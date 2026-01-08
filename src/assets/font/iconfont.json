@@ -1,0 +1,16 @@
+{
+  "id": "4877141",
+  "name": "远程集中监控项目",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "9224028",
+      "name": "首页",
+      "font_class": "shouye",
+      "unicode": "e619",
+      "unicode_decimal": 58905
+    }
+  ]
+}
