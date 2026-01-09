@@ -27,7 +27,7 @@
 
 <script setup>
 import HeaderYe from "./HeaderYe.vue";
-import Side1Cards from "./Side1Cards.vue";
+import Side1Cards from "@/components/Side1Cards.vue";
 import EacherPie from "./EacherPie.vue";
 import EacherBar from "./EacherBar.vue";
 
