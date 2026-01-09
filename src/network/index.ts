@@ -3,10 +3,12 @@ import axios from "axios"
 import router from "@/router";
 import { ElMessage } from 'element-plus'
 
-// import Vue from 'vue'
 
+// 直接访问
+const apiUrl =  process.env.VUE_APP_API_URL;
 const service = axios.create({
-    baseURL: "/api/pc",
+    // baseURL: "/api/pc",
+    baseURL: apiUrl,
     timeout: 40000,
     headers: {
         "Access-Control-Allow-Origin": "*",
