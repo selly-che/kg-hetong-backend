@@ -5,7 +5,10 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "build:test": "vue-cli-service build --mode test",
+    "build:pro": "vue-cli-service build --mode production",
+    "lint": "vue-cli-service lint",
+    "commit": "git-cz"
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.1",
@@ -63,5 +66,15 @@
     "last 2 versions",
     "not dead",
     "not ie 11"
-  ]
+  ],
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-customizable"
+    }
+  },
+   "husky": {
+    "hooks": {
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+    }
+  }
 }
