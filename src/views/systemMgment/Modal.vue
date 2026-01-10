@@ -1,6 +1,6 @@
 <template>
   <div>
-    <a-modal v-model:visible="visible" title="编辑用户" @ok="handleOk">
+    <a-modal v-model:visible="visible" :title="title" @ok="handleOk">
       <template v-slot:footer>
         <a-button key="back" @click="handleCancel"> 取消 </a-button>
         <a-button
@@ -18,6 +18,12 @@
 </template>
 <script>
 export default {
+  props: {
+    title: {
+      type: String,
+      default: '默认标题'
+    }
+  },
   data() {
     return {
       loading: false,
