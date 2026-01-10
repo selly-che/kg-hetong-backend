@@ -9,16 +9,16 @@
                     <template v-for="item in menus" :key="item.index">
                         <el-sub-menu v-if="item.children" :index="item.index">
                             <template #title>
-                                    <i :class="'iconfont ' + item.icon"></i>
-                                    <span class="pl-10">{{ item.title }}
-                                        <i class="el-icon-edit" style="color: red;"></i>
-                                    </span>
+                                <i :class="'iconfont ' + item.icon"></i>
+                                <span class="pl-10">{{ item.meta.title }}
+                                    <i class="el-icon-edit" style="color: red;"></i>
+                                </span>
                             </template>
                             <el-menu-item v-for="child in item.children" :key="child.index" :index="child.path">
                                 <template #title>
                                     <div>
                                         <i :class="'iconfont ' + child.icon"></i>
-                                        <span class="pl-10"> {{ child.title }}</span>
+                                        <span class="pl-10"> {{ child.meta.title }}</span>
                                     </div>
                                 </template>
                             </el-menu-item>
@@ -26,7 +26,7 @@
                         <el-menu-item v-else :index="item.path">
                             <i :class="'iconfont ' + item.icon"></i>
                             <template #title="">
-                                <span :class="item.children ? '' : 'pl-10'">{{ item.title }}</span>
+                                <span :class="item.children ? '' : 'pl-10'">{{ item.meta.title }}</span>
                             </template>
 
                         </el-menu-item>
@@ -109,6 +109,9 @@ interface MenuItem {
     type?: string;
     icon?: string;
     name?: string;
+    meta: {
+        title?: string;
+    }
     children?: MenuItem[];
 };
 
@@ -148,7 +151,7 @@ const logout = () => {
         type: 'warning',
     }).then(() => {
         Router.replace({ name: "login" });
-        localStorage.removeItem("wuyetoken");
+        localStorage.removeItem("accesstoken");
         ElMessage({
             type: 'success', message: '已退出',
         })

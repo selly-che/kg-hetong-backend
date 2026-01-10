@@ -19,8 +19,8 @@ import { useRouter } from "vue-router";
 import getDatas from "@/network/index";
 import { ElMessage } from 'element-plus'
 
-const input = ref("");
-const password = ref("");
+const input = ref("admin");
+const password = ref("123456");
 const router = useRouter()
 // const data:any = reactive({});
 
@@ -38,7 +38,7 @@ const guestRoutes = {
             "component": "home/index",
             "meta": {
                 "title": "首页",
-                
+
             }
         },
         {
@@ -84,7 +84,7 @@ const guestRoutes = {
             "parentId": "5",
             "index": "5",
             "title": "合同管理",
-            "icon": "icon-mokuai", 
+            "icon": "icon-mokuai",
             "type": "",
             "meta": {
                 "title": "合同管理",
@@ -109,7 +109,7 @@ const guestRoutes = {
                     "icon": "icon-hetong",
                     "path": "/contractMgment/outsourcing",
                     "component": "contractMgment/outsourcing",
-                    "menuType": 0,
+                    "menuType": 1,
                     "meta": {
                         "title": "外协合同",
                     }
@@ -149,14 +149,174 @@ const guestRoutes = {
             "icon": "icon-xitong",
             "type": "",
             "name": "systemMgment",
-            "path": "/systemMgment",
-            "component": "systemMgment/index",
+            // "path": "/systemMgment",
+            // "component": "systemMgment/index",
             "meta": {
                 "title": "系统管理",
-            }
+            },
+            "children": [
+                {
+                    "index": "7-1",
+                    "title": "用户管理",
+                    "name": "userMgment",
+                    "icon": "icon-hetong2",
+                    "path": "/systemMgment/userMgment",
+                    "component": "systemMgment/userMgment",
+                    "menuType": 0,
+                    "meta": {
+                        "title": "用户管理",
+                    }
+                },
+                {
+                    "index": "7-2",
+                    "title": "角色管理",
+                    "name": "roleMgment",
+                    "icon": "icon-hetong",
+                    "path": "/systemMgment/roleMgment",
+                    "component": "systemMgment/roleMgment",
+                    "menuType": 1,
+                    "meta": {
+                        "title": "角色管理",
+                    }
+                },
+                {
+                    "index": "7-3",
+                    "title": "菜单管理",
+                    "name": "menuMgment",
+                    "icon": "icon-hetong",
+                    "path": "/systemMgment/menuMgment",
+                    "component": "systemMgment/menuMgment",
+                    "menuType": 2,
+                    "meta": {
+                        "title": "菜单管理",
+                    }
+                },
+
+            ]
         },
     ]
 };
+
+// admin真是账号数据
+const adminRoutes = {
+    menu: [
+        {
+            "redirect": null,
+            "path": "/online",
+            "component": "layouts/RouteView",
+            "route": "1",
+            "children": [
+                {
+                    "path": "/online/copyform/:code",
+                    "component": "modules/online/cgform/OnlCgformCopyList",
+                    "route": "1",
+                    "hidden": true,
+                    "meta": {
+                        "keepAlive": false,
+                        "internalOrExternal": false,
+                        "componentName": "OnlCgformCopyList",
+                        "title": "AUTO复制表单"
+                    },
+                    "name": "online-copyform-@code",
+                    "id": "f2849d3814fc97993bfc519ae6bbf049"
+                },
+                {
+                    "path": "/online/cgformErpList/:code",
+                    "component": "modules/online/cgform/auto/erp/OnlCgformErpList",
+                    "route": "1",
+                    "hidden": true,
+                    "meta": {
+                        "keepAlive": false,
+                        "internalOrExternal": false,
+                        "componentName": "OnlCgformErpList",
+                        "title": "AUTO在线表单ERP"
+                    },
+                    "name": "online-cgformErpList-@code",
+                    "id": "1229674163694841857"
+                },
+                {
+                    "path": "/online/cgformTabList/:code",
+                    "component": "modules/online/cgform/auto/tab/OnlCgformTabList",
+                    "route": "1",
+                    "hidden": true,
+                    "meta": {
+                        "keepAlive": false,
+                        "internalOrExternal": false,
+                        "componentName": "OnlCgformTabList",
+                        "title": "AUTO在线表单TAB"
+                    },
+                    "name": "online-cgformTabList-@code",
+                    "id": "1304032910990495745"
+                },
+                {
+                    "path": "/online/cgreport/:code",
+                    "component": "modules/online/cgreport/auto/OnlCgreportAutoList",
+                    "route": "1",
+                    "hidden": true,
+                    "meta": {
+                        "keepAlive": false,
+                        "internalOrExternal": false,
+                        "componentName": "onlineAutoList",
+                        "title": "AUTO在线报表"
+                    },
+                    "name": "onlineAutoList",
+                    "id": "9fe26464838de2ea5e90f2367e35efa0"
+                },
+                {
+                    "path": "/online/cgformTreeList/:code",
+                    "component": "modules/online/cgform/auto/OnlCgformTreeList",
+                    "route": "1",
+                    "hidden": true,
+                    "meta": {
+                        "keepAlive": false,
+                        "internalOrExternal": false,
+                        "componentName": "OnlCgformTreeList",
+                        "title": "AUTO树表单列表"
+                    },
+                    "name": "online-cgformTreeList-@code",
+                    "id": "fba41089766888023411a978d13c0aa4"
+                },
+                {
+                    "path": "/online/cgformList/:code",
+                    "component": "modules/online/cgform/auto/OnlCgformAutoList",
+                    "route": "1",
+                    "hidden": true,
+                    "meta": {
+                        "keepAlive": false,
+                        "internalOrExternal": false,
+                        "componentName": "OnlCgformAutoList",
+                        "title": "AUTO在线表单"
+                    },
+                    "name": "online-cgformList-@code",
+                    "id": "54097c6a3cf50fad0793a34beff1efdf"
+                },
+                {
+                    "path": "/online/cgformInnerTableList/:code",
+                    "component": "modules/online/cgform/auto/innerTable/OnlCgformInnerTableList",
+                    "route": "1",
+                    "hidden": true,
+                    "meta": {
+                        "keepAlive": false,
+                        "internalOrExternal": false,
+                        "componentName": "OnlCgformInnerTableList",
+                        "title": "AUTO在线内嵌子表"
+                    },
+                    "name": "online-cgformInnerTableList-@code",
+                    "id": "1235823781053313025"
+                }
+            ],
+            "meta": {
+                "keepAlive": false,
+                "internalOrExternal": false,
+                "icon": "cloud",
+                "componentName": "RouteView",
+                "title": "在线开发"
+            },
+            "name": "online",
+            "id": "e41b69c57a941a3bbcce45032fe57605"
+        }
+    ]
+}
 
 const login = async () => {
     console.log("登录", input.value, password.value);
@@ -166,25 +326,27 @@ const login = async () => {
         const menus = guestRoutes.nav;
         const wuyemenusJSON = JSON.stringify(menus);
         localStorage.setItem('wuyemenusJSON', wuyemenusJSON);
-        localStorage.setItem('wuyetoken', 'guest-token'); // 设置游客token
+        localStorage.setItem('accesstoken', 'guest-token'); // 设置游客token
         router.push("/home");
         ElMessage({ message: '游客登录成功!', type: 'success' });
         return;
     }
 
-    
+
     //正常登录流程
-    const res = await getDatas("home/PostLogin", {
-        phone: input.value,
+    const res = await getDatas("common/PostLogin", {
+        username: input.value,
         password: password.value
     });
-    console.log("登录", JSON.parse(JSON.stringify(res)));
-    if (res.data.code == 0) {
-        const menus = res.data.nav;
+    console.log("登录123", JSON.parse(JSON.stringify(res)));
+    if (res.data.code == 200) {
+        const menus = adminRoutes.menu
+        console.log(menus, 'menusmenus');
+
         const wuyemenusJSON = JSON.stringify(menus);
         // console.log("wuyemenusJSON", JSON.parse(JSON.stringify(wuyemenusJSON)));
         localStorage.setItem('wuyemenusJSON', wuyemenusJSON)
-        localStorage.setItem('wuyetoken', res.data.access_token)//本地存储
+        localStorage.setItem('accesstoken', res.data.result.token)//本地存储
         // router.push({ name: "shouye" });
         router.push("/home");
         ElMessage({ message: '登录成功!', type: 'success' })

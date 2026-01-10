@@ -38,7 +38,7 @@ const router = createRouter({
 
 
 router.beforeEach((to, from, next) => {
-  const token = localStorage.getItem('wuyetoken');
+  const token = localStorage.getItem('accesstoken');
   // console.log("token",JSON.parse(JSON.stringify(token)));
   const currentRoutes = router.getRoutes(); // 获取当前所有路由
   const layoutRoute = currentRoutes.find(item => item.name === 'Layout');

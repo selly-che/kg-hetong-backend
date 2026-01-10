@@ -13,13 +13,13 @@ const service = axios.create({
     headers: {
         "Access-Control-Allow-Origin": "*",
         "Connection": "Keep-Alive",
-        "Content-Type": "application/json; charset = utf-8"
+        "Content-Type": "application/json;charset=utf-8"
     }
 })
 //请求拦截
 service.interceptors.request.use(
     config => {
-        const token = localStorage.getItem("wuyetoken");
+        const token = localStorage.getItem("accesstoken");
         if (token) {
             config.headers["access-token"] = token
         }
