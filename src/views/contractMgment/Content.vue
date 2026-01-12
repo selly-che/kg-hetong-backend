@@ -31,7 +31,6 @@ const selectedRowKeys = ref([]);
 
 const data = ref([]);
 const columns = [
-  {},
   {
     title: "序号",
     width: 70,
@@ -150,6 +149,9 @@ const columns = [
   },
 ];
 
+const exportExcel = () => {
+  console.log("导出excel");
+}
 onMounted(() => {
   for (let i = 0; i < 100; i++) {
     data.value.push({
