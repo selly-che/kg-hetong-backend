@@ -24,11 +24,6 @@ const routes: Array<RouteRecordRaw> = [
     meta: { check: false },
     component: () => import("../views/login/Login.vue"),
   },
-  {
-    path: "/:pathMatch(.*)*",
-    name: "404",
-    component: () => import("../views/error/404.vue"),
-  },
 ];
 
 const router = createRouter({
@@ -41,24 +36,30 @@ router.beforeEach((to, from, next) => {
   // console.log("token",JSON.parse(JSON.stringify(token)));
   const currentRoutes = router.getRoutes(); // 获取当前所有路由
   const layoutRoute = currentRoutes.find((item) => item.name === "Layout");
+  console.log(currentRoutes, 'currentRoutes');
 
   // 如果用户未登录且访问需要认证的路由，则重定向到登录页面
   if (!token && to.meta.check) {
     next({ name: "login" });
     return;
   }
-
   // 已登录且需要初始化路由
   // 注意：检查是否有子路由，但至少应该有一个首页路由
   if (token && layoutRoute && layoutRoute.children.length <= 1) {
     const menus = JSON.parse(localStorage.getItem("wuyemenusJSON") || "[]");
     addDynamicRoutes(router, menus);
+    // 在动态路由添加完成后，再添加 404 路由
+    router.addRoute({
+      path: "/:pathMatch(.*)*",
+      name: "404",
+      component: () => import("../views/error/404.vue"),
+    });
     // 如果当前路由是根路径或首页，直接导航到首页
     if (to.path === "/" || to.path === "/home") {
       next("/home");
       return;
     }
-
+    console.log(to, 'addDynamicRoutes');
     // 否则重定向到目标路由
     next({ ...to, replace: true });
     return;
