@@ -3,30 +3,16 @@
     <div class="main-container">
       <div class="side-menu-container" :style="`width:${collWidth}`">
         <div class="title">{{ isCollapse ? "系统" : "合同管理系统" }}</div>
-        <el-menu
-          class="side-menu"
-          :style="`width:${collWidth}`"
-          :default-active="activeMenu"
-          mode="vertical"
-          :collapse-transition="false"
-          router
-          unique-opened
-          text-color="#bfcbd9"
-          active-text-color="#ffffff"
-          background-color="#409eff"
-          :collapse="isCollapse"
-        >
+        <el-menu class="side-menu" :style="`width:${collWidth}`" :default-active="activeMenu" mode="vertical"
+          :collapse-transition="false" router unique-opened text-color="#bfcbd9" active-text-color="#ffffff"
+          background-color="#409eff" :collapse="isCollapse">
           <template v-for="item in menus" :key="item.index">
             <el-sub-menu v-if="item.children" :index="item.index">
               <template #title>
                 <i :class="'iconfont ' + item.icon"></i>
                 <span class="pl-10">{{ item.meta.title }} </span>
               </template>
-              <el-menu-item
-                v-for="child in item.children"
-                :key="child.index"
-                :index="child.path"
-              >
+              <el-menu-item v-for="child in item.children" :key="child.index" :index="child.path">
                 <template #title>
                   <div>
                     <i :class="'iconfont ' + child.icon"></i>
@@ -64,29 +50,45 @@
                         <el-breadcrumb-item v-for="item in tabs">{{item.title}}</el-breadcrumb-item>
                     </el-breadcrumb> -->
 
-          <div class="flexTWO cu_p" @click="logout">
+          <a-dropdown placement="bottomRight">
+            <div class="flexTWO cu_p">
+              <a-avatar :size="24">
+                <template #icon>
+                  <UserOutlined />
+                </template>
+              </a-avatar>
+              <span style="padding: 0 4px;">admin</span>
+              <down-outlined />
+            </div>
+            <template #overlay>
+              <a-menu @click="handleMenuClick">
+                <a-menu-item key="refresh">
+                  <reload-outlined />
+                  刷新
+                </a-menu-item>
+                <!-- <a-menu-item key="switch">
+                  <swap-outlined />
+                  切换账号
+                </a-menu-item> -->
+                <a-menu-divider />
+                <a-menu-item key="logout">
+                  <logout-outlined />
+                  退出
+                </a-menu-item>
+              </a-menu>
+            </template>
+          </a-dropdown>
+          <!-- <div class="flexTWO cu_p" @click="logout">
             <span class="mr-8">退出登录</span>
             <el-icon>
               <SwitchButton />
             </el-icon>
-          </div>
+          </div> -->
         </div>
         <div class="tabs-container">
-          <el-tabs
-            v-model="activeTab"
-            type="card"
-            closable
-            @tab-remove="removeTab"
-            @tab-click="handleClick"
-          >
-            <el-tab-pane
-              v-for="tab in tabs"
-              :key="tab.path"
-              :label="tab.title"
-              :name="tab.path"
-              :closable="tab.path !== '/home'"
-              @close="removeTab(tab.path)"
-            >
+          <el-tabs v-model="activeTab" type="card" closable @tab-remove="removeTab" @tab-click="handleClick">
+            <el-tab-pane v-for="tab in tabs" :key="tab.path" :label="tab.title" :name="tab.path"
+              :closable="tab.path !== '/home'" @close="removeTab(tab.path)">
             </el-tab-pane>
           </el-tabs>
         </div>
@@ -97,14 +99,14 @@
 </template>
 
 <script lang="ts" setup>
-import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons-vue";
+import { MenuFoldOutlined, MenuUnfoldOutlined, UserOutlined, DownOutlined } from "@ant-design/icons-vue";
 
 import { SwitchButton } from "@element-plus/icons-vue";
 import { ref, watch, onMounted, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
 import { ElMessage, ElMessageBox } from "element-plus";
-
+import { message } from 'ant-design-vue'
 const collWidth = computed(() => {
   return store.state.common.isCollapse ? "80px" : "216px";
 });
@@ -139,7 +141,26 @@ interface MenuItem {
   children?: MenuItem[];
 }
 
-onMounted(() => {});
+// 处理菜单点击
+const handleMenuClick = (row: any) => {
+  switch (row.key) {
+    case 'refresh':
+      // 刷新页面
+      window.location.reload()
+      break
+    case 'switch':
+      // 切换账号逻辑
+      message.info('切换账号功能')
+      break
+    case 'logout':
+      // 退出登录逻辑
+      logout()
+      break
+  }
+}
+
+
+onMounted(() => { });
 
 // 从 Vuex 中获取 menus
 const menusFromVuex = store.state.menus;

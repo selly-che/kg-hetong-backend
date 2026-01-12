@@ -26,4 +26,13 @@ export default {
 
         };
     },
+    // 获取系统菜单管理树
+    GetMenuListTree(params: any) {
+        return {
+            method: "GET",
+            url: "/jeecg-boot/sys/permission/list",
+            params,
+
+        };
+    }
 }
