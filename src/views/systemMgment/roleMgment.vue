@@ -1,7 +1,10 @@
 <template>
-  <div>
+  <div style="margin: 20px">
     <!-- 搜索区域 -->
-    <div class="search" style="display: flex">
+    <div
+      class="search"
+      style="display: flex; margin-top: 10px; font-size: 18px"
+    >
       <a-form-item label="账号" style="width: 400px; margin-right: 10px">
         <a-input placeholder="请输入角色名" v-model="roleName"></a-input>
       </a-form-item>
@@ -32,83 +35,42 @@
       </div>
     </div>
     <!-- 已选择项 -->
-    <div class="ant-alert ant-alert-info" style="margin-bottom: 16px">
+    <div
+      class="ant-alert ant-alert-info"
+      style="margin-bottom: 16px; margin-top: 10px"
+    >
       <i class="anticon anticon-info-circle ant-alert-icon"></i>
       已选择&nbsp;<a style="font-weight: 600">{{ selectedRowKeys.length }}</a
       >项&nbsp;&nbsp;
       <a style="margin-left: 24px" @click="onClearSelected">清空</a>
     </div>
     <!-- table -->
-    <a-table
-      :columns="columns"
-      :data-source="data"
-      class="components-table-demo-nested"
-    >
-      <!-- 操作键 -->
-      <template #action="{ record }">
-        <a @click="handleEdit(record)">编辑</a>
-        <a-divider type="vertical" />
-        <a-dropdown :placement="bottomRight">
-          <template #overlay>
-            <a-menu>
-              <a-menu-item>
-                <a href="javascript:;" @click="handleDetail(record)">详情</a>
-              </a-menu-item>
-
-              <a-menu-item>
-                <a
-                  href="javascript:;"
-                  @click="handleChangePassword(record.username)"
-                  >密码</a
-                >
-              </a-menu-item>
-
-              <a-menu-item>
-                <a-popconfirm
-                  title="确定删除吗?"
-                  @confirm="() => handleDelete(record.id)"
-                >
-                  <a>删除</a>
-                </a-popconfirm>
-              </a-menu-item>
-
-              <a-menu-item v-if="record.status == 1">
-                <a-popconfirm
-                  title="确定冻结吗?"
-                  @confirm="() => handleFrozen(record.id, 2, record.username)"
-                >
-                  <a>冻结</a>
-                </a-popconfirm>
-              </a-menu-item>
-
-              <a-menu-item v-if="record.status == 2">
-                <a-popconfirm
-                  title="确定解冻吗?"
-                  @confirm="() => handleFrozen(record.id, 1, record.username)"
-                >
-                  <a>解冻</a>
-                </a-popconfirm>
-              </a-menu-item>
-
-              <a-menu-item>
-                <a
-                  href="javascript:;"
-                  @click="handleAgentSettings(record.username)"
-                  >代理人</a
-                >
-              </a-menu-item>
-            </a-menu>
+    <div class="table-container">
+      <!-- 左侧主表格 -->
+      <div class="table-wrapperzhu">
+        <a-table
+          :columns="columns"
+          :data-source="data"
+          class="components-table-demo-nested"
+        >
+          <!-- 操作键 -->
+          <template #action="{ record }">
+            <a
+              @click="
+                () => {
+                  handleEdit(record);
+                  showDetailTable = !showDetailTable;
+                }
+              "
+            >
+              {{ showDetailTable ? "隐藏" : "查看" }}
+            </a>
           </template>
-          <a> 更多 <DownOutlined /> </a>
-        </a-dropdown>
-      </template>
+        </a-table>
+      </div>
 
-      <template #bodyCell="{ column }">
-        <template v-if="column.key === 'operation'">
-          <a>Publish</a>
-        </template>
-      </template>
-      <template #expandedRowRender>
+      <!-- 右侧子表格 -->
+      <div class="table-wrapperzi">
         <a-table
           :columns="innerColumns"
           :data-source="innerData"
@@ -126,27 +88,20 @@
               </span>
             </template>
             <template v-else-if="column.key === 'operation'">
+              <!-- 编辑+删除 -->
               <span class="table-operation">
-                <a>Pause</a>
-                <a>Stop</a>
-                <a-dropdown>
-                  <template #overlay>
-                    <a-menu>
-                      <a-menu-item>Action 1</a-menu-item>
-                      <a-menu-item>Action 2</a-menu-item>
-                    </a-menu>
-                  </template>
-                  <a>
-                    More
-                    <down-outlined />
-                  </a>
-                </a-dropdown>
+                <a-button type="primary" @click="handleEdit(record)"
+                  >编辑</a-button
+                >
+                <a-button type="danger" @click="handlaDelete(record)"
+                  >删除</a-button
+                >
               </span>
             </template>
           </template>
         </a-table>
-      </template>
-    </a-table>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -162,6 +117,7 @@ import {
 const roleName = ref("");
 const selectedRowKeys = ref([]);
 const table = ref(null);
+const showDetailTable = ref(false); // 控制右侧子表格的显示/隐藏
 const columns = ref([
   {
     title: "角色名称",
@@ -219,7 +175,6 @@ const data = [
     updateTime: "2026-01-10 10:30:00",
   },
 ];
-//当前子列点击显示后是排在主列的下面的，我想让子列排在主列的右边（它们各占一半）
 // 子表格列
 const innerColumns = [
   {
@@ -249,7 +204,7 @@ const innerColumns = [
 ];
 // 子表格数据
 const innerData = [];
-for (let i = 0; i < 4; ++i) {
+for (let i = 0; i < 2; ++i) {
   innerData.push({
     key: i,
     date: "2014-12-24 23:12:00",
@@ -302,4 +257,23 @@ const handleTableChange = (pagination, filters, sorter) => {
   console.log("表格变化", pagination, filters, sorter);
 };
 </script>
-<style lang="less" scoped></style>
+<style lang="less" scoped>
+.table-container {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.table-wrapperzhu {
+  width: v-bind('showDetailTable ? "49%" : "100%"');
+}
+
+.table-wrapperzi {
+  width: v-bind('showDetailTable ? "49%" : "0%"');
+  overflow: hidden;
+  transition: width 0.3s ease;
+}
+button {
+  border-radius: 5px;
+}
+</style>
