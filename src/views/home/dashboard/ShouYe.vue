@@ -3,7 +3,7 @@
     <div class="header">
       <HeaderYe />
     </div>
-    <div class="side">
+    <div class="side br8 pd20">
       <div class="side1">
         <div class="side1-header">
           <span class="side1-title">进行中的项目</span>
@@ -77,7 +77,6 @@ const projects = [
 
 <style scoped lang="less">
 .header {
-  height: 80px;
   margin-bottom: 10px;
 }
 .side {

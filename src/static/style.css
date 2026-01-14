@@ -10,6 +10,7 @@ div {
     box-sizing: border-box !important;
 }
 
+
 /*文字一行溢出*/
 .oneline {
     display: -webkit-box;
@@ -632,6 +633,9 @@ div {
 
 .bgf {
     background: #ffffff !important;
+}
+.bgf7 {
+    background: #f7f8fa !important;
 }
 
 /**** 字体 ****/

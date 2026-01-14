@@ -1,5 +1,5 @@
 <template>
-  <div style="margin: 20px">
+  <div class="bgf pd20 br8">
     <!-- 搜索区域 -->
     <div
       class="search"

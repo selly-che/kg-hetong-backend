@@ -1,55 +1,59 @@
 <template>
-  <div class="container">
-    <div class="contract-audit">
-      <div class="tabs">
-        <div
-          class="tab"
-          :class="{ active: activeTab === 'pending' }"
-          @click="switchTab('pending')"
-        >
-          待审核 ({{ pendingCount }})
-        </div>
-        <div
-          class="tab"
-          :class="{ active: activeTab === 'approved' }"
-          @click="switchTab('approved')"
-        >
-          已审核 ({{ approvedCount }})
-        </div>
+  <div class="contract-audit bgf br8">
+    <div class="tabs">
+      <div
+        class="tab"
+        :class="{ active: activeTab === 'pending' }"
+        @click="switchTab('pending')"
+      >
+        待审核 ({{ pendingCount }})
       </div>
-      <table class="contract-table">
-        <thead>
-          <tr>
-            <th>序号</th>
-            <th>合同名称</th>
-            <th>合同编号</th>
-            <th>创建时间</th>
-            <th>创建人</th>
-            <th>合同状态</th>
-            <th>操作</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(contract, index) in filteredContracts" :key="contract.id">
-            <td>{{ index + 1 }}</td>
-            <td class="contract-name">{{ contract.contractName }}</td>
-            <td>{{ contract.contractNo }}</td>
-            <td>{{ contract.createTime }}</td>
-            <td>{{ contract.creator }}</td>
-            <td>
-              <span :class="['status', contract.status]">
-                {{ contract.status === "pending" ? "待审核" : "已审核" }}
-              </span>
-            </td>
-            <td><a href="#" class="view-btn">查看</a></td>
-          </tr>
-        </tbody>
-      </table>
+      <div
+        class="tab"
+        :class="{ active: activeTab === 'approved' }"
+        @click="switchTab('approved')"
+      >
+        已审核 ({{ approvedCount }})
+      </div>
     </div>
+    <table class="contract-table">
+      <thead>
+        <tr>
+          <th>序号</th>
+          <th>合同名称</th>
+          <th>合同编号</th>
+          <th>创建时间</th>
+          <th>创建人</th>
+          <th>合同状态</th>
+          <th>操作</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="(contract, index) in filteredContracts" :key="contract.id">
+          <td>{{ index + 1 }}</td>
+          <td class="contract-name">{{ contract.contractName }}</td>
+          <td>{{ contract.contractNo }}</td>
+          <td>{{ contract.createTime }}</td>
+          <td>{{ contract.creator }}</td>
+          <td>
+            <span :class="['status', contract.status]">
+              {{ contract.status === "pending" ? "待审核" : "已审核" }}
+            </span>
+          </td>
+          <td><a href="#" class="view-btn">查看</a></td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </template>
 
-<script setup>
+<script lang="ts">
+export default {
+  name: "ApprovalMgment",
+};
+</script>
+
+<script setup lang="ts">
 import { ref, computed } from "vue";
 
 // 使用ref定义响应式状态
@@ -125,17 +129,14 @@ const filteredContracts = computed(() => {
 });
 
 // 切换标签页
-const switchTab = (tab) => {
+const switchTab = (tab:string) => {
   activeTab.value = tab;
 };
 </script>
 
 <style scoped lang="less">
-.container {
-  padding: 20px;
-}
-
 .contract-audit {
+  padding: 10px 20px;
   width: 100%;
 }
 

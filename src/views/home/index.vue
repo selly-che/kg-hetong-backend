@@ -1,7 +1,8 @@
+<!-- eslint-disable vue/multi-word-component-names -->
 <template>
   <div class="home">
     首页
-    <div>
+    <div >
       测试icon
       <MenuFoldOutlined />
     </div>
@@ -17,6 +18,8 @@
     <!-- <inputCom label="用户名"  v-model="inputValue"></inputCom> -->
   </div>
 </template>
+
+
 
 <script lang="ts" setup>
 import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons-vue";

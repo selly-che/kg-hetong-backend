@@ -59,12 +59,20 @@
     </modal>
   </div>
 </template>
-<script setup>
+
+<script lang="ts">
+export default {
+  name: "ConText",
+};
+</script>
+
+<script setup lang="ts">
 // 引入Modal组件
 import Modal from "./Modal.vue";
 import { ref } from "vue";
 import { EditTwoTone, DeleteTwoTone } from "@ant-design/icons-vue";
-const editModal = ref(null);
+import {InterfaceList} from "./interface/index"
+const editModal = ref<any>(null);
 const columns = [
   {
     title: "用户名",
@@ -155,11 +163,20 @@ const data = [
     lastLogin: "2026-01-06 14:20:00",
   },
 ];
-const records = ref(null);
-const getStatusColor = (status) => {
+const records = ref<InterfaceList>({
+  key: "",
+  username: "",
+  name: "",
+  email: "",
+  role: "",
+  department: "",
+  status: "",
+  lastLogin: "",
+});
+const getStatusColor = (status: string) => {
   return status === "在线" ? "green" : "red";
 };
-const getRoleColor = (role) => {
+const getRoleColor = (role: string) => {
   switch (role) {
     case "管理员":
       return "red";
@@ -171,13 +188,13 @@ const getRoleColor = (role) => {
       return "default";
   }
 };
-const handleEdit = (record) => {
+const handleEdit = (record:InterfaceList) => {
   console.log("编辑记录:", record);
   records.value = record;
   // 显示Modal
-  editModal.value.showModal(record);
+  editModal.value?.showModal(record);
 };
-const handleDelete = (record) => {
+const handleDelete = (record:InterfaceList) => {
   console.log("删除记录:", record);
   // 添加删除
 };

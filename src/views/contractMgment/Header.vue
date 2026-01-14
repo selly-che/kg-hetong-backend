@@ -59,13 +59,21 @@
       <a-form-item>
         <a-button type="primary" @click="handleSearch">搜索</a-button>
         <a-button @click="handleReset">重置</a-button>
-        <a-button @click="handleExpand">展开 <a-icon type="down" /></a-button>
+        <a-button @click="handleExpand">展开</a-button>
       </a-form-item>
     </a-form>
   </div>
 </template>
-<script setup>
-const formData = {
+
+<script lang="ts">
+export default {
+  name: "HeaDer",
+};
+</script>
+
+<script setup lang="ts">
+import { ref } from "vue";
+const formData = ref({
   contractName: "",
   contractNumber: "",
   executionUnit: "all",
@@ -75,14 +83,14 @@ const formData = {
   hasReceivable: "all",
   contractDate: null,
   signDateRange: [],
-};
+});
 const handleSearch = () => {
   // 搜索
-  console.log("搜索参数:", this.formData);
+  console.log("搜索参数:", formData.value);
 };
 const handleReset = () => {
   // 重置
-  this.formData = {
+  formData.value = {
     contractName: "",
     contractNumber: "",
     executionUnit: "all",
@@ -104,7 +112,6 @@ const handleExpand = () => {
   padding: 16px;
   border-radius: 4px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.09);
-  height: 200px;
   width: 100%;
 }
 

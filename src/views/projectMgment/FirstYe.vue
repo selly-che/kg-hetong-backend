@@ -1,5 +1,5 @@
 <template>
-  <div class="header">
+  <div class="header br8">
     <div class="title">项目管理</div>
     <a-input-search
       style="width: 400px; margin: 10px 0"

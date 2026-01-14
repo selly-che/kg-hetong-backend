@@ -1,5 +1,5 @@
 <template>
-    <div class="peijianSort">
+    <div class="bgf pd20 br8">
         <!--新增  -->
         <el-button type="primary" @click="num++">新增</el-button>
         <SelectNumber :num="num" @clearSelect="clearNum"></SelectNumber>
@@ -296,12 +296,6 @@ onMounted(() => {
 </script>
 
 <style lang="less" scoped>
-.peijianSort {
-    padding: 1rem;
-    background-color: white;
-    margin: 1rem;
-
-}
 
 :deep(.custom-menu-item) {
     color: #000 !important;

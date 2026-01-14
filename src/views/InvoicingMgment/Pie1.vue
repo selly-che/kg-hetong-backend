@@ -29,12 +29,18 @@
   </div>
 </template>
 
-<script setup>
+<script  lang="ts">
+export default {
+  name: "PiE",
+};
+</script>
+
+<script setup lang="ts">
 import * as echarts from "echarts";
 import { ref, onMounted, onBeforeUnmount } from "vue";
 
 // 响应式数据
-const chart = ref(null);
+const chart = ref<echarts.ECharts | null>(null);
 const activeTab = ref(0);
 const pieChartRef = ref(null);
 
@@ -98,7 +104,7 @@ const handleResize = () => {
   }
 };
 
-const handleTabClick = (index) => {
+const handleTabClick = (index: number) => {
   activeTab.value = index;
   // 更新标签页的active状态
   const tabs = document.querySelectorAll(".pie-tabs .tab");

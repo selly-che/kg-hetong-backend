@@ -74,7 +74,6 @@
                 style="margin-left: 8px; color: #1890ff; cursor: pointer"
               >
                 {{ toggleSearchStatus ? "收起" : "展开" }}
-                <a-icon :type="toggleSearchStatus ? 'up' : 'down'" />
               </a>
             </span>
           </a-col>

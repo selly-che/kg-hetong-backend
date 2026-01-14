@@ -3,16 +3,30 @@
     <div class="main-container">
       <div class="side-menu-container" :style="`width:${collWidth}`">
         <div class="title">{{ isCollapse ? "系统" : "合同管理系统" }}</div>
-        <el-menu class="side-menu" :style="`width:${collWidth}`" :default-active="activeMenu" mode="vertical"
-          :collapse-transition="false" router unique-opened text-color="#bfcbd9" active-text-color="#ffffff"
-          background-color="#409eff" :collapse="isCollapse">
+        <el-menu
+          class="side-menu"
+          :style="`width:${collWidth}`"
+          :default-active="activeMenu"
+          mode="vertical"
+          :collapse-transition="false"
+          router
+          unique-opened
+          text-color="#bfcbd9"
+          active-text-color="#ffffff"
+          background-color="#409eff"
+          :collapse="isCollapse"
+        >
           <template v-for="item in menus" :key="item.index">
             <el-sub-menu v-if="item.children" :index="item.index">
               <template #title>
                 <i :class="'iconfont ' + item.icon"></i>
                 <span class="pl-10">{{ item.meta.title }} </span>
               </template>
-              <el-menu-item v-for="child in item.children" :key="child.index" :index="child.path">
+              <el-menu-item
+                v-for="child in item.children"
+                :key="child.index"
+                :index="child.path"
+              >
                 <template #title>
                   <div>
                     <i :class="'iconfont ' + child.icon"></i>
@@ -57,24 +71,18 @@
                   <UserOutlined />
                 </template>
               </a-avatar>
-              <span style="padding: 0 4px;">admin</span>
+              <span style="padding: 0 4px">admin</span>
               <down-outlined />
             </div>
             <template #overlay>
               <a-menu @click="handleMenuClick">
-                <a-menu-item key="refresh">
-                  <reload-outlined />
-                  刷新
-                </a-menu-item>
+                <a-menu-item key="refresh"> 刷新 </a-menu-item>
                 <!-- <a-menu-item key="switch">
                   <swap-outlined />
                   切换账号
                 </a-menu-item> -->
                 <a-menu-divider />
-                <a-menu-item key="logout">
-                  <logout-outlined />
-                  退出
-                </a-menu-item>
+                <a-menu-item key="logout"> 退出 </a-menu-item>
               </a-menu>
             </template>
           </a-dropdown>
@@ -86,27 +94,52 @@
           </div> -->
         </div>
         <div class="tabs-container">
-          <el-tabs v-model="activeTab" type="card" closable @tab-remove="removeTab" @tab-click="handleClick">
-            <el-tab-pane v-for="tab in tabs" :key="tab.path" :label="tab.title" :name="tab.path"
-              :closable="tab.path !== '/home'" @close="removeTab(tab.path)">
+          <el-tabs
+            v-model="activeTab"
+            type="card"
+            closable
+            @tab-remove="removeTab"
+            @tab-click="handleClick"
+          >
+            <el-tab-pane
+              v-for="tab in tabs"
+              :key="tab.path"
+              :label="tab.title"
+              :name="tab.path"
+              :closable="tab.path !== '/home'"
+              @close="removeTab(tab.path)"
+            >
             </el-tab-pane>
           </el-tabs>
         </div>
-        <router-view></router-view>
+        <div :class="{ pd20: $router.currentRoute.value.path !== '/home' }">
+          <router-view></router-view>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
+<script lang="ts">
+export default {
+  name: "LayOut",
+};
+</script>
+
 <script lang="ts" setup>
-import { MenuFoldOutlined, MenuUnfoldOutlined, UserOutlined, DownOutlined } from "@ant-design/icons-vue";
+import {
+  MenuFoldOutlined,
+  MenuUnfoldOutlined,
+  UserOutlined,
+  DownOutlined,
+} from "@ant-design/icons-vue";
 
 import { SwitchButton } from "@element-plus/icons-vue";
 import { ref, watch, onMounted, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
 import { ElMessage, ElMessageBox } from "element-plus";
-import { message } from 'ant-design-vue'
+import { message } from "ant-design-vue";
 const collWidth = computed(() => {
   return store.state.common.isCollapse ? "80px" : "216px";
 });
@@ -144,23 +177,20 @@ interface MenuItem {
 // 处理菜单点击
 const handleMenuClick = (row: any) => {
   switch (row.key) {
-    case 'refresh':
+    case "refresh":
       // 刷新页面
-      window.location.reload()
-      break
-    case 'switch':
+      window.location.reload();
+      break;
+    case "switch":
       // 切换账号逻辑
-      message.info('切换账号功能')
-      break
-    case 'logout':
+      message.info("切换账号功能");
+      break;
+    case "logout":
       // 退出登录逻辑
-      logout()
-      break
+      logout();
+      break;
   }
-}
-
-
-onMounted(() => { });
+};
 
 // 从 Vuex 中获取 menus
 const menusFromVuex = store.state.menus;
@@ -292,43 +322,39 @@ watch(
 
 <style lang="less" scoped>
 :deep(.el-menu) {
-  // background:  !important;
-  background-color: #001529 !important;
-
+  background-color: #1961ac !important;
+  border-right: none !important;
   :hover {
     background: none !important;
     // color: #bfcbd9 !important;
-    color: white !important;
+    color: #fff !important;
   }
 
   &-item {
     // color: white !important;
-    background-color: #0f2438 !important;
+    background-color: #1961ac !important;
 
     &.is-active {
-      background: #409eff !important;
-      // color: white !important;
+      background: #ffff !important;
+      color: #1961ac !important;
     }
 
     &:hover {
       // background: none !important;
     }
   }
+  .is-opened {
+    .is-active :hover{
+      color: #409eff !important;
+    } 
+  }
 }
 
 .layout {
-  // display: flex;
-  // flex-direction: column;
-  // height: 100%;
-  // overflow: hidden;
-
   .main-container {
     width: 100%;
     background-color: rgb(247, 248, 250);
     display: flex;
-    // margin-top: 40px;
-    // height: calc(100vh - 20px);
-    // border: 1px solid rebeccapurple;
     position: absolute;
     left: 0;
     right: 0;
@@ -339,12 +365,20 @@ watch(
       height: 100%;
       overflow: hidden;
       overflow-y: auto;
-      background-color: #001529;
+      background-color: #1961ac;
+      /* 隐藏滚动条 */
+      &::-webkit-scrollbar {
+        width: 0;
+        height: 0;
+        display: none;
+      }
 
+      /* 兼容 Firefox */
+      scrollbar-width: none; /* Firefox */
       .title {
         // width: 180px;
-        color: black;
-        font-size: 18px;
+        color: #1961ac;
+        font-size: 24px;
         font-weight: bold;
         text-align: center;
         padding: 10px 0;
@@ -360,8 +394,16 @@ watch(
         height: calc(100vh - 54px);
         overflow: hidden;
         overflow-y: auto;
-        background-color: #0f2438;
+        background-color: #1961ac;
+        /* 隐藏滚动条 */
+        &::-webkit-scrollbar {
+          width: 0;
+          height: 0;
+          display: none;
+        }
 
+        /* 兼容 Firefox */
+        scrollbar-width: none; /* Firefox */
         .el-sub-menu__title {
           .iconfont {
             font-size: 20px;
@@ -443,7 +485,7 @@ watch(
 
         &.is-active {
           background-color: #409eff;
-          color: white;
+          color: #1961ac;
           font-weight: 500;
         }
 
@@ -464,19 +506,17 @@ watch(
 
           &:hover {
             background-color: #c0c4cc;
-            color: white;
+            color: #1961ac;
           }
         }
 
         &.is-active .el-icon-close {
-          color: white;
-
+          color: #1961ac;
           &:hover {
             background-color: rgba(255, 255, 255, 0.3);
           }
         }
       }
-
       // 隐藏首页标签页的关闭按钮
       :deep(.el-tabs__item[aria-controls="pane-home"]) {
         .el-icon-close {

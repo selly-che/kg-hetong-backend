@@ -1,5 +1,5 @@
 <template>
-  <div class="header-container">
+  <div class="header-container br8 ">
     <div class="user-info">
       <div class="avatar">
         <img src="#" alt="" />
@@ -38,9 +38,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 80px;
-  padding: 0 20px;
   background-color: #fff;
+  padding: 30px 20px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 

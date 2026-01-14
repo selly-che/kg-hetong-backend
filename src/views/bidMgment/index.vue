@@ -1,6 +1,9 @@
+<!-- eslint-disable vue/multi-word-component-names -->
 <template>
-    <div class="peijianSort">
-       投标管理
+    <div >
+        <div class="pd20 bgf br8">
+           投标管理
+        </div>
     </div>
 </template>
 <script lang="ts" setup>
@@ -8,12 +11,8 @@ import { onMounted } from 'vue';
 
 onMounted(() => {
     console.log('组件挂载完成');
-    adc(1);
 });
 
-const adc = (item :any) => {
-    console.log("item",JSON.parse(JSON.stringify(item)));
-}
 </script>
 
 <style lang="less" scoped> 

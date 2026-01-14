@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="br8">
     <FirstYe
       @tab-change="handleTabChange"
       @category-change="handleCategoryChange"
@@ -19,11 +19,19 @@
   </div>
 </template>
 
-<script setup>
+<script lang="ts">
+export default {
+  name: "ProjectMgment",
+};
+</script>
+
+<script setup lang="ts">
 import { ref, computed } from "vue";
 import Side1Cards from "@/components/Side1Cards.vue";
 import FirstYe from "./FirstYe.vue";
 import PaginationYe from "./PaginationYe.vue";
+
+import {categoryType} from "./interface/index"
 
 const activeKey = ref("1");
 const activeCategory = ref("all");
@@ -94,12 +102,18 @@ const filteredProjects = computed(() => {
   // 再根据类目过滤
   if (activeCategory.value !== "all") {
     // 将英文类目转换为中文类型名称
-    const categoryMap = {
+    // const categoryMap = {
+    //   railway: "铁路",
+    //   tunnel: "隧道",
+    //   bridge: "桥梁",
+    //   road: "公路",
+    // };
+    const categoryMap: categoryType = {
       railway: "铁路",
       tunnel: "隧道",
       bridge: "桥梁",
       road: "公路",
-    };
+    }
     const typeName = categoryMap[activeCategory.value] || activeCategory.value;
     filteredByStatus = filteredByStatus.filter(
       (project) => project.type === typeName
@@ -115,15 +129,15 @@ const filteredProjects = computed(() => {
   return filteredByStatus;
 });
 
-const handleTabChange = (key) => {
+const handleTabChange = (key: string) => {
   activeKey.value = key;
 };
 
-const handleCategoryChange = (category) => {
+const handleCategoryChange = (category: string) => {
   activeCategory.value = category;
 };
 
-const handleSearch = (searchTextValue) => {
+const handleSearch = (searchTextValue: string) => {
   searchText.value = searchTextValue;
 };
 </script>
