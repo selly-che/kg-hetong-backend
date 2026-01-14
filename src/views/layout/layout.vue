@@ -327,7 +327,7 @@ watch(
   :hover {
     background: none !important;
     // color: #bfcbd9 !important;
-    color: #fff !important;
+    color: #409eff !important;
   }
 
   &-item {
