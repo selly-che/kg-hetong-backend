@@ -343,11 +343,15 @@ watch(
       // background: none !important;
     }
   }
+   .is-active :hover {
+   color: #409eff !important;
+  }
   .is-opened {
     .is-active :hover{
       color: #409eff !important;
     } 
   }
+ 
 }
 
 .layout {
