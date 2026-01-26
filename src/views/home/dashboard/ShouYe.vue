@@ -3,8 +3,8 @@
     <div class="header">
       <HeaderYe />
     </div>
-    <div class="side br8 pd20">
-      <div class="side1">
+    <div class="side  pd20">
+      <div class="side1 " >
         <div class="side1-header">
           <span class="side1-title">进行中的项目</span>
           <a class="side1-more">全部</a>
@@ -82,7 +82,7 @@ const projects = [
 .side {
   display: flex;
   justify-content: space-between;
-  height: 480px;
+  height: 420px;
   .side1 {
     width: 60%;
     background-color: #ffffff;
@@ -150,7 +150,6 @@ const projects = [
   }
 }
 .footer {
-  height: 420px;
   background-color: rgb(255, 255, 255);
   margin-top: 10px;
 }
