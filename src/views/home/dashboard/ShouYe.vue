@@ -82,7 +82,7 @@ const projects = [
 .side {
   display: flex;
   justify-content: space-between;
-  height: 420px;
+  height: 480px;
   .side1 {
     width: 60%;
     background-color: #ffffff;
