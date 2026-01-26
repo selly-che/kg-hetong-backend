@@ -30,8 +30,7 @@ import { ref, computed } from "vue";
 import Side1Cards from "@/components/Side1Cards.vue";
 import FirstYe from "./FirstYe.vue";
 import PaginationYe from "./PaginationYe.vue";
-
-import {categoryType} from "./interface/index"
+import {categoryType} from "./interface/index";
 
 const activeKey = ref("1");
 const activeCategory = ref("all");
