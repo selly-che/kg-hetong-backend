@@ -14,7 +14,13 @@ export default {
             method: "GET",
             url: "/jeecg-boot/sys/permission/getUserPermissionByToken?",
             params,
-
+        };
+    },
+    GetToken(params: any) {
+        return {
+            method: "GET",
+            url: "/jeecg-boot/sys/getToken",
+            params,
         };
     },
 }

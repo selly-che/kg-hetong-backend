@@ -93,7 +93,7 @@
             </el-icon>
           </div> -->
         </div>
-        <div class="tabs-container">
+        <div class="tabs-container" v-if="!route.meta.noTab">
           <el-tabs
             v-model="activeTab"
             type="card"
@@ -237,7 +237,11 @@ const logout = () => {
 
 // 添加标签页
 const addTab = (route: any) => {
-  const { path } = route;
+  const { path, meta } = route;
+  // 如果路由有 noTab 元数据，则不添加标签页
+  if (meta && meta.noTab) {
+    return;
+  }
   // if (path === '/home') return;
 
   const isExist = tabs.value.some((tab) => tab.path === path);

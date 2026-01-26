@@ -120,7 +120,7 @@ export default {
 <style scoped lang="less">
 .pie-container {
   // padding: 20px;
-  height: 420px;
+  height: 440px;
   background-color: #fff;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 

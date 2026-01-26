@@ -10,7 +10,7 @@ module.exports = defineConfig({
     open: true,
     proxy: {
       "/jeecg-boot": {
-        target: "http://192.168.200.198:8080",
+        target: "http://192.168.100.77:10888",
         changeOrigin: true,
         pathRewrite: {
           "^/jeecg-boot": "",

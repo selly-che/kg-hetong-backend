@@ -8,7 +8,8 @@ import { ElMessage } from 'element-plus'
 const apiUrl =  process.env.VUE_APP_API_URL;
 const service = axios.create({
     // baseURL: "/api/pc",
-    baseURL: apiUrl,
+    // baseURL: apiUrl,
+    baseURL: "/",
     timeout: 40000,
     headers: {
         "Access-Control-Allow-Origin": "*",

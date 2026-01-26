@@ -31,7 +31,7 @@
       <tbody>
         <tr v-for="(contract, index) in filteredContracts" :key="contract.id">
           <td>{{ index + 1 }}</td>
-          <td class="contract-name">{{ contract.contractName }}</td>
+          <td class="contract-name" @click="goToEdit(contract)">{{ contract.contractName }}</td>
           <td>{{ contract.contractNo }}</td>
           <td>{{ contract.createTime }}</td>
           <td>{{ contract.creator }}</td>
@@ -55,6 +55,7 @@ export default {
 
 <script setup lang="ts">
 import { ref, computed } from "vue";
+import { useRouter } from "vue-router";
 
 // 使用ref定义响应式状态
 const activeTab = ref("pending"); // 当前选中的标签：pending-待审核, approved-已审核
@@ -132,6 +133,17 @@ const filteredContracts = computed(() => {
 const switchTab = (tab:string) => {
   activeTab.value = tab;
 };
+const router = useRouter();
+
+const goToEdit = (contract: any) => {
+  router.push({
+    path:"/approvalMgment/editht",
+    query:{
+      id:contract.id,
+      contractName:contract.contractName
+    },
+  })
+}
 </script>
 
 <style scoped lang="less">
