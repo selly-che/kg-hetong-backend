@@ -1,5 +1,4 @@
 <template>
-<<<<<<< HEAD
     <div class="login">
         <div class="from">
             <div class="title">合同管理系统</div>
@@ -10,34 +9,7 @@
             </div>
             <div class="login-btn" @click="login">登录</div>
         </div>
-=======
-  <div class="login">
-    <div class="from">
-      <div class="title">合同管理系统</div>
-      <el-input
-        v-model="input"
-        size="large"
-        style="width: 400px"
-        placeholder="请输入您的账号"
-        prefix-icon="User"
-      />
-      <div class="password">
-        <el-input
-          v-model="password"
-          @keyup.enter="login"
-          size="large"
-          type="password"
-          style="width: 400px"
-          placeholder="请输入您的密码"
-          show-password
-          prefix-icon="Lock"
-        />
-      </div>
-      <div class="login-btn" @click="login">登录</div>
-      <div>游客登录账号同密码：admin</div>
->>>>>>> b48219ef289aff2d7012d340a9ea3c53af01aba9
     </div>
-  </div>
 </template>
 
 <script lang="ts" setup>
@@ -374,7 +346,6 @@ const login = async () => {
     const menus = adminRoutes.menu;
     console.log(menus, "menusmenus");
 
-<<<<<<< HEAD
 
     //正常登录流程
     const res = await getDatas("common/PostLogin", {
@@ -398,18 +369,6 @@ const login = async () => {
     } else {
         ElMessage({ message: res.data.msg, type: 'error' })
     }
-=======
-    const wuyemenusJSON = JSON.stringify(menus);
-    // console.log("wuyemenusJSON", JSON.parse(JSON.stringify(wuyemenusJSON)));
-    localStorage.setItem("wuyemenusJSON", wuyemenusJSON);
-    localStorage.setItem("accesstoken", res.data.result.token); //本地存储
-    // router.push({ name: "shouye" });
-    router.push("/home");
-    ElMessage({ message: "登录成功!", type: "success" });
-  } else {
-    ElMessage({ message: res.data.msg, type: "error" });
-  }
->>>>>>> b48219ef289aff2d7012d340a9ea3c53af01aba9
 };
 
 //添加监听

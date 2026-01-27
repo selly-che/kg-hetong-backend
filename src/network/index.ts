@@ -8,12 +8,7 @@ import { ElMessage } from 'element-plus'
 const apiUrl =  process.env.VUE_APP_API_URL;
 const service = axios.create({
     // baseURL: "/api/pc",
-<<<<<<< HEAD
     baseURL: '/jeecg-boot',
-=======
-    // baseURL: apiUrl,
-    baseURL: "/",
->>>>>>> b48219ef289aff2d7012d340a9ea3c53af01aba9
     timeout: 40000,
     headers: {
         "Access-Control-Allow-Origin": "*",
