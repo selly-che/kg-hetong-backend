@@ -370,6 +370,7 @@ const login = async () => {
         ElMessage({ message: res.data.msg, type: 'error' })
     }
 };
+}
 
 //添加监听
 onBeforeMount(() => {
