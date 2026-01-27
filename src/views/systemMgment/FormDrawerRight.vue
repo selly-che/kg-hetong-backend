@@ -10,160 +10,139 @@
     <a-form :model="form" :rules="rules" layout="vertical">
       <a-row :gutter="16">
         <a-col :span="12">
-          <a-form-item label="Name" name="name">
-            <a-input
-              v-model:value="form.name"
-              placeholder="Please enter user name"
-            />
+          <a-form-item label="用户账号" name="username">
+            <a-input v-model:value="form.username" placeholder="请输入用户账号" :disabled="isDetail"/>
           </a-form-item>
         </a-col>
         <a-col :span="12">
-          <a-form-item label="Url" name="url">
-            <a-input
-              v-model:value="form.url"
-              style="width: 100%"
-              addon-before="http://"
-              addon-after=".com"
-              placeholder="please enter url"
-            />
+          <a-form-item label="用户姓名" name="realname">
+            <a-input v-model:value="form.realname" placeholder="请输入用户姓名" :disabled="isDetail"/>
           </a-form-item>
         </a-col>
       </a-row>
       <a-row :gutter="16">
         <a-col :span="12">
-          <a-form-item label="Owner" name="owner">
-            <a-select
-              v-model:value="form.owner"
-              placeholder="Please a-s an owner"
-            >
-              <a-select-option value="xiao">Xiaoxiao Fu</a-select-option>
-              <a-select-option value="mao">Maomao Zhou</a-select-option>
-            </a-select>
+          <a-form-item label="头像" name="avatar">
+            <a-input v-model:value="form.avatar" placeholder="请输入头像地址" :disabled="isDetail"/>
           </a-form-item>
         </a-col>
         <a-col :span="12">
-          <a-form-item label="Type" name="type">
-            <a-select
-              v-model:value="form.type"
-              placeholder="Please choose the type"
-            >
-              <a-select-option value="private">Private</a-select-option>
-              <a-select-option value="public">Public</a-select-option>
-            </a-select>
+          <a-form-item label="性别" name="sex">
+            <a-input v-model:value="form.sex" placeholder="请输入性别" :disabled="isDetail"/>
           </a-form-item>
         </a-col>
       </a-row>
       <a-row :gutter="16">
         <a-col :span="12">
-          <a-form-item label="Approver" name="approver">
-            <a-select
-              v-model:value="form.approver"
-              placeholder="Please choose the approver"
-            >
-              <a-select-option value="jack">Jack Ma</a-select-option>
-              <a-select-option value="tom">Tom Liu</a-select-option>
-            </a-select>
-          </a-form-item>
-        </a-col>
-        <a-col :span="12">
-          <a-form-item label="DateTime" name="dateTime">
+          <a-form-item label="生日" name="birthday">
             <a-date-picker
-              v-model:value="form.dateTime"
+              v-model:value="form.birthday"
               style="width: 100%"
+              placeholder="请选择生日"
               :get-popup-container="(trigger) => trigger.parentElement"
+              :disabled="isDetail"
             />
+          </a-form-item>
+        </a-col>
+        <a-col :span="12">
+          <a-form-item label="手机号码" name="phone">
+            <a-input v-model:value="form.phone" placeholder="请输入手机号码" :disabled="isDetail"/>
           </a-form-item>
         </a-col>
       </a-row>
       <a-row :gutter="16">
-        <a-col :span="24">
-          <a-form-item label="Description" name="description">
-            <a-textarea
-              v-model:value="form.description"
-              :rows="4"
-              placeholder="please enter url description"
-            />
+        <a-col :span="12">
+          <a-form-item label="部门" name="orgCodeTxt">
+            <a-input v-model:value="form.orgCodeTxt" placeholder="请输入部门" />
+          </a-form-item>
+        </a-col>
+        <a-col :span="12">
+          <a-form-item label="负责部门" name="departIds">
+            <a-input v-model:value="form.departIds" placeholder="请输入负责部门" />
           </a-form-item>
         </a-col>
       </a-row>
     </a-form>
     <!-- <slot name="form-content">暂无内容</slot> -->
-    <a-button @click="onClose" style="margin-right: 10px">取消</a-button>
-    <a-button type="primary" @click="onClose">提交</a-button>
+    <a-button @click="onClose" style="margin-right: 10px" v-if="isDetail">退出</a-button>
+    <template v-else>
+      <a-button @click="onClose" style="margin-right: 10px">取消</a-button>
+      <a-button type="primary" @click="submitForm">提交</a-button>
+    </template>
   </a-drawer>
 </template>
-<script>
-import { defineComponent, reactive, ref } from "vue";
-export default defineComponent({
-  setup() {
-    const form = reactive({
-      name: "",
-      url: "",
-      owner: "",
-      type: "",
-      approver: "",
-      dateTime: null,
-      description: "",
+<script setup>
+import { reactive, ref } from "vue";
+import {defineExpose} from "vue"
+
+const isDetail = ref(false);
+const form = reactive({
+  username: "",
+  realname: "",
+  avatar: "",
+  sex: "",
+  birthday: null,
+  phone: "",
+  orgCodeTxt: "",
+  departIds: "",
+});
+const rules = {
+  username: [
+    {
+      required: true,
+      message: "请输入用户账号",
+    },
+  ],
+  realname: [
+    {
+      required: true,
+      message: "请输入用户姓名",
+    },
+  ],
+  phone: [
+    {
+      required: true,
+      message: "请输入手机号码",
+    },
+  ],
+};
+
+const visible = ref(false);
+// 展开抽屉
+const showDrawer = (record, detail) => {
+  isDetail.value = detail;
+  if (record) {
+    Object.assign(form, {
+      username: record.username || "",
+      realname: record.realname || "",
+      avatar: record.avatar || "",
+      sex: record.sex || "",
+      birthday: record.birthday || null,
+      phone: record.phone || "",
+      orgCodeTxt: record.orgCodeTxt || "",
+      departIds: record.departIds || "",
     });
-    const rules = {
-      name: [
-        {
-          required: true,
-          message: "Please enter user name",
-        },
-      ],
-      url: [
-        {
-          required: true,
-          message: "please enter url",
-        },
-      ],
-      owner: [
-        {
-          required: true,
-          message: "Please select an owner",
-        },
-      ],
-      type: [
-        {
-          required: true,
-          message: "Please choose the type",
-        },
-      ],
-      approver: [
-        {
-          required: true,
-          message: "Please choose the approver",
-        },
-      ],
-      dateTime: [
-        {
-          required: true,
-          message: "Please choose the dateTime",
-          type: "object",
-        },
-      ],
-      description: [
-        {
-          required: true,
-          message: "Please enter url description",
-        },
-      ],
-    };
-    const visible = ref(false);
-    const showDrawer = () => {
-      visible.value = true;
-    };
-    const onClose = () => {
-      visible.value = false;
-    };
-    return {
-      form,
-      rules,
-      visible,
-      showDrawer,
-      onClose,
-    };
-  },
+  } else {
+    Object.assign(form, {
+      username: "",
+      realname: "",
+      avatar: "",
+      sex: "",
+      birthday: null,
+      phone: "",
+      orgCodeTxt: "",
+      departIds: "",
+    });
+  }
+  visible.value = true;
+};
+
+const onClose = () => {
+  visible.value = false;
+};
+const submitForm = () => {};
+
+defineExpose({
+  showDrawer,
 });
 </script>

@@ -337,7 +337,7 @@ const login = async () => {
 
   const res = await getDatas("common/PostLogin", {
     username: input.value,
-    passwrod: password.value,
+    password: password.value,
     // captcha: "",
     // checkKey: "",
   });

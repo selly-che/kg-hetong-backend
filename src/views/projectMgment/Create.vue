@@ -127,7 +127,7 @@ const rules = {
 }
 
 .header {
-  font-size: 12px;
+  font-size: 14px;
   font-weight: bold;
   color: #333;
   margin-bottom: 16px;
