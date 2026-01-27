@@ -24,7 +24,9 @@
       </div>
     </div>
     <div class="project-actions">
-      <a-button class="action-btn view-btn">查看项目</a-button>
+      <a-button class="action-btn view-btn" @click="watchProject"
+        >查看项目</a-button
+      >
       <a-button class="action-btn edit-btn">编辑</a-button>
     </div>
   </div>
@@ -32,12 +34,23 @@
 
 <script setup>
 import { defineProps } from "vue";
+import router from "@/router";
+
 const props = defineProps({
   project: {
     type: Object,
     required: true,
   },
 });
+
+// const watchProject = () => {
+//   router.push({
+//     path: `/projectMgment/watchproject`,
+//     name: "watchProject",
+//     params: { id: props.project.id },
+//   });
+// };
+
 const getStatusClass = (status) => {
   // 根据状态返回不同的样式类
   switch (status) {
