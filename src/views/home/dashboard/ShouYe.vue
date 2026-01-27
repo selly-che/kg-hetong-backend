@@ -82,6 +82,7 @@ const projects = [
 .side {
   display: flex;
   justify-content: space-between;
+  height: 480px;
   .side1 {
     width: 60%;
     background-color: #ffffff;
@@ -125,8 +126,6 @@ const projects = [
         align-items: stretch;
         justify-content: center;
       }
-
-      /* 响应式布局 */
       @media (max-width: 1200px) {
         li {
           width: 33.33%;
@@ -148,7 +147,6 @@ const projects = [
   }
   .side2 {
     width: 40%;
-    background-color: #d2e99b;
   }
 }
 .footer {

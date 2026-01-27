@@ -44,13 +44,16 @@ export default function addDynamicRoutes(router: any, menus: any[]) {
                     console.log('首页路由已存在，跳过添加');
                     return;
                 }
-
+   
                 // 构建路由配置对象
                 const routeConfig = {
                     path: child.path,
                     name: child.name, // 假设 child.component 是唯一的路由名称
                     component: () => import(`@/views/${child.component}.vue`), // 使用 ES6 动态导入语法
-                    meta: child.meta,
+                    meta: {
+                        ...child.meta,
+                        ...(child.path === '/approvalMgment/editht' ? { noTab: true } : {})
+                    },
                 };
                 
                 // 添加新的路由配置到 Layout 路由的子路由中
@@ -66,7 +69,11 @@ export default function addDynamicRoutes(router: any, menus: any[]) {
                 path: menu.path,
                 name: menu.name,
                 component: () => import(`@/views/${menu.component}.vue`),
-                meta: menu.meta,
+                meta: {
+                    ...menu.meta,
+                    // 为编辑合同路由添加 noTab 配置
+                    ...(menu.path === '/approvalMgment/editht' ? { noTab: true } : {})
+                },
             };
             router.addRoute(layoutRoute.name, routeConfig);
             allRoutes.find((item: any) => item.name === 'Layout')?.children.push(routeConfig);
