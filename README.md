@@ -1,7 +1,6 @@
 # Vue3 后台管理系统模板
 
 一个基于 Vue3 + TypeScript + Element Plus 的后台管理系统模板，集成了动态路由和权限管理功能。
-游客登录账号同密码:admin
 
 ![alt text](image-2.png)
 

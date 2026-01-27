@@ -8,7 +8,6 @@
                     placeholder="请输入您的密码" show-password prefix-icon="Lock" />
             </div>
             <div class="login-btn" @click="login">登录</div>
-            <div>游客登录账号同密码：admin</div>
         </div>
     </div>
 </template>
@@ -340,13 +339,15 @@ const login = async () => {
     });
     console.log("登录123", JSON.parse(JSON.stringify(res)));
     if (res.data.code == 200) {
-        const menus = adminRoutes.menu
-        console.log(menus, 'menusmenus');
-
-        const wuyemenusJSON = JSON.stringify(menus);
-        // console.log("wuyemenusJSON", JSON.parse(JSON.stringify(wuyemenusJSON)));
-        localStorage.setItem('wuyemenusJSON', wuyemenusJSON)
+        const menus = guestRoutes.nav;
+        // console.log(menus, 'menusmenus');
         localStorage.setItem('accesstoken', res.data.result.token)//本地存储
+        // const resp = await getDatas("common/getUserPermission");
+        // console.log(resp, 'respresp');
+        // const menus = resp.data.result.menu;
+        const wuyemenusJSON = JSON.stringify(menus);
+        localStorage.setItem('wuyemenusJSON', wuyemenusJSON)
+
         // router.push({ name: "shouye" });
         router.push("/home");
         ElMessage({ message: '登录成功!', type: 'success' })

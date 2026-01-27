@@ -3,7 +3,14 @@ export default {
     PostLogin(params: any) {
         return {
             method: "POST",
-            url: "/jeecg-boot/sys/login",
+            url: "/sys/login",
+            data:params,
+        };
+    },
+    getUserPermission(params: any) {
+        return {
+            method: "get",
+            url: "/sys/permission/getUserPermissionByToken",
             data:params,
         };
     },
@@ -12,7 +19,7 @@ export default {
     GetIndex(params: any) {
         return {
             method: "GET",
-            url: "/jeecg-boot/sys/permission/getUserPermissionByToken?",
+            url: "/sys/permission/getUserPermissionByToken?",
             params,
 
         };

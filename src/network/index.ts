@@ -8,11 +8,11 @@ import { ElMessage } from 'element-plus'
 const apiUrl =  process.env.VUE_APP_API_URL;
 const service = axios.create({
     // baseURL: "/api/pc",
-    baseURL: apiUrl,
+    baseURL: '/jeecg-boot',
     timeout: 40000,
     headers: {
         "Access-Control-Allow-Origin": "*",
-        "Connection": "Keep-Alive",
+        // "Connection": "Keep-Alive",
         "Content-Type": "application/json;charset=utf-8"
     }
 })
@@ -21,7 +21,7 @@ service.interceptors.request.use(
     config => {
         const token = localStorage.getItem("accesstoken");
         if (token) {
-            config.headers["access-token"] = token
+            config.headers["x-access-token"] = token
         }
         return config;
     }

@@ -10,10 +10,10 @@ module.exports = defineConfig({
     open: true,
     proxy: {
       "/jeecg-boot": {
-        target: "http://192.168.200.198:8080",
+        target: "http://192.168.100.77:8080",
         changeOrigin: true,
         pathRewrite: {
-          "^/jeecg-boot": "",
+          "^/api": "",
         },
       },
     },
@@ -23,10 +23,10 @@ module.exports = defineConfig({
       Object.assign(definitions[0], {
         __VUE_OPTIONS_API__: JSON.stringify(true),
         __VUE_PROD_DEVTOOLS__: JSON.stringify(
-          process.env.NODE_ENV === "production" ? false : true
+          process.env.NODE_ENV === "production" ? false : true,
         ),
         __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: JSON.stringify(
-          process.env.NODE_ENV === "production" ? false : true
+          process.env.NODE_ENV === "production" ? false : true,
         ),
       });
       return definitions;
