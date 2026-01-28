@@ -6,7 +6,10 @@
         <a-row :gutter="24">
           <a-col :md="6" :sm="12">
             <a-form-item label="账号">
-              <a-input placeholder="输入账号模糊查询" v-model="queryParam.username"></a-input>
+              <a-input
+                placeholder="输入账号模糊查询"
+                v-model="queryParam.username"
+              ></a-input>
             </a-form-item>
           </a-col>
 
@@ -22,7 +25,10 @@
 
           <a-col :md="6" :sm="8">
             <a-form-item label="真实名字">
-              <a-input placeholder="请输入真实名字" v-model="queryParam.realname"></a-input>
+              <a-input
+                placeholder="请输入真实名字"
+                v-model="queryParam.realname"
+              ></a-input>
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="8" v-if="toggleSearchStatus">
@@ -37,7 +43,10 @@
 
           <a-col :md="6" :sm="8" v-if="toggleSearchStatus">
             <a-form-item label="手机号码">
-              <a-input placeholder="请输入手机号码查询" v-model="queryParam.phone"></a-input>
+              <a-input
+                placeholder="请输入手机号码查询"
+                v-model="queryParam.phone"
+              ></a-input>
             </a-form-item>
           </a-col>
 
@@ -54,8 +63,16 @@
           <a-col :md="6" :sm="8">
             <span class="table-page-search-submitButtons">
               <a-button type="primary" @click="searchQuery">查询</a-button>
-              <a-button type="primary" @click="searchReset" style="margin-left: 8px">重置</a-button>
-              <a @click="handleToggleSearch" style="margin-left: 8px; color: #1890ff; cursor: pointer">
+              <a-button
+                type="primary"
+                @click="searchReset"
+                style="margin-left: 8px"
+                >重置</a-button
+              >
+              <a
+                @click="handleToggleSearch"
+                style="margin-left: 8px; color: #1890ff; cursor: pointer"
+              >
                 {{ toggleSearchStatus ? "收起" : "展开" }}
               </a>
             </span>
@@ -78,8 +95,14 @@
         </template>
         导出
       </a-button>
-      <a-upload name="file" :showUploadList="false" :multiple="false" :headers="tokenHeader" :action="importExcelUrl"
-        @change="handleImportExcel">
+      <a-upload
+        name="file"
+        :showUploadList="false"
+        :multiple="false"
+        :headers="tokenHeader"
+        :action="importExcelUrl"
+        @change="handleImportExcel"
+      >
         <a-button type="primary">
           <template #icon>
             <UploadOutlined />
@@ -100,24 +123,47 @@
         </template>
         高级查询
       </a-button>
+      <a-third-app-button
+        biz-type="user"
+        :selected-row-keys="selectedRowKeys"
+        syncToApp
+        syncToLocal
+        @sync-finally="onSyncFinally"
+      />
     </div>
 
     <!-- table区域-begin -->
     <div>
       <div class="ant-alert ant-alert-info" style="margin-bottom: 16px">
-        <i class="anticon anticon-info-circle ant-alert-icon"></i>已选择&nbsp;<a style="font-weight: 600">{{
-          selectedRowKeys.length }}</a>项&nbsp;&nbsp;
+        <i class="anticon anticon-info-circle ant-alert-icon"></i>已选择&nbsp;<a
+          style="font-weight: 600"
+          >{{ selectedRowKeys.length }}</a
+        >项&nbsp;&nbsp;
         <a style="margin-left: 24px" @click="onClearSelected">清空</a>
       </div>
 
-      <a-table ref="table" bordered size="middle" rowKey="id" :columns="columns" :dataSource="dataSource"
-        :pagination="ipagination" :loading="loading" :rowSelection="{
+      <a-table
+        ref="table"
+        bordered
+        size="middle"
+        rowKey="id"
+        :columns="columns"
+        :dataSource="dataSource"
+        :pagination="ipagination"
+        :loading="loading"
+        :rowSelection="{
           selectedRowKeys: selectedRowKeys,
           onChange: onSelectChange,
-        }" @change="handleTableChange">
+        }"
+        @change="handleTableChange"
+      >
         <template #avatarslot="{ record }">
           <div class="anty-img-wrap">
-            <a-avatar shape="square" :src="getAvatarView(record.avatar)" icon="user" />
+            <a-avatar
+              shape="square"
+              :src="getAvatarView(record.avatar)"
+              icon="user"
+            />
           </div>
         </template>
 
@@ -132,33 +178,51 @@
                 </a-menu-item>
 
                 <a-menu-item>
-                  <a href="javascript:;" @click="handleChangePassword(record.username)">密码</a>
+                  <a
+                    href="javascript:;"
+                    @click="handleChangePassword(record.username)"
+                    >密码</a
+                  >
                 </a-menu-item>
 
                 <a-menu-item>
-                  <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record.id)">
+                  <a-popconfirm
+                    title="确定删除吗?"
+                    @confirm="() => handleDelete(record.id)"
+                  >
                     <a>删除</a>
                   </a-popconfirm>
                 </a-menu-item>
 
                 <a-menu-item v-if="record.status == 1">
-                  <a-popconfirm title="确定冻结吗?" @confirm="() => handleFrozen(record.id, 2, record.username)">
+                  <a-popconfirm
+                    title="确定冻结吗?"
+                    @confirm="() => handleFrozen(record.id, 2, record.username)"
+                  >
                     <a>冻结</a>
                   </a-popconfirm>
                 </a-menu-item>
 
                 <a-menu-item v-if="record.status == 2">
-                  <a-popconfirm title="确定解冻吗?" @confirm="() => handleFrozen(record.id, 1, record.username)">
+                  <a-popconfirm
+                    title="确定解冻吗?"
+                    @confirm="() => handleFrozen(record.id, 1, record.username)"
+                  >
                     <a>解冻</a>
                   </a-popconfirm>
                 </a-menu-item>
 
                 <a-menu-item>
-                  <a href="javascript:;" @click="handleAgentSettings(record.username)">代理人</a>
+                  <a
+                    href="javascript:;"
+                    @click="handleAgentSettings(record.username)"
+                    >代理人</a
+                  >
                 </a-menu-item>
               </a-menu>
             </template>
-            <a> 更多
+            <a>
+              更多
               <DownOutlined />
             </a>
           </a-dropdown>
@@ -174,7 +238,10 @@
     <sys-user-agent-modal ref="sysUserAgentModal"></sys-user-agent-modal> -->
 
     <!-- 用户回收站 -->
-    <!-- <user-recycle-bin-modal v-model:visible="recycleBinVisible" @ok="modalFormOk" /> -->
+    <user-recycle-bin-modal
+      v-model:visible="recycleBinVisible"
+      @ok="modalFormOk"
+    />
   </a-card>
   <!-- 编辑抽屉 -->
   <!-- <form-drawer-right ref="modalFormDawer" @ok="modalFormOk" :title="title">
@@ -209,8 +276,8 @@ const ipagination = ref({
   current: 1,
   pageSize: 10,
   total: 0,
-  showSizeChanger: true,      // 显示分页大小切换器
-  showQuickJumper: true,      // 显示快速跳转
+  showSizeChanger: true, // 显示分页大小切换器
+  showQuickJumper: true, // 显示快速跳转
   showTotal: (total, range) => `第 ${range[0]}-${range[1]} 条 / 共 ${total} 条`, // 显示总数
   pageSizeOptions: ["10", "20", "30", "40"],
 });
@@ -312,9 +379,9 @@ const searchQuery = async () => {
   // 调用API
   const res = await getDatas("system/GetUserinfo", {
     pageNo: ipagination.value.current,
-    pageSize: ipagination.value.pageSize
+    pageSize: ipagination.value.pageSize,
   });
-  console.log(res, 'qq');
+  console.log(res, "qq");
 
   if (res && res.data.code === 0) {
     dataSource.value = res.data.result.records;
@@ -394,15 +461,20 @@ const getAvatarView = (avatar) => {
 };
 
 // 编辑用户
-const handleEdit = (record) => {
+const handleEdit = async (record) => {
+  // console.log(record.id,"xxxxxx");
+  const res = await getDatas("system/GetUserinfoById", {
+    id: record.id,
+  });
+  // console.log(res, "idinfo");
+  console.log(res.data.result);
   title.value = "编辑用户";
   modalFormDawer.value.showDrawer(record);
 };
 
 // 查看详情
 const handleDetail = (record) => {
-  //   message.info("详情功能开发中");
-  modalFormDawer.value.showDrawer(record);
+  modalFormDawer.value.showDrawer(record, true);
 };
 
 // 修改密码
@@ -449,7 +521,7 @@ const passwordModalOk = () => {
     .ant-form-item-label {
       padding-right: 8px;
 
-      >label {
+      > label {
         font-weight: normal;
         margin-bottom: 0;
       }
@@ -500,7 +572,7 @@ const passwordModalOk = () => {
   //   padding: 12px 0;
   margin-bottom: 16px;
 
-  >* {
+  > * {
     display: flex;
     align-items: center;
     margin-right: 8px;

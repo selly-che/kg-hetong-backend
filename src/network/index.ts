@@ -1,5 +1,5 @@
 // 导入axios网络请求
-import axios from "axios"
+import axios from "axios";
 import router from "@/router";
 import { ElMessage, ElMessageBox } from 'element-plus'
 import type { Action } from 'element-plus'
@@ -15,15 +15,13 @@ const service = axios.create({
     }
 })
 //请求拦截
-service.interceptors.request.use(
-    config => {
-        const token = localStorage.getItem("accesstoken");
-        if (token) {
-            config.headers["x-access-token"] = token
-        }
-        return config;
+service.interceptors.request.use((config) => {
+    const token = localStorage.getItem("accesstoken");
+    if (token) {
+        config.headers["x-access-token"] = token;
     }
-)
+    return config;
+});
 // 响应拦截
 service.interceptors.response.use(
     (res) => {
@@ -53,13 +51,13 @@ service.interceptors.response.use(
         }
         return Promise.reject(error);
     }
-)
+
+);
 function startNetwork(params: any) {
     return service({
         ...params,
     });
 }
-
 
 const modules = require.context("./apis", true, /\.(js|ts)$/);
 const newModules = modules.keys().reduce((target: any, keyName) => {
@@ -78,7 +76,7 @@ const proxy = new Proxy(newModules, {
         const data = await startNetwork(params);
         target.meta = null;
         return data;
-    }
+    },
 });
 
 

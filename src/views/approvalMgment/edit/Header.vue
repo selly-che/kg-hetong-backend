@@ -1,42 +1,50 @@
 <template>
   <div>
     <a-card class="contract-card" :style="{ height: '200px' }">
-    <div class="contract-header">
-      <h2 class="contract-title"> {{ contractName }}</h2>
-      <div class="contract-actions">
-      <a-button type="primary" style="margin-right: 8px;">通过</a-button>
-      <a-button style="margin-right: 8px;">不通过</a-button>
-      <a-button danger>驳回</a-button>
-    </div>
-    </div>
-    <div class="contract-info">
-      <div class="info-row">
-        <span class="info-label">创建人：</span>
-        <span class="info-value">张三</span>
+      <div class="header">
+        <span
+          @click="$router.push({ name: 'approvalMgment' })"
+          style="cursor: pointer"
+          >审批管理</span
+        >
+        <span>/合同详情</span>
       </div>
-      <div class="info-row">
-        <span class="info-label">创建时间：</span>
-        <span class="info-value">2017-01-10</span>
+      <div class="contract-header">
+        <h2 class="contract-title">{{ contractName }}</h2>
+        <div class="contract-actions">
+          <a-button type="primary" style="margin-right: 8px">通过</a-button>
+          <a-button style="margin-right: 8px">不通过</a-button>
+          <a-button danger>驳回</a-button>
+        </div>
       </div>
-      <div class="info-row">
-        <span class="info-label">合同编号：</span>
-        <span class="info-value">2017-01-004</span>
+      <div class="contract-info">
+        <div class="info-row">
+          <span class="info-label">创建人：</span>
+          <span class="info-value">张三</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">创建时间：</span>
+          <span class="info-value">2017-01-10</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">合同编号：</span>
+          <span class="info-value">2017-01-004</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">合同附件：</span>
+          <a class="info-link" href="#">关于中铁开发投资有限公司合同.pdf</a>
+        </div>
       </div>
-      <div class="info-row">
-        <span class="info-label">合同附件：</span>
-        <a class="info-link" href="#">关于中铁开发投资有限公司合同.pdf</a>
-      </div>
-    </div>
-  </a-card>
+    </a-card>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { useRoute } from 'vue-router'
+import { ref } from "vue";
+import { useRoute } from "vue-router";
 //拿到路由携带的参数
-const route = useRoute()
-const contractName = ref(route.query.contractName)
+const route = useRoute();
+const contractName = ref(route.query.contractName);
 // console.log(contractName.value)
 </script>
 
@@ -97,5 +105,11 @@ const contractName = ref(route.query.contractName)
   justify-content: flex-end;
   /* 靠右 */
   margin-left: auto;
+}
+.header {
+  font-size: 12px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 16px;
 }
 </style>

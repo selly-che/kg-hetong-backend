@@ -11,196 +11,259 @@
         <a-tab-pane key="7" tab="中标信息"></a-tab-pane>
       </a-tabs>
     </div>
-      <div class="supplementary-form">
-        <a-form
-          ref="formRef"
-          :model="formState"
-          :rules="rules"
-          class="supplementary-form-container"
-        >
-          <div class="form-row">
-            <a-form-item label="是否补充合同" name="contract" class="compact-item">
-              <a-input v-model:value="formState.contract" />
-            </a-form-item>
-            
-            <a-form-item label="签订单位" name="signingUnit" class="compact-item">
-              <a-input v-model:value="formState.signingUnit" />
-            </a-form-item>
-          </div>
+    <div class="supplementary-form">
+      <a-form
+        ref="formRef"
+        :model="formState"
+        :rules="rules"
+        class="supplementary-form-container"
+      >
+        <div class="form-row">
+          <a-form-item
+            label="是否补充合同"
+            name="contract"
+            class="compact-item"
+          >
+            <a-input v-model:value="formState.contract" />
+          </a-form-item>
 
-          <div class="form-row">
-            <a-form-item label="所属项目" name="project" class="compact-item">
-              <a-input v-model:value="formState.project" />
-            </a-form-item>
-            
-            <a-form-item label="中标时间" name="bidTime" class="compact-item">
-              <a-date-picker v-model:value="formState.bidTime" style="width: 100%" />
-            </a-form-item>
-          </div>
-          
-          <div class="form-row">
-            <a-form-item label="中标金额" name="bidAmount" class="compact-item">
-              <a-input v-model:value="formState.bidAmount">
-                <template #suffix>
-                  <span class="unit-suffix">万元</span>
-                </template>
-              </a-input>
-            </a-form-item>
-            
-            <a-form-item label="合同名称" name="contractName" class="compact-item">
-              <a-input v-model:value="formState.contractName" />
-            </a-form-item>
-            
-            <a-form-item label="合同编号" name="contractNumber" class="compact-item">
-              <a-input v-model:value="formState.contractNumber" />
-            </a-form-item>
-            
-            <a-form-item label="合同唯一ID" name="contractUniqueId" class="compact-item">
-              <a-input v-model:value="formState.contractUniqueId" />
-            </a-form-item>
-          </div>
-          
-          <div class="form-row">
-            <a-form-item label="板块" name="plate" class="compact-item">
-              <a-select v-model:value="formState.plate">
-                <a-select-option value="设备（产品）代销及系统集成">设备（产品）代销及系统集成</a-select-option>
-                <a-select-option value="基建">基建</a-select-option>
-                <a-select-option value="房建">房建</a-select-option>
-                <a-select-option value="市政">市政</a-select-option>
-              </a-select>
-            </a-form-item>
-            
-            <a-form-item label="类型一" name="typeOne" class="compact-item">
-              <a-select v-model:value="formState.typeOne">
-                <a-select-option value="系统集成">系统集成</a-select-option>
-                <a-select-option value="施工">施工</a-select-option>
-                <a-select-option value="设计">设计</a-select-option>
-                <a-select-option value="采购">采购</a-select-option>
-              </a-select>
-            </a-form-item>
-            
-            <a-form-item label="类型二" name="typeTwo" class="compact-item">
-              <a-select v-model:value="formState.typeTwo">
-                <a-select-option value="总承包">总承包</a-select-option>
-                <a-select-option value="专业分包">专业分包</a-select-option>
-              </a-select>
-            </a-form-item>
-            
-            <a-form-item label="类型三" name="typeThree" class="compact-item">
-              <a-select v-model:value="formState.typeThree">
-                <a-select-option value="公开招标">公开招标</a-select-option>
-                <a-select-option value="邀请招标">邀请招标</a-select-option>
-              </a-select>
-            </a-form-item>
-          </div>
-          
-          <div class="form-row">
-            <a-form-item label="承揽类型" name="undertakingType" class="compact-item">
-              <a-select v-model:value="formState.undertakingType">
-                <a-select-option value="自主承揽">自主承揽</a-select-option>
-                <a-select-option value="合作承揽">合作承揽</a-select-option>
-              </a-select>
-            </a-form-item>
-            
-            <a-form-item label="业主单位" name="ownerUnit" class="compact-item">
-              <a-input v-model:value="formState.ownerUnit" />
-            </a-form-item>
-            
-            <a-form-item label="付款方是否与业主单位一致" name="isPayerSameAsOwner" class="compact-item">
-              <a-radio-group v-model:value="formState.isPayerSameAsOwner">
-                <a-radio :value="true">是</a-radio>
-                <a-radio :value="false">否</a-radio>
-              </a-radio-group>
-            </a-form-item>
-          </div>
-          
-          <div class="form-row">
-            <a-form-item label="是否为联合体" name="isConsortium" class="compact-item">
-              <a-radio-group v-model:value="formState.isConsortium">
-                <a-radio :value="true">是</a-radio>
-                <a-radio :value="false">否</a-radio>
-              </a-radio-group>
-            </a-form-item>
-            
-            <a-form-item label="合同金额" name="contractAmount" class="compact-item">
-              <a-input-number v-model:value="formState.contractAmount" style="width: 100%" />
-            </a-form-item>
-            
-            <a-form-item label="投资金额" name="investmentAmount" class="compact-item">
-              <a-input-number v-model:value="formState.investmentAmount" style="width: 100%">
-                <template #suffix>
-                  <span class="unit-suffix">万元</span>
-                </template>
-              </a-input-number>
-            </a-form-item>
-            
-            <a-form-item label="合同价格类型" name="contractPriceType" class="compact-item">
-              <a-select v-model:value="formState.contractPriceType">
-                <a-select-option value="固定总价">固定总价</a-select-option>
-                <a-select-option value="固定单价">固定单价</a-select-option>
-                <a-select-option value="可调价格">可调价格</a-select-option>
-              </a-select>
-            </a-form-item>
-          </div>
-          
-          <div class="form-row">
-            <a-form-item label="同意付款比例" name="agreedPaymentRatio" class="compact-item">
-              <a-input-number 
-                v-model:value="formState.agreedPaymentRatio" 
-                style="width: 100%"
-                :min="0"
-                :max="100"
-                :formatter="value => `${value}%`"
-                :parser="value => value.replace('%', '')"
-              />
-            </a-form-item>
-            
-            <a-form-item label="是否框架合同" name="isFrameworkContract" class="compact-item">
-              <a-radio-group v-model:value="formState.isFrameworkContract">
-                <a-radio :value="true">是</a-radio>
-                <a-radio :value="false">否</a-radio>
-              </a-radio-group>
-            </a-form-item>
-            
-            <a-form-item label="合同识别号" name="contractIdentificationNumber" class="compact-item">
-              <a-input v-model:value="formState.contractIdentificationNumber" />
-            </a-form-item>
-          </div>
-        </a-form>
-      </div>
+          <a-form-item label="签订单位" name="signingUnit" class="compact-item">
+            <a-input v-model:value="formState.signingUnit" />
+          </a-form-item>
+        </div>
+
+        <div class="form-row">
+          <a-form-item label="所属项目" name="project" class="compact-item">
+            <a-input v-model:value="formState.project" />
+          </a-form-item>
+
+          <a-form-item label="中标时间" name="bidTime" class="compact-item">
+            <a-date-picker
+              v-model:value="formState.bidTime"
+              style="width: 100%"
+            />
+          </a-form-item>
+        </div>
+
+        <div class="form-row">
+          <a-form-item label="中标金额" name="bidAmount" class="compact-item">
+            <a-input v-model:value="formState.bidAmount">
+              <template #suffix>
+                <span class="unit-suffix">万元</span>
+              </template>
+            </a-input>
+          </a-form-item>
+
+          <a-form-item
+            label="合同名称"
+            name="contractName"
+            class="compact-item"
+          >
+            <a-input v-model:value="formState.contractName" />
+          </a-form-item>
+
+          <a-form-item
+            label="合同编号"
+            name="contractNumber"
+            class="compact-item"
+          >
+            <a-input v-model:value="formState.contractNumber" />
+          </a-form-item>
+
+          <a-form-item
+            label="合同唯一ID"
+            name="contractUniqueId"
+            class="compact-item"
+          >
+            <a-input v-model:value="formState.contractUniqueId" />
+          </a-form-item>
+        </div>
+
+        <div class="form-row">
+          <a-form-item label="板块" name="plate" class="compact-item">
+            <a-select v-model:value="formState.plate">
+              <a-select-option value="设备（产品）代销及系统集成"
+                >设备（产品）代销及系统集成</a-select-option
+              >
+              <a-select-option value="基建">基建</a-select-option>
+              <a-select-option value="房建">房建</a-select-option>
+              <a-select-option value="市政">市政</a-select-option>
+            </a-select>
+          </a-form-item>
+
+          <a-form-item label="类型一" name="typeOne" class="compact-item">
+            <a-select v-model:value="formState.typeOne">
+              <a-select-option value="系统集成">系统集成</a-select-option>
+              <a-select-option value="施工">施工</a-select-option>
+              <a-select-option value="设计">设计</a-select-option>
+              <a-select-option value="采购">采购</a-select-option>
+            </a-select>
+          </a-form-item>
+
+          <a-form-item label="类型二" name="typeTwo" class="compact-item">
+            <a-select v-model:value="formState.typeTwo">
+              <a-select-option value="总承包">总承包</a-select-option>
+              <a-select-option value="专业分包">专业分包</a-select-option>
+            </a-select>
+          </a-form-item>
+
+          <a-form-item label="类型三" name="typeThree" class="compact-item">
+            <a-select v-model:value="formState.typeThree">
+              <a-select-option value="公开招标">公开招标</a-select-option>
+              <a-select-option value="邀请招标">邀请招标</a-select-option>
+            </a-select>
+          </a-form-item>
+        </div>
+
+        <div class="form-row">
+          <a-form-item
+            label="承揽类型"
+            name="undertakingType"
+            class="compact-item"
+          >
+            <a-select v-model:value="formState.undertakingType">
+              <a-select-option value="自主承揽">自主承揽</a-select-option>
+              <a-select-option value="合作承揽">合作承揽</a-select-option>
+            </a-select>
+          </a-form-item>
+
+          <a-form-item label="业主单位" name="ownerUnit" class="compact-item">
+            <a-input v-model:value="formState.ownerUnit" />
+          </a-form-item>
+
+          <a-form-item
+            label="付款方是否与业主单位一致"
+            name="isPayerSameAsOwner"
+            class="compact-item"
+          >
+            <a-radio-group v-model:value="formState.isPayerSameAsOwner">
+              <a-radio :value="true">是</a-radio>
+              <a-radio :value="false">否</a-radio>
+            </a-radio-group>
+          </a-form-item>
+        </div>
+
+        <div class="form-row">
+          <a-form-item
+            label="是否为联合体"
+            name="isConsortium"
+            class="compact-item"
+          >
+            <a-radio-group v-model:value="formState.isConsortium">
+              <a-radio :value="true">是</a-radio>
+              <a-radio :value="false">否</a-radio>
+            </a-radio-group>
+          </a-form-item>
+
+          <a-form-item
+            label="合同金额"
+            name="contractAmount"
+            class="compact-item"
+          >
+            <a-input-number
+              v-model:value="formState.contractAmount"
+              style="width: 100%"
+            />
+          </a-form-item>
+
+          <a-form-item
+            label="投资金额"
+            name="investmentAmount"
+            class="compact-item"
+          >
+            <a-input-number
+              v-model:value="formState.investmentAmount"
+              style="width: 100%"
+            >
+              <template #suffix>
+                <span class="unit-suffix">万元</span>
+              </template>
+            </a-input-number>
+          </a-form-item>
+
+          <a-form-item
+            label="合同价格类型"
+            name="contractPriceType"
+            class="compact-item"
+          >
+            <a-select v-model:value="formState.contractPriceType">
+              <a-select-option value="固定总价">固定总价</a-select-option>
+              <a-select-option value="固定单价">固定单价</a-select-option>
+              <a-select-option value="可调价格">可调价格</a-select-option>
+            </a-select>
+          </a-form-item>
+        </div>
+
+        <div class="form-row">
+          <a-form-item
+            label="同意付款比例"
+            name="agreedPaymentRatio"
+            class="compact-item"
+          >
+            <a-input-number
+              v-model:value="formState.agreedPaymentRatio"
+              style="width: 100%"
+              :min="0"
+              :max="100"
+              :formatter="(value) => `${value}%`"
+              :parser="(value) => value.replace('%', '')"
+            />
+          </a-form-item>
+
+          <a-form-item
+            label="是否框架合同"
+            name="isFrameworkContract"
+            class="compact-item"
+          >
+            <a-radio-group v-model:value="formState.isFrameworkContract">
+              <a-radio :value="true">是</a-radio>
+              <a-radio :value="false">否</a-radio>
+            </a-radio-group>
+          </a-form-item>
+
+          <a-form-item
+            label="合同识别号"
+            name="contractIdentificationNumber"
+            class="compact-item"
+          >
+            <a-input v-model:value="formState.contractIdentificationNumber" />
+          </a-form-item>
+        </div>
+      </a-form>
     </div>
+  </div>
 </template>
 
 <script setup>
 import { ref, reactive } from "vue";
-import dayjs from 'dayjs';
+import dayjs from "dayjs";
 
 const activeKey = ref("1");
 
 // 表单状态
 const formState = reactive({
-  contract: '',
-  signingUnit: '旷谷公司',
-  project: '重庆市永川至璧山高速公路弱电系统销售',
+  contract: "",
+  signingUnit: "旷谷公司",
+  project: "重庆市永川至璧山高速公路弱电系统销售",
   bidTime: dayjs(),
-  bidAmount: '3,020',
-  contractName: '',
-  contractNumber: '',
-  contractUniqueId: '',
-  plate: '设备（产品）代销及系统集成',
-  typeOne: '系统集成',
-  typeTwo: '',
-  typeThree: '',
-  undertakingType: '',
-  ownerUnit: '',
+  bidAmount: "3,020",
+  contractName: "",
+  contractNumber: "",
+  contractUniqueId: "",
+  plate: "设备（产品）代销及系统集成",
+  typeOne: "系统集成",
+  typeTwo: "",
+  typeThree: "",
+  undertakingType: "",
+  ownerUnit: "",
   isPayerSameAsOwner: true,
   isConsortium: false,
   contractAmount: 0,
   investmentAmount: 5000,
-  contractPriceType: '',
+  contractPriceType: "",
   agreedPaymentRatio: 100,
   isFrameworkContract: false,
-  contractIdentificationNumber: ''
+  contractIdentificationNumber: "",
 });
 
 // 验证规则
@@ -224,7 +287,7 @@ const rules = {
 
 <style scoped lang="less">
 .contract-form-container {
-  font-family: 'Microsoft YaHei', Arial, sans-serif;
+  font-family: "Microsoft YaHei", Arial, sans-serif;
   background: #fff;
   padding: 20px;
 }
@@ -409,22 +472,22 @@ const rules = {
     gap: 20px;
     margin-bottom: 16px;
   }
-  
+
   .compact-item {
     flex: 1;
     min-width: 200px;
     margin-bottom: 0;
-    
+
     :deep(.ant-form-item-label) {
       padding-bottom: 4px;
-      
+
       label {
         font-size: 13px;
         font-weight: bold;
         color: #333;
       }
     }
-    
+
     :deep(.ant-form-item-control) {
       .ant-input,
       .ant-select-selector,
@@ -432,11 +495,11 @@ const rules = {
         border: 1px solid #d9d9d9;
         border-radius: 4px;
         background: #fff;
-        
+
         &:hover {
           border-color: #40a9ff;
         }
-        
+
         &:focus {
           border-color: #40a9ff;
           box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);

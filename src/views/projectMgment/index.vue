@@ -7,7 +7,14 @@
     />
     <div class="content">
       <ul>
-        <li class="new-project">+新建项目</li>
+        <li>
+          <div
+            class="new-project"
+            @click="$router.push('/projectMgment/create')"
+          >
+            +新建项目
+          </div>
+        </li>
         <li v-for="project in filteredProjects" :key="project.id">
           <Side1Cards :project="project" />
         </li>
@@ -30,7 +37,7 @@ import { ref, computed } from "vue";
 import Side1Cards from "@/components/Side1Cards.vue";
 import FirstYe from "./FirstYe.vue";
 import PaginationYe from "./PaginationYe.vue";
-import {categoryType} from "./interface/index";
+import { categoryType } from "./interface/index";
 
 const activeKey = ref("1");
 const activeCategory = ref("all");
@@ -85,17 +92,17 @@ const filteredProjects = computed(() => {
   if (activeKey.value === "2") {
     // 进行中
     filteredByStatus = projects.filter(
-      (project) => project.status === "进行中"
+      (project) => project.status === "进行中",
     );
   } else if (activeKey.value === "3") {
     // 已暂停
     filteredByStatus = projects.filter(
-      (project) => project.status === "已暂停"
+      (project) => project.status === "已暂停",
     );
   } else if (activeKey.value === "4") {
     // 已结束
     filteredByStatus = projects.filter(
-      (project) => project.status === "已结束"
+      (project) => project.status === "已结束",
     );
   }
   // 再根据类目过滤
@@ -112,17 +119,17 @@ const filteredProjects = computed(() => {
       tunnel: "隧道",
       bridge: "桥梁",
       road: "公路",
-    }
+    };
     const typeName = categoryMap[activeCategory.value] || activeCategory.value;
     filteredByStatus = filteredByStatus.filter(
-      (project) => project.type === typeName
+      (project) => project.type === typeName,
     );
   }
   // 最后根据搜索文本过滤项目名称
   if (searchText.value.trim()) {
     const searchLower = searchText.value.toLowerCase().trim();
     filteredByStatus = filteredByStatus.filter((project) =>
-      project.name.toLowerCase().includes(searchLower)
+      project.name.toLowerCase().includes(searchLower),
     );
   }
   return filteredByStatus;
@@ -178,7 +185,8 @@ const handleSearch = (searchTextValue: string) => {
     }
     .new-project {
       width: 100%;
-      height: 100%;
+      height: 188px;
+      // height: 100%;
       padding: 12px;
       font-size: 20px;
       font-weight: 600;

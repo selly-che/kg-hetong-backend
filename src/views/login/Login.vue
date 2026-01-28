@@ -331,7 +331,9 @@ const login = async () => {
   //正常登录流程
   const res = await getDatas("common/PostLogin", {
     username: input.value,
-    password: password.value
+    password: password.value,
+    // captcha: "",
+    // checkKey: "",
   });
   console.log("登录123", JSON.parse(JSON.stringify(res)));
   if (res.data.code == 200) {

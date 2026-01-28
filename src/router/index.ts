@@ -22,6 +22,12 @@ const routes: Array<RouteRecordRaw> = [
         component: () => import("../views/approvalMgment/edit/Editht.vue"),
         meta: { check: true, title: "编辑合同", noTab: true },
       },
+      {
+        path: "/projectMgment/create",
+        name: "create",
+        component: () => import("../views/projectMgment/Create.vue"),
+        meta: { check: true, title: "新建项目", noTab: true },
+      },
     ],
   },
   {
@@ -51,7 +57,7 @@ router.beforeEach((to, from, next) => {
   }
   // 已登录且需要初始化路由
   // 注意：检查是否有子路由，但至少应该有一个首页路由
-  if (token && layoutRoute && layoutRoute.children.length <= 2) {
+  if (token && layoutRoute && layoutRoute.children.length <= 3) {
     const menus = JSON.parse(localStorage.getItem("wuyemenusJSON") || "[]");
     addDynamicRoutes(router, menus);
     // 在动态路由添加完成后，再添加 404 路由
