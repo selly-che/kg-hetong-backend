@@ -1,11 +1,15 @@
 <template>
     <div class="bgf pd20 br8">
         <!--新增  -->
-        <el-button type="primary" @click="num++">新增</el-button>
-        <SelectNumber :num="num" @clearSelect="clearNum"></SelectNumber>
+        <el-button type="primary" @click="addUserMenu">新增</el-button>
+        <el-button @click="batchDelete" v-show="selectedRowKeys.length > 0">
+            <delete-outlined /> <span class="pl-5">批量删除</span></el-button>
+
+        <SelectNumber :num="selectedRowKeys.length" @clearSelect="clearNum"></SelectNumber>
         <!-- 展示权限菜单、树结构  -->
-        <a-table :columns="columns" :data-source="dataSource" :row-key="(record: any) => record.id"
-            :expand-row-by-click="true" :default-expand-all="true" :pagination="false">
+        <a-table :columns="columns" :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
+            :data-source="menuList" :row-key="(record: any) => record.id" :expand-row-by-click="true"
+            :default-expand-all="true" :pagination="false">
             <template #bodyCell="{ column, record }">
                 <template v-if="column.key === 'action'">
                     <a-space>
@@ -32,85 +36,26 @@
             </template>
         </a-table>
         <!-- 编辑菜单 -->
-        <template>
-            <a-drawer title="编辑菜单" :width="720" :visible="open" :body-style="{ paddingBottom: '80px' }"
-                :footer-style="{ textAlign: 'right' }" @close="onClose">
-                <a-form :model="form" :rules="rules" layout="vertical">
-                    <a-row :gutter="16">
-                        <a-col :span="12">
-                            <a-form-item label="Name" name="name">
-                                <a-input v-model:value="form.name" placeholder="Please enter user name" />
-                            </a-form-item>
-                        </a-col>
-                        <a-col :span="12">
-                            <a-form-item label="Url" name="url">
-                                <a-input v-model:value="form.url" style="width: 100%" addon-before="http://"
-                                    addon-after=".com" placeholder="please enter url" />
-                            </a-form-item>
-                        </a-col>
-                    </a-row>
-                    <a-row :gutter="16">
-                        <a-col :span="12">
-                            <a-form-item label="Owner" name="owner">
-                                <a-select v-model:value="form.owner" placeholder="Please a-s an owner">
-                                    <a-select-option value="xiao">Xiaoxiao Fu</a-select-option>
-                                    <a-select-option value="mao">Maomao Zhou</a-select-option>
-                                </a-select>
-                            </a-form-item>
-                        </a-col>
-                        <a-col :span="12">
-                            <a-form-item label="Type" name="type">
-                                <a-select v-model:value="form.type" placeholder="Please choose the type">
-                                    <a-select-option value="private">Private</a-select-option>
-                                    <a-select-option value="public">Public</a-select-option>
-                                </a-select>
-                            </a-form-item>
-                        </a-col>
-                    </a-row>
-                    <a-row :gutter="16">
-                        <a-col :span="12">
-                            <a-form-item label="Approver" name="approver">
-                                <a-select v-model:value="form.approver" placeholder="Please choose the approver">
-                                    <a-select-option value="jack">Jack Ma</a-select-option>
-                                    <a-select-option value="tom">Tom Liu</a-select-option>
-                                </a-select>
-                            </a-form-item>
-                        </a-col>
-                        <a-col :span="12">
-                            <!-- <a-form-item label="DateTime" name="dateTime">
-                                <a-date-picker v-model:value="form.dateTime" style="width: 100%"
-                                    :get-popup-container="trigger => trigger.parentElement" />
-                            </a-form-item> -->
-                        </a-col>
-                    </a-row>
-                    <a-row :gutter="16">
-                        <a-col :span="24">
-                            <a-form-item label="Description" name="description">
-                                <a-textarea v-model:value="form.description" :rows="4"
-                                    placeholder="please enter url description" />
-                            </a-form-item>
-                        </a-col>
-                    </a-row>
-                </a-form>
-                <template #extra>
-                    <a-space>
-                        <a-button @click="onClose">Cancel</a-button>
-                        <a-button type="primary" @click="onClose">Submit</a-button>
-                    </a-space>
-                </template>
-            </a-drawer>
-        </template>
+        <MenuDrawer v-model:visible="open" :edit-data="currentEditData" :menu-tree-data="menuTreeData"
+            @submit="handleSubmit" @close="handleDrawerClose" />
     </div>
 </template>
 <script lang="ts" setup>
-import type { Rule } from 'ant-design-vue/es/form';
+import { DeleteOutlined } from '@ant-design/icons-vue';
+import getDatas from "@/network/index";
+import MenuDrawer from '@/components/MenuDrawer.vue';
 import { DownOutlined } from '@ant-design/icons-vue';
-import { Usermenu } from "./interface/menu";
-import { onMounted, ref, reactive } from 'vue';
+import { Usermenu, MenuType } from "./interface/menu";
+import { onMounted, ref, reactive, computed } from 'vue';
+import { ElMessageBox, ElMessage } from 'element-plus'
+import type { MenuItem } from './interface/menu';
+import { message } from "ant-design-vue";
 // 引入组件
 import SelectNumber from "@/components/SelectNumber.vue"
 
-const dataSource = ref<Usermenu[]>([
+const selectedRowKeys = ref<any[]>([]);
+
+const menuList = ref<Usermenu[]>([
     {
         "id": "1692351203619045377",
         "key": "1692351203619045377",
@@ -213,6 +158,9 @@ const handleEdit = (record: Usermenu) => {
     console.log('编辑:', open.value)
 }
 
+const onSelectChange = (selectedKeys: any[]) => {
+    selectedRowKeys.value = selectedKeys;
+};
 // 处理菜单点击
 const handleMenuClick = (row: any, record: any) => {
     switch (row.key) {
@@ -228,35 +176,64 @@ const handleMenuClick = (row: any, record: any) => {
     }
 }
 
-let num = ref(100);
 
 const clearNum = (value: number) => {
-    num.value = value;
+    selectedRowKeys.value = [];
+}
+const addUserMenu = () => {
+    console.log('新增菜单');
+    open.value = true;
+}
+const batchDelete = () => {
+    console.log('批量删除菜单:', selectedRowKeys.value);
+    ElMessageBox.confirm(
+        '是否删除选中数据?',
+        '提示',
+        {
+            confirmButtonText: '确认',
+            cancelButtonText: '取消',
+            type: 'warning',
+        }
+    )
+        .then(async () => {
+            let resp = await getDatas("system/deleteMenuListTree", { ids: selectedRowKeys.value });
+            if (resp.data.code == 0) {
+                ElMessage({
+                    type: 'success',
+                    message: '删除成功!',
+                });
+                getUserTreeFn();
+                selectedRowKeys.value = [];
+            }
+        })
+        .catch(() => {
+        })
 }
 // 定义表格列
 const columns = [
     {
-        title: '菜单',
+        title: '菜单名称',
         dataIndex: 'name',
         key: 'name',
-        width: '40%'
     },
     {
         title: '图标',
         dataIndex: 'icon',
         key: 'icon',
-        width: '20%'
+    },
+    {
+        title: '路径',
+        dataIndex: 'url',
+        key: 'url',
     },
     {
         title: '排序',
         dataIndex: 'sortNo',
         key: 'sortNo',
-        width: '20%',
     },
     {
         title: '操作',
         key: 'action',
-        width: '20%'
     }
 ]
 // 转换数据为树形结构
@@ -266,37 +243,65 @@ const transformData = (item: any) => {
         children: item.children ? item.children.map(transformData) : undefined
     }
 }
+// 获取数据
+const getUserTreeFn = async () => {
+    let resp = await getDatas("system/GetMenuListTree");
+    console.log(resp, 'respresp')
+    if (resp.data.code == 0) {
+        menuList.value = resp.data.result;
+    }
+}
 
-// 编辑表格内数据
-const form = reactive({
-    name: '',
-    url: '',
-    owner: '',
-    type: '',
-    approver: '',
-    dateTime: null,
-    description: '',
+
+const currentEditData = ref<MenuItem | null>(null);
+
+// 构建树形数据
+const menuTreeData  = computed(() => {
+    const buildTree :any  = (items: MenuItem[], parentId: string = ''): any[] => {
+        return items
+            .filter(item => item.parentId === parentId && item.menuType !== MenuType.BUTTON)
+            .map(item => ({
+                id: item.id,
+                key: item.key,
+                title: item.title,
+                children: buildTree(items, item.id),
+            }));
+    };
+    return buildTree(menuList.value);
 });
-const rules: Record<string, Rule[]> = {
-    name: [{ required: true, message: 'Please enter user name' }],
-    url: [{ required: true, message: 'please enter url' }],
-    owner: [{ required: true, message: 'Please select an owner' }],
-    type: [{ required: true, message: 'Please choose the type' }],
-    approver: [{ required: true, message: 'Please choose the approver' }],
-    dateTime: [{ required: true, message: 'Please choose the dateTime', type: 'object' }],
-    description: [{ required: true, message: 'Please enter url description' }],
+
+// 提交表单
+const handleSubmit = async (formData: any) => {
+    try {
+        if (formData.id) {
+            // 编辑操作
+            // await updateMenu(formData);
+            message.success('编辑成功');
+        } else {
+            // 新增操作
+            // await addMenu(formData);
+            message.success('新增成功');
+        }
+        getUserTreeFn();
+    } catch (error) {
+        message.error('操作失败');
+    }
 };
-const onClose = () => {
-    open.value = false;
+
+
+// 关闭抽屉
+const handleDrawerClose = () => {
+    currentEditData.value = null;
 };
+
 onMounted(() => {
     console.log('组件挂载完成');
+    getUserTreeFn();
 });
 
 </script>
 
 <style lang="less" scoped>
-
 :deep(.custom-menu-item) {
     color: #000 !important;
     margin: 0 !important;

@@ -232,12 +232,12 @@
       </a-table>
     </div>
     <!-- table区域-end -->
-
+<!-- 
     <user-modal ref="modalForm" @ok="modalFormOk"></user-modal>
 
     <password-modal ref="passwordmodal" @ok="passwordModalOk"></password-modal>
 
-    <sys-user-agent-modal ref="sysUserAgentModal"></sys-user-agent-modal>
+    <sys-user-agent-modal ref="sysUserAgentModal"></sys-user-agent-modal> -->
 
     <!-- 用户回收站 -->
     <user-recycle-bin-modal
@@ -246,8 +246,8 @@
     />
   </a-card>
   <!-- 编辑抽屉 -->
-  <form-drawer-right ref="modalFormDawer" @ok="modalFormOk" :title="title">
-  </form-drawer-right>
+  <!-- <form-drawer-right ref="modalFormDawer" @ok="modalFormOk" :title="title">
+  </form-drawer-right> -->
   <!-- 高级查询抽屉 -->
   <modal ref="superQueryModal" @ok="superQueryModalOk" :title="title2">
     
@@ -513,10 +513,6 @@ const passwordModalOk = () => {
   message.success("密码修改成功");
 };
 
-// 同步完成
-const onSyncFinally = () => {
-  searchQuery();
-};
 </script>
 
 <style lang="less" scoped>
@@ -578,8 +574,6 @@ const onSyncFinally = () => {
   align-items: center;
   flex-wrap: wrap;
   //   padding: 12px 0;
-  border-top: 1px solid #f0f0f0;
-  border-bottom: 1px solid #f0f0f0;
   margin-bottom: 16px;
 
   > * {

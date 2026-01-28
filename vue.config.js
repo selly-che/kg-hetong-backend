@@ -8,6 +8,7 @@ module.exports = defineConfig({
   devServer: {
     port: 8086,
     open: true,
+    https: false,
     proxy: {
       "/jeecg-boot": {
         target: "http://192.168.100.77:10888",
@@ -17,6 +18,13 @@ module.exports = defineConfig({
         },
       },
     },
+    client: {
+      overlay: {
+        errors: false,
+        warnings: false,
+        runtimeErrors: false
+      }
+    }
   },
   chainWebpack: (config) => {
     config.plugin("define").tap((definitions) => {

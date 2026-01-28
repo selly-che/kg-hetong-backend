@@ -1,34 +1,3 @@
-export interface Usermenu {
-  id: string;
-  key: string;
-  title: string;
-  parentId: string;
-  name: string;
-  perms: null | string;
-  permsType: string;
-  icon: string;
-  component: string;
-  url: string;
-  redirect: null | string;
-  sortNo: number;
-  menuType: number;
-  isLeaf: boolean;
-  route: boolean;
-  keepAlive: boolean;
-  description: null | string;
-  delFlag: number;
-  createBy: string;
-  createTime: string;
-  updateBy: string;
-  updateTime: string;
-  alwaysShow: boolean;
-  hidden: boolean;
-  status: string;
-  internalOrExternal: boolean;
-  children: null | Usermenu[];
-  leaf: boolean;
-}
-
 // types/menu.ts
 export enum MenuType {
   DIRECTORY = 0, // 一级菜单/目录

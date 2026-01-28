@@ -33,13 +33,12 @@ export default {
       params,
     };
   },
-
   // 添加角色数据
   AddUserRole(data: any) {
     return {
       method: "POST",
       url: "/sys/role/add",
-      data,
+      data
     };
   },
   // 编辑角色数据
@@ -47,7 +46,7 @@ export default {
     return {
       method: "PUT",
       url: "/sys/role/edit",
-      data: params,
+      data: params
     };
   },
   // 删除角色数据
@@ -55,6 +54,32 @@ export default {
     return {
       method: "DELETE",
       url: "sys/role/delete",
+      params
+    };
+  },
+  // 获取系统菜单管理树
+  GetMenuListTree(params: any) {
+    return {
+      method: "GET",
+      url: "/sys/permission/list",
+      params,
+
+    };
+  },
+  // 添加系统菜单管理树
+  addMenuListTree(params: any) {
+    return {
+      method: "POST",
+      url: "/sys/permission/add",
+      params,
+
+    };
+  },
+  // 删除系统菜单管理树
+  deleteMenuListTree(params: any) {
+    return {
+      method: "DELETE",
+      url: "/sys/permission/deleteBatch",
       params,
     };
   },
@@ -66,12 +91,5 @@ export default {
       params,
     };
   },
-  // 获取系统菜单管理树
-  GetMenuListTree(params: any) {
-    return {
-      method: "GET",
-      url: "/sys/permission/list",
-      params,
-    };
-  },
-};
+}
+
