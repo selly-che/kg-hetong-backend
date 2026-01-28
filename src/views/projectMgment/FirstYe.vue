@@ -11,33 +11,59 @@
     <div class="category-group">
       <span class="category-label">所属类目：</span>
       <a-button-group>
-        <a-button :type="activeCategory === 'all' ? 'default' : 'text'" @click="changeCategory('all')">全部</a-button>
-        <a-button :type="activeCategory === 'railway' ? 'default' : 'text'" @click="changeCategory('railway')"
+        <a-button
+          :type="activeCategory === 'all' ? 'default' : 'text'"
+          @click="changeCategory('all')"
+          >全部</a-button
+        >
+        <a-button
+          :type="activeCategory === 'railway' ? 'default' : 'text'"
+          @click="changeCategory('railway')"
           >铁路</a-button
         >
-        <a-button :type="activeCategory === 'tunnel' ? 'primary' : 'text'" @click="changeCategory('tunnel')"
+        <a-button
+          :type="activeCategory === 'tunnel' ? 'primary' : 'text'"
+          @click="changeCategory('tunnel')"
           >隧道</a-button
         >
-        <a-button :type="activeCategory === 'bridge' ? 'default' : 'text'" @click="changeCategory('bridge')"
+        <a-button
+          :type="activeCategory === 'bridge' ? 'default' : 'text'"
+          @click="changeCategory('bridge')"
           >桥梁</a-button
         >
-        <a-button :type="activeCategory === 'road' ? 'default' : 'text'" @click="changeCategory('road')">公路</a-button>
-        <a-button :type="activeCategory === 'category5' ? 'default' : 'text'" @click="changeCategory('category5')"
+        <a-button
+          :type="activeCategory === 'road' ? 'default' : 'text'"
+          @click="changeCategory('road')"
+          >公路</a-button
+        >
+        <a-button
+          :type="activeCategory === 'category5' ? 'default' : 'text'"
+          @click="changeCategory('category5')"
           >类目五</a-button
         >
-        <a-button :type="activeCategory === 'category6' ? 'default' : 'text'" @click="changeCategory('category6')"
+        <a-button
+          :type="activeCategory === 'category6' ? 'default' : 'text'"
+          @click="changeCategory('category6')"
           >类目六</a-button
         >
-        <a-button :type="activeCategory === 'category7' ? 'default' : 'text'" @click="changeCategory('category7')"
+        <a-button
+          :type="activeCategory === 'category7' ? 'default' : 'text'"
+          @click="changeCategory('category7')"
           >类目七</a-button
         >
-        <a-button :type="activeCategory === 'category8' ? 'default' : 'text'" @click="changeCategory('category8')"
+        <a-button
+          :type="activeCategory === 'category8' ? 'default' : 'text'"
+          @click="changeCategory('category8')"
           >类目八</a-button
         >
-        <a-button :type="activeCategory === 'category9' ? 'default' : 'text'" @click="changeCategory('category9')"
+        <a-button
+          :type="activeCategory === 'category9' ? 'default' : 'text'"
+          @click="changeCategory('category9')"
           >类目九</a-button
         >
-        <a-button :type="activeCategory === 'category10' ? 'default' : 'text'" @click="changeCategory('category10')"
+        <a-button
+          :type="activeCategory === 'category10' ? 'default' : 'text'"
+          @click="changeCategory('category10')"
           >类目十</a-button
         >
       </a-button-group>
@@ -51,35 +77,41 @@
   </div>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      searchText: '',
-      activeCategory: 'all',
-      activeStatus: 'all',
-      activeKey: '1'
-    }
-  },
-  methods: {
-    onSearch(searchText) {
-      this.searchText = searchText
-      this.$emit('search', this.searchText)
-    },
-    changeCategory(category) {
-      this.activeCategory = category
-      this.$emit('category-change', category)
-    },
-    changeStatus(status) {
-      this.activeStatus = status
-    },
-    handleTabChange(key) {
-      // console.log('切换标签:', key)
-      this.activeKey = key
-      this.$emit('tab-change', key)
-    }
-  }
+<script setup>
+import { ref, onMounted, defineEmits } from "vue";
+import getDatas from "@/network/index";
+
+const emit = defineEmits(['search', 'category-change', 'tab-change']);
+const searchText = ref("");
+const activeCategory = ref("all");
+const activeStatus = ref("all");
+const activeKey = ref("1");
+
+onMounted(() => {
+  console.log('组件挂载完成');
+  projectinfo()
+});
+
+const projectinfo = async () => {
+  const res = await getDatas("project/GetProjectList")
+  console.log("项目管理中",res);
 }
+
+const onSearch = (value) => {
+  searchText.value = value;
+  emit("search", searchText.value);
+};
+const changeCategory = (category) => {
+  activeCategory.value = category;
+  emit("category-change", category);
+};
+const changeStatus = (status) => {
+  activeStatus.value = status;
+};
+const handleTabChange = (key) => {
+  activeKey.value = key;
+  emit("tab-change", key);
+};
 </script>
 
 <style scoped lang="less">

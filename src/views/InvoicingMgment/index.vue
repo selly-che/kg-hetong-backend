@@ -41,7 +41,7 @@
             <span class="percentage">75.5%</span>
           </div>
         </div>
-        <div class="m">
+        <div class="m" style="margin-left: 12px;">
           <Pie1 />
         </div>
       </div>

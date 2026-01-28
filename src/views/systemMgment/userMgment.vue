@@ -8,14 +8,14 @@
             <a-form-item label="账号">
               <a-input
                 placeholder="输入账号模糊查询"
-                v-model="queryParam.username"
+                v-model:value="queryParam.username"
               ></a-input>
             </a-form-item>
           </a-col>
 
           <a-col :md="6" :sm="8">
             <a-form-item label="性别">
-              <a-select v-model="queryParam.sex" placeholder="请选择性别">
+              <a-select v-model:value="queryParam.sex" placeholder="请选择性别">
                 <a-select-option value="">请选择</a-select-option>
                 <a-select-option value="1">男</a-select-option>
                 <a-select-option value="2">女</a-select-option>
@@ -24,19 +24,21 @@
           </a-col>
 
           <a-col :md="6" :sm="8">
-            <a-form-item label="真实名字">
+            <a-form-item label="真实姓名">
               <a-input
-                placeholder="请输入真实名字"
-                v-model="queryParam.realname"
+                placeholder="请输入用户真实姓名"
+                v-model:value="queryParam.realname"
               ></a-input>
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="8" v-if="toggleSearchStatus">
             <a-form-item label="部门">
-              <a-select v-model="queryParam.orgCode" placeholder="请选择部门">
+              <a-select v-model:value="queryParam.orgCode" placeholder="请选择部门">
                 <a-select-option value="">请选择</a-select-option>
                 <a-select-option value="1">部门1</a-select-option>
                 <a-select-option value="2">部门2</a-select-option>
+                <a-select-option value="3">部门3</a-select-option>
+                <a-select-option value="4">部门4</a-select-option>
               </a-select>
             </a-form-item>
           </a-col>
@@ -45,14 +47,14 @@
             <a-form-item label="手机号码">
               <a-input
                 placeholder="请输入手机号码查询"
-                v-model="queryParam.phone"
+                v-model:value="queryParam.phone"
               ></a-input>
             </a-form-item>
           </a-col>
 
           <a-col :md="6" :sm="8" v-if="toggleSearchStatus">
             <a-form-item label="用户状态">
-              <a-select v-model="queryParam.status" placeholder="请选择">
+              <a-select v-model:value="queryParam.status" placeholder="请选择">
                 <a-select-option value="">请选择</a-select-option>
                 <a-select-option value="1">正常</a-select-option>
                 <a-select-option value="2">冻结</a-select-option>
@@ -247,7 +249,9 @@
   <form-drawer-right ref="modalFormDawer" @ok="modalFormOk" :title="title">
   </form-drawer-right>
   <!-- 高级查询抽屉 -->
-  <modal ref="superQueryModal" @ok="superQueryModalOk" :title="title2"> </modal>
+  <modal ref="superQueryModal" @ok="superQueryModalOk" :title="title2">
+    
+  </modal>
 </template>
 
 <script setup>
@@ -267,7 +271,15 @@ import {
 
 const title = ref("");
 const title2 = ref("");
-const queryParam = reactive({});
+// 普通查询参数
+const queryParam = reactive({
+  username: "",
+  sex: "",
+  realname: "",
+  orgCodeTxt: "",
+  phone: "",
+  status: ""
+});
 const recycleBinVisible = ref(false);
 const toggleSearchStatus = ref(true);
 const selectedRowKeys = ref([]);
@@ -356,33 +368,23 @@ const columns = [
     width: 170,
   },
 ];
-const superQueryFieldList = [
-  { type: "input", value: "username", text: "用户账号" },
-  { type: "input", value: "realname", text: "用户姓名" },
-  {
-    type: "select",
-    value: "sex",
-    dbType: "int",
-    text: "性别",
-    dictCode: "sex",
-  },
-];
 
 // 初始化数据
 onMounted(() => {
   searchQuery();
 });
-
-// 查询
+// 查询用户列表
 const searchQuery = async () => {
   loading.value = true;
   // 调用API
   const res = await getDatas("system/GetUserinfo", {
     pageNo: ipagination.value.current,
     pageSize: ipagination.value.pageSize,
+    ...queryParam,
   });
-  console.log(res, "qq");
-
+  //获取发送的参数
+  console.log("发送的参数：", res.config.params);
+  
   if (res && res.data.code === 0) {
     dataSource.value = res.data.result.records;
     ipagination.value.total = res.data.result.total;
@@ -391,10 +393,12 @@ const searchQuery = async () => {
   }
   loading.value = false;
 };
-
 // 重置
 const searchReset = () => {
-  Object.assign(queryParam, {});
+  //遍历清空
+  Object.keys(queryParam).forEach((key) => {
+    queryParam[key] = "";
+  });
   searchQuery();
 };
 
