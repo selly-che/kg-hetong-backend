@@ -1,13 +1,11 @@
 // 导入axios网络请求
 import axios from "axios"
 import router from "@/router";
-import { ElMessage } from 'element-plus'
-
-
+import { ElMessage, ElMessageBox } from 'element-plus'
+import type { Action } from 'element-plus'
 // 直接访问
-const apiUrl =  process.env.VUE_APP_API_URL;
+const apiUrl = process.env.VUE_APP_API_URL;
 const service = axios.create({
-    // baseURL: "/api/pc",
     baseURL: '/jeecg-boot',
     timeout: 40000,
     headers: {
@@ -40,6 +38,19 @@ service.interceptors.response.use(
         }
         return res
     }, (error) => {
+        let resPonse = error.response.data;
+        if (resPonse.status == 500 && resPonse.message.includes("Token失效")) {
+            ElMessageBox.alert('登录失效，请重新登录', '提示',
+                {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '',
+                    type: 'warning',
+                    callback: (action: Action) => {
+                        router.push({ name: "login" });
+                    }
+                }
+            )
+        }
         return Promise.reject(error);
     }
 )
@@ -86,7 +97,7 @@ async function getData<T = any>(keyName: string, meta: Record<string, any> | nul
         const result = await proxy[keyName];
         return result;
     } catch (error) {
-        console.error(`Error occurred while fetching data for key "${keyName}":`, error);
+        // console.error(`Error occurred while fetching data for key "${keyName}":`, error);
         throw error; // 抛出错误以便调用方处理
     }
 }

@@ -41,15 +41,6 @@ export default {
             params
         };
     },
-    // 获取系统菜单管理
-    GetMenuList(params: any) {
-        return {
-            method: "GET",
-            url: "/sys/permission/list",
-            params,
-
-        };
-    },
     // 获取系统菜单管理树
     GetMenuListTree(params: any) {
         return {
@@ -58,5 +49,23 @@ export default {
             params,
 
         };
-    }
+    },
+    // 添加系统菜单管理树
+    addMenuListTree(params: any) {
+        return {
+            method: "POST",
+            url: "/sys/permission/add",
+            params,
+
+        };
+    },
+    // 删除系统菜单管理树
+    deleteMenuListTree(params: any) {
+        return {
+            method: "DELETE",
+            url: "/sys/permission/deleteBatch",
+            params,
+        };
+    },
+
 }

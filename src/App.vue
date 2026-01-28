@@ -7,15 +7,22 @@
     </router-view>
   </div>
 </template>
-<script setup>
+<script>
+import { defineComponent } from 'vue';
 import { ConfigProvider } from 'ant-design-vue';
-// 配置全局的弹出层行为
-const modalConfig = {
-  getContainer: () => document.body,
-  focusTrap: true,
-  autoFocus: true,
-  destroyOnClose: true,
-};
+import zhCN from 'ant-design-vue/es/locale/zh_CN';
+
+export default defineComponent({
+  name: 'App',
+  components: {
+    AConfigProvider: ConfigProvider,
+  },
+  setup() {
+    return {
+      zhCN,
+    };
+  }
+});
 </script>
 
 <style lang="less"></style>

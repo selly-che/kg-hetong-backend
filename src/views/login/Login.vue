@@ -1,15 +1,15 @@
 <template>
-    <div class="login">
-        <div class="from">
-            <div class="title">合同管理系统</div>
-            <el-input v-model="input" size="large" style="width: 400px" placeholder="请输入您的账号" prefix-icon="User" />
-            <div class="password">
-                <el-input v-model="password" @keyup.enter="login" size="large" type="password" style="width: 400px"
-                    placeholder="请输入您的密码" show-password prefix-icon="Lock" />
-            </div>
-            <div class="login-btn" @click="login">登录</div>
-        </div>
+  <div class="login">
+    <div class="from">
+      <div class="title">合同管理系统</div>
+      <el-input v-model="input" size="large" style="width: 400px" placeholder="请输入您的账号" prefix-icon="User" />
+      <div class="password">
+        <el-input v-model="password" @keyup.enter="login" size="large" type="password" style="width: 400px"
+          placeholder="请输入您的密码" show-password prefix-icon="Lock" />
+      </div>
+      <div class="login-btn" @click="login">登录</div>
     </div>
+  </div>
 </template>
 
 <script lang="ts" setup>
@@ -329,47 +329,24 @@ const login = async () => {
     return;
   }
   //正常登录流程
-  // const res=await getDatas("common/GetToken", {
-  //     username: input.value,
-  //     passwrod: password.value
-  // });
-  // console.log("token", res);
-
   const res = await getDatas("common/PostLogin", {
     username: input.value,
-    passwrod: password.value,
-    // captcha: "",
-    // checkKey: "",
+    password: password.value
   });
   console.log("登录123", JSON.parse(JSON.stringify(res)));
   if (res.data.code == 200) {
-    const menus = adminRoutes.menu;
-    console.log(menus, "menusmenus");
+    const menus = guestRoutes.nav;
+    // console.log(menus, 'menusmenus');
+    localStorage.setItem('accesstoken', res.data.result.token)//本地存储
+    // const resp = await getDatas("common/getUserPermission"); // 获取角色菜单
+    const wuyemenusJSON = JSON.stringify(menus);
+    localStorage.setItem('wuyemenusJSON', wuyemenusJSON)
+    router.push("/home");
+    ElMessage({ message: '登录成功!', type: 'success' })
+  } else {
+    ElMessage({ message: res.data.msg, type: 'error' })
+  }
 
-
-    //正常登录流程
-    const res = await getDatas("common/PostLogin", {
-        username: input.value,
-        password: password.value
-    });
-    console.log("登录123", JSON.parse(JSON.stringify(res)));
-    if (res.data.code == 200) {
-        const menus = guestRoutes.nav;
-        // console.log(menus, 'menusmenus');
-        localStorage.setItem('accesstoken', res.data.result.token)//本地存储
-        // const resp = await getDatas("common/getUserPermission");
-        // console.log(resp, 'respresp');
-        // const menus = resp.data.result.menu;
-        const wuyemenusJSON = JSON.stringify(menus);
-        localStorage.setItem('wuyemenusJSON', wuyemenusJSON)
-
-        // router.push({ name: "shouye" });
-        router.push("/home");
-        ElMessage({ message: '登录成功!', type: 'success' })
-    } else {
-        ElMessage({ message: res.data.msg, type: 'error' })
-    }
-};
 }
 
 //添加监听
