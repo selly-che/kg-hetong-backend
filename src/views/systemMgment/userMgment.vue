@@ -246,8 +246,8 @@
     />
   </a-card>
   <!-- 编辑抽屉 -->
-  <!-- <form-drawer-right ref="modalFormDawer" @ok="modalFormOk" :title="title">
-  </form-drawer-right> -->
+  <form-drawer-right ref="modalFormDawer" @ok="modalFormOk" :title="title">
+  </form-drawer-right>
   <!-- 高级查询抽屉 -->
   <modal ref="superQueryModal" @ok="superQueryModalOk" :title="title2">
     
