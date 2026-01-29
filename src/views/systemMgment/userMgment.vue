@@ -33,12 +33,11 @@
           </a-col>
           <a-col :md="6" :sm="8" v-if="toggleSearchStatus">
             <a-form-item label="部门">
-              <a-select v-model:value="queryParam.orgCode" placeholder="请选择部门">
+              <a-select v-model:value="queryParam.departIds" placeholder="请选择部门">
                 <a-select-option value="">请选择</a-select-option>
-                <a-select-option value="1">部门1</a-select-option>
-                <a-select-option value="2">部门2</a-select-option>
-                <a-select-option value="3">部门3</a-select-option>
-                <a-select-option value="4">部门4</a-select-option>
+                <a-select-option v-for="item in deptList" :key="item.departIds" :value="item.departIds">
+                  {{ item.departIds_dictText}}
+                </a-select-option>
               </a-select>
             </a-form-item>
           </a-col>
@@ -240,10 +239,10 @@
     <sys-user-agent-modal ref="sysUserAgentModal"></sys-user-agent-modal> -->
 
     <!-- 用户回收站 -->
-    <user-recycle-bin-modal
+    <!-- <user-recycle-bin-modal
       v-model:visible="recycleBinVisible"
       @ok="modalFormOk"
-    />
+    /> -->
   </a-card>
   <!-- 编辑抽屉 -->
   <form-drawer-right ref="modalFormDawer" @ok="modalFormOk" :title="title">
@@ -368,6 +367,8 @@ const columns = [
     width: 170,
   },
 ];
+//部门列表数据
+const deptList = ref([]);
 
 // 初始化数据
 onMounted(() => {
@@ -382,8 +383,19 @@ const searchQuery = async () => {
     pageSize: ipagination.value.pageSize,
     ...queryParam,
   });
-  //获取发送的参数
   console.log("发送的参数：", res.config.params);
+  // console.log(res.data.result.records)
+  //去重部门列表
+  const deptNew = new Map();
+  res.data.result.records.forEach(item => {
+    if (item.departIds && item.departIds.length > 0) {
+      deptNew.set(item.departIds, {
+        departIds: item.departIds,
+        departIds_dictText: item.departIds_dictText
+      });
+    }
+  });
+  deptList.value = Array.from(deptNew.values());
   
   if (res && res.data.code === 0) {
     dataSource.value = res.data.result.records;
