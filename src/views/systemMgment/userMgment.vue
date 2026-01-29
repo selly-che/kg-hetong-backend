@@ -5,9 +5,9 @@
       <a-form layout="inline" @keyup.enter="searchQuery" class="search-form">
         <a-row :gutter="24">
           <a-col :md="6" :sm="12">
-            <a-form-item label="账号">
+            <a-form-item label="用户账号">
               <a-input
-                placeholder="输入账号模糊查询"
+                placeholder="请输入用户账号"
                 v-model:value="queryParam.username"
               ></a-input>
             </a-form-item>
@@ -33,10 +33,17 @@
           </a-col>
           <a-col :md="6" :sm="8" v-if="toggleSearchStatus">
             <a-form-item label="部门">
-              <a-select v-model:value="queryParam.departIds" placeholder="请选择部门">
+              <a-select
+                v-model:value="queryParam.departIds"
+                placeholder="请选择部门"
+              >
                 <a-select-option value="">请选择</a-select-option>
-                <a-select-option v-for="item in deptList" :key="item.departIds" :value="item.departIds">
-                  {{ item.departIds_dictText}}
+                <a-select-option
+                  v-for="item in deptList"
+                  :key="item.departIds"
+                  :value="item.departIds"
+                >
+                  {{ item.departIds_dictText }}
                 </a-select-option>
               </a-select>
             </a-form-item>
@@ -118,12 +125,12 @@
         </template>
         回收站
       </a-button>
-      <a-button type="primary" @click="handleSuperQuery">
+      <!-- <a-button type="primary" @click="handleSuperQuery">
         <template #icon>
           <FilterOutlined />
         </template>
         高级查询
-      </a-button>
+      </a-button> -->
       <a-third-app-button
         biz-type="user"
         :selected-row-keys="selectedRowKeys"
@@ -178,13 +185,13 @@
                   <a href="javascript:;" @click="handleDetail(record)">详情</a>
                 </a-menu-item>
 
-                <a-menu-item>
+                <!-- <a-menu-item>
                   <a
                     href="javascript:;"
                     @click="handleChangePassword(record.username)"
                     >密码</a
                   >
-                </a-menu-item>
+                </a-menu-item> -->
 
                 <a-menu-item>
                   <a-popconfirm
@@ -213,13 +220,13 @@
                   </a-popconfirm>
                 </a-menu-item>
 
-                <a-menu-item>
+                <!-- <a-menu-item>
                   <a
                     href="javascript:;"
                     @click="handleAgentSettings(record.username)"
                     >代理人</a
                   >
-                </a-menu-item>
+                </a-menu-item> -->
               </a-menu>
             </template>
             <a>
@@ -231,26 +238,14 @@
       </a-table>
     </div>
     <!-- table区域-end -->
-<!-- 
-    <user-modal ref="modalForm" @ok="modalFormOk"></user-modal>
-
-    <password-modal ref="passwordmodal" @ok="passwordModalOk"></password-modal>
-
-    <sys-user-agent-modal ref="sysUserAgentModal"></sys-user-agent-modal> -->
-
-    <!-- 用户回收站 -->
-    <!-- <user-recycle-bin-modal
-      v-model:visible="recycleBinVisible"
-      @ok="modalFormOk"
-    /> -->
   </a-card>
   <!-- 编辑抽屉 -->
   <form-drawer-right ref="modalFormDawer" @ok="modalFormOk" :title="title">
   </form-drawer-right>
   <!-- 高级查询抽屉 -->
-  <modal ref="superQueryModal" @ok="superQueryModalOk" :title="title2">
+  <!-- <modal ref="superQueryModal" @ok="superQueryModalOk" :title="title2">
     
-  </modal>
+  </modal> -->
 </template>
 
 <script setup>
@@ -277,7 +272,9 @@ const queryParam = reactive({
   realname: "",
   orgCodeTxt: "",
   phone: "",
-  status: ""
+  status: "",
+  email: "",
+  post: "",
 });
 const recycleBinVisible = ref(false);
 const toggleSearchStatus = ref(true);
@@ -341,17 +338,29 @@ const columns = [
     width: 100,
     dataIndex: "phone",
   },
+  // {
+  //   title: "部门",
+  //   align: "center",
+  //   width: 180,
+  //   dataIndex: "orgCodeTxt",
+  // },
+  {
+    title: "邮箱",
+    align: "center",
+    width: 180,
+    dataIndex: "email",
+  },
   {
     title: "部门",
     align: "center",
     width: 180,
-    dataIndex: "orgCodeTxt",
+    dataIndex: "departIds_dictText",
   },
   {
-    title: "负责部门",
+    title: "职务",
     align: "center",
-    width: 180,
-    dataIndex: "departIds_dictText",
+    width: 100,
+    dataIndex: "post",
   },
   {
     title: "状态",
@@ -383,20 +392,19 @@ const searchQuery = async () => {
     pageSize: ipagination.value.pageSize,
     ...queryParam,
   });
-  console.log("发送的参数：", res.config.params);
-  // console.log(res.data.result.records)
+  // console.log("发送的参数：", res.config.params);
   //去重部门列表
   const deptNew = new Map();
-  res.data.result.records.forEach(item => {
+  res.data.result.records.forEach((item) => {
     if (item.departIds && item.departIds.length > 0) {
       deptNew.set(item.departIds, {
         departIds: item.departIds,
-        departIds_dictText: item.departIds_dictText
+        departIds_dictText: item.departIds_dictText,
       });
     }
   });
   deptList.value = Array.from(deptNew.values());
-  
+
   if (res && res.data.code === 0) {
     dataSource.value = res.data.result.records;
     ipagination.value.total = res.data.result.total;
@@ -483,13 +491,14 @@ const handleEdit = async (record) => {
     id: record.id,
   });
   // console.log(res, "idinfo");
-  console.log(res.data.result);
+  // console.log(res.data.result);
   title.value = "编辑用户";
   modalFormDawer.value.showDrawer(record);
 };
 
 // 查看详情
 const handleDetail = (record) => {
+  title.value = "查看详情";
   modalFormDawer.value.showDrawer(record, true);
 };
 
@@ -524,7 +533,6 @@ const modalFormOk = () => {
 const passwordModalOk = () => {
   message.success("密码修改成功");
 };
-
 </script>
 
 <style lang="less" scoped>

@@ -6,6 +6,7 @@
     :body-style="{ paddingBottom: '80px' }"
     :footer-style="{ textAlign: 'right' }"
     @close="onClose"
+    :maskClosable="false"
   >
     <a-form :model="form" :rules="rules" layout="vertical">
       <a-row :gutter="16">
@@ -21,14 +22,18 @@
         </a-col>
       </a-row>
       <a-row :gutter="16">
-        <a-col :span="12">
+        <!-- <a-col :span="12">
           <a-form-item label="头像" name="avatar">
             <a-input v-model:value="form.avatar" placeholder="请输入头像地址" :disabled="isDetail"/>
           </a-form-item>
-        </a-col>
+        </a-col> -->
         <a-col :span="12">
           <a-form-item label="性别" name="sex">
-            <a-input v-model:value="form.sex" placeholder="请输入性别" :disabled="isDetail"/>
+            <!-- 下拉框 -->
+            <a-select v-model:value="form.sex" placeholder="请选择性别" :disabled="isDetail">
+              <a-select-option value="男">男</a-select-option>
+              <a-select-option value="女">女</a-select-option>
+            </a-select>
           </a-form-item>
         </a-col>
       </a-row>
