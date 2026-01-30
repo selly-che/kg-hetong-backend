@@ -64,6 +64,6 @@ export interface MenuFormData {
   hidden: boolean;
   keepAlive: boolean;
   alwaysShow: boolean;
-  status: Status;
+  status: Status | string;
   internalOrExternal: boolean;
 }

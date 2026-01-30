@@ -1,81 +1,180 @@
 <template>
-  <div class="bgf pd20 br8">
-    <!-- 搜索区域 -->
-    <div class="search" style="display: flex; margin-top: 10px; font-size: 18px">
-      <a-form-item label="账号" style="width: 400px; margin-right: 10px">
-        <a-input placeholder="请输入角色名" allow-clear v-model:value="roleName"></a-input>
-      </a-form-item>
-      <a-button type="primary" @click="handleSearch" style="margin-right: 10px">查询</a-button>
-      <a-button type="primary" @click="handleReset">重置</a-button>
-    </div>
-    <!-- 按钮区 -->
-    <div style="display: flex">
-      <div class="button" style="margin-right: 10px">
-        <a-button type="primary" @click="handleAdd">
-          <template #icon>
-            <PlusOutlined />
-          </template>
-          新增</a-button>
+  <div class="  br8 role flex">
+    <div class="role_l bgf pd20 br8">
+      <!-- 搜索区域 -->
+      <div class="search" style="display: flex; margin-top: 10px; font-size: 18px">
+        <a-form-item label="账号" style="width: 400px; margin-right: 10px">
+          <a-input placeholder="请输入角色名" allow-clear v-model:value="roleName"></a-input>
+        </a-form-item>
+        <a-button type="primary" @click="handleSearch" style="margin-right: 10px">查询</a-button>
+        <a-button type="primary" @click="handleReset">重置</a-button>
       </div>
-      <div class="button" style="margin-right: 10px">
-        <a-button type="primary" @click="handleAdd">
-          <template #icon>
-            <LoginOutlined />
-          </template>
-          导入</a-button>
+      <!-- 按钮区 -->
+      <div style="display: flex">
+        <div class="button" style="margin-right: 10px">
+          <a-button type="primary" @click="handleAdd">
+            <template #icon>
+              <PlusOutlined />
+            </template>
+            新增</a-button>
+        </div>
+        <div class="button" style="margin-right: 10px">
+          <a-button type="primary" @click="handleAdd">
+            <template #icon>
+              <LoginOutlined />
+            </template>
+            导入</a-button>
+        </div>
+        <div class="button" style="margin-right: 10px">
+          <a-button type="primary" @click="handleExportXls('角色管理')">
+            <template #icon>
+              <VerticalAlignBottomOutlined />
+            </template>
+            导出
+          </a-button>
+        </div>
       </div>
-      <div class="button" style="margin-right: 10px">
-        <a-button type="primary" @click="handleExportXls('角色管理')">
-          <template #icon>
-            <VerticalAlignBottomOutlined />
-          </template>
-          导出
-        </a-button>
+      <!-- 已选择项 -->
+      <div class="ant-alert ant-alert-info" style="margin-bottom: 16px; margin-top: 10px">
+        <i class="anticon anticon-info-circle ant-alert-icon"></i>
+        已选择&nbsp;<a style="font-weight: 600">{{ selectedRowKeys.length }}</a>项&nbsp;&nbsp;
+        <a style="margin-left: 24px" @click="onClearSelected">清空</a>
       </div>
-    </div>
-    <!-- 已选择项 -->
-    <div class="ant-alert ant-alert-info" style="margin-bottom: 16px; margin-top: 10px">
-      <i class="anticon anticon-info-circle ant-alert-icon"></i>
-      已选择&nbsp;<a style="font-weight: 600">{{ selectedRowKeys.length }}</a>项&nbsp;&nbsp;
-      <a style="margin-left: 24px" @click="onClearSelected">清空</a>
-    </div>
-    <!-- table展示列表 -->
-    <div class="table-container">
-      <div class="table-wrapperzhu">
-        <a-table :columns="columns" :loading="loading" :pagination="pagination" :data-source="data"
-          class="components-table-demo-nested">
-          <template #action="{ record }">
-            <div>
-              <a href=""> 用户</a>
-              <a-divider type="vertical" />
+      <!-- table展示列表 -->
+      <div class="table-container">
+        <div class="table-wrapperzhu">
+          <a-table :row-selection="{
+            selectedRowKeys: selectedRowKeys.value,
+            onChange: onSelectChange,
+            type: 'radio',
+          }" :columns="columns" row-key="id" :loading="loading" :pagination="pagination" :data-source="data"
+            class="components-table-demo-nested">
+            <template #action="{ record }">
+              <div>
+                <a href=""> 用户</a>
+                <a-divider type="vertical" />
 
-              <a-dropdown placement="bottomRight">
-                <a class="ant-dropdown-link">
-                  更多
-                  <DownOutlined />
-                </a>
-                <template #overlay>
-                  <a-menu>
-                    <a-menu-item>
-                      <a @click="handlePerssion(record.id)">授权</a>
-                    </a-menu-item>
-                    <a-menu-item>
-                      <a @click="handleEdit(record)">编辑</a>
-                    </a-menu-item>
-                    <a-menu-item>
-                      <a-popconfirm title="确定删除吗?" ok-text="确定" cancel-text="取消"
-                        @confirm="() => handleDelete(record.id)">
-                        <a>删除</a>
-                      </a-popconfirm>
-                    </a-menu-item>
-                  </a-menu>
-                </template>
-              </a-dropdown>
-            </div>
-          </template>
-        </a-table>
+                <a-dropdown placement="bottomRight">
+                  <a class="ant-dropdown-link">
+                    更多
+                    <DownOutlined />
+                  </a>
+                  <template #overlay>
+                    <a-menu>
+                      <a-menu-item>
+                        <a @click="handlePerssion(record.id)">授权</a>
+                      </a-menu-item>
+                      <a-menu-item>
+                        <a @click="handleEdit(record)">编辑</a>
+                      </a-menu-item>
+                      <a-menu-item>
+                        <a-popconfirm title="确定删除吗?" ok-text="确定" cancel-text="取消"
+                          @confirm="() => handleDelete(record.id)">
+                          <a>删除</a>
+                        </a-popconfirm>
+                      </a-menu-item>
+                    </a-menu>
+                  </template>
+                </a-dropdown>
+              </div>
+            </template>
+          </a-table>
+        </div>
       </div>
     </div>
+    <div class="role_r  bgf pd20 br8">
+      <!-- 角色对应的用户信息 -->
+      <div class="user-management mt-10">
+        <!-- 搜索区域 -->
+        <div class="search-area mb-24">
+          <a-form ref="searchFormRef" :model="searchForm" layout="inline">
+            <a-form-item label="用户账号">
+              <a-input v-model:value="searchForm.username" placeholder="请输入用户账号" allow-clear />
+            </a-form-item>
+            <a-form-item>
+              <a-space>
+                <a-button type="primary" @click="handleUserSearch">
+                  <!-- <template #icon>
+                    <SearchOutlined />
+                  </template> -->
+                  查询
+                </a-button>
+                <a-button @click="handleUserReset">
+                  <template #icon>
+                    <!-- <RedoOutlined /> -->
+                  </template>
+                  重置
+                </a-button>
+              </a-space>
+            </a-form-item>
+          </a-form>
+        </div>
+
+        <!-- 操作区域 -->
+        <div class="action-area">
+          <a-space>
+            <a-button type="primary" @click="handleAddUser">
+              <template #icon>
+                <PlusOutlined />
+              </template>
+              新增用户
+            </a-button>
+            <a-button @click="handleImportUser">
+              <template #icon>
+                <!-- <UserAddOutlined /> -->
+              </template>
+              已有用户
+            </a-button>
+            <a-button @click="handleUserBatchDelete" :disabled="selectedUserRowKeys.length === 0">
+              <template #icon>
+                <!-- <UserAddOutlined /> -->
+              </template>
+              批量删除
+            </a-button>
+
+          </a-space>
+        </div>
+        <!-- 批量操作区域 -->
+        <div class="ant-alert ant-alert-info" style="margin-bottom: 16px; margin-top: 10px">
+          <i class="anticon anticon-info-circle ant-alert-icon"></i>
+          已选择&nbsp;<a style="font-weight: 600">{{ selectedUserRowKeys.length }}</a>项&nbsp;&nbsp;
+          <a style="margin-left: 24px" @click="handleBatchDelete">清空</a>
+        </div>
+
+        <!-- 表格区域 -->
+        <div class="table-area mt-10">
+          <a-table :row-selection="{
+            selectedRowKeys: selectedUserRowKeys.value,
+            onChange: onSelectUserChange,
+            type: 'radio',
+          }" :columns="UserColumns" :data-source="tableData" :pagination="UserPagination" row-key="id"
+            :loading="Userloading" @change="handleTableChange">
+            <!-- 状态列自定义渲染 -->
+            <template #status="{ text, record }">
+              <a-tag :color="record.status === 1 ? 'green' : 'red'">
+                {{ record.status_dictText || (record.status === 1 ? '正常' : '禁用') }}
+              </a-tag>
+            </template>
+
+            <!-- 操作列 -->
+            <template #action="{ record }">
+              <a-space>
+                <a-button type="link" size="small" @click="handleUserEdit(record)">
+                  编辑
+                </a-button>
+                <a-popconfirm title="确定要删除该用户吗？" ok-text="确定" cancel-text="取消" @confirm="handleUserDelete(record)">
+                  <a-button type="link" size="small" danger>
+                    删除
+                  </a-button>
+                </a-popconfirm>
+              </a-space>
+            </template>
+          </a-table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div>
     <!-- 新增角色弹窗 -->
     <a-modal :width="800" :cancel-text="'取消'" :ok-text="'确定'" style="top:5%;height: 85%;overflow-y: hidden"
       v-model:visible="modalVisible" :title="IsCreate ? '新增角色' : '编辑角色'" :mask-closable="false" :keyboard="false"
@@ -99,20 +198,28 @@
         </a-form-item>
       </a-form>
     </a-modal>
+    <!-- 授权 -->
+    <PermissionConfigDrawer v-model:visible="drawerVisible" :role-id="selectedRoleId"
+      :fetch-tree-api="fetchPermissionTree" :fetch-checked-api="fetchCheckedPermissions" :save-api="saveRolePermissions"
+      @save-success="handleSave" @close="handleClose">
+    </PermissionConfigDrawer>
+    <!-- 角色对应用户管理 -->
   </div>
+
 </template>
 
 <script setup>
 import { ref, reactive, onMounted } from "vue";
 import getDatas from "@/network/index";
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import {
   PlusOutlined,
   VerticalAlignBottomOutlined,
   LoginOutlined,
   DownOutlined,
 } from "@ant-design/icons-vue";
-
+import PermissionConfigDrawer from "@/components/PermissionConfigDrawer.vue";
+import { Modal } from 'ant-design-vue';
 /*  表格数据及其内容配置 */
 const roleName = ref("");
 const pagination = reactive({
@@ -160,6 +267,8 @@ const columns = ref([
     slots: { customRender: "action" },
   },
 ]);
+
+
 /*  新增角色内容及配置 */
 const modalVisible = ref(false);
 // 判断是编辑还是新增
@@ -203,8 +312,14 @@ const handleCancel = () => {
     Modal.confirm({
       title: '提示',
       content: '您有未保存的内容，确定要关闭吗？',
+      okText: '确定',
+      cancelText: '取消',
       onOk() {
         modalVisible.value = false;
+      },
+      onCancel() {
+        modalVisible.value = false;
+        // 什么都不做，保持弹窗打开
       },
     });
   } else {
@@ -276,14 +391,69 @@ const onClearSelected = () => {
 
 // 选择变更
 const onSelectChange = (newSelectedRowKeys) => {
+  console.log(newSelectedRowKeys);
+
   selectedRowKeys.value = newSelectedRowKeys;
+  searchForm.username = '';
+  searchForm.roleId = newSelectedRowKeys[0] || '';
+
+  handleUserSearch();
 };
 
 // 授权
-const handlePerssion = (id) => {
-  console.log("授权功能待实现", id);
+const drawerVisible = ref(false);
+const selectedRoleId = ref(null);
+const handleSave = (values) => {
+  console.log("保存授权待实现", selectedRoleId.value, values);
 };
+const handleClose = () => {
+  drawerVisible.value = false;
+};
+const handlePerssion = (id) => {
+  console.log("授权功能待实现123", id);
+  drawerVisible.value = true;
+  selectedRoleId.value = id
+};
+// 角色树结构
+const fetchPermissionTree = async () => {
+  try {
+    const response = await getDatas('system/GetRoleListTree');
+    console.log("获取权限树响应:", response);
 
+    return response.data.result.treeList
+  } catch (error) {
+    console.error('获取权限树失败:', error)
+    return []
+  }
+}
+// 角色已选权限
+const fetchCheckedPermissions = async (roleId) => {
+  try {
+    const response = await getDatas('system/GetRoleListTreeById', { roleId });
+
+    return response.data.result
+  } catch (error) {
+    console.error('获取已选权限失败:', error)
+    return []
+  }
+}
+// 保存角色权限
+const saveRolePermissions = async (saveData) => {
+  try {
+    console.log("保存权限参数:", saveData);
+    const response = await getDatas('system/SaveRolePermission', saveData);
+    console.log(response, '132132');
+    if (response.data.code === 200) {
+      ElMessage.success('保存成功');
+      fetchPermissionTree();
+      fetchCheckedPermissions(selectedRoleId.value);
+
+    }
+  } catch (error) {
+    console.error('保存权限失败:', error)
+    throw error
+  }
+}
 
 
 // 查询
@@ -298,7 +468,7 @@ const handleSearch = async () => {
   console.log("获取用户角色管理信息", res);
   if (res.data.code === 0) {
     data.value = res.data.result.records;
-    pagination.total = res.data.result.total;
+    pagination.total = Number(res.data.result.total || 0);
     loading.value = false;
   }
 };
@@ -339,6 +509,166 @@ const handleExportXls = (fileName) => {
     }
   })
 }
+
+
+// 角色对应的客户端用户管理
+// 搜索表单
+const searchForm = reactive({
+  username: '',
+  roleId: ''
+})
+
+const searchFormRef = ref()
+const selectedUserRowKeys = ref([])
+const UserColumns = [
+  {
+    title: '用户账号',
+    dataIndex: 'username',
+    key: 'username',
+  },
+  {
+    title: '用户名称',
+    dataIndex: 'realname',
+    key: 'realname',
+  },
+  {
+    title: '状态',
+    dataIndex: 'status',
+    key: 'status',
+    slots: { customRender: 'status' }
+  },
+  {
+    title: '操作',
+    key: 'action',
+    slots: { customRender: 'action' }
+  }
+]
+
+const tableData = ref([{
+  birthday: null,
+  relTenantIds: null,
+  activitiSync: null,
+  userIdentity: null,
+  status_dictText: "正常",
+  delFlag: 0,
+  workNo: "18380432843",
+  post: null,
+  updateBy: "admin",
+  orgCode: "4312",
+  id: "101177",
+  email: null,
+  clientId: null,
+  sex: null,
+  departIds_dictText: "综合管理（党群工作）部",
+  telephone: "510106199408084848",
+  updateTime: "2025-06-10 10:51:22",
+  departIds: "4312",
+  avatar: null,
+  realname: "黄旎诗",
+  createBy: null,
+  phone: "18380432843",
+  createTime: null,
+  totalPoints: null,
+  orgCodeTxt: null,
+  username: "huangns",
+  status: 1
+},])
+const Userloading = ref(false)
+// 分页配置
+const UserPagination = reactive({
+  current: 1,
+  pageSize: 10,
+  total: 102,
+  showSizeChanger: true,
+  showQuickJumper: true,
+  showTotal: (total, range) => `${range[0]}-${range[1]} 共 ${total} 条`,
+  pageSizeOptions: ['10', '20', '50', '100']
+})
+
+const handleUserSearch = async () => {
+  let res = await getDatas("system/GetRoleListInfo", {
+    roleId: searchForm.roleId,
+    username: searchForm.username,
+  });
+  if (res.data.code === 0) {
+    tableData.value = res.data.result.records || [];
+    UserPagination.total = Number(res.data.result.total || 0);
+  }
+}
+
+const handleUserReset = () => {
+  searchForm.username = '';
+  searchFormRef.value?.resetFields();
+}
+const handleTableChange = (pagination, filters, sorter) => {
+  console.log('表格分页或排序变更:', pagination, filters, sorter);
+}
+const handleUserEdit = (record) => {
+  console.log('编辑用户:', record);
+}
+// 单个删除
+const handleUserDelete = async (record) => {
+  console.log('删除用户:', record);
+  let resp = await getDatas("system/DeleteUserinfo", {
+    userId: record.id,
+    roleId: searchForm.roleId
+  });
+  if (resp.data.code == 200) {
+    ElMessage.success('用户删除成功');
+    handleUserSearch();
+  } else {
+    ElMessage.error(resp.data.message);
+  }
+}
+// 批量删除
+const handleUserBatchDelete = async () => {
+  // 提示
+  ElMessageBox.confirm(
+    `是否确认删除选中的 ${selectedUserRowKeys.value.length} 个用户？`,
+    '批量删除用户',
+    {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning',
+    }
+  ).then(async () => {
+    console.log('批量删除用户:', selectedUserRowKeys.value);
+    let resp = await getDatas("system/DeleteUserinfoBatch", {
+      userIds: selectedUserRowKeys.value.join(','),
+      roleId: searchForm.roleId
+    });
+    if (resp.data.code == 200) {
+      ElMessage.success('用户批量删除成功');
+      handleUserSearch();
+      handleClearUserSelection();
+    } else {
+      ElMessage.error(resp.data.message);
+    }
+  }).catch(() => { });
+  // 确认删除
+
+
+}
+// 新增用户
+const handleAddUser = () => {
+  console.log('新增用户');
+}
+const handleImportUser = () => {
+  console.log('已有用户');
+}
+
+const handleClearUserSelection = () => {
+  selectedUserRowKeys.value = [];
+};
+
+const handleBatchDelete = () => {
+  console.log('批量删除用户:', selectedUserRowKeys.value);
+};
+
+const onSelectUserChange = (newSelectedRowKeys) => {
+  selectedUserRowKeys.value = newSelectedRowKeys;
+};
+
 onMounted(() => {
   handleSearch();
 })
@@ -347,5 +677,18 @@ onMounted(() => {
 <style lang="less" scoped>
 button {
   border-radius: 5px;
+}
+
+.role {
+  gap: 20px;
+}
+
+.role_l {
+  width: 48%;
+}
+
+.role_r {
+
+  flex: 1;
 }
 </style>

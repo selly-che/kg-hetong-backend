@@ -13,6 +13,7 @@
       :label-col="{ span: 6 }"
       :wrapper-col="{ span: 16 }"
       layout="horizontal"
+      style="border: 1px solid #e9e9e9;padding-top: 10px;"
     >
       <!-- 菜单类型 -->
       <a-form-item label="菜单类型" name="menuType">
@@ -60,7 +61,6 @@
 
       <!-- 菜单路径 -->
       <a-form-item 
-        v-if="formState.menuType !== MenuType.BUTTON" 
         label="菜单路径" 
         name="url"
         :required="true"
@@ -108,7 +108,7 @@
       </a-form-item>
 
       <!-- 前端组件（仅菜单显示） -->
-      <a-form-item 
+      <!-- <a-form-item 
         v-if="formState.menuType === MenuType.MENU" 
         label="前端组件" 
         name="component"
@@ -118,7 +118,7 @@
           v-model:value="formState.component"
           placeholder="请输入前端组件"
         />
-      </a-form-item>
+      </a-form-item> -->
 
       <!-- 默认跳转地址（仅菜单显示） -->
       <a-form-item 
@@ -146,14 +146,14 @@
             @click="showIconSelector = true"
           />
           <div v-if="formState.icon" class="icon-preview">
-            <component :is="formState.icon" v-if="typeof formState.icon === 'object'" />
-            <Icon :type="formState.icon" v-else />
+            <!-- <component :is="formState.icon" v-if="typeof formState.icon === 'object'" />
+            <Icon :type="formState.icon" v-else /> -->
           </div>
         </div>
       </a-form-item>
 
       <!-- 排序 -->
-      <a-form-item label="排序" name="sortNo">
+      <a-form-item label="排序" name="sortNo" v-if="formState.menuType !== MenuType.BUTTON" >
         <a-input-number
           v-model:value="formState.sortNo"
           :min="0"
@@ -220,14 +220,15 @@
         label="打开方式" 
         name="internalOrExternal"
       >
-        <a-radio-group v-model:value="formState.internalOrExternal">
-          <a-radio :value="false">内部</a-radio>
-          <a-radio :value="true">外部</a-radio>
-        </a-radio-group>
+       <a-switch
+          v-model:checked="formState.internalOrExternal"
+          checked-children="内部"
+          un-checked-children="外部"
+        />
       </a-form-item>
 
       <!-- 状态 -->
-      <a-form-item label="状态" name="status">
+      <a-form-item label="状态" name="status"  v-if="formState.menuType == MenuType.BUTTON">
         <a-radio-group v-model:value="formState.status">
           <a-radio :value="Status.DISABLED">无效</a-radio>
           <a-radio :value="Status.ENABLED">有效</a-radio>
@@ -238,10 +239,10 @@
       <a-modal
         v-model:visible="showIconSelector"
         title="选择图标"
-        width="600px"
+        :width="900"
         :footer="null"
       >
-        <IconSelector @select="handleIconSelect" />
+        <IconSelector @select="handleIconSelect"  />
       </a-modal>
     </a-form>
 
@@ -361,11 +362,11 @@ const rules = computed<Record<string, Rule[]>>(() => {
   }
 
   // 添加前端组件验证
-  if (formState.menuType === MenuType.MENU) {
-    baseRules.component = [
-      { required: true, message: '请输入前端组件', trigger: 'blur' },
-    ];
-  }
+  // if (formState.menuType === MenuType.MENU) {
+  //   baseRules.component = [
+  //     { required: true, message: '请输入前端组件', trigger: 'blur' },
+  //   ];
+  // }
 
   return baseRules;
 });
@@ -396,8 +397,10 @@ const handlePermsTypeChange = (e: any) => {
 };
 
 // 图标选择处理
-const handleIconSelect = (icon: string) => {
-  formState.icon = icon;
+const handleIconSelect = (fromicon: { icon: string}) => {
+  console.log(fromicon,'fromicon');
+  
+  formState.icon = fromicon.icon;
   showIconSelector.value = false;
 };
 
@@ -412,7 +415,7 @@ const handleClose = () => {
 const handleSubmit = async () => {
   try {
     await formRef.value?.validate();
-    
+  
     const formData = {
       ...formState,
       id: props.editData?.id,
@@ -420,13 +423,14 @@ const handleSubmit = async () => {
       isLeaf: formState.menuType === MenuType.BUTTON,
       leaf: formState.menuType === MenuType.BUTTON,
       delFlag: 0,
+      status: String(formState.status),
+      sortNo: String(formState.sortNo),
+      menuType: String(formState.menuType),
     };
-
     // 发送数据
     emit('submit', formData);
     handleClose();
-    
-    message.success(props.editData ? '编辑成功' : '新增成功');
+  
   } catch (error) {
     console.error('表单验证失败:', error);
   }

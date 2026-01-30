@@ -24,6 +24,33 @@ export default {
       params,
     };
   },
+
+// 根据角色信息查询用户
+  GetRoleListInfo(params: any) {
+    return {
+      method: "GET",
+      url: "/sys/user/userRoleList",
+      params,
+    };
+  },
+
+  // 删除用户数据
+  DeleteUserinfo(params: any) {
+    return {
+      method: "DELETE",
+      url: "/sys/user/deleteUserRole",
+      params,
+    };
+  } ,
+ // 批量删除
+  DeleteUserinfoBatch(params: any) {
+    return {
+      method: "DELETE",
+      url: "/sys/user/deleteUserRoleBatch",
+      params,
+    };
+  },
+
   // 添加角色数据
   AddUserRole(data: any) {
     return {
@@ -48,6 +75,31 @@ export default {
       params
     };
   },
+  // 获取角色管理树
+  GetRoleListTree(params: any) {
+    return {
+      method: "GET",
+      url: "/sys/role/queryTreeList",
+      params,
+    };
+  },
+  // 获取角色管理树(根据角色id获取已分配菜单)
+  GetRoleListTreeById(params: any) {
+    return {
+      method: "GET",
+      url: "/sys/permission/queryRolePermission",
+      params,
+    };
+  },
+  // 保存角色分配权限
+  SaveRolePermission(data: any) {
+    return {
+      method: "POST",
+      url: "/sys/permission/saveRolePermission",
+      data
+    };
+  },
+
   // 获取系统菜单管理树
   GetMenuListTree(params: any) {
     return {
@@ -57,12 +109,22 @@ export default {
 
     };
   },
+
   // 添加系统菜单管理树
   addMenuListTree(params: any) {
     return {
       method: "POST",
       url: "/sys/permission/add",
-      params,
+      data: params,
+
+    };
+  },
+  // 编辑系统菜单管理树
+  updateMenuListTree(params: any) {
+    return {
+      method: "PUT",
+      url: "/sys/permission/edit",
+      data: params,
 
     };
   },
@@ -71,14 +133,6 @@ export default {
     return {
       method: "DELETE",
       url: "/sys/permission/deleteBatch",
-      params,
-    };
-  },
-  // 获取系统菜单管理
-  GetMenuList(params: any) {
-    return {
-      method: "GET",
-      url: "/sys/permission/list",
       params,
     };
   },

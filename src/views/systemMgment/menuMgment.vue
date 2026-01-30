@@ -36,7 +36,7 @@
             </template>
         </a-table>
         <!-- 编辑菜单 -->
-        <MenuDrawer v-model:visible="open" :edit-data="currentEditData" :menu-tree-data="menuTreeData"
+        <MenuDrawer v-model:visible="open" :edit-data="currentEditData" :menu-tree-data="menuList"
             @submit="handleSubmit" @close="handleDrawerClose" />
     </div>
 </template>
@@ -55,99 +55,7 @@ import SelectNumber from "@/components/SelectNumber.vue"
 
 const selectedRowKeys = ref<any[]>([]);
 
-const menuList = ref<Usermenu[]>([
-    {
-        "id": "1692351203619045377",
-        "key": "1692351203619045377",
-        "title": "栏目管理",
-        "parentId": "",
-        "name": "栏目管理",
-        "perms": null,
-        "permsType": "1",
-        "icon": "cluster",
-        "component": "layouts/RouteView",
-        "url": "/columnmage",
-        "redirect": null,
-        "sortNo": 1,
-        "menuType": 0,
-        "isLeaf": false,
-        "route": true,
-        "keepAlive": false,
-        "description": null,
-        "delFlag": 0,
-        "createBy": "admin",
-        "createTime": "2023-08-18 09:42:24",
-        "updateBy": "admin",
-        "updateTime": "2023-08-18 10:28:35",
-        "alwaysShow": false,
-        "hidden": false,
-        "status": "1",
-        "internalOrExternal": false,
-        "children": [
-            {
-                "id": "1686624163074867202",
-                "key": "1686624163074867202",
-                "title": "栏目管理",
-                "parentId": "1692351203619045377",
-                "name": "栏目管理",
-                "perms": null,
-                "permsType": "1",
-                "icon": "bars",
-                "component": "newsper/NewsperList",
-                "url": "/newsper/NewsperList",
-                "redirect": null,
-                "sortNo": 1,
-                "menuType": 1,
-                "isLeaf": true,
-                "route": true,
-                "keepAlive": false,
-                "description": null,
-                "delFlag": 0,
-                "createBy": "admin",
-                "createTime": "2023-08-02 14:25:11",
-                "updateBy": "admin",
-                "updateTime": "2023-08-18 09:59:44",
-                "alwaysShow": false,
-                "hidden": false,
-                "status": "1",
-                "internalOrExternal": false,
-                "children": null,
-                "leaf": true
-            },
-            {
-                "id": "1692351828494843906",
-                "key": "1692351828494843906",
-                "title": "栏目管理员",
-                "parentId": "1692351203619045377",
-                "name": "栏目管理员",
-                "perms": null,
-                "permsType": "1",
-                "icon": "usergroup-add",
-                "component": "columnm/ColumnAdmList",
-                "url": "/columnm/ColumnAdmList",
-                "redirect": null,
-                "sortNo": 2,
-                "menuType": 1,
-                "isLeaf": true,
-                "route": true,
-                "keepAlive": false,
-                "description": null,
-                "delFlag": 0,
-                "createBy": "admin",
-                "createTime": "2023-08-18 09:44:53",
-                "updateBy": "admin",
-                "updateTime": "2023-08-18 10:48:40",
-                "alwaysShow": false,
-                "hidden": false,
-                "status": "1",
-                "internalOrExternal": false,
-                "children": null,
-                "leaf": true
-            }
-        ],
-        "leaf": false
-    }
-])
+const menuList = ref<Usermenu[]>([])
 
 
 // 处理编辑
@@ -155,7 +63,7 @@ const open = ref<boolean>(false);
 const handleEdit = (record: Usermenu) => {
     console.log('编辑:', record)
     open.value = true;
-    console.log('编辑:', open.value)
+    currentEditData.value = { ...record };
 }
 
 const onSelectChange = (selectedKeys: any[]) => {
@@ -177,12 +85,35 @@ const handleMenuClick = (row: any, record: any) => {
 }
 
 
-const clearNum = (value: number) => {
+const clearNum = () => {
     selectedRowKeys.value = [];
 }
 const addUserMenu = () => {
     console.log('新增菜单');
     open.value = true;
+    // let formDataFinal = {
+    //     "alwaysShow": false,
+    //     "component": "1",
+    //     "hidden": false,
+    //      "icon": "ArrowsAltOutlined",
+    //     "keepAlive": false,
+    //     "menuType": "0",
+    //     "name": "11421",
+    //     "perms": "",
+    //     "permsType": "1",
+    //     "redirect": "",
+    //     "route": true,
+    //     "status": "1",
+    //     "sortNo": "0",
+    //     "url": "11",
+
+    //     // "parentId": "",
+    //     "internalOrExternal": false,
+    //     "title": "11",
+    //     "isLeaf": false,
+    //     "leaf": false,
+    // }
+    // handleSubmit(formDataFinal)
 }
 const batchDelete = () => {
     console.log('批量删除菜单:', selectedRowKeys.value);
@@ -196,14 +127,20 @@ const batchDelete = () => {
         }
     )
         .then(async () => {
-            let resp = await getDatas("system/deleteMenuListTree", { ids: selectedRowKeys.value });
-            if (resp.data.code == 0) {
+            let idss = selectedRowKeys.value.join(',');
+            let resp = await getDatas("system/deleteMenuListTree", { ids: idss });
+            if (resp.data.code == 200) {
                 ElMessage({
                     type: 'success',
                     message: '删除成功!',
                 });
                 getUserTreeFn();
                 selectedRowKeys.value = [];
+            } else {
+                ElMessage({
+                    type: 'error',
+                    message: resp.data.message || '删除失败!',
+                });
             }
         })
         .catch(() => {
@@ -253,41 +190,48 @@ const getUserTreeFn = async () => {
 }
 
 
-const currentEditData = ref<MenuItem | null>(null);
+let currentEditData = ref<any>(null);
 
-// 构建树形数据
-const menuTreeData  = computed(() => {
-    const buildTree :any  = (items: MenuItem[], parentId: string = ''): any[] => {
-        return items
-            .filter(item => item.parentId === parentId && item.menuType !== MenuType.BUTTON)
-            .map(item => ({
-                id: item.id,
-                key: item.key,
-                title: item.title,
-                children: buildTree(items, item.id),
-            }));
-    };
-    return buildTree(menuList.value);
-});
 
 // 提交表单
 const handleSubmit = async (formData: any) => {
     try {
+        console.log(formData, 'formDataformData');
         if (formData.id) {
             // 编辑操作
-            // await updateMenu(formData);
-            message.success('编辑成功');
+            await updateMenu(formData);
         } else {
             // 新增操作
-            // await addMenu(formData);
-            message.success('新增成功');
+            await addMenu(formData);
         }
-        getUserTreeFn();
     } catch (error) {
         message.error('操作失败');
     }
 };
+const addMenu = async (data: any) => {
+    let resp = await getDatas("system/addMenuListTree", data);
+    console.log(resp, 'respresp');
 
+    if (resp.data.code == 200) {
+        message.success('新增成功');
+        getUserTreeFn();
+        open.value = false;
+    } else {
+        message.error(resp.data.message || '新增失败');
+    }
+};
+
+const updateMenu = async (data: any) => {
+    let resp = await getDatas("system/updateMenuListTree", data);
+    console.log(resp, 'respresp');
+    if (resp.data.code == 200) {
+        message.success('编辑成功');
+        getUserTreeFn();
+        open.value = false;
+    } else {
+        message.error(resp.data.message || '编辑失败');
+    }
+};
 
 // 关闭抽屉
 const handleDrawerClose = () => {
