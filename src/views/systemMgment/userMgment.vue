@@ -5,17 +5,17 @@
       <a-form layout="inline" @keyup.enter="searchQuery" class="search-form">
         <a-row :gutter="24">
           <a-col :md="6" :sm="12">
-            <a-form-item label="账号">
+            <a-form-item label="用户账号">
               <a-input
-                placeholder="输入账号模糊查询"
-                v-model="queryParam.username"
+                placeholder="请输入用户账号"
+                v-model:value="queryParam.username"
               ></a-input>
             </a-form-item>
           </a-col>
 
           <a-col :md="6" :sm="8">
             <a-form-item label="性别">
-              <a-select v-model="queryParam.sex" placeholder="请选择性别">
+              <a-select v-model:value="queryParam.sex" placeholder="请选择性别">
                 <a-select-option value="">请选择</a-select-option>
                 <a-select-option value="1">男</a-select-option>
                 <a-select-option value="2">女</a-select-option>
@@ -24,19 +24,27 @@
           </a-col>
 
           <a-col :md="6" :sm="8">
-            <a-form-item label="真实名字">
+            <a-form-item label="真实姓名">
               <a-input
-                placeholder="请输入真实名字"
-                v-model="queryParam.realname"
+                placeholder="请输入用户真实姓名"
+                v-model:value="queryParam.realname"
               ></a-input>
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="8" v-if="toggleSearchStatus">
             <a-form-item label="部门">
-              <a-select v-model="queryParam.orgCode" placeholder="请选择部门">
+              <a-select
+                v-model:value="queryParam.departIds"
+                placeholder="请选择部门"
+              >
                 <a-select-option value="">请选择</a-select-option>
-                <a-select-option value="1">部门1</a-select-option>
-                <a-select-option value="2">部门2</a-select-option>
+                <a-select-option
+                  v-for="item in deptList"
+                  :key="item.departIds"
+                  :value="item.departIds"
+                >
+                  {{ item.departIds_dictText }}
+                </a-select-option>
               </a-select>
             </a-form-item>
           </a-col>
@@ -45,14 +53,14 @@
             <a-form-item label="手机号码">
               <a-input
                 placeholder="请输入手机号码查询"
-                v-model="queryParam.phone"
+                v-model:value="queryParam.phone"
               ></a-input>
             </a-form-item>
           </a-col>
 
           <a-col :md="6" :sm="8" v-if="toggleSearchStatus">
             <a-form-item label="用户状态">
-              <a-select v-model="queryParam.status" placeholder="请选择">
+              <a-select v-model:value="queryParam.status" placeholder="请选择">
                 <a-select-option value="">请选择</a-select-option>
                 <a-select-option value="1">正常</a-select-option>
                 <a-select-option value="2">冻结</a-select-option>
@@ -117,12 +125,12 @@
         </template>
         回收站
       </a-button>
-      <a-button type="primary" @click="handleSuperQuery">
+      <!-- <a-button type="primary" @click="handleSuperQuery">
         <template #icon>
           <FilterOutlined />
         </template>
         高级查询
-      </a-button>
+      </a-button> -->
       <a-third-app-button
         biz-type="user"
         :selected-row-keys="selectedRowKeys"
@@ -177,13 +185,13 @@
                   <a href="javascript:;" @click="handleDetail(record)">详情</a>
                 </a-menu-item>
 
-                <a-menu-item>
+                <!-- <a-menu-item>
                   <a
                     href="javascript:;"
                     @click="handleChangePassword(record.username)"
                     >密码</a
                   >
-                </a-menu-item>
+                </a-menu-item> -->
 
                 <a-menu-item>
                   <a-popconfirm
@@ -212,13 +220,13 @@
                   </a-popconfirm>
                 </a-menu-item>
 
-                <a-menu-item>
+                <!-- <a-menu-item>
                   <a
                     href="javascript:;"
                     @click="handleAgentSettings(record.username)"
                     >代理人</a
                   >
-                </a-menu-item>
+                </a-menu-item> -->
               </a-menu>
             </template>
             <a>
@@ -230,24 +238,14 @@
       </a-table>
     </div>
     <!-- table区域-end -->
-<!-- 
-    <user-modal ref="modalForm" @ok="modalFormOk"></user-modal>
-
-    <password-modal ref="passwordmodal" @ok="passwordModalOk"></password-modal>
-
-    <sys-user-agent-modal ref="sysUserAgentModal"></sys-user-agent-modal> -->
-
-    <!-- 用户回收站 -->
-    <user-recycle-bin-modal
-      v-model:visible="recycleBinVisible"
-      @ok="modalFormOk"
-    />
   </a-card>
   <!-- 编辑抽屉 -->
-  <!-- <form-drawer-right ref="modalFormDawer" @ok="modalFormOk" :title="title">
-  </form-drawer-right> -->
+  <form-drawer-right ref="modalFormDawer" @ok="modalFormOk" :title="title">
+  </form-drawer-right>
   <!-- 高级查询抽屉 -->
-  <!-- <modal ref="superQueryModal" @ok="superQueryModalOk" :title="title2"> </modal> -->
+  <!-- <modal ref="superQueryModal" @ok="superQueryModalOk" :title="title2">
+    
+  </modal> -->
 </template>
 
 <script setup>
@@ -267,7 +265,17 @@ import {
 
 const title = ref("");
 const title2 = ref("");
-const queryParam = reactive({});
+// 普通查询参数
+const queryParam = reactive({
+  username: "",
+  sex: "",
+  realname: "",
+  orgCodeTxt: "",
+  phone: "",
+  status: "",
+  email: "",
+  post: "",
+});
 const recycleBinVisible = ref(false);
 const toggleSearchStatus = ref(true);
 const selectedRowKeys = ref([]);
@@ -330,17 +338,29 @@ const columns = [
     width: 100,
     dataIndex: "phone",
   },
+  // {
+  //   title: "部门",
+  //   align: "center",
+  //   width: 180,
+  //   dataIndex: "orgCodeTxt",
+  // },
+  {
+    title: "邮箱",
+    align: "center",
+    width: 180,
+    dataIndex: "email",
+  },
   {
     title: "部门",
     align: "center",
     width: 180,
-    dataIndex: "orgCodeTxt",
+    dataIndex: "departIds_dictText",
   },
   {
-    title: "负责部门",
+    title: "职务",
     align: "center",
-    width: 180,
-    dataIndex: "departIds_dictText",
+    width: 100,
+    dataIndex: "post",
   },
   {
     title: "状态",
@@ -356,32 +376,34 @@ const columns = [
     width: 170,
   },
 ];
-const superQueryFieldList = [
-  { type: "input", value: "username", text: "用户账号" },
-  { type: "input", value: "realname", text: "用户姓名" },
-  {
-    type: "select",
-    value: "sex",
-    dbType: "int",
-    text: "性别",
-    dictCode: "sex",
-  },
-];
+//部门列表数据
+const deptList = ref([]);
 
 // 初始化数据
 onMounted(() => {
   searchQuery();
 });
-
-// 查询
+// 查询用户列表
 const searchQuery = async () => {
   loading.value = true;
   // 调用API
   const res = await getDatas("system/GetUserinfo", {
     pageNo: ipagination.value.current,
     pageSize: ipagination.value.pageSize,
+    ...queryParam,
   });
-  console.log(res, "qq");
+  // console.log("发送的参数：", res.config.params);
+  //去重部门列表
+  const deptNew = new Map();
+  res.data.result.records.forEach((item) => {
+    if (item.departIds && item.departIds.length > 0) {
+      deptNew.set(item.departIds, {
+        departIds: item.departIds,
+        departIds_dictText: item.departIds_dictText,
+      });
+    }
+  });
+  deptList.value = Array.from(deptNew.values());
 
   if (res && res.data.code === 0) {
     dataSource.value = res.data.result.records;
@@ -391,10 +413,12 @@ const searchQuery = async () => {
   }
   loading.value = false;
 };
-
 // 重置
 const searchReset = () => {
-  Object.assign(queryParam, {});
+  //遍历清空
+  Object.keys(queryParam).forEach((key) => {
+    queryParam[key] = "";
+  });
   searchQuery();
 };
 
@@ -467,13 +491,14 @@ const handleEdit = async (record) => {
     id: record.id,
   });
   // console.log(res, "idinfo");
-  console.log(res.data.result);
+  // console.log(res.data.result);
   title.value = "编辑用户";
   modalFormDawer.value.showDrawer(record);
 };
 
 // 查看详情
 const handleDetail = (record) => {
+  title.value = "查看详情";
   modalFormDawer.value.showDrawer(record, true);
 };
 
@@ -508,7 +533,6 @@ const modalFormOk = () => {
 const passwordModalOk = () => {
   message.success("密码修改成功");
 };
-
 </script>
 
 <style lang="less" scoped>

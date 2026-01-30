@@ -16,6 +16,15 @@ export default {
       params,
     };
   },
+  //模块高级查询
+  ///jeecg-boot/sys/user/queryUserComponentData
+  SelectUserinfo(params: any) {
+    return {
+      method: "GET",
+      url: "/sys/user/queryUserComponentData",
+      params,
+    };
+  },
   // 获取用户角色管理信息
   GetUserRole(params: any) {
     return {
