@@ -42,6 +42,18 @@ export default {
       params,
     };
   },
+  
+  
+  // 添加已有客户信息
+  AddSysUserRole(params: any) {
+    return {
+      method: "POST",
+      url: "/sys/user/addSysUserRole",
+      data: params,
+    };
+  },
+
+
 
   // 删除用户数据
   DeleteUserinfo(params: any) {

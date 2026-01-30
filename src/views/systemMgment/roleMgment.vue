@@ -6,8 +6,16 @@
         <a-form-item label="账号" style="width: 400px; margin-right: 10px">
           <a-input placeholder="请输入角色名" allow-clear v-model:value="roleName"></a-input>
         </a-form-item>
-        <a-button type="primary" @click="handleSearch" style="margin-right: 10px">查询</a-button>
-        <a-button type="primary" @click="handleReset">重置</a-button>
+        <a-button type="primary" @click="handleSearch" style="margin-right: 10px">
+          <template #icon>
+            <SearchOutlined />
+          </template>
+          查询</a-button>
+        <a-button type="primary" @click="handleReset">
+          <template #icon>
+            <RedoOutlined />
+          </template>
+          重置</a-button>
       </div>
       <!-- 按钮区 -->
       <div style="display: flex">
@@ -94,14 +102,14 @@
             <a-form-item>
               <a-space>
                 <a-button type="primary" @click="handleUserSearch">
-                  <!-- <template #icon>
+                  <template #icon>
                     <SearchOutlined />
-                  </template> -->
+                  </template>
                   查询
                 </a-button>
                 <a-button @click="handleUserReset">
                   <template #icon>
-                    <!-- <RedoOutlined /> -->
+                    <RedoOutlined />
                   </template>
                   重置
                 </a-button>
@@ -119,9 +127,9 @@
               </template>
               新增用户
             </a-button>
-            <a-button @click="handleImportUser">
+            <a-button type="primary" @click="handleImportUser">
               <template #icon>
-                <!-- <UserAddOutlined /> -->
+                <PlusOutlined />
               </template>
               已有用户
             </a-button>
@@ -146,7 +154,6 @@
           <a-table :row-selection="{
             selectedRowKeys: selectedUserRowKeys.value,
             onChange: onSelectUserChange,
-            type: 'radio',
           }" :columns="UserColumns" :data-source="tableData" :pagination="UserPagination" row-key="id"
             :loading="Userloading" @change="handleTableChange">
             <!-- 状态列自定义渲染 -->
@@ -204,6 +211,9 @@
       @save-success="handleSave" @close="handleClose">
     </PermissionConfigDrawer>
     <!-- 角色对应用户管理 -->
+      <UserAddDrawer ref="userAddDrawerRef" @submit-success="handleSubmitSuccess" />
+    <!-- 添加已有客户 -->
+    <AddExistingUserModal ref="addUserModalRef" @confirm="handleUserSelected" @cancel="handleModalCancel" />
   </div>
 
 </template>
@@ -217,8 +227,12 @@ import {
   VerticalAlignBottomOutlined,
   LoginOutlined,
   DownOutlined,
+  SearchOutlined,
+  RedoOutlined
 } from "@ant-design/icons-vue";
 import PermissionConfigDrawer from "@/components/PermissionConfigDrawer.vue";
+import AddExistingUserModal from '@/components/AddExistingUserModal.vue';
+import UserAddDrawer from '@/components/UserAddDrawer.vue';
 import { Modal } from 'ant-design-vue';
 /*  表格数据及其内容配置 */
 const roleName = ref("");
@@ -544,35 +558,7 @@ const UserColumns = [
   }
 ]
 
-const tableData = ref([{
-  birthday: null,
-  relTenantIds: null,
-  activitiSync: null,
-  userIdentity: null,
-  status_dictText: "正常",
-  delFlag: 0,
-  workNo: "18380432843",
-  post: null,
-  updateBy: "admin",
-  orgCode: "4312",
-  id: "101177",
-  email: null,
-  clientId: null,
-  sex: null,
-  departIds_dictText: "综合管理（党群工作）部",
-  telephone: "510106199408084848",
-  updateTime: "2025-06-10 10:51:22",
-  departIds: "4312",
-  avatar: null,
-  realname: "黄旎诗",
-  createBy: null,
-  phone: "18380432843",
-  createTime: null,
-  totalPoints: null,
-  orgCodeTxt: null,
-  username: "huangns",
-  status: 1
-},])
+const tableData = ref([])
 const Userloading = ref(false)
 // 分页配置
 const UserPagination = reactive({
@@ -586,14 +572,18 @@ const UserPagination = reactive({
 })
 
 const handleUserSearch = async () => {
+  Userloading.value = true;
   let res = await getDatas("system/GetRoleListInfo", {
     roleId: searchForm.roleId,
     username: searchForm.username,
+    pageNo: UserPagination.current,
+    pageSize: UserPagination.pageSize
   });
   if (res.data.code === 0) {
     tableData.value = res.data.result.records || [];
     UserPagination.total = Number(res.data.result.total || 0);
   }
+  Userloading.value = false;
 }
 
 const handleUserReset = () => {
@@ -602,6 +592,10 @@ const handleUserReset = () => {
 }
 const handleTableChange = (pagination, filters, sorter) => {
   console.log('表格分页或排序变更:', pagination, filters, sorter);
+  UserPagination.current = pagination.current;
+  UserPagination.pageSize = pagination.pageSize;
+  handleUserSearch(); // 重新请求表格数据
+
 }
 const handleUserEdit = (record) => {
   console.log('编辑用户:', record);
@@ -649,13 +643,7 @@ const handleUserBatchDelete = async () => {
 
 
 }
-// 新增用户
-const handleAddUser = () => {
-  console.log('新增用户');
-}
-const handleImportUser = () => {
-  console.log('已有用户');
-}
+
 
 const handleClearUserSelection = () => {
   selectedUserRowKeys.value = [];
@@ -669,6 +657,43 @@ const onSelectUserChange = (newSelectedRowKeys) => {
   selectedUserRowKeys.value = newSelectedRowKeys;
 };
 
+
+/* 添加已有用户弹窗相关 ---------------------*/ 
+
+const addUserModalRef = ref();
+const handleImportUser = () => {
+  console.log('已有用户');
+  addUserModalRef.value.openModal();
+}
+
+const handleUserSelected =  async (selectedUsers) => {
+  console.log('选择的用户:123123', selectedUsers);
+  // 这里可以处理选择的用户，比如添加到当前角色或组织中
+  const resp = await getDatas("system/AddSysUserRole", {
+    roleId: searchForm.roleId,
+    userIds: selectedUsers.map(item => item).join(',')
+  });
+  if (resp.data.code == 200) {
+    ElMessage.success('用户添加成功');
+    handleUserSearch();
+  } else {
+    ElMessage.error(resp.data.message);
+  }
+};
+
+const handleModalCancel = () => {
+  console.log('弹框已取消');
+};
+/* 添加用户弹窗相关 ---------------------*/ 
+const userAddDrawerRef = ref();
+const handleAddUser = () => {
+  console.log('新增用户');
+  userAddDrawerRef.value.openDrawer();
+}
+const handleSubmitSuccess = (userData) => {
+  console.log('新增的用户数据:', userData);
+  // 这里可以刷新列表或进行其他操作
+};
 onMounted(() => {
   handleSearch();
 })
