@@ -8,4 +8,12 @@ export default {
       data: params,
     };
   },
+  ///jeecg-boot/projectcontract/tpmProject/list
+  GetProjectContractList(params: any) {
+    return {
+      method: "GET",
+      url: "/projectcontract/tpmProject/list",
+      data: params,
+    };
+  },
 };
