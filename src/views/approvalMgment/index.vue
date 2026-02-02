@@ -40,7 +40,7 @@
               {{ contract.status === "pending" ? "待审核" : "已审核" }}
             </span>
           </td>
-          <td><a href="#" class="view-btn">查看</a></td>
+          <td><a href="#" class="view-btn" @click="goToEdit(contract)">查看</a></td>
         </tr>
       </tbody>
     </table>

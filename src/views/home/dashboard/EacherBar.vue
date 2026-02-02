@@ -32,7 +32,7 @@
             >全年</a-button
           >
         </a-space>
-        <a-range-picker :suffix-icon="cicon" @change="onChange" />
+        <a-range-picker @change="onChange" />
       </div>
     </div>
     <div class="bar-content">
@@ -61,7 +61,6 @@ export default {
   name: "EacherBar",
   data() {
     return {
-      cicon: "calendar",
       activeKey: "1",
       activeDate: "today",
       chart: null,
@@ -124,9 +123,6 @@ export default {
         ],
       },
     };
-  },
-  components: {
-    // CalendarOutlined
   },
   mounted() {
     this.chart = echarts.init(this.$refs.barContainer);
