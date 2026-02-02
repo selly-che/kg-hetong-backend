@@ -57,30 +57,35 @@
       </a-form>
     </div>
     <div class="context">
-      <a-button type="primary" style="margin-right: 10px">新增</a-button>
+      <a-button
+        type="primary"
+        style="margin-right: 10px"
+        @click="handleAdd()"
+        >新增</a-button
+      >
       <a-button>导出excel</a-button>
       <div class="table" style="margin-top: 10px">
         <a-table
           :columns="columns"
           :data-source="tabledata"
-          :pagination="false"
+          :pagination="pagination"
           :row-selection="rowSelection"
           :scroll="{ x: 'max-content', y: 600 }"
         >
           <template #action="{ record }">
-            <a
-              style="margin-right: 10px"
-              @click="handleEdit(record)"
-              >编辑</a>
+            <a style="margin-right: 10px" @click="handleEdit(record)">编辑</a>
           </template>
         </a-table>
       </div>
+      <outsourcingAdd ref="outsourcingAddRef" />
     </div>
   </div>
 </template>
 <script lang="ts" setup>
 import { onMounted, ref } from "vue";
+import outsourcingAdd from "../contractMgment/outsourcingAdd.vue";
 
+const outsourcingAddRef= ref();
 const formData = ref({
   year: "all",
   contractNumber: "",
@@ -209,7 +214,7 @@ const columns = [
     key: "action",
     width: 80,
     fixed: "right",
-    slots: { customRender: 'action' },
+    slots: { customRender: "action" },
   },
 ];
 //行数据
@@ -237,7 +242,25 @@ const tabledata = ref([
 const handleEdit = (record: any) => {
   console.log("编辑", record);
 };
-
+//分页
+const pagination = ref({
+  current: 1, // 当前页数
+  pageSize: 10, // 每页显示条数
+  total: "", // 总条数
+  showSizeChanger: true, // 显示每页条数选择器
+  showQuickJumper: true, // 显示快速跳转
+  showTotal: (total: number) => `共 ${total} 条记录`, // 显示总数
+  pageSizeOptions: ["10", "20", "50", "100"], // 每页条数选项
+  onChange: (page: number, pageSize: number) => {
+    pagination.value.current = page;
+    pagination.value.pageSize = pageSize;
+  },
+});
+//新增
+const handleAdd = () => {
+  console.log("弹抽屉");
+  outsourcingAddRef.value.showModal();
+};
 onMounted(() => {
   console.log("组件挂载完成");
   adc(1);
@@ -250,12 +273,7 @@ const handleSearch = () => {
   console.log("formData", formData.value);
 };
 const handleReset = () => {
-  formData.value = {
-    year: "all",
-    contractNumber: "",
-    contractName: "",
-    executionUnit: "",
-  };
+  console.log("重置");
 };
 </script>
 
