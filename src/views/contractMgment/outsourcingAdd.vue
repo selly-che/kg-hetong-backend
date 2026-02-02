@@ -1,6 +1,6 @@
 <template>
   <div>
-    <a-modal v-model:visible="visible" title="新增外协合同" @ok="handleOk">
+    <a-modal v-model:visible="visible" title="新增外协合同" @ok="handleOk" width="1200px">
        <!-- 新增外协合同的表单 -->
     </a-modal>
   </div>
