@@ -252,6 +252,7 @@
 import getDatas from "@/network/index";
 import { ref, reactive, onMounted } from "vue";
 import { message } from "ant-design-vue";
+import { exportExcel } from "@/utils/common";
 import FormDrawerRight from "./FormDrawerRight.vue";
 import Modal from "./Modal.vue";
 import {
@@ -434,8 +435,36 @@ const handleAdd = () => {
 };
 
 // 导出Excel
-const handleExportXls = (fileName) => {
-  message.info("导出功能开发中");
+const handleExportXls = async (fileName) => {
+  if (dataSource.value.length === 0) {
+    message.warning("暂无数据可导出");
+    return;
+  }
+
+  try {
+    message.loading("正在导出...", 0);
+
+    const exportColumns = [
+      { title: "用户账号", dataIndex: "username" },
+      { title: "用户姓名", dataIndex: "realname" },
+      { title: "性别", dataIndex: "sex_dictText" },
+      { title: "生日", dataIndex: "birthday" },
+      { title: "手机号码", dataIndex: "phone" },
+      { title: "邮箱", dataIndex: "email" },
+      { title: "部门", dataIndex: "departIds_dictText" },
+      { title: "职务", dataIndex: "post" },
+      { title: "状态", dataIndex: "status_dictText" },
+    ];
+
+    exportExcel(dataSource.value, exportColumns, { fileName });
+
+    message.destroy();
+    message.success("导出成功");
+  } catch (error) {
+    message.destroy();
+    message.error("导出失败");
+    console.error("导出错误:", error);
+  }
 };
 
 // 导入Excel
