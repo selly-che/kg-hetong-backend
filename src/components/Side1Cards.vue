@@ -34,7 +34,6 @@
 
 <script setup>
 import { defineProps } from "vue";
-import router from "@/router";
 
 const props = defineProps({
   project: {
@@ -43,16 +42,8 @@ const props = defineProps({
   },
 });
 
-// const watchProject = () => {
-//   router.push({
-//     path: `/projectMgment/watchproject`,
-//     name: "watchProject",
-//     params: { id: props.project.id },
-//   });
-// };
-
+// 根据状态返回不同的样式类
 const getStatusClass = (status) => {
-  // 根据状态返回不同的样式类
   switch (status) {
     case "进行中":
       return "status-in-progress";

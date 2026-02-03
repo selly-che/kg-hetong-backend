@@ -88,15 +88,16 @@ const activeStatus = ref("all");
 const activeKey = ref("1");
 
 onMounted(() => {
-  console.log('组件挂载完成');
-  projectinfo()
+  getProjectList()
 });
 
-const projectinfo = async () => {
-  const res = await getDatas("project/GetProjectList")
-  console.log("项目管理中",res);
-}
-
+const getProjectList = async () => {
+  const res = await getDatas("project/GetProjectList", {
+    pageNum: 1,
+    pageSize: 10,
+  });
+  console.log("项目列表信息:", res.data.result);
+};
 const onSearch = (value) => {
   searchText.value = value;
   emit("search", searchText.value);
