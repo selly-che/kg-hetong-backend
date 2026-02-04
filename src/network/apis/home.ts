@@ -35,7 +35,7 @@ export default {
     return {
       method: "POST",
       url: "/statistics/contractCountStats",
-      params,
+      data: params,
     };
   },
 };
