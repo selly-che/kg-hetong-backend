@@ -13,6 +13,8 @@
 
 <script>
 import * as echarts from "echarts";
+import getDatas from "@/network/index";
+
 export default {
   name: "EacherPie",
   data() {
@@ -20,13 +22,15 @@ export default {
       chart: null,
       activeTab: 0,
       option: {
+        //悬停提示
         tooltip: {
+          // show:false,
           trigger: "item",
           formatter: "{b}: {c} ({d}%)",
         },
         legend: {
           orient: "vertical",
-          right: "10%",
+          right: "5%",
           top: "center",
           formatter: "{name} | 36%  ¥4,544",
           textStyle: {
@@ -40,9 +44,9 @@ export default {
             name: "应收款项目",
             type: "pie",
             radius: ["40%", "70%"],
-            center: ["35%", "55%"],
+            center: ["30%", "55%"],
             avoidLabelOverlap: false,
-            padAngle: 5,
+            // padAngle: 5,
             selectedMode: "single",
             selectedOffset: 10,
             itemStyle: {
@@ -51,32 +55,25 @@ export default {
               borderWidth: 2,
             },
             label: {
-              show: false,
+              show: true,
               position: "center",
-              // formatter: '总金额\n¥123,224',
               color: "#333",
               fontSize: 16,
               fontWeight: "bold",
+              formatter:"111"
             },
             emphasis: {
               label: {
                 show: true,
-                formatter: "总金额\n¥4,544",
-                fontSize: 18,
+                formatter: "总金额\n¥12624",
+                fontSize: 16,
                 fontWeight: "bold",
               },
             },
             labelLine: {
               show: false,
             },
-            data: [
-              { value: 4544, name: "市政", itemStyle: { color: "#4A90E2" } },
-              { value: 2524, name: "隧道", itemStyle: { color: "#50E3C2" } },
-              { value: 2021, name: "公路", itemStyle: { color: "#7ED321" } },
-              { value: 1267, name: "铁路", itemStyle: { color: "#F5A623" } },
-              { value: 1129, name: "建筑", itemStyle: { color: "#D0021B" } },
-              { value: 1139, name: "其他", itemStyle: { color: "#9013FE" } },
-            ],
+            data: [],
             total: 12624,
           },
         ],
@@ -87,6 +84,7 @@ export default {
     this.chart = echarts.init(this.$refs.pieChart);
     this.chart.setOption(this.option);
     window.addEventListener("resize", this.handleResize);
+    this.getPieData();
   },
   beforeUnmount() {
     window.removeEventListener("resize", this.handleResize);
@@ -102,7 +100,6 @@ export default {
     },
     handleTabClick(index) {
       this.activeTab = index;
-      // 更新标签页的active状态
       const tabs = document.querySelectorAll(".pie-tabs .tab");
       tabs.forEach((tab, i) => {
         if (i === index) {
@@ -111,7 +108,42 @@ export default {
           tab.classList.remove("active");
         }
       });
-      this.chart.setOption(this.option);
+      this.getPieData();
+    },
+    //饼图数据
+    async getPieData() {
+      const res = await getDatas("home/GetContractCollectionStats");
+      console.log("饼图数据", res);
+      if (res.data.code === 200) {
+        const data = res.data.result;
+        const colorMap = {
+          "市政": "#4A90E2",
+          "隧道": "#50E3C2",
+          "公路": "#7ED321",
+          "铁路": "#F5A623",
+          "建筑": "#D0021B",
+          "其他": "#9013FE",
+          "其它": "#9013FE",
+          "城轨": "#BD10E0"
+        };
+        const statsKey = this.activeTab === 0 ? "allContractStats" : this.activeTab === 1 ? "domesticContractStats" : "externalContractStats";
+        const stats = data[statsKey];
+        const total = stats["总计"] || 0;
+        const pieData = Object.entries(stats)
+          .filter(([key]) => key !== "总计")
+          .map(([name, value]) => ({
+            value,
+            name,
+            itemStyle: { color: colorMap[name] || "#999" },
+            percentage: total > 0 ? ((value / total) * 100).toFixed(1) : "0.0"
+          }));
+        this.option.series[0].data = pieData;
+        this.option.series[0].total = total;
+        const totalText = `总金额\n¥${total.toLocaleString()}`;
+        this.option.series[0].label.formatter = totalText;
+        this.option.series[0].emphasis.label.formatter = totalText;
+        this.chart.setOption(this.option);
+      }
     },
   },
 };

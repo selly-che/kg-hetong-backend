@@ -1,25 +1,25 @@
 <template>
   <div class="project-card">
     <div class="project-card-header">
-      <a-tag class="project-type-tag">{{ props.project.type }}</a-tag>
+      <a-tag class="project-type-tag">{{ props.project.projectType }}</a-tag>
       <a-tag
         class="project-status-tag"
-        :class="getStatusClass(props.project.status)"
+        :class="getStatusClass(getStatusText(props.project.projectStatus))"
       >
-        {{ props.project.status }}
+        {{ getStatusText(props.project.projectStatus) }}
       </a-tag>
     </div>
-    <h3 class="project-name">{{ props.project.name }}</h3>
+    <h3 class="project-name">{{ props.project.projectShortName }}</h3>
     <div class="project-stats">
       <div class="stat-item">
         <div class="stat-label">集团合同数量</div>
-        <div class="stat-value">{{ props.project.groupContractCount }}</div>
+        <div class="stat-value">{{ props.project.internalContractCount }}</div>
       </div>
       <div class="stat-divider"></div>
       <div class="stat-item">
         <div class="stat-label">外协合同数量</div>
         <div class="stat-value">
-          {{ props.project.outsourcingContractCount }}
+          {{ props.project.externalContractCount }}
         </div>
       </div>
     </div>
@@ -42,7 +42,19 @@ const props = defineProps({
   },
 });
 
-// 根据状态返回不同的样式类
+const getStatusText = (status) => {
+  switch (status) {
+    case 1:
+      return "进行中";
+    case 2:
+      return "已暂停";
+    case 3:
+      return "已结束";
+    default:
+      return "";
+  }
+};
+
 const getStatusClass = (status) => {
   switch (status) {
     case "进行中":

@@ -30,49 +30,22 @@ import HeaderYe from "./HeaderYe.vue";
 import Side1Cards from "@/components/Side1Cards.vue";
 import EacherPie from "./EacherPie.vue";
 import EacherBar from "./EacherBar.vue";
+import getDatas from "@/network/index";
+import { onMounted, ref } from "vue";
 
-const projects = [
-  {
-    id: 1,
-    name: "项目A",
-    type: "隧道",
-    status: "进行中",
-    groupContractCount: 24,
-    outsourcingContractCount: 5,
-  },
-  {
-    id: 2,
-    name: "项目B",
-    type: "铁路",
-    status: "进行中",
-    groupContractCount: 18,
-    outsourcingContractCount: 3,
-  },
-  {
-    id: 3,
-    name: "项目C",
-    type: "桥梁",
-    status: "已暂停",
-    groupContractCount: 12,
-    outsourcingContractCount: 2,
-  },
-  {
-    id: 4,
-    name: "项目D",
-    type: "公路",
-    status: "已结束",
-    groupContractCount: 30,
-    outsourcingContractCount: 8,
-  },
-  {
-    id: 5,
-    name: "项目E",
-    type: "隧道",
-    status: "已结束",
-    groupContractCount: 22,
-    outsourcingContractCount: 4,
-  },
-];
+const projects = ref([]);
+onMounted(() => {
+  getProjectList();
+});
+  const getProjectList = async () => {
+  const res = await getDatas("project/GetProjectList", {
+    pageNum: 1,
+    pageSize: 10,
+  });
+    console.log("项目列表信息:", res.data.result.records);
+    projects.value = res.data.result.records;
+};
+
 </script>
 
 <style scoped lang="less">

@@ -56,11 +56,16 @@
 </template>
 <script>
 import * as echarts from "echarts";
+import getDatas from "@/network/index";
 
 export default {
   name: "EacherBar",
   data() {
     return {
+      params: {
+        endTime: "",
+        startTime: "",
+      },
       activeKey: "1",
       activeDate: "today",
       chart: null,
@@ -127,10 +132,23 @@ export default {
   mounted() {
     this.chart = echarts.init(this.$refs.barContainer);
     this.chart.setOption(this.option);
+    this.getbarinfo();
   },
   methods: {
-    onChange: (date, dateString) => {
+    onChange(date, dateString){
       console.log(date, dateString);
+    },
+    async getbarinfo() {
+      const res = await getDatas("home/GetContractCountStats", this.params);
+      console.log("柱状图数据",res);
+    },
+  },
+  watch: {
+    activeDate(newVal) {
+      if (newVal === "today") {
+        this.params.startTime = new Date().toLocaleDateString();
+        this.params.endTime = new Date().toLocaleDateString();
+      }
     },
   },
 };
