@@ -28,11 +28,12 @@ export default {
           trigger: "item",
           formatter: "{b}: {c} ({d}%)",
         },
+        //图例
         legend: {
           orient: "vertical",
           right: "5%",
           top: "center",
-          formatter: "{name} | 36%  ¥4,544",
+          formatter: "",
           textStyle: {
             fontSize: 12,
           },
@@ -62,10 +63,11 @@ export default {
               fontWeight: "bold",
               formatter:"111"
             },
+            //选中状态
             emphasis: {
               label: {
                 show: true,
-                formatter: "总金额\n¥12624",
+                formatter: "",
                 fontSize: 16,
                 fontWeight: "bold",
               },
@@ -110,10 +112,10 @@ export default {
       });
       this.getPieData();
     },
-    //饼图数据
+    //饼图数据处理
     async getPieData() {
       const res = await getDatas("home/GetContractCollectionStats");
-      console.log("饼图数据", res);
+      // console.log("饼图数据", res);
       if (res.data.code === 200) {
         const data = res.data.result;
         const colorMap = {
@@ -122,8 +124,7 @@ export default {
           "公路": "#7ED321",
           "铁路": "#F5A623",
           "建筑": "#D0021B",
-          "其他": "#9013FE",
-          "其它": "#9013FE",
+          "其它": "#DDA0DD",
           "城轨": "#BD10E0"
         };
         const statsKey = this.activeTab === 0 ? "allContractStats" : this.activeTab === 1 ? "domesticContractStats" : "externalContractStats";
@@ -142,6 +143,10 @@ export default {
         const totalText = `总金额\n¥${total.toLocaleString()}`;
         this.option.series[0].label.formatter = totalText;
         this.option.series[0].emphasis.label.formatter = totalText;
+        this.option.legend.formatter = (name) => {
+          const item = pieData.find((item) => item.name === name);
+          return item ? `${name} | ${item.percentage}%  ¥${item.value.toLocaleString()}` : name;
+        };
         this.chart.setOption(this.option);
       }
     },
