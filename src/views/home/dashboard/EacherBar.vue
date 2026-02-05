@@ -114,7 +114,7 @@ export default {
           type: "value",
           min: 0,
           max: 10,
-          interval: 1,
+          // interval: 1,
         },
         series: [
           {
@@ -140,20 +140,27 @@ export default {
     },
     async getbarinfo() {
       const res = await getDatas("home/GetContractCountStats", this.params);
-      console.log("柱状图数据", res.data.result);
+      // console.log("柱状图数据", res.data.result);
       //tab切换
       let tab = "internalContractCountStats";
       if(this.activeKey === "1") {
         tab = "externalContractCountStats";
       }
       const dataBar = res.data.result
-      const a1=Object.values(dataBar[tab])
+      //值
+      const a1 = Object.values(dataBar[tab])
+      const ymax = Math.max(...a1)
+      const ymin=Math.min(...a1)
       if (res.data.code === 200 && dataBar) {
-        console.log("柱状图数据", dataBar[tab]);
+        // console.log("柱状图数据", dataBar[tab]);
+        // y轴分行
+        this.option.yAxis.max=ymax
+        this.option.yAxis.min=ymin
         this.option.series[0].data = [...a1]; 
         this.option.xAxis.data = Object.keys(dataBar[tab]);
         this.chart.setOption(this.option); 
         // console.log(this.activeKey);
+        //右边图例
         this.rankingList = Object.entries(dataBar[tab]).map(([name, value]) => ({ name, value }));
       }
     },

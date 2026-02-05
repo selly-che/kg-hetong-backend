@@ -33,87 +33,62 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 import Side1Cards from "@/components/Side1Cards.vue";
 import FirstYe from "./FirstYe.vue";
 import PaginationYe from "./PaginationYe.vue";
-import { categoryType } from "./interface/index";
+import { categoryType, Project } from "./interface/index";
+import getDatas from "@/network/index";
 
 const activeKey = ref("1");
 const activeCategory = ref("all");
 const searchText = ref("");
-const projects = [
-  {
-    id: 1,
-    name: "项目A",
-    type: "隧道",
-    status: "进行中",
-    groupContractCount: 24,
-    outsourcingContractCount: 5,
-  },
-  {
-    id: 2,
-    name: "项目B",
-    type: "铁路",
-    status: "进行中",
-    groupContractCount: 18,
-    outsourcingContractCount: 3,
-  },
-  {
-    id: 3,
-    name: "项目C",
-    type: "桥梁",
-    status: "已暂停",
-    groupContractCount: 12,
-    outsourcingContractCount: 2,
-  },
-  {
-    id: 4,
-    name: "项目D",
-    type: "公路",
-    status: "已结束",
-    groupContractCount: 30,
-    outsourcingContractCount: 8,
-  },
-  {
-    id: 5,
-    name: "项目E",
-    type: "隧道",
-    status: "已结束",
-    groupContractCount: 22,
-    outsourcingContractCount: 4,
-  },
-];
+// const projects = [
+//   {
+//     id: 1,
+//     projectType: "隧道",
+//     projectStatus: 1,
+//     projectShortName: "项目A",
+//     internalContractCount: 24,
+//     externalContractCount: 5,
+//   }
+// ];
+const projects = ref<Project[]>([]);
+onMounted(() => {
+  getProjectList();
+});
+  const getProjectList = async () => {
+  const res = await getDatas("project/GetProjectList", {
+    pageNum: 1,
+    pageSize: 10,
+  });
+    console.log("项目列表信息:", res.data.result.records);
+    projects.value = res.data.result.records;
+};
 
 // 根据activeKey、activeCategory和searchText过滤项目
 const filteredProjects = computed(() => {
   // 先根据状态过滤
-  let filteredByStatus = projects;
+  let filteredByStatus = projects.value;
   if (activeKey.value === "2") {
     // 进行中
-    filteredByStatus = projects.filter(
-      (project) => project.status === "进行中",
+    filteredByStatus = projects.value.filter(
+      (project) => project.projectStatus === 1,
     );
   } else if (activeKey.value === "3") {
     // 已暂停
-    filteredByStatus = projects.filter(
-      (project) => project.status === "已暂停",
+    filteredByStatus = projects.value.filter(
+      (project) => project.projectStatus === 2,
     );
   } else if (activeKey.value === "4") {
     // 已结束
-    filteredByStatus = projects.filter(
-      (project) => project.status === "已结束",
+    filteredByStatus = projects.value.filter(
+      (project) => project.projectStatus === 3,
     );
   }
   // 再根据类目过滤
   if (activeCategory.value !== "all") {
     // 将英文类目转换为中文类型名称
-    // const categoryMap = {
-    //   railway: "铁路",
-    //   tunnel: "隧道",
-    //   bridge: "桥梁",
-    //   road: "公路",
-    // };
     const categoryMap: categoryType = {
       railway: "铁路",
       tunnel: "隧道",
@@ -122,14 +97,14 @@ const filteredProjects = computed(() => {
     };
     const typeName = categoryMap[activeCategory.value] || activeCategory.value;
     filteredByStatus = filteredByStatus.filter(
-      (project) => project.type === typeName,
+      (project) => project.projectType === typeName,
     );
   }
   // 最后根据搜索文本过滤项目名称
   if (searchText.value.trim()) {
     const searchLower = searchText.value.toLowerCase().trim();
     filteredByStatus = filteredByStatus.filter((project) =>
-      project.name.toLowerCase().includes(searchLower),
+      project.projectShortName.toLowerCase().includes(searchLower),
     );
   }
   return filteredByStatus;
