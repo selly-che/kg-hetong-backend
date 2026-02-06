@@ -48,7 +48,7 @@ export default {
             center: ["30%", "55%"],
             avoidLabelOverlap: false,
             // padAngle: 5,
-            selectedMode: "single",
+            // selectedMode: "single",
             selectedOffset: 10,
             itemStyle: {
               borderRadius: 10,
@@ -59,18 +59,18 @@ export default {
               show: true,
               position: "center",
               color: "#333",
-              fontSize: 16,
+              fontSize: 15,
               fontWeight: "bold",
               formatter:"111"
             },
             //选中状态
             emphasis: {
-              label: {
-                show: true,
-                formatter: "",
-                fontSize: 16,
-                fontWeight: "bold",
-              },
+              // label: {
+              //   show: false,
+              //   formatter: "",
+              //   fontSize: 16,
+              //   fontWeight: "bold",
+              // },
             },
             labelLine: {
               show: false,
@@ -142,7 +142,6 @@ export default {
         this.option.series[0].total = total;
         const totalText = `总金额\n¥${total.toLocaleString()}`;
         this.option.series[0].label.formatter = totalText;
-        this.option.series[0].emphasis.label.formatter = totalText;
         this.option.legend.formatter = (name) => {
           const item = pieData.find((item) => item.name === name);
           return item ? `${name} | ${item.percentage}%  ¥${item.value.toLocaleString()}` : name;

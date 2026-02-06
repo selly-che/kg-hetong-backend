@@ -7,7 +7,7 @@
       <div class="side1 " >
         <div class="side1-header">
           <span class="side1-title">进行中的项目</span>
-          <a class="side1-more">全部</a>
+          <a class="side1-more" @click="$router.push('/projectMgment')">全部</a>
         </div>
         <ul>
           <li v-for="project in projects" :key="project.id">
