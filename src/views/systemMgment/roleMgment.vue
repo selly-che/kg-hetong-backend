@@ -213,7 +213,7 @@
     <!-- 角色对应用户管理 -->
       <UserAddDrawer ref="userAddDrawerRef" @submit-success="handleSubmitSuccess" />
     <!-- 添加已有客户 -->
-    <AddExistingUserModal ref="addUserModalRef" @confirm="handleUserSelected" @cancel="handleModalCancel" />
+    <AddExistingUserModal  :selected-users="tableData" ref="addUserModalRef" @confirm="handleUserSelected" @cancel="handleModalCancel" />
   </div>
 
 </template>
@@ -671,9 +671,9 @@ const handleUserSelected =  async (selectedUsers) => {
   // 这里可以处理选择的用户，比如添加到当前角色或组织中
   const resp = await getDatas("system/AddSysUserRole", {
     roleId: searchForm.roleId,
-    userIds: selectedUsers.map(item => item).join(',')
+    userIdList: selectedUsers
   });
-  if (resp.data.code == 200) {
+  if (resp.data.code == 0) {
     ElMessage.success('用户添加成功');
     handleUserSearch();
   } else {

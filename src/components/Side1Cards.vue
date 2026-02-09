@@ -43,13 +43,13 @@ const props = defineProps({
   },
 });
 
-// const watchProject = () => {
-//   router.push({
-//     path: `/projectMgment/watchproject`,
-//     name: "watchProject",
-//     params: { id: props.project.id },
-//   });
-// };
+const watchProject = () => {
+  // router.push({
+  //   path: `/projectMgment/watchproject`,
+  //   name: "watchProject",
+  //   params: { id: props.project.id },
+  // });
+};
 
 const getStatusClass = (status) => {
   // 根据状态返回不同的样式类
