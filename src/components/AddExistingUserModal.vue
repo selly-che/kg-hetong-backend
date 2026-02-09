@@ -128,6 +128,18 @@ import { SearchOutlined, RedoOutlined } from '@ant-design/icons-vue';
 import { message } from 'ant-design-vue';
 import getDatas from "@/network/index";
 
+
+// 接收选中的用户
+const props = defineProps({
+  selectedUsers: {
+    type: Array,
+    default: () => []
+  }
+});
+
+console.log(props.selectedUsers,'propsprops');
+
+
 // 弹框显示控制
 const visible = ref(false);
 
@@ -173,9 +185,7 @@ const columns = [
 ];
 
 // 用户数据
-const userList = ref([
-  
-]);
+const userList = ref([]);
 
 // 分页配置
 const pagination = reactive({
@@ -184,9 +194,11 @@ const pagination = reactive({
   total: 8313
 });
 
-// 选中用户
+// 选中用户,拿到selectedUsers传过来的值
 const selectedRowKeys = ref([]);
+
 const selectedRows = ref([]);
+
 
 // 性别格式化
 const formatSex = (sex) => {
@@ -220,6 +232,9 @@ const loadUserList = async () => {
     
     userList.value = response.data.result.records;
     pagination.total = response.data.result.total;
+    // selectedUsers内的值判断
+    selectedRowKeys.value = props.selectedUsers.map(user => user.id);
+    console.log(selectedRowKeys.value,'selectedRowKeys.value');
     
     message.success('数据加载成功');
   } catch (error) {

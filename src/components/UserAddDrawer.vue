@@ -12,7 +12,35 @@
 
             <!-- 第二行：登录密码 -->
             <a-form-item label="登录密码" name="password" :rules="[{ required: true, message: '请输入登录密码' }]">
-                <a-input-password v-model:value="formState.password" placeholder="请输入登录密码" allow-clear />
+                <a-input-password   @blur="validatePasswordField" v-model:value="formState.password" placeholder="请输入登录密码" allow-clear />
+                <!-- 密码规则提示 -->
+                <div v-if="showPasswordRules" class="password-rules">
+                    <div class="rule-item" :class="{ 'valid': hasMinLength }">
+                        <check-circle-filled v-if="hasMinLength" />
+                        <close-circle-filled v-else />
+                        至少8位字符
+                    </div>
+                    <div class="rule-item" :class="{ 'valid': hasLowercase }">
+                        <check-circle-filled v-if="hasLowercase" />
+                        <close-circle-filled v-else />
+                        包含小写字母
+                    </div>
+                    <div class="rule-item" :class="{ 'valid': hasUppercase }">
+                        <check-circle-filled v-if="hasUppercase" />
+                        <close-circle-filled v-else />
+                        包含大写字母
+                    </div>
+                    <div class="rule-item" :class="{ 'valid': hasNumber }">
+                        <check-circle-filled v-if="hasNumber" />
+                        <close-circle-filled v-else />
+                        包含数字
+                    </div>
+                    <div class="rule-item" :class="{ 'valid': hasSpecialChar }">
+                        <check-circle-filled v-if="hasSpecialChar" />
+                        <close-circle-filled v-else />
+                        包含特殊符号 (!@#$%^&*等)
+                    </div>
+                </div>
             </a-form-item>
             <a-form-item label="确认密码" name="confirmPassword" :rules="[
                 { required: true, message: '请重新输入登录密码' },
@@ -22,7 +50,7 @@
             </a-form-item>
 
             <!-- 第三行：工号和职务 -->
-            <a-form-item label="工号" name="workNo">
+            <a-form-item label="工号" name="workNo" :rules="[{ required: true, message: '请输入工号' }]">
                 <a-input v-model:value="formState.workNo" placeholder="请输入工号" allow-clear />
             </a-form-item>
             <a-form-item label="职务" name="post">
@@ -107,6 +135,7 @@
 
 <script setup>
 import { ref, reactive, defineExpose, defineEmits } from 'vue';
+import { CheckCircleFilled, CloseCircleFilled } from '@ant-design/icons-vue'
 import { message } from 'ant-design-vue';
 import dayjs from 'dayjs';
 
@@ -162,6 +191,27 @@ const validatePassword = async (_rule, value) => {
         return Promise.reject('两次输入的密码不一致');
     }
     return Promise.resolve();
+};
+
+// 密码规则状态
+const showPasswordRules = ref(false);
+const hasMinLength = ref(false);
+const hasLowercase = ref(false);
+const hasUppercase = ref(false);
+const hasNumber = ref(false);
+const hasSpecialChar = ref(false);
+
+// 密码规则验证
+const checkPasswordStrength = (password) => {
+    hasMinLength.value = password.length >= 8;
+    hasLowercase.value = /[a-z]/.test(password);
+    hasUppercase.value = /[A-Z]/.test(password);
+    hasNumber.value = /[0-9]/.test(password);
+    hasSpecialChar.value = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+};
+const validatePasswordField = () => {
+    showPasswordRules.value = true;
+    checkPasswordStrength(formState.password);
 };
 
 // 表单验证规则

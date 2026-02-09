@@ -2,10 +2,7 @@
   <div class="project-card">
     <div class="project-card-header">
       <a-tag class="project-type-tag">{{ props.project.projectType }}</a-tag>
-      <a-tag
-        class="project-status-tag"
-        :class="getStatusClass(getStatusText(props.project.projectStatus))"
-      >
+      <a-tag class="project-status-tag" :class="getStatusClass(getStatusText(props.project.projectStatus))">
         {{ getStatusText(props.project.projectStatus) }}
       </a-tag>
     </div>
@@ -24,9 +21,7 @@
       </div>
     </div>
     <div class="project-actions">
-      <a-button class="action-btn view-btn" @click="watchProject"
-        >查看项目</a-button
-      >
+      <a-button class="action-btn view-btn" @click="watchProject">查看项目</a-button>
       <a-button class="action-btn edit-btn">编辑</a-button>
     </div>
   </div>
@@ -42,31 +37,37 @@ const props = defineProps({
   },
 });
 
-const getStatusText = (status) => {
-  switch (status) {
-    case 1:
-      return "进行中";
-    case 2:
-      return "已暂停";
-    case 3:
-      return "已结束";
-    default:
-      return "";
-  }
-};
+const watchProject = () => {
+  // router.push({
+  //   path: `/projectMgment/watchproject`,
+  //   name: "watchProject",
+  //   params: { id: props.project.id },
+  };
+  const getStatusText = (status) => {
+    switch (status) {
+      case 1:
+        return "进行中";
+      case 2:
+        return "已暂停";
+      case 3:
+        return "已结束";
+      default:
+        return "";
+    }
+  };
 
-const getStatusClass = (status) => {
-  switch (status) {
-    case "进行中":
-      return "status-in-progress";
-    case "已暂停":
-      return "status-paused";
-    case "已结束":
-      return "status-completed";
-    default:
-      return "";
-  }
-};
+  const getStatusClass = (status) => {
+    switch (status) {
+      case "进行中":
+        return "status-in-progress";
+      case "已暂停":
+        return "status-paused";
+      case "已结束":
+        return "status-completed";
+      default:
+        return "";
+    }
+  };
 </script>
 
 <style scoped>
