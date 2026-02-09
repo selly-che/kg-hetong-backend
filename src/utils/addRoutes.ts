@@ -64,6 +64,11 @@ export default function addDynamicRoutes(router: any, menus: any[]) {
                 existingPaths.add(child.path);
             });
         }else if (menu.path) {
+            // 如果路由已存在，则跳过
+            if (existingPaths.has(menu.path)) {
+                console.log(`路由 ${menu.path} 已存在，跳过添加`);
+                return;
+            }
             // 如果菜单项没有子菜单，则直接添加到 Layout 路由的子路由中
             const routeConfig = {
                 path: menu.path,

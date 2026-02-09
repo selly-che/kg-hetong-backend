@@ -1,10 +1,10 @@
 export default {
   // 获取项目列表信息
-  ///jeecg-boot/project/getProjectList
+  ///jeecg-boot/projectcontract/tpmProject/list
   GetProjectList(params: any) {
     return {
-      method: "POST",
-      url: "/project/getProjectList",
+      method: "GET",
+      url: "/projectcontract/tpmProject/list",
       data: params,
     };
   },

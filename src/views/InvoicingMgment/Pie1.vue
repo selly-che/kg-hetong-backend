@@ -29,7 +29,7 @@
   </div>
 </template>
 
-<script  lang="ts">
+<script lang="ts">
 export default {
   name: "PiE",
 };
@@ -38,6 +38,7 @@ export default {
 <script setup lang="ts">
 import * as echarts from "echarts";
 import { ref, onMounted, onBeforeUnmount } from "vue";
+import getDatas from "@/network/index";
 
 // 响应式数据
 const chart = ref<echarts.ECharts | null>(null);
@@ -45,7 +46,7 @@ const activeTab = ref(0);
 const pieChartRef = ref(null);
 
 // 图表配置
-const option = {
+const option = ref({
   tooltip: {
     trigger: "item",
     formatter: "{b}: {c} ({d}%)",
@@ -57,7 +58,7 @@ const option = {
       radius: ["40%", "70%"],
       center: ["50%", "50%"],
       avoidLabelOverlap: false,
-      padAngle: 5,
+      // padAngle: 5,
       selectedMode: "single",
       selectedOffset: 10,
       itemStyle: {
@@ -66,9 +67,9 @@ const option = {
         borderWidth: 2,
       },
       label: {
-        show: false,
+        show: true,
         position: "center",
-        // formatter: '总金额\n¥123,224',
+        formatter: '',
         color: "#333",
         fontSize: 16,
         fontWeight: "bold",
@@ -76,8 +77,8 @@ const option = {
       emphasis: {
         label: {
           show: true,
-          formatter: "总金额\n¥4,544",
-          fontSize: 18,
+          formatter: "",
+          fontSize: 16,
           fontWeight: "bold",
         },
       },
@@ -94,8 +95,8 @@ const option = {
       ],
       total: 12624,
     },
-  ],
-};
+  ]
+});
 
 // 方法
 const handleResize = () => {
@@ -106,7 +107,6 @@ const handleResize = () => {
 
 const handleTabClick = (index: number) => {
   activeTab.value = index;
-  // 更新标签页的active状态
   const tabs = document.querySelectorAll(".pie-tabs .tab");
   tabs.forEach((tab, i) => {
     if (i === index) {
@@ -115,15 +115,13 @@ const handleTabClick = (index: number) => {
       tab.classList.remove("active");
     }
   });
-  if (chart.value) {
-    chart.value.setOption(option);
-  }
+  getPieData();
 };
 
-// 生命周期
 onMounted(() => {
   chart.value = echarts.init(pieChartRef.value);
-  chart.value.setOption(option);
+  chart.value.setOption(option.value);
+  getPieData();
   window.addEventListener("resize", handleResize);
 });
 
@@ -133,6 +131,44 @@ onBeforeUnmount(() => {
     chart.value.dispose();
   }
 });
+
+const getPieData = async () => {
+  const res = await getDatas("home/GetContractCollectionStats");
+  // console.log("饼图数据", res);
+  if (res.data.code === 200) {
+    const data = res.data.result;
+    const colorMap:Record<string, string> = {
+      市政: "#4A90E2",
+      隧道: "#50E3C2",
+      公路: "#7ED321",
+      铁路: "#F5A623",
+      建筑: "#D0021B",
+      其它: "#DDA0DD",
+      城轨: "#BD10E0",
+    };
+    const statsKey =
+      activeTab.value === 0
+        ? "allContractStats"
+        : activeTab.value === 1
+        ? "domesticContractStats"
+        : "externalContractStats";
+    const stats = data[statsKey];
+    const total = stats["总计"] || 0;
+    const pieData = Object.entries(stats)
+      .filter(([key]) => key !== "总计")
+      .map(([name, value]) => ({
+        value: Number(value),
+        name,
+        itemStyle: { color: colorMap[name] || "#999" },
+        percentage: total > 0 ? ((Number(value) / total) * 100).toFixed(1) : "0.0",
+      }));
+    option.value.series[0].data = pieData;
+    option.value.series[0].total = total;
+    const totalText = `总金额\n¥${total.toLocaleString()}`;
+    option.value.series[0].label.formatter = totalText;
+    chart.value?.setOption(option.value);
+  }
+};
 </script>
 
 <style scoped lang="less">

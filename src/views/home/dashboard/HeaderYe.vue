@@ -1,5 +1,5 @@
 <template>
-  <div class="header-container br8 ">
+  <div class="header-container br8">
     <div class="user-info">
       <div class="avatar">
         <img src="#" alt="" />
@@ -12,25 +12,41 @@
     <div class="stats-container">
       <div class="stat-item">
         <div class="stat-label">项目数量</div>
-        <div class="stat-value">35</div>
+        <div class="stat-value">{{ headerdata.projectCount }}</div>
       </div>
       <div class="stat-item">
         <div class="stat-label">国内合同数量</div>
-        <div class="stat-value">467</div>
+        <div class="stat-value">{{ headerdata.internalContractCount }}</div>
       </div>
       <div class="stat-item">
         <div class="stat-label">外协合同数量</div>
-        <div class="stat-value">478</div>
+        <div class="stat-value">{{ headerdata.externalContractCount }}</div>
       </div>
       <div class="stat-item">
         <div class="stat-label">应收账款金额</div>
-        <div class="stat-value">¥2324.35万</div>
+        <div class="stat-value">¥{{ headerdata.totalReceivableAmount.toLocaleString() }}万</div> 
       </div>
     </div>
   </div>
 </template>
 
-<script setup></script>
+<script setup>
+import { onMounted, ref } from "vue";
+import getDatas from "@/network/index";
+
+const headerdata = ref({
+  externalContractCount: "",
+  internalContractCount: "",
+  projectCount: "",
+  totalReceivableAmount: "",
+});
+
+onMounted(async () => {
+  const res = await getDatas("home/GetComprehensiveStats");
+  console.log("统计信息", res.data.result);
+  headerdata.value = res.data.result;
+});
+</script>
 
 <style scoped lang="less">
 .header-container {

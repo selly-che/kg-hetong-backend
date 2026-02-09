@@ -1,32 +1,27 @@
 <template>
   <div class="project-card">
     <div class="project-card-header">
-      <a-tag class="project-type-tag">{{ props.project.type }}</a-tag>
-      <a-tag
-        class="project-status-tag"
-        :class="getStatusClass(props.project.status)"
-      >
-        {{ props.project.status }}
+      <a-tag class="project-type-tag">{{ props.project.projectType }}</a-tag>
+      <a-tag class="project-status-tag" :class="getStatusClass(getStatusText(props.project.projectStatus))">
+        {{ getStatusText(props.project.projectStatus) }}
       </a-tag>
     </div>
-    <h3 class="project-name">{{ props.project.name }}</h3>
+    <h3 class="project-name">{{ props.project.projectShortName }}</h3>
     <div class="project-stats">
       <div class="stat-item">
         <div class="stat-label">集团合同数量</div>
-        <div class="stat-value">{{ props.project.groupContractCount }}</div>
+        <div class="stat-value">{{ props.project.internalContractCount }}</div>
       </div>
       <div class="stat-divider"></div>
       <div class="stat-item">
         <div class="stat-label">外协合同数量</div>
         <div class="stat-value">
-          {{ props.project.outsourcingContractCount }}
+          {{ props.project.externalContractCount }}
         </div>
       </div>
     </div>
     <div class="project-actions">
-      <a-button class="action-btn view-btn" @click="watchProject"
-        >查看项目</a-button
-      >
+      <a-button class="action-btn view-btn" @click="watchProject">查看项目</a-button>
       <a-button class="action-btn edit-btn">编辑</a-button>
     </div>
   </div>
@@ -34,7 +29,6 @@
 
 <script setup>
 import { defineProps } from "vue";
-import router from "@/router";
 
 const props = defineProps({
   project: {
@@ -48,22 +42,32 @@ const watchProject = () => {
   //   path: `/projectMgment/watchproject`,
   //   name: "watchProject",
   //   params: { id: props.project.id },
-  // });
-};
+  };
+  const getStatusText = (status) => {
+    switch (status) {
+      case 1:
+        return "进行中";
+      case 2:
+        return "已暂停";
+      case 3:
+        return "已结束";
+      default:
+        return "";
+    }
+  };
 
-const getStatusClass = (status) => {
-  // 根据状态返回不同的样式类
-  switch (status) {
-    case "进行中":
-      return "status-in-progress";
-    case "已暂停":
-      return "status-paused";
-    case "已结束":
-      return "status-completed";
-    default:
-      return "";
-  }
-};
+  const getStatusClass = (status) => {
+    switch (status) {
+      case "进行中":
+        return "status-in-progress";
+      case "已暂停":
+        return "status-paused";
+      case "已结束":
+        return "status-completed";
+      default:
+        return "";
+    }
+  };
 </script>
 
 <style scoped>

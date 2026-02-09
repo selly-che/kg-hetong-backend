@@ -4,6 +4,12 @@ import addDynamicRoutes from "@/utils/addRoutes";
 
 const routes: Array<RouteRecordRaw> = [
   {
+    path: "/projectMgment",
+    name: "projectMgment",
+    component: () => import("../views/projectMgment/index.vue"),
+    meta: { check: true },
+  },
+  {
     path: "/",
     name: "Layout",
     component: Layout,

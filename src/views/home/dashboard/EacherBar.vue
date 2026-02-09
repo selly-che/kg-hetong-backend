@@ -1,9 +1,9 @@
 <template>
   <div class="bar-container">
     <div class="bar-tabs">
-      <a-tabs v-model="activeKey" class="custom-tabs">
-        <a-tab-pane key="1" tab="国内合同"></a-tab-pane>
-        <a-tab-pane key="3" tab="外协合同"></a-tab-pane>
+      <a-tabs v-model:activeKey="activeKey" class="custom-tabs">
+        <a-tab-pane key="0" tab="国内合同"></a-tab-pane>
+        <a-tab-pane key="1" tab="外协合同"></a-tab-pane>
       </a-tabs>
       <div class="date-section">
         <a-space class="quick-dates">
@@ -32,7 +32,7 @@
             >全年</a-button
           >
         </a-space>
-        <a-range-picker :suffix-icon="cicon" @change="onChange" />
+        <a-range-picker @change="onChange" />
       </div>
     </div>
     <div class="bar-content">
@@ -56,13 +56,17 @@
 </template>
 <script>
 import * as echarts from "echarts";
+import getDatas from "@/network/index";
 
 export default {
   name: "EacherBar",
   data() {
     return {
-      cicon: "calendar",
-      activeKey: "1",
+      params: {
+        endTime: "",
+        startTime: "",
+      },
+      activeKey: "0",
       activeDate: "today",
       chart: null,
       rankingList: [
@@ -109,8 +113,8 @@ export default {
         yAxis: {
           type: "value",
           min: 0,
-          max: 1000,
-          interval: 250,
+          max: 10,
+          // interval: 1,
         },
         series: [
           {
@@ -125,16 +129,68 @@ export default {
       },
     };
   },
-  components: {
-    // CalendarOutlined
-  },
   mounted() {
     this.chart = echarts.init(this.$refs.barContainer);
     this.chart.setOption(this.option);
+    this.getbarinfo();
+    // 图表自动收缩
+    window.addEventListener("resize", this.handleResize);
+  },
+  beforeUnmount() {
+    window.removeEventListener("resize", this.handleResize);
+    if (this.chart) {
+      this.chart.dispose();
+    }
   },
   methods: {
-    onChange: (date, dateString) => {
+    onChange(date, dateString) {
       console.log(date, dateString);
+    },
+    handleResize() {
+      if (this.chart) {
+        this.chart.resize();
+      }
+    },
+    async getbarinfo() {
+      const res = await getDatas("home/GetContractCountStats", this.params);
+      // console.log("柱状图数据", res.data.result);
+      //tab切换
+      let tab = "internalContractCountStats";
+      if (this.activeKey === "1") {
+        tab = "externalContractCountStats";
+      }
+      const dataBar = res.data.result;
+      //值
+      const a1 = Object.values(dataBar[tab]);
+      const ymax = Math.max(...a1);
+      const ymin = Math.min(...a1);
+      if (res.data.code === 200 && dataBar) {
+        // console.log("柱状图数据", dataBar[tab]);
+        // y轴分行
+        this.option.yAxis.max = ymax;
+        this.option.yAxis.min = ymin;
+        this.option.series[0].data = [...a1];
+        this.option.xAxis.data = Object.keys(dataBar[tab]);
+        this.chart.setOption(this.option);
+        // console.log(this.activeKey);
+        //右边图例
+        //排序
+        this.rankingList = Object.entries(dataBar[tab]).map(
+          ([name, value]) => ({ name, value }),
+        );
+        this.rankingList.sort((a, b) => a.value - b.value);
+      }
+    },
+  },
+  watch: {
+    activeDate(newVal) {
+      if (newVal === "today") {
+        this.params.startTime = new Date().toLocaleDateString();
+        this.params.endTime = new Date().toLocaleDateString();
+      }
+    },
+    activeKey() {
+      this.getbarinfo();
     },
   },
 };

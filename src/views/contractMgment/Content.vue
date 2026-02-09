@@ -147,6 +147,62 @@ const columns = [
     width: 150,
     align: "center",
   },
+  {
+    title: "类型一",
+    dataIndex: "address",
+    key: "14",
+    width: 120,
+    align: "center",
+  },
+  {
+    title: "类型二",
+    dataIndex: "address",
+    key: "15",
+    width: 120,
+    align: "center",
+  },
+  {
+    title: "合同状态",
+    dataIndex: "address",
+    key: "16",
+    width: 120,
+    align: "center",
+  },
+  {
+    title: "是否军融",
+    dataIndex: "address",
+    key: "17",
+    width: 100,
+    align: "center",
+  },
+  {
+    title: "是否进营销系统",
+    dataIndex: "address",
+    key: "18",
+    width: 140,
+    align: "center",
+  },
+  {
+    title: "上报营销系统时间",
+    dataIndex: "address",
+    key: "19",
+    width: 160,
+    align: "center",
+  },
+  {
+    title: "审定金额（万元）",
+    dataIndex: "address",
+    key: "20",
+    width: 150,
+    align: "center",
+  },
+  {
+    title: "归属年份",
+    dataIndex: "address",
+    key: "21",
+    width: 100,
+    align: "center",
+  },
 ];
 
 const exportExcel = () => {
