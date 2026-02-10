@@ -563,6 +563,8 @@ export default defineComponent({
 }
 
 .tab-content {
-  padding: 24px;
+  padding: 20px;
+  overflow-y: auto;
+  max-height: calc(100vh - 150px);
 }
 </style>
