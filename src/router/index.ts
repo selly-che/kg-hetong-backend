@@ -8,6 +8,28 @@ const routes: Array<RouteRecordRaw> = [
     name: "projectMgment",
     component: () => import("../views/projectMgment/index.vue"),
     meta: { check: true },
+    children: [
+      {
+        path: "ProjectOverview",
+        name: "ProjectOverview",
+        component: () => import("../views/projectMgment/ProjectOverview.vue"),
+        meta: { check: true, title: "项目概况" },
+      },
+      {
+        path: "ProductionOrganization",
+        name: "ProductionOrganization",
+        component: () =>
+          import("../views/projectMgment/ProductionOrganization.vue"),
+        meta: { check: true, title: "生产组织" },
+      },
+      {
+        path: "ProjectProgress",
+        name: "ScheduleManagement",
+        component: () =>
+          import("../views/projectMgment/ScheduleManagement.vue"),
+        meta: { check: true, title: "进度管理" },
+      },
+    ],
   },
   {
     path: "/",
