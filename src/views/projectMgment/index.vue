@@ -92,17 +92,32 @@
       <a-layout-content style="margin: 16px">
         <div
           :style="{
-            padding: '24px',
             background: '#fff',
             minHeight: 'calc(100vh - 132px)',
           }"
         >
-          <router-view></router-view>
+          <a-tabs
+            v-model:activeKey="activeTabKey"
+            type="editable-card"
+            hide-add
+            @edit="onTabEdit"
+            class="content-tabs"
+          >
+            <a-tab-pane
+              v-for="tab in openedTabs"
+              :key="tab.key"
+              :closable="tab.closable"
+            >
+              <template #tab>
+                <span @click="handleTabClick(tab)">{{ tab.title }}</span>
+              </template>
+              <div class="tab-content">
+                <router-view></router-view>
+              </div>
+            </a-tab-pane>
+          </a-tabs>
         </div>
       </a-layout-content>
-      <a-layout-footer style="text-align: center">
-        项目管理系统 ©2024
-      </a-layout-footer>
     </a-layout>
   </a-layout>
 </template>
@@ -129,6 +144,11 @@ export default defineComponent({
     const activeTab = ref("main");
     const selectedMenuKeys = ref<string[]>([]);
     const openMenuKeys = ref<string[]>([]);
+    
+    const activeTabKey = ref("ProjectOverview");
+    const openedTabs = ref([
+      { key: "ProjectOverview", title: "项目概况", closable: false, path: "/projectMgment/ProjectOverview" }
+    ]);
 
     // 过滤标签数据
     const filterTags = ref([
@@ -317,12 +337,44 @@ export default defineComponent({
       }
 
       if (targetHref) {
+        const routeName = targetHref.split('/').pop() || targetHref;
+        
+        const existingTab = openedTabs.value.find(tab => tab.path === targetHref);
+        if (!existingTab) {
+          openedTabs.value.push({
+            key: routeName,
+            title: targetTitle,
+            closable: true,
+            path: targetHref
+          });
+        }
+        
+        activeTabKey.value = routeName;
         router.push(targetHref);
       } else {
         currentContent.value = {
           title: targetTitle,
           description: `这是${targetTitle}的主页面内容。`,
         };
+      }
+    };
+    
+    const handleTabClick = (tab: any) => {
+      activeTabKey.value = tab.key;
+      router.push(tab.path);
+    };
+    
+    const onTabEdit = (targetKey: any, action: 'add' | 'remove') => {
+      if (action === 'remove') {
+        const index = openedTabs.value.findIndex(tab => tab.key === targetKey);
+        if (index > -1) {
+          openedTabs.value.splice(index, 1);
+          if (activeTabKey.value === targetKey && openedTabs.value.length > 0) {
+            const lastTab = openedTabs.value[openedTabs.value.length - 1];
+            activeTabKey.value = lastTab.key;
+            router.push(lastTab.path);
+          }
+        }
       }
     };
     return {
@@ -338,6 +390,10 @@ export default defineComponent({
       handleFilterChange,
       handleMenuClick,
       handleSearch,
+      activeTabKey,
+      openedTabs,
+      handleTabClick,
+      onTabEdit,
     };
   },
 });
@@ -467,5 +523,21 @@ export default defineComponent({
   font-size: 18px;
   font-weight: 500;
   color: rgba(0, 0, 0, 0.85);
+}
+
+.content-tabs {
+  padding: 8px 24px 0;
+}
+
+.content-tabs :deep(.ant-tabs-nav) {
+  margin-bottom: 0;
+}
+
+.content-tabs :deep(.ant-tabs-tab) {
+  padding: 8px 16px;
+}
+
+.tab-content {
+  padding: 24px;
 }
 </style>
