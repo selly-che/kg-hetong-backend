@@ -14,6 +14,18 @@
           style="margin-bottom: 16px; margin-top: 16px"
           @search="handleSearch"
         />
+        <!-- 责任类型筛选标签 --><!-- 筛选类型： 司控主责,司控参与,自揽主责,自揽参与-->
+        <div class="filter-tags">
+          <a-tag
+            v-for="tag in responsibilityTags"
+            :key="tag.value"
+            :color="activeResponsibility === tag.value ? 'blue' : 'default'"
+            class="filter-tag1"
+            @click="handleResponsibilityChange(tag.value)"
+          >
+            {{ tag.label }}
+          </a-tag>
+        </div>
         <!-- 过滤标签--四个方的 -->
         <div class="filter-tags">
           <a-tag
@@ -44,11 +56,11 @@
             :inline-collapsed="collapsed"
           >
             <!-- 动态渲染项目 -->
-            <a-sub-menu :key="newProjects.Id">
+            <a-sub-menu v-for="project in filteredProjects" :key="project.Id">
               <template #title>
-                <span class="project-title">{{ newProjects.text }}</span>
+                <span class="project-title">{{ project.text }}</span>
               </template>
-              <template v-for="node in newProjects.nodes" :key="node.Id">
+              <template v-for="node in project.nodes" :key="node.Id">
                 <a-sub-menu v-if="node.nodes && node.nodes.length">
                   <template #title>
                     <span>{{ node.text }}</span>
@@ -96,6 +108,7 @@
             minHeight: 'calc(100vh - 132px)',
           }"
         >
+          <!-- 页签 -->
           <a-tabs
             v-model:activeKey="activeTabKey"
             type="editable-card"
@@ -138,16 +151,22 @@ export default defineComponent({
   },
   setup() {
     const router = useRouter();
-    const searchText = ref("");
+    const searchText = ref<string>("");
     const collapsed = ref(false);
     const activeFilter = ref("all");
+    const activeResponsibility = ref("company_main");
     const activeTab = ref("main");
     const selectedMenuKeys = ref<string[]>([]);
     const openMenuKeys = ref<string[]>([]);
-    
+
     const activeTabKey = ref("ProjectOverview");
     const openedTabs = ref([
-      { key: "ProjectOverview", title: "项目概况", closable: false, path: "/projectMgment/ProjectOverview" }
+      {
+        key: "ProjectOverview",
+        title: "项目概况",
+        closable: false,
+        path: "/projectMgment/ProjectOverview",
+      },
     ]);
 
     // 过滤标签数据
@@ -156,6 +175,14 @@ export default defineComponent({
       { label: "铁路", value: "railway" },
       { label: "城轨", value: "urban" },
       { label: "公路", value: "highway" },
+    ]);
+
+    // 责任类型筛选标签数据
+    const responsibilityTags = ref([
+      { label: "司控主责", value: "company_main" },
+      { label: "司控参与", value: "company_assist" },
+      { label: "自揽主责", value: "self_main" },
+      { label: "自揽参与", value: "self_assist" },
     ]);
 
     // 旧目录数据
@@ -207,80 +234,110 @@ export default defineComponent({
     ]);
 
     //目录数据新
-    const newProjects = ref({
-      Id: "e4a66a5d-dd41-44b4-836d-37f6e3c495cc",
-      href: "",
-      text: "新都氢能源有轨电车",
-      fname: "成都市新都氢能源有轨电车示范线",
-      Project_Nature: 0,
-      IsFavorites: false,
-      nodes: [
-        {
-          Id: "12e51b31-524f-4683-82ae-e2b526464b3d",
-          currentStep: false,
-          text: "项目概况",
-          href: "/projectMgment/ProjectOverview",
-          remote: false,
-          nodes: [],
-        },
-        {
-          Id: "80533229-83c8-4d64-ac62-382d92d9724a",
-          currentStep: false,
-          text: "生产组织",
-          href: "/projectMgment/ProductionOrganization",
-          remote: false,
-          nodes: [],
-        },
-        {
-          Id: "31f603e4-2972-4716-9234-14232d6edb1b",
-          currentStep: false,
-          text: "进度管理",
-          href: "/projectMgment/ProjectProgress",
-          remote: false,
-          nodes: [],
-        },
-        {
-          Id: "2d9b57c8-0243-4288-aec9-17476d785c76",
-          text: "预可研",
-          currentStep: true,
-          href: "",
-          remote: true,
-          nodes: [
-            {
-              Id: "36f18353-c6ee-49db-945b-ffc8cd0fefd0",
-              text: "1-1",
-              href: "",
-              nodes: [],
-            },
-          ],
-        },
-        {
-          Id: "dbf144f0-71fb-47c0-befe-8ec0348307b2",
-          text: "可研",
-          currentStep: false,
-          href: "",
-          remote: true,
-          nodes: [
-            {
-              Id: "7e6656aa-5aa2-49b9-bfd0-64b1fd07065b",
-              text: "1-1",
-              href: "",
-              nodes: [],
-            },
-          ],
-        },
-      ],
+    const newProjects = ref([
+      {
+        Id: "e4a66a5d-dd41-44b4-836d-37f6e3c495cc",
+        href: "",
+        text: "新都氢能源有轨电车",
+        //筛选条件
+        tab: "main", //1.主管
+        type: "urban", //2.城轨
+        responsibility: "company_main", //3.司控主责
+        fname: "成都市新都氢能源有轨电车示范线",
+        Project_Nature: 0,
+        IsFavorites: false,
+        nodes: [
+          {
+            Id: "12e51b31-524f-4683-82ae-e2b526464b3d",
+            currentStep: false,
+            text: "项目概况",
+            href: "/projectMgment/ProjectOverview",
+            remote: false,
+            nodes: [],
+          },
+          {
+            Id: "80533229-83c8-4d64-ac62-382d92d9724a",
+            currentStep: false,
+            text: "生产组织",
+            href: "/projectMgment/ProductionOrganization",
+            remote: false,
+            nodes: [],
+          },
+          {
+            Id: "31f603e4-2972-4716-9234-14232d6edb1b",
+            currentStep: false,
+            text: "进度管理",
+            href: "/projectMgment/ProjectProgress",
+            remote: false,
+            nodes: [],
+          },
+          {
+            Id: "2d9b57c8-0243-4288-aec9-17476d785c76",
+            text: "预可研",
+            currentStep: true,
+            href: "",
+            remote: true,
+            nodes: [
+              {
+                Id: "36f18353-c6ee-49db-945b-ffc8cd0fefd0",
+                text: "1-1",
+                href: "",
+                nodes: [],
+              },
+            ],
+          },
+          {
+            Id: "dbf144f0-71fb-47c0-befe-8ec0348307b2",
+            text: "可研",
+            currentStep: false,
+            href: "",
+            remote: true,
+            nodes: [
+              {
+                Id: "7e6656aa-5aa2-49b9-bfd0-64b1fd07065b",
+                text: "1-1",
+                href: "",
+                nodes: [],
+              },
+            ],
+          },
+        ],
+      },
+      {
+        Id: "e4a66a5d-dd41-44b4-836d-37f6e3c495cc",
+        href: "",
+        text: "兴泉铁路",
+        //筛选条件
+        tab: "main", //1.主管
+        type: "railway", //2.铁路
+        responsibility: "company_main", //3.司控主责
+      },
+    ]);
+
+    // 根据过滤条件和选项卡筛选项目
+    const filteredProjects = computed(() => {
+      return newProjects.value.filter((node) => {
+        // 1
+        const typeMatch =
+          node.type === activeFilter.value || activeFilter.value === "all";
+        //2
+        const tabMatch =
+          node.tab === activeTab.value || activeTab.value === "all";
+        //3 责任类型筛选
+        const responsibilityMatch =
+          node.responsibility === activeResponsibility.value ||
+          activeResponsibility.value === "all";
+        //搜索框筛选
+        const searchLower = searchText.value.toLowerCase();
+        const textMatch =
+          node.text.toLowerCase().includes(searchLower) ||
+          node.nodes?.some((n) => n.text.toLowerCase().includes(searchLower));
+        return typeMatch && tabMatch && responsibilityMatch && textMatch;
+      });
     });
 
     // 当前显示的内容
     const currentContent = ref<any>(null);
-
-    // 根据过滤条件和选项卡筛选项目
-    const filteredProjects = computed(() => {
-      return newProjects.value.nodes.filter((node) => {
-        return true;
-      });
-    });
 
     // 处理搜索
     const handleSearch = (text: string) => {
@@ -292,32 +349,21 @@ export default defineComponent({
       activeFilter.value = filterValue;
     };
 
+    // 处理责任类型筛选标签点击
+    const handleResponsibilityChange = (responsibilityValue: string) => {
+      activeResponsibility.value = responsibilityValue;
+    };
+
     // 处理菜单项点击（修改此处）
-    // const handleMenuClick = (nodeId: string, childId?: string) => {
-    //   const node = newProjects.value.nodes.find((n) => n.Id === nodeId);
-    //   if (!node) return;
-
-    //   if (childId) {
-    //     const child = node.nodes?.find((c) => c.Id === childId);
-    //     if (child) {
-    //       currentContent.value = {
-    //         title: `${node.text} - ${child.text}`,
-    //         description: `这是${node.text}的${child.text}页面内容。`,
-    //       };
-    //     }
-    //   } else {
-    //     currentContent.value = {
-    //       title: node.text,
-    //       description: `这是${node.text}的主页面内容。`,
-    //     };
-    //   }
-
-    //   // 更新选中的菜单项
-    //   selectedMenuKeys.value = childId ? [childId] : [nodeId];
-    // };
-
     const handleMenuClick = (nodeId: string, childId?: string) => {
-      const node = newProjects.value.nodes.find((n) => n.Id === nodeId);
+      // 先找到项目对象
+      const project = newProjects.value.find(
+        (p) => p.nodes && p.nodes.some((n) => n.Id === nodeId),
+      );
+      if (!project) return;
+
+      // 然后从项目的 nodes 中找到对应的节点
+      const node = project.nodes?.find((n) => n.Id === nodeId);
       if (!node) return;
 
       let targetHref = "";
@@ -337,18 +383,20 @@ export default defineComponent({
       }
 
       if (targetHref) {
-        const routeName = targetHref.split('/').pop() || targetHref;
-        
-        const existingTab = openedTabs.value.find(tab => tab.path === targetHref);
+        const routeName = targetHref.split("/").pop() || targetHref;
+
+        const existingTab = openedTabs.value.find(
+          (tab) => tab.path === targetHref,
+        );
         if (!existingTab) {
           openedTabs.value.push({
             key: routeName,
             title: targetTitle,
             closable: true,
-            path: targetHref
+            path: targetHref,
           });
         }
-        
+
         activeTabKey.value = routeName;
         router.push(targetHref);
       } else {
@@ -358,15 +406,17 @@ export default defineComponent({
         };
       }
     };
-    
+
     const handleTabClick = (tab: any) => {
       activeTabKey.value = tab.key;
       router.push(tab.path);
     };
-    
-    const onTabEdit = (targetKey: any, action: 'add' | 'remove') => {
-      if (action === 'remove') {
-        const index = openedTabs.value.findIndex(tab => tab.key === targetKey);
+
+    const onTabEdit = (targetKey: any, action: "add" | "remove") => {
+      if (action === "remove") {
+        const index = openedTabs.value.findIndex(
+          (tab) => tab.key === targetKey,
+        );
         if (index > -1) {
           openedTabs.value.splice(index, 1);
           if (activeTabKey.value === targetKey && openedTabs.value.length > 0) {
@@ -381,13 +431,17 @@ export default defineComponent({
       searchText,
       collapsed,
       activeFilter,
+      activeResponsibility,
       activeTab,
       selectedMenuKeys,
       openMenuKeys,
       filterTags,
+      responsibilityTags,
       currentContent,
       newProjects,
+      filteredProjects,
       handleFilterChange,
+      handleResponsibilityChange,
       handleMenuClick,
       handleSearch,
       activeTabKey,
@@ -432,6 +486,16 @@ export default defineComponent({
 .filter-tag {
   cursor: pointer;
   margin: 0 !important;
+  flex: 1;
+  text-align: center;
+  min-width: 45px;
+  border-radius: 10px;
+  border: 1px solid #000000;
+}
+.filter-tag1 {
+  cursor: pointer;
+  margin: 0 !important;
+  padding: 0 !important;
   flex: 1;
   text-align: center;
   min-width: 45px;
