@@ -208,7 +208,7 @@ const loadData = async () => {
     // 默认展开所有节点
     expandAllNodes()
 
-    message.success('数据加载成功')
+    // message.success('数据加载成功')
   } catch (error) {
     console.error('加载数据失败:', error)
     message.error('加载权限数据失败')

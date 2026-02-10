@@ -101,8 +101,8 @@
         </template>
         高级查询
       </a-button> -->
-      <a-third-app-button biz-type="user" :selected-row-keys="selectedRowKeys" syncToApp syncToLocal
-        @sync-finally="onSyncFinally" />
+      <!-- <a-third-app-button biz-type="user" :selected-row-keys="selectedRowKeys" syncToApp syncToLocal
+        @sync-finally="onSyncFinally" /> -->
     </div>
 
     <!-- table区域-begin -->

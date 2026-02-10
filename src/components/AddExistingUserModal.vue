@@ -236,7 +236,7 @@ const loadUserList = async () => {
     selectedRowKeys.value = props.selectedUsers.map(user => user.id);
     console.log(selectedRowKeys.value,'selectedRowKeys.value');
     
-    message.success('数据加载成功');
+    // message.success('数据加载成功');
   } catch (error) {
     message.error('数据加载失败');
   }
