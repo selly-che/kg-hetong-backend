@@ -185,54 +185,6 @@ export default defineComponent({
       { label: "自揽参与", value: "self_assist" },
     ]);
 
-    // 旧目录数据
-    const projects = ref([
-      {
-        id: "1",
-        name: "新都氢能源有轨电车",
-        type: "urban",
-        tab: "main",
-        children: [
-          { id: "1-1", name: "项目概况" },
-          { id: "1-2", name: "生产组织" },
-          { id: "1-3", name: "进度管理" },
-          { id: "1-4", name: "预可研" },
-          { id: "1-5", name: "可研" },
-        ],
-      },
-      {
-        id: "2",
-        name: "兴泉铁路",
-        type: "railway",
-        tab: "main",
-        children: [
-          { id: "2-1", name: "项目概况" },
-          { id: "2-2", name: "施工进度" },
-          { id: "2-3", name: "质量安全" },
-        ],
-      },
-      {
-        id: "3",
-        name: "京沪高速",
-        type: "highway",
-        tab: "main",
-        children: [
-          { id: "3-1", name: "项目概况" },
-          { id: "3-2", name: "建设进展" },
-        ],
-      },
-      {
-        id: "4",
-        name: "地铁3号线",
-        type: "urban",
-        tab: "assist",
-        children: [
-          { id: "4-1", name: "项目概况" },
-          { id: "4-2", name: "技术协调" },
-        ],
-      },
-    ]);
-
     //目录数据新
     const newProjects = ref([
       {
@@ -294,7 +246,7 @@ export default defineComponent({
             remote: true,
             nodes: [
               {
-                Id: "7e6656aa-5aa2-49b9-bfd0-64b1fd07065b",
+                Id: "7e6656aa-5aa2-49b9-bfd0-64b1fd07065b2",
                 text: "1-1",
                 href: "",
                 nodes: [],
@@ -304,7 +256,7 @@ export default defineComponent({
         ],
       },
       {
-        Id: "e4a66a5d-dd41-44b4-836d-37f6e3c495cc",
+        Id: "e4a66a5d-dd41-44b4-836d-37f6e3c495cc2",
         href: "",
         text: "兴泉铁路",
         //筛选条件
@@ -366,6 +318,14 @@ export default defineComponent({
       const node = project.nodes?.find((n) => n.Id === nodeId);
       if (!node) return;
 
+      // 只展开当前项目，收起其他所有项目
+      // openMenuKeys.value = [project.Id];
+      if (node.nodes && node.nodes.length > 0) {
+        openMenuKeys.value = [project.Id, nodeId];
+      } else {
+        openMenuKeys.value = [project.Id];
+      }
+      //
       let targetHref = "";
       let targetTitle = "";
 
@@ -399,12 +359,13 @@ export default defineComponent({
 
         activeTabKey.value = routeName;
         router.push(targetHref);
-      } else {
-        currentContent.value = {
-          title: targetTitle,
-          description: `这是${targetTitle}的主页面内容。`,
-        };
       }
+      // else {
+      //   currentContent.value = {
+      //     title: targetTitle,
+      //     description: `这是${targetTitle}的主页面内容。`,
+      //   };
+      // }
     };
 
     const handleTabClick = (tab: any) => {
@@ -440,12 +401,12 @@ export default defineComponent({
       currentContent,
       newProjects,
       filteredProjects,
+      activeTabKey,
+      openedTabs,
       handleFilterChange,
       handleResponsibilityChange,
       handleMenuClick,
       handleSearch,
-      activeTabKey,
-      openedTabs,
       handleTabClick,
       onTabEdit,
     };
