@@ -94,11 +94,13 @@
     <a-layout>
       <a-layout-header style="background: #fff; padding: 0 16px">
         <div class="header-content">
-          <div class="trigger" @click="collapsed = !collapsed">
+          <!-- <div class="trigger" @click="collapsed = !collapsed">
             <menu-unfold-outlined v-if="collapsed" />
             <menu-fold-outlined v-else />
-          </div>
+          </div> -->
           <div class="header-title">项目管理系统</div>
+         
+          <div class="HomeFilled" @click="goHome"> <HomeFilled /></div>
         </div>
       </a-layout-header>
       <a-layout-content style="margin: 16px">
@@ -138,13 +140,14 @@
 <script lang="ts">
 import { defineComponent, ref, computed } from "vue";
 import { useRouter } from "vue-router";
-import { MenuUnfoldOutlined, MenuFoldOutlined } from "@ant-design/icons-vue";
-import { Tag, Tabs } from "ant-design-vue";
+import { MenuUnfoldOutlined, MenuFoldOutlined ,HomeFilled} from "@ant-design/icons-vue";
+import { Tag, Tabs , } from "ant-design-vue";
 
 export default defineComponent({
   components: {
     MenuUnfoldOutlined,
     MenuFoldOutlined,
+    HomeFilled,
     ATag: Tag,
     ATabs: Tabs,
     ATabPane: Tabs.TabPane,
@@ -288,6 +291,10 @@ export default defineComponent({
       });
     });
 
+    const goHome = () => {
+      router.push('/home');
+    };
+
     // 当前显示的内容
     const currentContent = ref<any>(null);
 
@@ -409,6 +416,7 @@ export default defineComponent({
       handleSearch,
       handleTabClick,
       onTabEdit,
+      goHome
     };
   },
 });
@@ -529,7 +537,13 @@ export default defineComponent({
 .header-content {
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
   height: 100%;
+}
+.HomeFilled {
+  font-size: 26px;
+  cursor: pointer;
 }
 
 .trigger {
