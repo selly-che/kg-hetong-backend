@@ -86,7 +86,7 @@
         </div>
         <div class="sidebar-footer">
           <a-button type="primary" block @click="$router.push('/home')">
-            返回上一级
+            回到首页
           </a-button>
         </div>
       </div>
@@ -151,12 +151,12 @@ const selectedMenuKeys = ref<string[]>([]);
 const openMenuKeys = ref<string[]>([]);
 const activeTabKey = ref("ProjectOverview");
 const openedTabs = ref([
-  // {
-  //   key: "ProjectOverview",
-  //   title: "项目概况",
-  //   closable: false,
-  //   path: "/projectMgment/ProjectOverview",
-  // },
+  {
+    key: "ProjectOverview",
+    title: "",
+    closable: false,
+    path: "/projectMgment/ProjectOverview",
+  },
 ]);
 //
 onMounted(() => {
@@ -186,9 +186,20 @@ const getProjectList = async () => {
     pageSize: 10,
   });
   const records = res.data.result.records;
-  console.log("获取项目列表", JSON.parse(JSON.stringify(records)));
+  const allTaskArrangements = records.flatMap(
+    (record: any) => record.taskArrangements || [],
+  );
+  const uniqueSteps = new Map();
+  allTaskArrangements.forEach((item: any) => {
+    if (!uniqueSteps.has(item.projectStepStr)) {
+      uniqueSteps.set(item.projectStepStr, item);
+    }
+  });
+  const yky = Array.from(uniqueSteps.values());
+  console.log("获取项目列表", JSON.parse(JSON.stringify(records.length)));
+  console.log("获取项目列表其他信息", JSON.parse(JSON.stringify(yky)));
 
-  const defaultNodes = [
+  const fixedNodes = [
     {
       Id: "12e51b31-524f-4683-82ae-e2b526464b3d",
       currentStep: false,
@@ -213,37 +224,20 @@ const getProjectList = async () => {
       remote: false,
       nodes: [],
     },
-    {
-      Id: "2d9b57c8-0243-4288-aec9-17476d785c76",
-      text: "预可研",
-      currentStep: true,
-      href: "",
-      remote: true,
-      nodes: [
-        {
-          Id: "36f18353-c6ee-49db-945b-ffc8cd0fefd0",
-          text: "1-1",
-          href: "",
-          nodes: [],
-        },
-      ],
-    },
-    {
-      Id: "dbf144f0-71fb-47c0-befe-8ec0348307b2",
-      text: "可研",
-      currentStep: false,
-      href: "",
-      remote: true,
-      nodes: [
-        {
-          Id: "7e6656aa-5aa2-49b9-bfd0-64b1fd07065b2",
-          text: "1-1",
-          href: "",
-          nodes: [],
-        },
-      ],
-    },
   ];
+
+  // 项目阶段节点
+  const dynamicNodes = yky.map((item: any, index: number) => ({
+    Id: `dynamic-${index}-${item.id}`, //动态节点id
+    currentStep: false,
+    text: item.projectStepStr,
+    // href: `/projectMgment/ProjectStep?stepId=${item.id}`, //动态节点路由
+    href: "",
+    remote: false,
+    nodes: [],
+  }));
+
+  const defaultNodes = [...fixedNodes, ...dynamicNodes];
 
   const getProjectType = (projectTypeDetail: string) => {
     if (projectTypeDetail?.includes("铁路")) return "railway";
@@ -254,13 +248,13 @@ const getProjectList = async () => {
 
   //（转化后端数据格式）
   newProjects.value = records.map((item: any) => {
-    // 为每个项目创建唯一的节点ID（！相同defaultNodes单一展开）
+    // 为每个项目创建唯一的节点ID
     const uniqueNodes = defaultNodes.map((node) => ({
       ...node,
-      Id: `${item.id}-${node.Id}`, // 确保defaultNodes的唯一性
+      Id: `${item.id}-${node.Id}`, // 确保的唯一性
       href: node.href ? `${node.href}?projectId=${item.id}` : node.href, // 在href中添加项目ID参数
       nodes: node.nodes
-        ? node.nodes.map((childNode) => ({
+        ? node.nodes.map((childNode: any) => ({
             ...childNode,
             Id: `${item.id}-${childNode.Id}`,
           }))
@@ -384,9 +378,6 @@ const filteredProjects = computed(() => {
   });
 });
 
-// 当前显示的内容
-const currentContent = ref<any>(null);
-
 // 处理搜索
 const handleSearch = (text: string) => {
   searchText.value = text;
@@ -449,7 +440,9 @@ const handleMenuClick = (nodeId: string, childId?: string) => {
   if (targetHref) {
     const routeName = targetHref.split("/").pop() || targetHref;
 
-    const existingTab = openedTabs.value.find((tab) => tab.path === targetHref);
+    const existingTab = openedTabs.value.find(
+      (tab: any) => tab.path === targetHref,
+    );
     if (!existingTab) {
       openedTabs.value.push({
         key: routeName,
