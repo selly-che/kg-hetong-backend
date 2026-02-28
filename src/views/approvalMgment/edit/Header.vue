@@ -2,12 +2,12 @@
   <div>
     <a-card class="contract-card" :style="{ height: '200px' }">
       <div class="header">
-        <span
-          @click="$router.push({ name: 'approvalMgment' })"
-          style="cursor: pointer"
-          >审批管理</span
-        >
-        <span>/合同详情</span>
+        <a-breadcrumb separator=">">
+          <a-breadcrumb-item>
+            <router-link to="/approvalMgment">审批管理</router-link>
+          </a-breadcrumb-item>
+          <a-breadcrumb-item>合同详情</a-breadcrumb-item>
+        </a-breadcrumb>
       </div>
       <div class="contract-header">
         <h2 class="contract-title">{{ contractName }}</h2>

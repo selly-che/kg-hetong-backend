@@ -223,7 +223,6 @@ const getprojectsdetails = async () => {
     projectId: route.query.projectId || 1,
   });
   const projectbaseInfo = res.data.result.projectInfo;
-  //要改的（数组--projectId上数三行）
   const techStandards = res.data.result.techStandards[0];
   technologyObj.value = techStandards;
   // console.log("项目基本信息", projectbaseInfo.projectStep);

@@ -151,12 +151,12 @@ const selectedMenuKeys = ref<string[]>([]);
 const openMenuKeys = ref<string[]>([]);
 const activeTabKey = ref("ProjectOverview");
 const openedTabs = ref([
-  {
-    key: "ProjectOverview",
-    title: "项目概况",
-    closable: false,
-    path: "/projectMgment/ProjectOverview",
-  },
+  // {
+  //   key: "ProjectOverview",
+  //   title: "项目概况",
+  //   closable: false,
+  //   path: "/projectMgment/ProjectOverview",
+  // },
 ]);
 //
 onMounted(() => {
@@ -254,10 +254,10 @@ const getProjectList = async () => {
 
   //（转化后端数据格式）
   newProjects.value = records.map((item: any) => {
-    // 为每个项目创建唯一的节点ID
+    // 为每个项目创建唯一的节点ID（！相同defaultNodes单一展开）
     const uniqueNodes = defaultNodes.map((node) => ({
       ...node,
-      Id: `${item.id}-${node.Id}`, // 将项目ID与节点ID组合，确保唯一性
+      Id: `${item.id}-${node.Id}`, // 确保defaultNodes的唯一性
       href: node.href ? `${node.href}?projectId=${item.id}` : node.href, // 在href中添加项目ID参数
       nodes: node.nodes
         ? node.nodes.map((childNode) => ({
