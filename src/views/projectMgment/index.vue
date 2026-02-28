@@ -94,11 +94,13 @@
     <a-layout>
       <a-layout-header style="background: #fff; padding: 0 16px">
         <div class="header-content">
-          <div class="trigger" @click="collapsed = !collapsed">
+          <!-- <div class="trigger" @click="collapsed = !collapsed">
             <menu-unfold-outlined v-if="collapsed" />
             <menu-fold-outlined v-else />
-          </div>
+          </div> -->
           <div class="header-title">项目管理系统</div>
+         
+          <div class="HomeFilled" @click="goHome"> <HomeFilled /></div>
         </div>
       </a-layout-header>
       <a-layout-content style="margin: 16px">
@@ -592,7 +594,13 @@ const onTabEdit = (targetKey: any, action: "add" | "remove") => {
 .header-content {
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
   height: 100%;
+}
+.HomeFilled {
+  font-size: 26px;
+  cursor: pointer;
 }
 
 .trigger {
