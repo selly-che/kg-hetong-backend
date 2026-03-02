@@ -1,6 +1,10 @@
 <template>
   <a-layout style="min-height: 100vh">
-    <a-layout-sider v-model:collapsed="collapsed" width="280" style="background-color: rgb(25, 97, 172)">
+    <a-layout-sider
+      v-model:collapsed="collapsed"
+      width="280"
+      style="background-color: rgb(25, 97, 172)"
+    >
       <div class="sidebar-container">
         <!-- 查询项目标题 -->
         <a-input-search v-model:value="searchText" placeholder="请输入项目名称" enter-button
@@ -8,17 +12,26 @@
 
         <!-- 责任类型筛选标签 -->
         <div class="filter-tags">
-          <a-tag v-for="tag in responsibilityTags" :key="tag.value"
-            :color="activeResponsibility === tag.value ? 'blue' : 'default'" class="filter-tag1"
-            @click="handleResponsibilityChange(tag.value)">
+          <a-tag
+            v-for="tag in responsibilityTags"
+            :key="tag.value"
+            :color="activeResponsibility === tag.value ? 'blue' : 'default'"
+            class="filter-tag1"
+            @click="handleResponsibilityChange(tag.value)"
+          >
             {{ tag.label }}
           </a-tag>
         </div>
 
         <!-- 过滤标签 -->
         <div class="filter-tags">
-          <a-tag v-for="tag in filterTags" :key="tag.value" :color="activeFilter === tag.value ? 'blue' : 'default'"
-            class="filter-tag" @click="handleFilterChange(tag.value)">
+          <a-tag
+            v-for="tag in filterTags"
+            :key="tag.value"
+            :color="activeFilter === tag.value ? 'blue' : 'default'"
+            class="filter-tag"
+            @click="handleFilterChange(tag.value)"
+          >
             {{ tag.label }}
           </a-tag>
         </div>
@@ -33,8 +46,12 @@
 
         <!-- 项目列表 -->
         <div class="project-list">
-          <a-menu v-model:selectedKeys="selectedMenuKeys" v-model:openKeys="openMenuKeys" mode="inline"
-            :inline-collapsed="collapsed">
+          <a-menu
+            v-model:selectedKeys="selectedMenuKeys"
+            v-model:openKeys="openMenuKeys"
+            mode="inline"
+            :inline-collapsed="collapsed"
+          >
             <!-- 动态渲染项目 -->
             <a-sub-menu v-for="project in filteredProjects" :key="project.Id">
               <template #title>
@@ -80,13 +97,25 @@
       </a-layout-header>
 
       <a-layout-content style="margin: 16px">
-        <div :style="{
-          background: '#fff',
-          minHeight: 'calc(100vh - 132px)',
-        }">
+        <div
+          :style="{
+            background: '#fff',
+            minHeight: 'calc(100vh - 132px)',
+          }"
+        >
           <!-- 页签 -->
-          <a-tabs v-model:activeKey="activeTabKey" type="editable-card" hide-add @edit="onTabEdit" class="content-tabs">
-            <a-tab-pane v-for="tab in openedTabs" :key="tab.key" :closable="tab.closable">
+          <a-tabs
+            v-model:activeKey="activeTabKey"
+            type="editable-card"
+            hide-add
+            @edit="onTabEdit"
+            class="content-tabs"
+          >
+            <a-tab-pane
+              v-for="tab in openedTabs"
+              :key="tab.key"
+              :closable="tab.closable"
+            >
               <template #tab>
                 <span @click="handleTabClick(tab)">{{ tab.title }}</span>
               </template>

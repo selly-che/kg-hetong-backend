@@ -2,32 +2,38 @@
   <div class="header-container">
     <a-form layout="inline" class="search-form">
       <a-form-item label="合同名称">
-        <a-input placeholder="请输入合同名称" v-model="formData.contractName" />
+        <a-input
+          placeholder="请输入合同名称"
+          v-model:value="formData.contractName"
+        />
       </a-form-item>
       <a-form-item label="合同编号">
         <a-input
           placeholder="请输入合同编号"
-          v-model="formData.contractNumber"
+          v-model:value="formData.contractNumber"
         />
       </a-form-item>
       <a-form-item label="执行单位">
-        <a-select v-model="formData.executionUnit" placeholder="所有单位">
+        <a-select v-model:value="formData.executionUnit" placeholder="所有单位">
           <a-select-option value="all">所有单位</a-select-option>
           <a-select-option value="1">中铁开发投资集团有限公司</a-select-option>
           <a-select-option value="2">2</a-select-option>
         </a-select>
       </a-form-item>
       <a-form-item label="业主名称">
-        <a-input placeholder="请输入业主名称" v-model="formData.ownerName" />
+        <a-input
+          placeholder="请输入业主名称"
+          v-model:value="formData.ownerName"
+        />
       </a-form-item>
       <a-form-item label="合同金额">
         <a-input
           placeholder="请输入合同金额"
-          v-model="formData.contractAmount"
+          v-model:value="formData.contractAmount"
         />
       </a-form-item>
       <a-form-item label="合同金额范围">
-        <a-select v-model="formData.amountRange" placeholder="所有单位">
+        <a-select v-model:value="formData.amountRange" placeholder="所有单位">
           <a-select-option value="all">所有单位</a-select-option>
           <a-select-option value="1">1-10万</a-select-option>
           <a-select-option value="2">10-50万</a-select-option>
@@ -38,7 +44,7 @@
         </a-select>
       </a-form-item>
       <a-form-item label="有应收款">
-        <a-select v-model="formData.hasReceivable" placeholder="全部">
+        <a-select v-model:value="formData.hasReceivable" placeholder="全部">
           <a-select-option value="all">全部</a-select-option>
           <a-select-option value="1">有</a-select-option>
           <a-select-option value="2">无</a-select-option>
@@ -46,13 +52,13 @@
       </a-form-item>
       <a-form-item label="合同日期">
         <a-date-picker
-          v-model="formData.contractDate"
+          v-model:value="formData.contractDate"
           placeholder="请选择合同日期"
         />
       </a-form-item>
       <a-form-item label="签订时间范围">
         <a-range-picker
-          v-model="formData.signDateRange"
+          v-model:value="formData.signDateRange"
           placeholder="开始时间 - 结束时间"
         />
       </a-form-item>
@@ -65,14 +71,11 @@
   </div>
 </template>
 
-<script lang="ts">
-export default {
-  name: "HeaDer",
-};
-</script>
-
 <script setup lang="ts">
+import { number } from "echarts";
 import { ref } from "vue";
+
+const emit = defineEmits(["search", "reset"]);
 const formData = ref({
   contractName: "",
   contractNumber: "",
@@ -81,12 +84,40 @@ const formData = ref({
   contractAmount: "",
   amountRange: "all",
   hasReceivable: "all",
-  contractDate: null,
-  signDateRange: [],
+  contractDate: "" as any,
+  signDateRange: [] as any[],
 });
 const handleSearch = () => {
-  // 搜索
-  console.log("搜索参数:", formData.value);
+  console.log("表单数据:", formData.value);
+  const searchParams = {
+    name: formData.value.contractName,
+    number: formData.value.contractNumber,
+    ownershipUnit:
+      formData.value.executionUnit === "all"
+        ? ""
+        : formData.value.executionUnit,
+    customerName: formData.value.ownerName,
+    amount: formData.value.contractAmount,
+    amountRange:
+      formData.value.amountRange === "all" ? "" : formData.value.amountRange,
+    hasReceivable:
+      formData.value.hasReceivable === "all"
+        ? ""
+        : formData.value.hasReceivable,
+    contractDate: formData.value.contractDate
+      ? formData.value.contractDate.format("YYYY-MM-DD")
+      : "",
+    signTimeStart:
+      formData.value.signDateRange && formData.value.signDateRange[0]
+        ? formData.value.signDateRange[0].format("YYYY-MM-DD")
+        : "",
+    signTimeEnd:
+      formData.value.signDateRange && formData.value.signDateRange[1]
+        ? formData.value.signDateRange[1].format("YYYY-MM-DD")
+        : "",
+  };
+  console.log("搜索参数:", searchParams);
+  emit("search", searchParams);
 };
 const handleReset = () => {
   // 重置
@@ -101,6 +132,7 @@ const handleReset = () => {
     contractDate: null,
     signDateRange: [],
   };
+  emit("reset");
 };
 const handleExpand = () => {
   // 展开/收起逻辑
