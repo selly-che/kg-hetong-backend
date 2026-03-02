@@ -15,6 +15,7 @@
           active-text-color="#ffffff"
           background-color="#409eff"
           :collapse="isCollapse"
+          @select="handleMenuSelect"
         >
           <template v-for="item in menus" :key="item.index">
             <el-sub-menu v-if="item.children" :index="item.index">
@@ -299,6 +300,20 @@ const handleClick = (tab: any) => {
   console.log(tab, "handleClick");
 
   Router.push(tab.props.name);
+};
+
+// 点击菜单判断跳转新始页面
+const handleMenuSelect = (path: string) => {
+  // 判断当前点击的菜单项是否为“项目管理”
+  console.log(path, "handleMenuSelect");
+  
+  if (path == "/projectMgment") {
+    // 使用 window.open 打开新页面
+    const projectManagementUrl = "/projectMgment"; // 替换为目标页面路径
+    window.open(projectManagementUrl, "_blank");
+    Router.push("/home");
+    return;
+  }
 };
 
 // 监听路由变化

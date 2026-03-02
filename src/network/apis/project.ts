@@ -17,4 +17,20 @@ export default {
       params,
     };
   },
+  // 工作安排
+  GetWorkArrangement(params: any) {
+    return {
+      method: "GET",
+      url: "/projectcontract/taskArrangement/gzap",
+      params,
+    };
+  },
+  // 项目组成员
+  GetProjectMembers(params: any) {
+       return {
+      method: "GET",
+      url: "/projectcontract/taskArrangement/xmzcy",
+      params,
+    };
+  }
 };

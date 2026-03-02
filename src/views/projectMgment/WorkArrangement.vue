@@ -4,8 +4,8 @@
         <div class="search-bar">
             <!-- 下拉选择搜索字段 -->
             <a-select v-model:value="searchType" style="width: 100px; margin-right: 8px">
-                <a-select-option value="noticeName">通知名称</a-select-option>
-                <a-select-option value="taskName">任务名称</a-select-option>
+                <a-select-option value="0">通知名称</a-select-option>
+                <a-select-option value="1">任务名称</a-select-option>
             </a-select>
 
             <!-- 搜索输入框 -->
@@ -13,12 +13,12 @@
 
             <!-- 状态筛选 -->
             <a-checkbox-group v-model:value="statusFilters" style="margin-right: 16px">
-                <a-checkbox value="notIssued">未下发</a-checkbox>
-                <a-checkbox value="notSigned">未签发</a-checkbox>
-                <a-checkbox value="unfinished">未完成</a-checkbox>
-                <a-checkbox value="returned">已退回</a-checkbox>
-                <a-checkbox value="finished">已完成</a-checkbox>
-                <a-checkbox value="notDecomposed">未分解</a-checkbox>
+                <a-checkbox value="-1">未下发</a-checkbox>
+                <a-checkbox value="0">未签发</a-checkbox>
+                <a-checkbox value="1">未完成</a-checkbox>
+                <a-checkbox value="-2">已退回</a-checkbox>
+                <a-checkbox value="2">已完成</a-checkbox>
+                <a-checkbox value="5">未分解</a-checkbox>
             </a-checkbox-group>
 
             <!-- 计划类型筛选 -->
@@ -43,29 +43,29 @@
                         <a-menu-item key="operation">
                             <a-checkbox v-model:checked="columnVisible.operation">操作</a-checkbox>
                         </a-menu-item>
-                        <a-menu-item key="noticeName">
-                            <a-checkbox v-model:checked="columnVisible.noticeName">通知名称</a-checkbox>
+                        <a-menu-item key="taTaskName">
+                            <a-checkbox v-model:checked="columnVisible.taTaskName">通知名称</a-checkbox>
                         </a-menu-item>
-                        <a-menu-item key="assigner">
-                            <a-checkbox v-model:checked="columnVisible.assigner">下发人</a-checkbox>
+                        <a-menu-item key="taCreator">
+                            <a-checkbox v-model:checked="columnVisible.taCreator">下发人</a-checkbox>
                         </a-menu-item>
-                        <a-menu-item key="number">
-                            <a-checkbox v-model:checked="columnVisible.number">编号</a-checkbox>
+                        <a-menu-item key="taSerialNumber">
+                            <a-checkbox v-model:checked="columnVisible.taSerialNumber">编号</a-checkbox>
                         </a-menu-item>
-                        <a-menu-item key="deadline">
-                            <a-checkbox v-model:checked="columnVisible.deadline">截止时间</a-checkbox>
+                        <a-menu-item key="taEndDate">
+                            <a-checkbox v-model:checked="columnVisible.taEndDate">截止时间</a-checkbox>
                         </a-menu-item>
-                        <a-menu-item key="status">
-                            <a-checkbox v-model:checked="columnVisible.status">状态</a-checkbox>
+                        <a-menu-item key="taStatus">
+                            <a-checkbox v-model:checked="columnVisible.taStatus">状态</a-checkbox>
                         </a-menu-item>
-                        <a-menu-item key="reason">
-                            <a-checkbox v-model:checked="columnVisible.reason">签发退回原因</a-checkbox>
+                        <a-menu-item key="taReason">
+                            <a-checkbox v-model:checked="columnVisible.taReason">签发退回原因</a-checkbox>
                         </a-menu-item>
-                        <a-menu-item key="progress">
-                            <a-checkbox v-model:checked="columnVisible.progress">阶段计划执行进度</a-checkbox>
+                        <a-menu-item key="planExecutionProgress">
+                            <a-checkbox v-model:checked="columnVisible.planExecutionProgress">阶段计划执行进度</a-checkbox>
                         </a-menu-item>
-                        <a-menu-item key="completion">
-                            <a-checkbox v-model:checked="columnVisible.completion">完成量</a-checkbox>
+                        <a-menu-item key="completionCount">
+                            <a-checkbox v-model:checked="columnVisible.completionCount">完成量</a-checkbox>
                         </a-menu-item>
                     </a-menu>
                 </template>
@@ -73,38 +73,65 @@
         </div>
 
         <!-- 表格区域 -->
-        <a-table :dataSource="tableData" :columns="visibleColumns" :pagination="false" size="small" bordered
-            class="work-arrangement-table">
+        <a-table :dataSource="tableData" :columns="visibleColumns" :loading="tableLoading" :pagination="false"
+            size="small" bordered class="work-arrangement-table">
             <template #empty>
                 <div class="empty-text">没有找到匹配的记录</div>
+            </template>
+            <template #taStatus="{ record }">
+                <a-tag>
+                    {{ getStatusText(record.taStatus) }}
+                </a-tag>
             </template>
         </a-table>
     </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 import { SettingOutlined } from '@ant-design/icons-vue';
-
+import getDatas from "@/network/index";
+import { ElMessage } from 'element-plus';
 // 搜索相关
-const searchType = ref('noticeName');
+const searchType = ref('0');
 const searchText = ref('');
-const statusFilters = ref(['notIssued', 'notSigned', 'unfinished', 'returned', 'finished', 'notDecomposed']);
+// 分页相关
+const pageSize = ref(10);
+const currentPage = ref(1);
+const total = ref(0);
+// 状态筛选
+const statusFilters = ref(['-1', '0', '1', '-2', '2', '5']);
 const planFilters = ref(['processPlan', 'phasePlan']);
+
+const tableLoading = ref(false);
 
 // 列可见性控制
 const columnVisible = ref({
-    operation: true,
-    noticeName: true,
-    assigner: true,
-    number: true,
-    deadline: true,
-    status: true,
-    reason: true,
-    progress: true,
-    completion: true,
+    operation: false,
+    taTaskName: true,
+    taCreator: true,
+    taSerialNumber: true,
+    taEndDate: true,
+    taStatus: true,
+    taReason: true,
+    planExecutionProgress: true,
+    completionCount: true,
 });
-
+// 状态映射函数
+const getStatusText = (status: number) => {
+    const statusMap: Record<number, string> = {
+        '-2': '已退回',
+        '-1': '未下发',
+        '0': '未签发',
+        '1': '未完成',
+        '2': '已完成',
+        '3': '已作废',
+        '4': '已暂停',
+        '5': '未分解'
+    };
+    return statusMap[status] || '未知状态';
+};
 // 表格数据（模拟）
 const tableData = ref([]);
 
@@ -122,54 +149,55 @@ const visibleColumns = computed(() => {
         },
         {
             title: '通知名称',
-            dataIndex: 'noticeName',
-            key: 'noticeName',
+            dataIndex: 'taTaskName',
+            key: 'taTaskName',
             width: 150,
             ellipsis: true,
         },
         {
             title: '下发人',
-            dataIndex: 'assigner',
-            key: 'assigner',
+            dataIndex: 'taCreator',
+            key: 'taCreator',
             width: 100,
         },
         {
             title: '编号',
-            dataIndex: 'number',
-            key: 'number',
+            dataIndex: 'taSerialNumber',
+            key: 'taSerialNumber',
             width: 100,
         },
         {
             title: '截止时间',
-            dataIndex: 'deadline',
-            key: 'deadline',
+            dataIndex: 'taEndDate',
+            key: 'taEndDate',
             width: 120,
-            sorter: (a: any, b: any) => new Date(a.deadline).getTime() - new Date(b.deadline).getTime(),
+            sorter: (a: any, b: any) => new Date(a.taEndDate).getTime() - new Date(b.taEndDate).getTime(),
         },
         {
             title: '状态',
-            dataIndex: 'status',
-            key: 'status',
+            dataIndex: 'taStatus',
+            key: 'taStatus',
             width: 100,
+            slots: { customRender: 'taStatus' },
         },
         {
             title: '签发退回原因',
-            dataIndex: 'reason',
-            key: 'reason',
+            dataIndex: 'taReason',
+            key: 'taReason',
             width: 150,
             ellipsis: true,
-        }, 
-      
+        },
+
         {
             title: '阶段计划执行进度',
-            dataIndex: 'progress',
-            key: 'progress',
+            dataIndex: 'planExecutionProgress',
+            key: 'planExecutionProgress',
             width: 150,
         },
-          {
+        {
             title: '完成量',
-            dataIndex: 'completion',
-            key: 'completion',
+            dataIndex: 'completionCount',
+            key: 'completionCount',
             width: 150,
         },
 
@@ -179,19 +207,43 @@ const visibleColumns = computed(() => {
 });
 
 // 查询处理
-const handleSearch = () => {
-    console.log('查询条件:', {
-        searchType: searchType.value,
-        searchText: searchText.value,
-        statusFilters: statusFilters.value,
-        planFilters: planFilters.value,
-    });
+const router = useRouter();
+const handleSearch = async () => {
+    try {
+        tableLoading.value = true;
+        const projectId = router.currentRoute.value.query.projectId;
+        const projectStep = router.currentRoute.value.query.projectStep;
+        const res = await getDatas("project/GetWorkArrangement", {
+            // id: 1,
+            // workType: searchType.value,
+            pageNo: currentPage.value,
+            pageSize: pageSize.value,
+            projectId: projectId,
+            projectStep: projectStep, // 全部
+            taPlanType: statusFilters.value.join(','),
+        })
+        if (res && res.data.code === 200) {
+            tableData.value = res.data.result.records || [];
+            total.value = res.data.result.total || 0;
+        } else {
+            ElMessage.warning(res.data.message || '查询失败');
+            tableData.value = [];
+            total.value = 0;
+        }
+    } catch (error) {
+        ElMessage.warning('查询失败');
+        tableData.value = [];
+        total.value = 0;
+        tableLoading.value = false;
+    } finally {
+        tableLoading.value = false;
+    }
 };
 
 // 重置处理
 const handleReset = () => {
     searchText.value = '';
-    statusFilters.value = ['notIssued', 'notSigned', 'unfinished', 'returned', 'finished', 'notDecomposed'];
+    statusFilters.value = ['-1', '0', '1', '-2', '2', '5'];
     planFilters.value = ['processPlan', 'phasePlan'];
 };
 
@@ -199,6 +251,9 @@ const handleReset = () => {
 const handleAdd = () => {
     console.log('点击新增');
 };
+onMounted(() => {
+    handleSearch();
+})
 </script>
 
 <style scoped>

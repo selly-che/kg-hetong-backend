@@ -1,8 +1,9 @@
 <template>
   <div>
     <div class="header">
+      <!-- @click="$router.push({ name: 'projectMgment' })" -->
       <span
-        @click="$router.push({ name: 'projectMgment' })"
+        @click="openNewPage"
         style="cursor: pointer"
         >项目管理</span
       >
@@ -286,6 +287,10 @@ const formState = reactive({
   plannedEndDate: null,
   actualEndDate: null,
 });
+const openNewPage = () => {
+  
+  window.open("/#/projectMgment/create", "_blank");
+};
 const rules = {};
 </script>
 
