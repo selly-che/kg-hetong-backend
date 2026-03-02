@@ -1,40 +1,22 @@
 <template>
   <a-layout style="min-height: 100vh">
-    <a-layout-sider
-      v-model:collapsed="collapsed"
-      width="280"
-      style="background-color: rgb(25, 97, 172)"
-    >
+    <a-layout-sider v-model:collapsed="collapsed" width="280" style="background-color: rgb(25, 97, 172)">
       <div class="sidebar-container">
         <!-- 查询项目标题 -->
-        <a-input-search
-          v-model:value="searchText"
-          placeholder="请输入项目名称"
-          enter-button
-          style="margin-bottom: 16px; margin-top: 16px"
-          @search="handleSearch"
-        />
+        <a-input-search v-model:value="searchText" placeholder="请输入项目名称" enter-button
+          style="margin-bottom: 16px; margin-top: 16px" @search="handleSearch" />
         <!-- 责任类型筛选标签 --><!-- 筛选类型： 司控主责,司控参与,自揽主责,自揽参与-->
         <div class="filter-tags">
-          <a-tag
-            v-for="tag in responsibilityTags"
-            :key="tag.value"
-            :color="activeResponsibility === tag.value ? 'blue' : 'default'"
-            class="filter-tag1"
-            @click="handleResponsibilityChange(tag.value)"
-          >
+          <a-tag v-for="tag in responsibilityTags" :key="tag.value"
+            :color="activeResponsibility === tag.value ? 'blue' : 'default'" class="filter-tag1"
+            @click="handleResponsibilityChange(tag.value)">
             {{ tag.label }}
           </a-tag>
         </div>
         <!-- 过滤标签--四个方的 -->
         <div class="filter-tags">
-          <a-tag
-            v-for="tag in filterTags"
-            :key="tag.value"
-            :color="activeFilter === tag.value ? 'blue' : 'default'"
-            class="filter-tag"
-            @click="handleFilterChange(tag.value)"
-          >
+          <a-tag v-for="tag in filterTags" :key="tag.value" :color="activeFilter === tag.value ? 'blue' : 'default'"
+            class="filter-tag" @click="handleFilterChange(tag.value)">
             {{ tag.label }}
           </a-tag>
         </div>
@@ -49,12 +31,8 @@
 
         <!-- 项目列表 -->
         <div class="project-list">
-          <a-menu
-            v-model:selectedKeys="selectedMenuKeys"
-            v-model:openKeys="openMenuKeys"
-            mode="inline"
-            :inline-collapsed="collapsed"
-          >
+          <a-menu v-model:selectedKeys="selectedMenuKeys" v-model:openKeys="openMenuKeys" mode="inline"
+            :inline-collapsed="collapsed">
             <!-- 动态渲染项目 -->
             <a-sub-menu v-for="project in filteredProjects" :key="project.Id">
               <template #title>
@@ -65,19 +43,11 @@
                   <template #title>
                     <span>{{ node.text }}</span>
                   </template>
-                  <a-menu-item
-                    v-for="child in node.nodes"
-                    :key="child.Id"
-                    @click="handleMenuClick(node.Id, child.Id)"
-                  >
+                  <a-menu-item v-for="child in node.nodes" :key="child.Id" @click="handleMenuClick(node.Id, child.Id)">
                     {{ child.text }}
                   </a-menu-item>
                 </a-sub-menu>
-                <a-menu-item
-                  v-else
-                  :key="node.Id"
-                  @click="handleMenuClick(node.Id)"
-                >
+                <a-menu-item v-else :key="node.Id" @click="handleMenuClick(node.Id)">
                   {{ node.text }}
                 </a-menu-item>
               </template>
@@ -99,30 +69,20 @@
             <menu-fold-outlined v-else />
           </div> -->
           <div class="header-title">项目管理系统</div>
-         
-          <div class="HomeFilled" @click="goHome"> <HomeFilled /></div>
+
+          <div class="HomeFilled" @click="goHome">
+            <HomeFilled />
+          </div>
         </div>
       </a-layout-header>
       <a-layout-content style="margin: 16px">
-        <div
-          :style="{
-            background: '#fff',
-            minHeight: 'calc(100vh - 132px)',
-          }"
-        >
+        <div :style="{
+          background: '#fff',
+          minHeight: 'calc(100vh - 132px)',
+        }">
           <!-- 页签 -->
-          <a-tabs
-            v-model:activeKey="activeTabKey"
-            type="editable-card"
-            hide-add
-            @edit="onTabEdit"
-            class="content-tabs"
-          >
-            <a-tab-pane
-              v-for="tab in openedTabs"
-              :key="tab.key"
-              :closable="tab.closable"
-            >
+          <a-tabs v-model:activeKey="activeTabKey" type="editable-card" hide-add @edit="onTabEdit" class="content-tabs">
+            <a-tab-pane v-for="tab in openedTabs" :key="tab.key" :closable="tab.closable">
               <template #tab>
                 <span @click="handleTabClick(tab)">{{ tab.title }}</span>
               </template>
@@ -216,7 +176,7 @@ const getProjectList = async () => {
       nodes: [],
     },
     {
-      Id: "2d9b57c8-0243-4288-aec9-17476d785c76",
+      Id: "2d9b57c8-0243-4288-aec9-17476d785c7611",
       text: "预可研",
       currentStep: true,
       href: "",
@@ -224,22 +184,46 @@ const getProjectList = async () => {
       nodes: [
         {
           Id: "36f18353-c6ee-49db-945b-ffc8cd0fefd0",
-          text: "1-1",
-          href: "",
+          text: "组建项目组成员",
+          href: "/projectMgment/ProjectTeam",
+          nodes: [],
+        },
+        {
+          Id: "36f18353-c6ee-49db-945b-ffc8cd0fefd1",
+          text: "查看全部工作安排",
+          href: "/projectMgment/WorkArrangementList",
+          nodes: [],
+        },
+        {
+          Id: "36f18353-c6ee-49db-945b-ffc8cd0fefd2",
+          text: "工作安排",
+          href: "/projectMgment/WorkArrangement",
           nodes: [],
         },
       ],
     },
     {
-      Id: "dbf144f0-71fb-47c0-befe-8ec0348307b2",
+      Id: "dbf144f0-71fb-47c0-befe-8ec0348307b222",
       text: "可研",
       currentStep: false,
       href: "",
       remote: true,
       nodes: [
         {
-          Id: "7e6656aa-5aa2-49b9-bfd0-64b1fd07065b2",
-          text: "1-1",
+          Id: "36f18353-c6ee-49db-945b-ffc8cd0fefd6",
+          text: "组建项目组成员",
+          href: "",
+          nodes: [],
+        },
+        {
+          Id: "36f18353-c6ee-49db-945b-ffc8cd0fefd7",
+          text: "查看全部工作安排",
+          href: "",
+          nodes: [],
+        },
+        {
+          Id: "36f18353-c6ee-49db-945b-ffc8cd0fefd8",
+          text: "工作安排",
           href: "",
           nodes: [],
         },
@@ -263,9 +247,9 @@ const getProjectList = async () => {
       href: node.href ? `${node.href}?projectId=${item.id}` : node.href, // 在href中添加项目ID参数
       nodes: node.nodes
         ? node.nodes.map((childNode) => ({
-            ...childNode,
-            Id: `${item.id}-${childNode.Id}`,
-          }))
+          ...childNode,
+          Id: `${item.id}-${childNode.Id}`,
+        }))
         : [],
     }));
 
@@ -282,6 +266,8 @@ const getProjectList = async () => {
       nodes: uniqueNodes,
     };
   });
+  console.log(newProjects.value, 'newProjectsnewProjects');
+
 };
 
 //目录数据新
@@ -323,30 +309,54 @@ const newProjects = ref([
         nodes: [],
       },
       {
-        Id: "2d9b57c8-0243-4288-aec9-17476d785c76",
+        Id: "2d9b57c8-0243-4288-aec9-2342",
         text: "预可研",
         currentStep: true,
         href: "",
         remote: true,
         nodes: [
           {
-            Id: "36f18353-c6ee-49db-945b-ffc8cd0fefd0",
-            text: "1-1",
+            Id: "36f18353-c6ee-49db-945b-1111",
+            text: "组建项目组成员123",
+            href: "/projectMgment/ProjectTeam",
+            nodes: [],
+          },
+          {
+            Id: "36f18353-c6ee-49db-945b-2222",
+            text: "查看全部工作安排",
+            href: "",
+            nodes: [],
+          },
+          {
+            Id: "36f18353-c6ee-49db-945b-3333",
+            text: "工作安排",
             href: "",
             nodes: [],
           },
         ],
       },
       {
-        Id: "dbf144f0-71fb-47c0-befe-8ec0348307b2",
+        Id: "dbf144f0-71fb-47c0-befe-123",
         text: "可研",
         currentStep: false,
         href: "",
         remote: true,
         nodes: [
           {
-            Id: "7e6656aa-5aa2-49b9-bfd0-64b1fd07065b2",
-            text: "1-1",
+            Id: "36f18353-c6ee-49db-945b-4444",
+            text: "组建项目组成员",
+            href: "",
+            nodes: [],
+          },
+          {
+            Id: "36f18353-c6ee-49db-945b-5555",
+            text: "查看全部工作安排",
+            href: "",
+            nodes: [],
+          },
+          {
+            Id: "36f18353-c6ee-49db-945b-6666",
+            text: "工作安排",
             href: "",
             nodes: [],
           },
@@ -385,6 +395,9 @@ const filteredProjects = computed(() => {
     return typeMatch && tabMatch && responsibilityMatch && textMatch;
   });
 });
+const goHome = () => {
+  router.push('/home');
+};
 
 // 当前显示的内容
 const currentContent = ref<any>(null);
@@ -415,27 +428,36 @@ const handleMenuClick = (nodeId: string, childId?: string) => {
 
   // 打印项目ID到控制台
   console.log("当前点击的项目ID:", project.Id);
-  //本地存储project.Id
-  // localStorage.setItem("projectId", project.Id);
+
   // 从项目的 nodes 中找到对应的节点
   const node = project.nodes?.find((n) => n.Id === nodeId);
   if (!node) return;
 
-  // 只展开当前项目，收起其他所有项目
+  // 控制当前项目的展开/收起状态
+  const isOpen = openMenuKeys.value.includes(project.Id); // 判断当前项目是否已展开
+  const isSubOpen = openMenuKeys.value.includes(nodeId); // 判断当前子节点是否已展开
+
   if (node.nodes && node.nodes.length > 0) {
-    openMenuKeys.value = [project.Id, nodeId];
+    // 如果是父节点（有子节点），切换其展开状态
+    if (isSubOpen) {
+      // 如果当前子节点已展开，则收起它
+      openMenuKeys.value = openMenuKeys.value.filter((key) => key !== nodeId);
+    } else {
+      // 如果当前子节点未展开，则展开它，并保持项目本身展开
+      openMenuKeys.value = [...new Set([...openMenuKeys.value, project.Id, nodeId])];
+    }
   } else {
-    openMenuKeys.value = [project.Id];
+    // 如果是叶子节点（无子节点），只展开项目本身
+    openMenuKeys.value = isOpen ? openMenuKeys.value : [project.Id];
   }
-  //
+
+  // 设置选中项
   let targetHref = "";
   let targetTitle = "";
 
   if (childId) {
     // 确保子节点ID也包含项目ID前缀
-    const fullChildId = childId.includes("-")
-      ? childId
-      : `${projectId}-${childId}`;
+    const fullChildId = childId.includes("-") ? childId : `${projectId}-${childId}`;
     const child = node.nodes?.find((c) => c.Id === fullChildId);
     if (child) {
       targetHref = child.href;
@@ -448,11 +470,14 @@ const handleMenuClick = (nodeId: string, childId?: string) => {
     selectedMenuKeys.value = [nodeId];
   }
 
+  // 根据 href 跳转页面
   if (targetHref) {
     const routeName = targetHref.split("/").pop() || targetHref;
 
+    // 检查是否已存在相同路径的标签页
     const existingTab = openedTabs.value.find((tab) => tab.path === targetHref);
     if (!existingTab) {
+      // 如果不存在，则新增标签页
       openedTabs.value.push({
         key: routeName,
         title: targetTitle,
@@ -461,6 +486,7 @@ const handleMenuClick = (nodeId: string, childId?: string) => {
       });
     }
 
+    // 激活当前标签页并跳转路由
     activeTabKey.value = routeName;
     router.push(targetHref);
   }
@@ -525,6 +551,7 @@ const onTabEdit = (targetKey: any, action: "add" | "remove") => {
   border-radius: 10px;
   border: 1px solid #000000;
 }
+
 .filter-tag1 {
   cursor: pointer;
   margin: 0 !important;
@@ -605,6 +632,7 @@ const onTabEdit = (targetKey: any, action: "add" | "remove") => {
   padding: 0 16px;
   height: 100%;
 }
+
 .HomeFilled {
   font-size: 26px;
   cursor: pointer;

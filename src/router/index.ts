@@ -29,6 +29,30 @@ const routes: Array<RouteRecordRaw> = [
           import("../views/projectMgment/ScheduleManagement.vue"),
         meta: { check: true, title: "进度管理" },
       },
+      // 查看组建项目组成员
+      {
+        path: "ProjectTeam",
+        name: "ProjectTeam",
+        component: () =>
+          import("../views/projectMgment/ProjectTeam.vue"),
+        meta: { check: true, title: "组建项目组成员" },
+      },
+      // 查看全部工作安排
+        {
+        path: "WorkArrangementList",
+        name: "WorkArrangementList",
+        component: () =>
+          import("../views/projectMgment/WorkArrangementList.vue"),
+        meta: { check: true, title: "查看全部工作安排" },
+      },
+      // 工作安排
+        {
+        path: "WorkArrangement",
+        name: "WorkArrangement",
+        component: () =>
+          import("../views/projectMgment/WorkArrangement.vue"),
+        meta: { check: true, title: "工作安排" },
+      },
     ],
   },
   {
