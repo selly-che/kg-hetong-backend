@@ -11,7 +11,8 @@
                 <a-card class="info-card">
                   <a-descriptions bordered size="middle" :column="2">
                     <a-descriptions-item label="当前阶段">
-                      {{ projects.Project_Step || "--" }}
+                      <!-- {{ projects.Project_Step || "--" }} -->
+                      {{ getStepText(projects.Project_Step) }}
                     </a-descriptions-item>
                     <a-descriptions-item label="地铁类型">
                       <a-select mode="multiple" style="width: 100%">
@@ -185,6 +186,20 @@ const projects = ref({
       Value: 3,
     },
   ],
+  ProjectStepConfig: [
+    {
+      Name: "预付期",
+      Value: "600",
+    },
+    {
+      Name: "投标",
+      Value: "601",
+    },
+    {
+      Name: "可研",
+      Value: "602",
+    },
+  ],
   isCG: true,
 });
 const technologyObj = ref({
@@ -223,7 +238,6 @@ const getprojectsdetails = async () => {
     projectId: route.query.projectId || 1,
   });
   const projectbaseInfo = res.data.result.projectInfo;
-  //要改的（数组--projectId上数三行）
   const techStandards = res.data.result.techStandards[0];
   technologyObj.value = techStandards;
   // console.log("项目基本信息", projectbaseInfo.projectStep);
@@ -267,6 +281,20 @@ const getprojectsdetails = async () => {
         Value: 3,
       },
     ],
+    ProjectStepConfig: [
+      {
+        Name: "预付期",
+        Value: "600",
+      },
+      {
+        Name: "投标",
+        Value: "601",
+      },
+      {
+        Name: "可研",
+        Value: "602",
+      },
+    ],
     isCG: true,
   };
 };
@@ -281,5 +309,9 @@ const getStatusText = (status: number) => {
     (c) => c.Value === status,
   );
   return config ? config.Name : "未知状态";
+};
+const getStepText = (step: string) => {
+  const config = projects.value.ProjectStepConfig.find((c) => c.Value === step);
+  return config ? config.Name : "--";
 };
 </script>

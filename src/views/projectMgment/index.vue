@@ -56,7 +56,7 @@
         </div>
         <div class="sidebar-footer">
           <a-button type="primary" block @click="$router.push('/home')">
-            返回上一级
+            回到首页
           </a-button>
         </div>
       </div>
@@ -115,7 +115,7 @@ const activeTabKey = ref("ProjectOverview");
 const openedTabs = ref([
   {
     key: "ProjectOverview",
-    title: "项目概况",
+    title: "",
     closable: false,
     path: "/projectMgment/ProjectOverview",
   },
@@ -148,9 +148,20 @@ const getProjectList = async () => {
     pageSize: 10,
   });
   const records = res.data.result.records;
-  console.log("获取项目列表", JSON.parse(JSON.stringify(records)));
+  const allTaskArrangements = records.flatMap(
+    (record: any) => record.taskArrangements || [],
+  );
+  const uniqueSteps = new Map();
+  allTaskArrangements.forEach((item: any) => {
+    if (!uniqueSteps.has(item.projectStepStr)) {
+      uniqueSteps.set(item.projectStepStr, item);
+    }
+  });
+  const yky = Array.from(uniqueSteps.values());
+  console.log("获取项目列表", JSON.parse(JSON.stringify(records.length)));
+  console.log("获取项目列表其他信息", JSON.parse(JSON.stringify(yky)));
 
-  const defaultNodes = [
+  const fixedNodes = [
     {
       Id: "12e51b31-524f-4683-82ae-e2b526464b3d",
       currentStep: false,
@@ -231,6 +242,19 @@ const getProjectList = async () => {
     },
   ];
 
+  // 项目阶段节点
+  const dynamicNodes = yky.map((item: any, index: number) => ({
+    Id: `dynamic-${index}-${item.id}`, //动态节点id
+    currentStep: false,
+    text: item.projectStepStr,
+    // href: `/projectMgment/ProjectStep?stepId=${item.id}`, //动态节点路由
+    href: "",
+    remote: false,
+    nodes: [],
+  }));
+
+  const defaultNodes = [...fixedNodes, ...dynamicNodes];
+
   const getProjectType = (projectTypeDetail: string) => {
     if (projectTypeDetail?.includes("铁路")) return "railway";
     if (projectTypeDetail?.includes("城轨")) return "urban";
@@ -243,7 +267,7 @@ const getProjectList = async () => {
     // 为每个项目创建唯一的节点ID
     const uniqueNodes = defaultNodes.map((node) => ({
       ...node,
-      Id: `${item.id}-${node.Id}`, // 将项目ID与节点ID组合，确保唯一性
+      Id: `${item.id}-${node.Id}`, // 确保的唯一性
       href: node.href ? `${node.href}?projectId=${item.id}` : node.href, // 在href中添加项目ID参数
       nodes: node.nodes
         ? node.nodes.map((childNode) => ({
@@ -398,9 +422,6 @@ const filteredProjects = computed(() => {
 const goHome = () => {
   router.push('/home');
 };
-
-// 当前显示的内容
-const currentContent = ref<any>(null);
 
 // 处理搜索
 const handleSearch = (text: string) => {
