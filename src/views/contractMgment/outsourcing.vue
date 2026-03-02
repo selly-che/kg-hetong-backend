@@ -3,51 +3,47 @@
     <div class="header">
       <a-form layout="inline" class="search-form">
         <a-form-item label="归属年份">
-          <a-select v-model="formData.year" placeholder="所有年份">
+          <a-select v-model:value="formData.year" placeholder="所有年份">
             <a-select-option value="all">所有年份</a-select-option>
-            <a-select-option value="1">2025</a-select-option>
-            <a-select-option value="2">2024</a-select-option>
-            <a-select-option value="2">2023</a-select-option>
-            <a-select-option value="2">2022</a-select-option>
-            <a-select-option value="2">2020</a-select-option>
-            <a-select-option value="2">2019</a-select-option>
-            <a-select-option value="2">2018</a-select-option>
+            <a-select-option value="2026">2026</a-select-option>
+            <a-select-option value="2025">2025</a-select-option>
+            <a-select-option value="2024">2024</a-select-option>
           </a-select>
         </a-form-item>
         <a-form-item label="外协合同编号">
           <a-input
             placeholder="请输入合同编号"
-            v-model="formData.contractNumber"
+            v-model:value="formData.contractNumber"
           />
         </a-form-item>
         <a-form-item label="外协合同识别号">
           <a-input
             placeholder="请输入合同识别号"
-            v-model="formData.contractNumber"
+            v-model:value="formData.uniqueNumber"
           />
         </a-form-item>
         <a-form-item label="外协合同名称">
           <a-input
             placeholder="请输入合同名称"
-            v-model="formData.contractName"
+            v-model:value="formData.contractName"
           />
         </a-form-item>
         <a-form-item label="主合同名称">
           <a-input
             placeholder="请输入主合同名称"
-            v-model="formData.mainContractName"
+            v-model:value="formData.mainContractName"
           />
         </a-form-item>
         <a-form-item label="主合同编号">
           <a-input
             placeholder="请输入主合同编号"
-            v-model="formData.mainContractNumber"
+            v-model:value="formData.mainContractNumber"
           />
         </a-form-item>
         <a-form-item label="外协单位">
           <a-input
             placeholder="请输入外协单位"
-            v-model="formData.executionUnit"
+            v-model:value="formData.executionUnit"
           />
         </a-form-item>
         <a-form-item>
@@ -57,10 +53,7 @@
       </a-form>
     </div>
     <div class="context">
-      <a-button
-        type="primary"
-        style="margin-right: 10px"
-        @click="handleAdd()"
+      <a-button type="primary" style="margin-right: 10px" @click="handleAdd()"
         >新增</a-button
       >
       <a-button>导出excel</a-button>
@@ -84,11 +77,13 @@
 <script lang="ts" setup>
 import { onMounted, ref } from "vue";
 import outsourcingAdd from "../contractMgment/outsourcingAdd.vue";
+import getDates from "@/network/index";
 
-const outsourcingAddRef= ref();
+const outsourcingAddRef = ref();
 const formData = ref({
   year: "all",
   contractNumber: "",
+  uniqueNumber: "",
   contractName: "",
   mainContractName: "",
   mainContractNumber: "",
@@ -128,34 +123,34 @@ const columns = [
   },
   {
     title: "审核状态",
-    dataIndex: "approvalStatus",
-    key: "approvalStatus",
+    dataIndex: "paymentAuditStatus",
+    key: "paymentAuditStatus",
     width: 100,
   },
   {
     title: "外协合同名称",
-    dataIndex: "contractName",
-    key: "contractName",
+    dataIndex: "name",
+    key: "name",
     ellipsis: true,
   },
   {
     title: "外协合同编号",
-    dataIndex: "contractNumber",
-    key: "contractNumber",
+    dataIndex: "number",
+    key: "number",
     width: 120,
     ellipsis: true,
   },
   {
     title: "合同识别号",
-    dataIndex: "contractIdNumber",
-    key: "contractIdNumber",
+    dataIndex: "uniqueNumber",
+    key: "uniqueNumber",
     width: 120,
     ellipsis: true,
   },
   {
     title: "合同金额（万元）",
-    dataIndex: "contractAmount",
-    key: "contractAmount",
+    dataIndex: "amount",
+    key: "amount",
     width: 150,
   },
   {
@@ -179,15 +174,15 @@ const columns = [
   },
   {
     title: "外协单位",
-    dataIndex: "outsourcingUnit",
-    key: "outsourcingUnit",
+    dataIndex: "customer",
+    key: "customer",
     width: 150,
     ellipsis: true,
   },
   {
     title: "外协承担单位",
-    dataIndex: "undertakingUnit",
-    key: "undertakingUnit",
+    dataIndex: "ownershipUnit",
+    key: "ownershipUnit",
     width: 150,
     ellipsis: true,
   },
@@ -199,8 +194,8 @@ const columns = [
   },
   {
     title: "签订日期",
-    dataIndex: "signDate",
-    key: "signDate",
+    dataIndex: "signTime",
+    key: "signTime",
     width: 120,
   },
   {
@@ -217,25 +212,13 @@ const columns = [
     slots: { customRender: "action" },
   },
 ];
-//行数据
+//行数据(修改)
 const tabledata = ref([
   {
     key: "1",
     index: 1,
     approvalStatus: "已审核",
     contractName: "合同名称",
-  },
-  {
-    key: "2",
-    index: 2,
-    approvalStatus: "未审核",
-    contractName: "合同名称2",
-  },
-  {
-    key: "3",
-    index: 3,
-    approvalStatus: "已审核",
-    contractName: "合同名称3",
   },
 ]);
 //编辑
@@ -261,7 +244,29 @@ const handleAdd = () => {
   console.log("弹抽屉");
   outsourcingAddRef.value.showModal();
 };
+//获取数据
+const getOutsourcingList = async () => {
+  const res = await getDates("contract/GetContractList", {
+    pageNum: 1,
+    pageSize: 10,
+  });
+  const data = res.data.result.records;
+  console.log("外协合同列表", data);
+  tabledata.value = data.map((item, index) => {
+    const contractInfo = item.contractInfo || {};
+    return {
+      ...contractInfo,
+      key: contractInfo.id,
+      index: index + 1,
+      contractState: contractInfo.contractState === 1 ? "已通过" : "已超期",
+      statusText: contractInfo.status === 1 ? "生效" : "未生效",
+      isJrText: contractInfo.isJr === 1 ? "是" : "否",
+      isReportText: contractInfo.isReport === 1 ? "是" : "否",
+    };
+  });
+};
 onMounted(() => {
+  getOutsourcingList();
   console.log("组件挂载完成");
   adc(1);
 });
@@ -269,11 +274,68 @@ onMounted(() => {
 const adc = (item: any) => {
   console.log("item", JSON.parse(JSON.stringify(item)));
 };
-const handleSearch = () => {
-  console.log("formData", formData.value);
+const handleSearch = async () => {
+  //打印搜索参数
+  console.log("搜索参数", formData.value);
+
+  const params: any = {
+    pageNum: pagination.value.current,
+    pageSize: pagination.value.pageSize,
+  };
+  if (formData.value.year !== "all") {
+    params.year = parseInt(formData.value.year);
+  }
+  if (formData.value.contractNumber) {
+    params.number = formData.value.contractNumber;
+  }
+  if (formData.value.uniqueNumber) {
+    params.uniqueNumber = formData.value.uniqueNumber;
+  }
+  if (formData.value.contractName) {
+    params.name = formData.value.contractName;
+  }
+  if (formData.value.mainContractName) {
+    params.mainContractName = formData.value.mainContractName;
+  }
+  if (formData.value.mainContractNumber) {
+    params.mainContractNumber = formData.value.mainContractNumber;
+  }
+  if (formData.value.executionUnit) {
+    params.customer = formData.value.executionUnit;
+  }
+
+  try {
+    const res = await getDates("contract/GetContractList", params);
+    const data = res.data.result.records;
+    tabledata.value = data.map((item, index) => {
+      const contractInfo = item.contractInfo || {};
+      return {
+        ...contractInfo,
+        key: contractInfo.id,
+        index: index + 1,
+        contractState: contractInfo.contractState === 1 ? "已通过" : "已超期",
+        statusText: contractInfo.status === 1 ? "生效" : "未生效",
+        isJrText: contractInfo.isJr === 1 ? "是" : "否",
+        isReportText: contractInfo.isReport === 1 ? "是" : "否",
+      };
+    });
+    pagination.value.total = res.data.result.total;
+  } catch (error) {
+    console.error("搜索失败:", error);
+  }
 };
 const handleReset = () => {
-  console.log("重置");
+  formData.value = {
+    year: "all",
+    contractNumber: "",
+    uniqueNumber: "",
+    contractName: "",
+    mainContractName: "",
+    mainContractNumber: "",
+    executionUnit: "",
+  };
+  pagination.value.current = 1;
+  getOutsourcingList();
 };
 </script>
 

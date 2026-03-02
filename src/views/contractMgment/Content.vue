@@ -1,11 +1,11 @@
 <template>
   <div class="container">
     <div class="spbu">
-      <span>合同数量：62</span>
-      <span>合同金额：23，564.3658万元</span>
-      <span>审定金额：46，564.3658万元</span>
-      <span>开票金额：63，263.3658万元</span>
-      <span>收款金额：63，263.3658万元</span>
+      <span>合同数量：{{ contractStatistics.contractCount }}</span>
+      <span>合同金额：{{ contractStatistics.contractAmount }}万元</span>
+      <span>审定金额：{{ contractStatistics.approvedAmount }}万元</span>
+      <span>开票金额：{{ contractStatistics.invoiceAmount }}万元</span>
+      <span>收款金额：{{ contractStatistics.receivedAmount }}万元</span>
       <a-button type="primary" @click="exportExcel">导出excel</a-button>
     </div>
     <a-table
@@ -26,180 +26,187 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref } from "vue";
-const selectedRowKeys = ref([]);
+import { computed, onMounted, ref, watch } from "vue";
+import getDates from "@/network/index";
 
+const props = defineProps({
+  searchParams: {
+    type: Object,
+    default: () => ({}),
+  },
+});
+const selectedRowKeys = ref([]);
 const data = ref([]);
 const columns = [
   {
     title: "序号",
     width: 70,
-    dataIndex: "name",
-    key: "name",
+    dataIndex: "index",
+    key: "index",
     fixed: "left",
     align: "center",
   },
   {
     title: "合同节点状态",
     width: 120,
-    dataIndex: "age",
-    key: "age",
+    dataIndex: "contractState",
+    key: "contractState",
     scopedSlots: { customRender: "status" },
     align: "center",
   },
   {
     title: "操作",
-    dataIndex: "address",
-    key: "1",
+    dataIndex: "action",
+    key: "action",
     width: 150,
     align: "center",
   },
   {
     title: "合同编号",
-    dataIndex: "address",
-    key: "2",
+    dataIndex: "number",
+    key: "number",
     width: 150,
     align: "center",
   },
   {
     title: "合同识别号",
-    dataIndex: "address",
-    key: "3",
+    dataIndex: "uniqueNumber",
+    key: "uniqueNumber",
     width: 150,
     align: "center",
   },
   {
     title: "合同名称",
-    dataIndex: "address",
-    key: "4",
+    dataIndex: "name",
+    key: "name",
     width: 150,
     ellipsis: true,
     align: "center",
   },
   {
     title: "委托单位",
-    dataIndex: "address",
-    key: "5",
+    dataIndex: "customerName",
+    key: "customerName",
     width: 100,
     ellipsis: true,
     align: "center",
   },
   {
     title: "合同金额（万元）",
-    dataIndex: "address",
-    key: "6",
+    dataIndex: "amount",
+    key: "amount",
     width: 150,
     align: "center",
   },
   {
     title: "累计收款金额（万元）",
-    dataIndex: "address",
-    key: "7",
+    dataIndex: "collectedAmount",
+    key: "collectedAmount",
     width: 150,
     align: "center",
   },
   {
     title: "累计开票金额（万元）",
-    dataIndex: "address",
-    key: "8",
+    dataIndex: "invoicedAmount",
+    key: "invoicedAmount",
     width: 150,
     align: "center",
   },
   {
     title: "投资金额（万元）",
-    dataIndex: "address",
-    key: "8",
+    dataIndex: "investmentAmount",
+    key: "investmentAmount",
     width: 150,
     align: "center",
   },
   {
     title: "签订日期",
-    dataIndex: "address",
-    key: "9",
+    dataIndex: "signTime",
+    key: "signTime",
     width: 150,
     align: "center",
   },
   {
     title: "区域",
-    dataIndex: "address",
-    key: "10",
+    dataIndex: "commandPost",
+    key: "commandPost",
     width: 150,
     align: "center",
   },
   {
     title: "省份",
-    dataIndex: "address",
-    key: "11",
+    dataIndex: "province",
+    key: "province",
     width: 150,
     align: "center",
   },
   {
     title: "经办人",
-    dataIndex: "address",
-    key: "12",
+    dataIndex: "charge",
+    key: "charge",
     width: 150,
     align: "center",
   },
   {
     title: "板块",
-    dataIndex: "address",
-    key: "13",
+    dataIndex: "section",
+    key: "section",
     width: 150,
     align: "center",
   },
   {
     title: "类型一",
-    dataIndex: "address",
-    key: "14",
+    dataIndex: "typeOne",
+    key: "typeOne",
     width: 120,
     align: "center",
   },
   {
     title: "类型二",
-    dataIndex: "address",
-    key: "15",
+    dataIndex: "typeTwo",
+    key: "typeTwo",
     width: 120,
     align: "center",
   },
   {
     title: "合同状态",
-    dataIndex: "address",
-    key: "16",
+    dataIndex: "statusText",
+    key: "statusText",
     width: 120,
     align: "center",
   },
   {
     title: "是否军融",
-    dataIndex: "address",
-    key: "17",
+    dataIndex: "isJrText",
+    key: "isJrText",
     width: 100,
     align: "center",
   },
   {
     title: "是否进营销系统",
-    dataIndex: "address",
-    key: "18",
+    dataIndex: "isReportText",
+    key: "isReportText",
     width: 140,
     align: "center",
   },
   {
     title: "上报营销系统时间",
-    dataIndex: "address",
-    key: "19",
+    dataIndex: "reportTime",
+    key: "reportTime",
     width: 160,
     align: "center",
   },
   {
     title: "审定金额（万元）",
-    dataIndex: "address",
-    key: "20",
+    dataIndex: "auditAmount",
+    key: "auditAmount",
     width: 150,
     align: "center",
   },
   {
     title: "归属年份",
-    dataIndex: "address",
-    key: "21",
+    dataIndex: "year",
+    key: "year",
     width: 100,
     align: "center",
   },
@@ -207,16 +214,40 @@ const columns = [
 
 const exportExcel = () => {
   console.log("导出excel");
-}
+};
+//合同统计数据
+const contractStatistics = ref({
+  capprovedAmount: 0,
+  contractAmount: 400,
+  contractCount: 5,
+  invoiceAmount: 10,
+  receivedAmount: 10,
+});
+
 onMounted(() => {
-  for (let i = 0; i < 100; i++) {
-    data.value.push({
-      key: i,
-      name: `${i}`,
-      age: i % 2 === 0 ? "已通过" : "已超期",
-      address: `London Park no. ${i}`,
-    });
-  }
+  getContractStatistics();
+  getContractList();
+});
+
+watch(
+  () => props.searchParams,
+  (newParams) => {
+    console.log("searchParams 变化:", newParams);
+    getContractList();
+  },
+  { deep: true },
+);
+
+const refreshContractList = () => {
+  console.log(
+    "refreshContractList 被调用, 当前 searchParams:",
+    props.searchParams,
+  );
+  getContractList();
+};
+
+defineExpose({
+  refreshContractList,
 });
 // 行选择
 const rowSelection = computed(() => {
@@ -230,6 +261,40 @@ const rowSelection = computed(() => {
 const handleSelectChange = (keys, selectedRows) => {
   selectedRowKeys.value = keys;
   console.log(keys, selectedRows);
+};
+// 合同统计数据
+const getContractStatistics = async () => {
+  const res = await getDates("contract/GetContractStatistics");
+  const data = res.data.result;
+  contractStatistics.value = data;
+  console.log("合同统计数据", data);
+};
+// 分页查询合同列表
+const getContractList = async () => {
+  const requestParams = {
+    pageNum: 1,
+    pageSize: 10,
+    ...props.searchParams,
+  };
+  console.log("请求参数:", requestParams);
+  const res = await getDates("contract/GetContractList", requestParams);
+  const resData = res.data.result.records;
+  // console.log("分页查询合同列表", res.data.result.records);
+  if (res.data.code === 200) {
+    const records = resData || [];
+    data.value = records.map((item, index) => {
+      const contractInfo = item.contractInfo || {};
+      return {
+        ...contractInfo,
+        key: contractInfo.id,
+        index: index + 1,
+        contractState: contractInfo.contractState === 1 ? "已通过" : "已超期",
+        statusText: contractInfo.status === 1 ? "生效" : "未生效",
+        isJrText: contractInfo.isJr === 1 ? "是" : "否",
+        isReportText: contractInfo.isReport === 1 ? "是" : "否",
+      };
+    });
+  }
 };
 </script>
 

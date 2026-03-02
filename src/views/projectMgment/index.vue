@@ -1,22 +1,40 @@
 <template>
   <a-layout style="min-height: 100vh">
-    <a-layout-sider v-model:collapsed="collapsed" width="280" style="background-color: rgb(25, 97, 172)">
+    <a-layout-sider
+      v-model:collapsed="collapsed"
+      width="280"
+      style="background-color: rgb(25, 97, 172)"
+    >
       <div class="sidebar-container">
         <!-- 查询项目标题 -->
-        <a-input-search v-model:value="searchText" placeholder="请输入项目名称" enter-button
-          style="margin-bottom: 16px; margin-top: 16px" @search="handleSearch" />
+        <a-input-search
+          v-model:value="searchText"
+          placeholder="请输入项目名称"
+          enter-button
+          style="margin-bottom: 16px; margin-top: 16px"
+          @search="handleSearch"
+        />
         <!-- 责任类型筛选标签 --><!-- 筛选类型： 司控主责,司控参与,自揽主责,自揽参与-->
         <div class="filter-tags">
-          <a-tag v-for="tag in responsibilityTags" :key="tag.value"
-            :color="activeResponsibility === tag.value ? 'blue' : 'default'" class="filter-tag1"
-            @click="handleResponsibilityChange(tag.value)">
+          <a-tag
+            v-for="tag in responsibilityTags"
+            :key="tag.value"
+            :color="activeResponsibility === tag.value ? 'blue' : 'default'"
+            class="filter-tag1"
+            @click="handleResponsibilityChange(tag.value)"
+          >
             {{ tag.label }}
           </a-tag>
         </div>
         <!-- 过滤标签--四个方的 -->
         <div class="filter-tags">
-          <a-tag v-for="tag in filterTags" :key="tag.value" :color="activeFilter === tag.value ? 'blue' : 'default'"
-            class="filter-tag" @click="handleFilterChange(tag.value)">
+          <a-tag
+            v-for="tag in filterTags"
+            :key="tag.value"
+            :color="activeFilter === tag.value ? 'blue' : 'default'"
+            class="filter-tag"
+            @click="handleFilterChange(tag.value)"
+          >
             {{ tag.label }}
           </a-tag>
         </div>
@@ -31,8 +49,12 @@
 
         <!-- 项目列表 -->
         <div class="project-list">
-          <a-menu v-model:selectedKeys="selectedMenuKeys" v-model:openKeys="openMenuKeys" mode="inline"
-            :inline-collapsed="collapsed">
+          <a-menu
+            v-model:selectedKeys="selectedMenuKeys"
+            v-model:openKeys="openMenuKeys"
+            mode="inline"
+            :inline-collapsed="collapsed"
+          >
             <!-- 动态渲染项目 -->
             <a-sub-menu v-for="project in filteredProjects" :key="project.Id">
               <template #title>
@@ -43,11 +65,19 @@
                   <template #title>
                     <span>{{ node.text }}</span>
                   </template>
-                  <a-menu-item v-for="child in node.nodes" :key="child.Id" @click="handleMenuClick(node.Id, child.Id)">
+                  <a-menu-item
+                    v-for="child in node.nodes"
+                    :key="child.Id"
+                    @click="handleMenuClick(node.Id, child.Id)"
+                  >
                     {{ child.text }}
                   </a-menu-item>
                 </a-sub-menu>
-                <a-menu-item v-else :key="node.Id" @click="handleMenuClick(node.Id)">
+                <a-menu-item
+                  v-else
+                  :key="node.Id"
+                  @click="handleMenuClick(node.Id)"
+                >
                   {{ node.text }}
                 </a-menu-item>
               </template>
@@ -76,13 +106,25 @@
         </div>
       </a-layout-header>
       <a-layout-content style="margin: 16px">
-        <div :style="{
-          background: '#fff',
-          minHeight: 'calc(100vh - 132px)',
-        }">
+        <div
+          :style="{
+            background: '#fff',
+            minHeight: 'calc(100vh - 132px)',
+          }"
+        >
           <!-- 页签 -->
-          <a-tabs v-model:activeKey="activeTabKey" type="editable-card" hide-add @edit="onTabEdit" class="content-tabs">
-            <a-tab-pane v-for="tab in openedTabs" :key="tab.key" :closable="tab.closable">
+          <a-tabs
+            v-model:activeKey="activeTabKey"
+            type="editable-card"
+            hide-add
+            @edit="onTabEdit"
+            class="content-tabs"
+          >
+            <a-tab-pane
+              v-for="tab in openedTabs"
+              :key="tab.key"
+              :closable="tab.closable"
+            >
               <template #tab>
                 <span @click="handleTabClick(tab)">{{ tab.title }}</span>
               </template>
@@ -161,6 +203,26 @@ const getProjectList = async () => {
   console.log("获取项目列表", JSON.parse(JSON.stringify(records.length)));
   console.log("获取项目列表其他信息", JSON.parse(JSON.stringify(yky)));
 
+  const nodes3 = [
+    {
+      Id: "36f18353--49db-945b-ffc8cd0fefd6",
+      text: "组建项目组成员",
+      href: "/projectMgment/ProjectTeam",
+      nodes: [],
+    },
+    {
+      Id: "36f18353-c6ee-49db-945b-ffc8cd0fefd7",
+      text: "查看全部工作安排",
+      href: "/projectMgment/WorkArrangementList",
+      nodes: [],
+    },
+    {
+      Id: "36f18353-c6ee-49db-945b-ffc8cd0fefd8",
+      text: "工作安排",
+      href: "/projectMgment/WorkArrangement",
+      nodes: [],
+    },
+  ];
   const fixedNodes = [
     {
       Id: "12e51b31-524f-4683-82ae-e2b526464b3d",
@@ -186,60 +248,60 @@ const getProjectList = async () => {
       remote: false,
       nodes: [],
     },
-    {
-      Id: "2d9b57c8-0243-4288-aec9-17476d785c7611",
-      text: "预可研",
-      currentStep: true,
-      href: "",
-      remote: true,
-      nodes: [
-        {
-          Id: "36f18353-c6ee-49db-945b-ffc8cd0fefd0",
-          text: "组建项目组成员",
-          href: "/projectMgment/ProjectTeam",
-          nodes: [],
-        },
-        {
-          Id: "36f18353-c6ee-49db-945b-ffc8cd0fefd1",
-          text: "查看全部工作安排",
-          href: "/projectMgment/WorkArrangementList",
-          nodes: [],
-        },
-        {
-          Id: "36f18353-c6ee-49db-945b-ffc8cd0fefd2",
-          text: "工作安排",
-          href: "/projectMgment/WorkArrangement",
-          nodes: [],
-        },
-      ],
-    },
-    {
-      Id: "dbf144f0-71fb-47c0-befe-8ec0348307b222",
-      text: "可研",
-      currentStep: false,
-      href: "",
-      remote: true,
-      nodes: [
-        {
-          Id: "36f18353-c6ee-49db-945b-ffc8cd0fefd6",
-          text: "组建项目组成员",
-          href: "",
-          nodes: [],
-        },
-        {
-          Id: "36f18353-c6ee-49db-945b-ffc8cd0fefd7",
-          text: "查看全部工作安排",
-          href: "",
-          nodes: [],
-        },
-        {
-          Id: "36f18353-c6ee-49db-945b-ffc8cd0fefd8",
-          text: "工作安排",
-          href: "",
-          nodes: [],
-        },
-      ],
-    },
+    // {
+    //   Id: "2d9b57c8-0243-4288-aec9-17476d785c7611",
+    //   text: "预可研",
+    //   currentStep: true,
+    //   href: "",
+    //   remote: true,
+    //   nodes: [
+    //     {
+    //       Id: "36f18353-c6ee-49db-945b-ffc8cd0fefd0",
+    //       text: "组建项目组成员",
+    //       href: "/projectMgment/ProjectTeam",
+    //       nodes: [],
+    //     },
+    //     {
+    //       Id: "36f18353-c6ee-49db-945b-ffc8cd0fefd1",
+    //       text: "查看全部工作安排",
+    //       href: "/projectMgment/WorkArrangementList",
+    //       nodes: [],
+    //     },
+    //     {
+    //       Id: "36f18353-c6ee-49db-945b-ffc8cd0fefd2",
+    //       text: "工作安排",
+    //       href: "/projectMgment/WorkArrangement",
+    //       nodes: [],
+    //     },
+    //   ],
+    // },
+    // {
+    //   Id: "dbf144f0-71fb-47c0-befe-8ec0348307b222",
+    //   text: "可研",
+    //   currentStep: false,
+    //   href: "",
+    //   remote: true,
+    //   nodes: [
+    //     {
+    //       Id: "36f18353-c6ee-49db-945b-ffc8cd0fefd6",
+    //       text: "组建项目组成员",
+    //       href: "",
+    //       nodes: [],
+    //     },
+    //     {
+    //       Id: "36f18353-c6ee-49db-945b-ffc8cd0fefd7",
+    //       text: "查看全部工作安排",
+    //       href: "",
+    //       nodes: [],
+    //     },
+    //     {
+    //       Id: "36f18353-c6ee-49db-945b-ffc8cd0fefd8",
+    //       text: "工作安排",
+    //       href: "",
+    //       nodes: [],
+    //     },
+    //   ],
+    // },
   ];
 
   // 项目阶段节点
@@ -250,7 +312,10 @@ const getProjectList = async () => {
     // href: `/projectMgment/ProjectStep?stepId=${item.id}`, //动态节点路由
     href: "",
     remote: false,
-    nodes: [],
+    nodes: nodes3.map((node) => ({
+      ...node,
+      Id: `${item.id}-${node.Id}`,
+    })),
   }));
 
   const defaultNodes = [...fixedNodes, ...dynamicNodes];
@@ -271,9 +336,9 @@ const getProjectList = async () => {
       href: node.href ? `${node.href}?projectId=${item.id}` : node.href, // 在href中添加项目ID参数
       nodes: node.nodes
         ? node.nodes.map((childNode) => ({
-          ...childNode,
-          Id: `${item.id}-${childNode.Id}`,
-        }))
+            ...childNode,
+            Id: `${item.id}-${childNode.Id}`,
+          }))
         : [],
     }));
 
@@ -290,8 +355,7 @@ const getProjectList = async () => {
       nodes: uniqueNodes,
     };
   });
-  console.log(newProjects.value, 'newProjectsnewProjects');
-
+  console.log(newProjects.value, "newProjectsnewProjects");
 };
 
 //目录数据新
@@ -420,7 +484,7 @@ const filteredProjects = computed(() => {
   });
 });
 const goHome = () => {
-  router.push('/home');
+  router.push("/home");
 };
 
 // 处理搜索
@@ -465,7 +529,9 @@ const handleMenuClick = (nodeId: string, childId?: string) => {
       openMenuKeys.value = openMenuKeys.value.filter((key) => key !== nodeId);
     } else {
       // 如果当前子节点未展开，则展开它，并保持项目本身展开
-      openMenuKeys.value = [...new Set([...openMenuKeys.value, project.Id, nodeId])];
+      openMenuKeys.value = [
+        ...new Set([...openMenuKeys.value, project.Id, nodeId]),
+      ];
     }
   } else {
     // 如果是叶子节点（无子节点），只展开项目本身
@@ -478,7 +544,9 @@ const handleMenuClick = (nodeId: string, childId?: string) => {
 
   if (childId) {
     // 确保子节点ID也包含项目ID前缀
-    const fullChildId = childId.includes("-") ? childId : `${projectId}-${childId}`;
+    const fullChildId = childId.includes("-")
+      ? childId
+      : `${projectId}-${childId}`;
     const child = node.nodes?.find((c) => c.Id === fullChildId);
     if (child) {
       targetHref = child.href;
