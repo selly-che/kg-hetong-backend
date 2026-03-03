@@ -1,10 +1,6 @@
 <template>
   <a-layout style="min-height: 100vh">
-    <a-layout-sider
-      v-model:collapsed="collapsed"
-      width="280"
-      style="background-color: rgb(25, 97, 172)"
-    >
+    <a-layout-sider v-model:collapsed="collapsed" width="280" style="background-color: rgb(25, 97, 172)">
       <div class="sidebar-container">
         <!-- 查询项目标题 -->
         <a-input-search v-model:value="searchText" placeholder="请输入项目名称" enter-button
@@ -12,26 +8,17 @@
 
         <!-- 责任类型筛选标签 -->
         <div class="filter-tags">
-          <a-tag
-            v-for="tag in responsibilityTags"
-            :key="tag.value"
-            :color="activeResponsibility === tag.value ? 'blue' : 'default'"
-            class="filter-tag1"
-            @click="handleResponsibilityChange(tag.value)"
-          >
+          <a-tag v-for="tag in responsibilityTags" :key="tag.value"
+            :color="activeResponsibility === tag.value ? 'blue' : 'default'" class="filter-tag1"
+            @click="handleResponsibilityChange(tag.value)">
             {{ tag.label }}
           </a-tag>
         </div>
 
         <!-- 过滤标签 -->
         <div class="filter-tags">
-          <a-tag
-            v-for="tag in filterTags"
-            :key="tag.value"
-            :color="activeFilter === tag.value ? 'blue' : 'default'"
-            class="filter-tag"
-            @click="handleFilterChange(tag.value)"
-          >
+          <a-tag v-for="tag in filterTags" :key="tag.value" :color="activeFilter === tag.value ? 'blue' : 'default'"
+            class="filter-tag" @click="handleFilterChange(tag.value)">
             {{ tag.label }}
           </a-tag>
         </div>
@@ -46,12 +33,8 @@
 
         <!-- 项目列表 -->
         <div class="project-list">
-          <a-menu
-            v-model:selectedKeys="selectedMenuKeys"
-            v-model:openKeys="openMenuKeys"
-            mode="inline"
-            :inline-collapsed="collapsed"
-          >
+          <a-menu v-model:selectedKeys="selectedMenuKeys" v-model:openKeys="openMenuKeys" mode="inline"
+            :inline-collapsed="collapsed">
             <!-- 动态渲染项目 -->
             <a-sub-menu v-for="project in filteredProjects" :key="project.Id">
               <template #title>
@@ -82,7 +65,7 @@
 
         <!-- 固定在底部的返回首页按钮 -->
         <div class="sidebar-footer">
-          <a-button type="primary" block @click="$router.push('/home')">
+          <a-button type="primary" block @click="goHomeFn">
             回到首页
           </a-button>
         </div>
@@ -97,33 +80,25 @@
       </a-layout-header>
 
       <a-layout-content style="margin: 16px">
-        <div
-          :style="{
-            background: '#fff',
-            minHeight: 'calc(100vh - 132px)',
-          }"
-        >
+        <div :style="{
+          background: '#fff',
+          minHeight: 'calc(100vh - 132px)',
+        }">
           <!-- 页签 -->
-          <a-tabs
-            v-model:activeKey="activeTabKey"
-            type="editable-card"
-            hide-add
-            @edit="onTabEdit"
-            class="content-tabs"
-          >
-            <a-tab-pane
-              v-for="tab in openedTabs"
-              :key="tab.key"
-              :closable="tab.closable"
-            >
+          <a-tabs v-model:activeKey="activeTabKey" type="editable-card" hide-add @edit="onTabEdit" class="content-tabs">
+            <a-tab-pane v-for="tab in openedTabs" :key="tab.key" :closable="tab.closable">
               <template #tab>
                 <span @click="handleTabClick(tab)">{{ tab.title }}</span>
               </template>
-              <div class="tab-content">
-                <router-view></router-view>
-              </div>
             </a-tab-pane>
           </a-tabs>
+          <div class="tab-content">
+            <keep-alive :include="cachedViews">
+              <router-view v-slot="{ Component }">
+                <component :is="Component" />
+              </router-view>
+            </keep-alive>
+          </div>
         </div>
       </a-layout-content>
     </a-layout>
@@ -131,7 +106,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed, onMounted, watch } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import getDatas from "@/network/index";
 import { ElMessage } from "element-plus";
@@ -145,10 +120,20 @@ const activeTab = ref("main");
 const selectedMenuKeys = ref<string[]>([]);
 const openMenuKeys = ref<string[]>([]);
 const activeTabKey = ref("ProjectOverview");
+// 缓存的视图组件名称
+const cachedViews = ref<string[]>
+  ([
+    'ProjectOverview',
+    'ProductionOrganization',
+    'ScheduleManagement',
+    'ProjectTeam',
+    'WorkArrangementList',
+    'WorkArrangement'
+  ]);
 const openedTabs = ref([
   {
     key: "ProjectOverview",
-    title: "",
+    title: "首页",
     closable: false,
     path: "/projectMgment/ProjectOverview",
   },
@@ -173,10 +158,12 @@ const responsibilityTags = ref([
 // 项目数据
 const projects = ref<any[]>([]);
 
-onMounted(() => {
-  getProjectList();
-});
 
+
+const goHomeFn = () => {
+  // 跳转到首页，打开新页面
+  window.open("/", "_blank");
+};
 // 获取项目列表
 const getProjectList = async () => {
   try {
@@ -206,7 +193,7 @@ const getProjectList = async () => {
         {
           Id: `${project.id}-production`,
           text: "生产组织",
-          href: `/projectMgment/ProductionOrganization?projectId=${project.id}`,
+          href: `/projectMgment/ProductionOrganization?projectId=${project.id}&projectStep=${project.taskArrangements?.[0]?.projectStep || ''}`,
           projectId: project.id
         }
       ];
@@ -220,7 +207,7 @@ const getProjectList = async () => {
           {
             Id: `${taskId}-team-${Date.now()}`,
             text: "组建项目组成员",
-            href: `/projectMgment/ProjectTeam?projectId=${project.id}&projectStep=${task.projectStep}`,
+            href: `/projectMgment/ProjectTeam?taskArrangementId=${task.id}&projectStep=${task.projectStep}`,
             projectId: project.id,
             projectStep: task.projectStep,
             taskId: task.id
@@ -319,6 +306,8 @@ const handleMenuItemClick = (menuItem: any) => {
 
     // 激活当前标签页并跳转路由
     activeTabKey.value = routeName;
+    console.log(`激活标签页: ${routeName}`);
+
     router.push(menuItem.href);
   }
 };
@@ -362,10 +351,10 @@ const onTabEdit = (targetKey: any, action: "add" | "remove") => {
   }
 };
 
-// 监听菜单展开状态变化
-watch(openMenuKeys, (newVal) => {
-  console.log("菜单展开状态:", newVal);
+onMounted(() => {
+  getProjectList();
 });
+
 </script>
 
 <style scoped>
@@ -458,8 +447,10 @@ watch(openMenuKeys, (newVal) => {
   flex: 1;
   overflow-y: auto;
   margin-bottom: 16px;
-   scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE 10+ */
+  scrollbar-width: none;
+  /* Firefox */
+  -ms-overflow-style: none;
+  /* IE 10+ */
 }
 
 .project-list :deep(.ant-menu) {

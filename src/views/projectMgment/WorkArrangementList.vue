@@ -24,7 +24,7 @@
       <!-- 查询和重置按钮 -->
       <a-button type="primary" @click="handleSearch">查询</a-button>
       <a-button @click="handleReset">重置</a-button>
-      
+
       <!-- 列筛选菜单 -->
       <a-dropdown overlayClassName="column-filter-dropdown" trigger="click">
         <a-button>
@@ -36,14 +36,14 @@
             <a-menu-item key="operation">
               <a-checkbox v-model:checked="columnVisible.operation">操作</a-checkbox>
             </a-menu-item>
-            <a-menu-item key="noticeName">
-              <a-checkbox v-model:checked="columnVisible.noticeName">通知名称</a-checkbox>
+            <a-menu-item key="taDemand">
+              <a-checkbox v-model:checked="columnVisible.taDemand">通知名称</a-checkbox>
             </a-menu-item>
-            <a-menu-item key="assigner">
-              <a-checkbox v-model:checked="columnVisible.assigner">下发人</a-checkbox>
+            <a-menu-item key="taCreator">
+              <a-checkbox v-model:checked="columnVisible.taCreator">下发人</a-checkbox>
             </a-menu-item>
-            <a-menu-item key="taskName">
-              <a-checkbox v-model:checked="columnVisible.taskName">任务名称</a-checkbox>
+            <a-menu-item key="tcName">
+              <a-checkbox v-model:checked="columnVisible.tcName">任务名称</a-checkbox>
             </a-menu-item>
             <a-menu-item key="fileName">
               <a-checkbox v-model:checked="columnVisible.fileName">文件名称</a-checkbox>
@@ -54,11 +54,11 @@
             <a-menu-item key="planType">
               <a-checkbox v-model:checked="columnVisible.planType">计划类型</a-checkbox>
             </a-menu-item>
-            <a-menu-item key="number">
-              <a-checkbox v-model:checked="columnVisible.number">编号</a-checkbox>
+            <a-menu-item key="taSerialNumber">
+              <a-checkbox v-model:checked="columnVisible.taSerialNumber">编号</a-checkbox>
             </a-menu-item>
-            <a-menu-item key="deadline">
-              <a-checkbox v-model:checked="columnVisible.deadline">截止时间</a-checkbox>
+            <a-menu-item key="taEndDate">
+              <a-checkbox v-model:checked="columnVisible.taEndDate">截止时间</a-checkbox>
             </a-menu-item>
             <a-menu-item key="completionCount">
               <a-checkbox v-model:checked="columnVisible.completionCount">完成量</a-checkbox>
@@ -69,35 +69,43 @@
     </div>
 
     <!-- 表格区域 -->
-    <a-table 
-      :dataSource="processedTableData" 
-      :columns="visibleColumns" 
-      :loading="tableLoading" 
-      :pagination="paginationConfig"
-      size="small"
-      bordered 
-      class="work-arrangement-table"
-      @change="handleTableChange">
+    <a-table :dataSource="tableData" :columns="visibleColumns" :loading="tableLoading" :pagination="paginationConfig"
+      size="small" bordered class="work-arrangement-table" @change="handleTableChange">
       <template #empty>
         <div class="empty-text">没有找到匹配的记录</div>
       </template>
-      
+
       <!-- 自定义列渲染 -->
       <template #planType="{ record }">
         <span>{{ getPlanTypeName(record.taPlanType) }}</span>
       </template>
-      
+
       <template #drawingName="{ record }">
         <span>{{ record.taHasPictureWork ? '有' : '无' }}</span>
       </template>
-      
-      <!-- <template #operation="{ record }">
-        <a-space>
-          <a-button type="link" size="small" @click="handleViewDetail(record)">查看</a-button>
-          <a-button type="link" size="small" @click="handleEdit(record)">编辑</a-button>
-        </a-space>
-      </template> -->
+      <template #taDemand="{ record }">
+        <span class="notice-name-link" @click="showTaskContentModal(record)"
+          :style="{ color: hasTaskContents(record) ? '#1890ff' : 'inherit', cursor: hasTaskContents(record) ? 'pointer' : 'default' }">
+          {{ record.taDemand }}
+        </span>
+      </template>
     </a-table>
+
+    <!-- 任务内容弹窗 -->
+    <a-modal v-model:visible="taskContentModalVisible" :title="currentTaskContentTitle" width="800px" :footer="null">
+      <a-table :dataSource="currentTaskContentData" :columns="taskContentColumns" :pagination="false" size="middle"
+        bordered>
+        <template #empty>
+          <div class="empty-text">暂无任务内容</div>
+        </template>
+
+        <template #Taskcontent="{ record , index}">
+          <span>
+            {{ `任务${index + 1}` }}
+          </span>
+        </template>
+      </a-table>
+    </a-modal>
   </div>
 </template>
 
@@ -126,17 +134,43 @@ const tableLoading = ref(false);
 
 // 列可见性控制
 const columnVisible = ref({
-  operation: false,
-  noticeName: true,
-  assigner: true,
-  taskName: true,
-  fileName: true,
-  drawingName: true,
+  operation: true,
+  taDemand: true,
+  taCreator: true,
+  tcName: false,
+  fileName: false,
+  drawingName: false,
   planType: true,
-  number: true,
-  deadline: true,
+  taSerialNumber: true,
+  taEndDate: true,
   completionCount: true,
 });
+
+// 任务内容弹窗相关
+const taskContentModalVisible = ref(false);
+const currentTaskContentTitle = ref('任务内容列表');
+const currentTaskContentData = ref<any[]>([]);
+
+const taskContentColumns = [
+  {
+    title: '任务内容',
+    ellipsis: true,
+    slots: { customRender: 'Taskcontent' },
+  },
+  {
+    title: '任务名称',
+    dataIndex: 'tcName',
+    key: 'tcName',
+    width: 300,
+    ellipsis: true,
+  },
+  {
+    title: '完成时间',
+    dataIndex: 'tcLimitDate',
+    key: 'tcLimitDate',
+    width: 200,
+  },
+];
 
 // 表格数据
 const tableData = ref<any[]>([]);
@@ -155,21 +189,21 @@ const visibleColumns = computed(() => {
     },
     {
       title: '通知名称',
-      dataIndex: 'noticeName',
-      key: 'noticeName',
-      width: 150,
+      dataIndex: 'taDemand',
+      key: 'taDemand',
       ellipsis: true,
+      slots: { customRender: 'taDemand' },
     },
     {
       title: '下发人',
-      dataIndex: 'assigner',
-      key: 'assigner',
+      dataIndex: 'taCreator',
+      key: 'taCreator',
       width: 120,
     },
     {
       title: '任务名称',
-      dataIndex: 'taskName',
-      key: 'taskName',
+      dataIndex: 'tcName',
+      key: 'tcName',
       width: 200,
       ellipsis: true,
     },
@@ -196,14 +230,14 @@ const visibleColumns = computed(() => {
     },
     {
       title: '编号',
-      dataIndex: 'number',
-      key: 'number',
+      dataIndex: 'taSerialNumber',
+      key: 'taSerialNumber',
       width: 150,
     },
     {
       title: '截止时间',
-      dataIndex: 'deadline',
-      key: 'deadline',
+      dataIndex: 'taEndDate',
+      key: 'taEndDate',
       width: 160,
     },
     {
@@ -217,45 +251,6 @@ const visibleColumns = computed(() => {
   return baseColumns.filter((col) => columnVisible.value[col.key as keyof typeof columnVisible.value]);
 });
 
-// 处理后的表格数据（展平嵌套数据）
-const processedTableData = computed(() => {
-  return tableData.value.flatMap((item: any) => {
-    // 如果有twaTaskContents数组，为每个任务内容创建一行
-    if (item.twaTaskContents && item.twaTaskContents.length > 0) {
-      return item.twaTaskContents.map((taskContent: any) => ({
-        key: `${item.id}-${taskContent.id}`,
-        id: item.id,
-        noticeName: taskContent.tcName || '-', // 通知名称
-        assigner: item.taCreator || '-', // 下发人
-        taskName: item.taTaskName || '-', // 任务名称
-        fileName: item.taPreface || '-', // 文件名称
-        drawingName: item.taHasPictureWork, // 图纸名称（布尔值）
-        planType: item.taPlanType || 0, // 计划类型
-        number: item.taSerialNumber || '-', // 编号
-        deadline: taskContent.tcLimitDate || item.taEndDate || '-', // 截止时间
-        completionCount: item.completionCount || '0/0', // 完成量
-        originalData: item, // 保存原始数据用于操作
-        taskContent: taskContent // 保存任务内容
-      }));
-    } else {
-      // 如果没有任务内容，创建单行数据
-      return [{
-        key: item.id,
-        id: item.id,
-        noticeName: '-', // 通知名称
-        assigner: item.taCreator || '-', // 下发人
-        taskName: item.taTaskName || '-', // 任务名称
-        fileName: item.taPreface || '-', // 文件名称
-        drawingName: item.taHasPictureWork, // 图纸名称
-        planType: item.taPlanType || 0, // 计划类型
-        number: item.taSerialNumber || '-', // 编号
-        deadline: item.taEndDate || '-', // 截止时间
-        completionCount: item.completionCount || '0/0', // 完成量
-        originalData: item
-      }];
-    }
-  });
-});
 
 // 分页配置
 const paginationConfig = computed(() => ({
@@ -278,20 +273,40 @@ const getPlanTypeName = (planType: number) => {
   return planTypeMap[planType] || '未知类型';
 };
 
+// 判断是否有任务内容
+const hasTaskContents = (record: any) => {
+  return record.twaTaskContents && record.twaTaskContents.length > 0;
+};
+
+// 显示任务内容弹窗
+const showTaskContentModal = (record: any) => {
+  if (!hasTaskContents(record)) {
+    ElMessage.info('该记录没有任务内容');
+    return;
+  }
+
+  currentTaskContentTitle.value = `任务内容列表 - ${record.taDemand || record.taTaskName}`;
+  currentTaskContentData.value = record.twaTaskContents.map((task: any) => ({
+    tcName: task.tcName || '-',
+    tcLimitDate: task.tcLimitDate || '-'
+  }));
+  taskContentModalVisible.value = true;
+};
+
 // 查询处理
 const handleSearch = async () => {
   try {
     tableLoading.value = true;
-    
+
     console.log('查询条件:', {
       searchType: searchType.value,
       searchText: searchText.value,
       statusFilters: statusFilters.value,
       planFilters: planFilters.value,
     });
-    
-    const projectId = route.query.projectId || '1'; // 从路由获取项目ID
-    
+
+    const projectId = route.query.projectId || '1'; // 从路由获取项目 ID
+
     const res = await getDatas("project/GetWorkArrangement", {
       pageNo: currentPage.value,
       pageSize: pageSize.value,
@@ -299,7 +314,7 @@ const handleSearch = async () => {
       projectStep: '', // 全部
       // 可以根据需要添加更多筛选条件
     });
-    
+
     if (res && res.data.code === 200) {
       tableData.value = res.data.result.records || [];
       total.value = res.data.result.total || 0;
@@ -347,6 +362,8 @@ const handleEdit = (record: any) => {
 };
 
 onMounted(() => {
+  console.log('WorkArrangementList mounted');
+  
   handleSearch();
 });
 </script>
@@ -387,5 +404,14 @@ onMounted(() => {
 
 :deep(.ant-table-tbody > tr:hover) {
   background-color: #f5f5f5;
+}
+
+.notice-name-link {
+  transition: all 0.3s;
+}
+
+.notice-name-link:hover {
+  text-decoration: underline;
+  opacity: 0.8;
 }
 </style>

@@ -95,17 +95,9 @@
         </template>
         回收站
       </a-button>
-      <!-- <a-button type="primary" @click="handleSuperQuery">
-        <template #icon>
-          <FilterOutlined />
-        </template>
-        高级查询
-      </a-button> -->
-      <!-- <a-third-app-button biz-type="user" :selected-row-keys="selectedRowKeys" syncToApp syncToLocal
-        @sync-finally="onSyncFinally" /> -->
     </div>
 
-    <!-- table区域-begin -->
+    <!-- table 区域-begin -->
     <div>
       <div class="ant-alert ant-alert-info" style="margin-bottom: 16px">
         <i class="anticon anticon-info-circle ant-alert-icon"></i>已选择&nbsp;<a style="font-weight: 600">{{
@@ -134,39 +126,23 @@
                   <a href="javascript:;" @click="handleDetail(record)">详情</a>
                 </a-menu-item>
 
-                <!-- <a-menu-item>
-                  <a
-                    href="javascript:;"
-                    @click="handleChangePassword(record.username)"
-                    >密码</a
-                  >
-                </a-menu-item> -->
-
                 <a-menu-item>
-                  <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record.id)">
+                  <a-popconfirm title="确定删除吗？" @confirm="() => handleDelete(record.id)">
                     <a>删除</a>
                   </a-popconfirm>
                 </a-menu-item>
 
                 <a-menu-item v-if="record.status == 1">
-                  <a-popconfirm title="确定冻结吗?" @confirm="() => handleFrozen(record.id, 2, record.username)">
+                  <a-popconfirm title="确定冻结吗？" @confirm="() => handleFrozen(record.id, 2, record.username)">
                     <a>冻结</a>
                   </a-popconfirm>
                 </a-menu-item>
 
                 <a-menu-item v-if="record.status == 2">
-                  <a-popconfirm title="确定解冻吗?" @confirm="() => handleFrozen(record.id, 1, record.username)">
+                  <a-popconfirm title="确定解冻吗？" @confirm="() => handleFrozen(record.id, 1, record.username)">
                     <a>解冻</a>
                   </a-popconfirm>
                 </a-menu-item>
-
-                <!-- <a-menu-item>
-                  <a
-                    href="javascript:;"
-                    @click="handleAgentSettings(record.username)"
-                    >代理人</a
-                  >
-                </a-menu-item> -->
               </a-menu>
             </template>
             <a>
@@ -177,15 +153,11 @@
         </template>
       </a-table>
     </div>
-    <!-- table区域-end -->
+    <!-- table 区域-end -->
   </a-card>
   <!-- 编辑抽屉 -->
-  <!-- <form-drawer-right ref="modalFormDawer" @ok="modalFormOk" :title="title">
-  </form-drawer-right> -->
-  <!-- 高级查询抽屉 -->
-  <!-- <modal ref="superQueryModal" @ok="superQueryModalOk" :title="title2">
-    
-  </modal> -->
+  <form-drawer-right ref="modalFormDawer" @ok="modalFormOk" :title="title">
+  </form-drawer-right>
 </template>
 
 <script setup>
@@ -193,7 +165,7 @@ import getDatas from "@/network/index";
 import { ref, reactive, onMounted } from "vue";
 import { message } from "ant-design-vue";
 import { exportExcel } from "@/utils/common";
-// import FormDrawerRight from "./FormDrawerRight.vue";
+import FormDrawerRight from "./FormDrawerRight.vue";
 import {
   PlusOutlined,
   DownloadOutlined,
@@ -224,9 +196,9 @@ const ipagination = ref({
   current: 1,
   pageSize: 10,
   total: 0,
-  showSizeChanger: true, // 显示分页大小切换器
-  showQuickJumper: true, // 显示快速跳转
-  showTotal: (total, range) => `第 ${range[0]}-${range[1]} 条 / 共 ${total} 条`, // 显示总数
+  showSizeChanger: true,
+  showQuickJumper: true,
+  showTotal: (total, range) => `第 ${range[0]}-${range[1]} 条 / 共 ${total} 条`,
   pageSizeOptions: ["10", "20", "30", "40"],
 });
 const loading = ref(false);
@@ -278,12 +250,6 @@ const columns = [
     width: 100,
     dataIndex: "phone",
   },
-  // {
-  //   title: "部门",
-  //   align: "center",
-  //   width: 180,
-  //   dataIndex: "orgCodeTxt",
-  // },
   {
     title: "邮箱",
     align: "center",
@@ -323,17 +289,16 @@ const deptList = ref([]);
 onMounted(() => {
   searchQuery();
 });
+
 // 查询用户列表
 const searchQuery = async () => {
   loading.value = true;
-  // 调用API
   const res = await getDatas("system/GetUserinfo", {
     pageNo: ipagination.value.current,
     pageSize: ipagination.value.pageSize,
     ...queryParam,
   });
-  // console.log("发送的参数：", res.config.params);
-  //去重部门列表
+  
   const deptNew = new Map();
   res.data.result.records.forEach((item) => {
     if (item.departIds && item.departIds.length > 0) {
@@ -353,9 +318,9 @@ const searchQuery = async () => {
   }
   loading.value = false;
 };
+
 // 重置
 const searchReset = () => {
-  //遍历清空
   Object.keys(queryParam).forEach((key) => {
     queryParam[key] = "";
   });
@@ -373,7 +338,7 @@ const handleAdd = () => {
   modalFormDawer.value.showDrawer();
 };
 
-// 导出Excel
+// 导出 Excel
 const handleExportXls = async (fileName) => {
   if (dataSource.value.length === 0) {
     message.warning("暂无数据可导出");
@@ -406,7 +371,7 @@ const handleExportXls = async (fileName) => {
   }
 };
 
-// 导入Excel
+// 导入 Excel
 const handleImportExcel = (info) => {
   message.info("导入功能开发中");
 };
@@ -454,12 +419,9 @@ const getAvatarView = (avatar) => {
 
 // 编辑用户
 const handleEdit = async (record) => {
-  // console.log(record.id,"xxxxxx");
   const res = await getDatas("system/GetUserinfoById", {
     id: record.id,
   });
-  // console.log(res, "idinfo");
-  // console.log(res.data.result);
   title.value = "编辑用户";
   modalFormDawer.value.showDrawer(record);
 };
@@ -561,7 +523,6 @@ const passwordModalOk = () => {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  //   padding: 12px 0;
   margin-bottom: 16px;
 
   >* {

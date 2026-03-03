@@ -32,5 +32,13 @@ export default {
       url: "/projectcontract/taskArrangement/xmzcy",
       params,
     };
+  },
+  // 查询项目生产组织详情
+  GetProjectProductionOrg(params: any) {
+       return {
+      method: "GET",
+      url: "/projectcontract/tpmProject/production-org",
+      params,
+    };
   }
 };

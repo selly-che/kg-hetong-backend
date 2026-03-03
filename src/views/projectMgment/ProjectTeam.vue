@@ -1,240 +1,206 @@
 <template>
-    <div class="project-progress-container">
-        <!-- 进度卡片区域 -->
-        <a-row :gutter="[16, 16]" class="progress-cards">
-            <a-col :span="6">
-                <a-card size="small" title="12312">
-                    <div class="progress-number">
-                        <span class="progress-value">{{ progressData.ProgressSummary.TotalProgress }}%</span>
-                    </div>
-                </a-card>
-            </a-col>
-            <a-col :span="6">
-                <a-card size="small" title="当前项目施工进度">
-                    <div class="progress-number">
-                        <span class="progress-value">{{ progressData.ProgressSummary.ProgressOfWorkInspection || '-'
-                            }}</span>
-                    </div>
-                </a-card>
-            </a-col>
-            <a-col :span="6">
-                <a-card size="small" title="当前合同履约进度">
-                    <div class="progress-number">
-                        <span class="progress-value">{{ progressData.ProgressSummary.ProjectPerformanceProgress || '-'
-                            }}</span>
-                    </div>
-                </a-card>
-            </a-col>
-            <a-col :span="6">
-                <a-card size="small" title="当前项目收款比例">
-                    <div class="progress-number">
-                        <span class="progress-value">{{ progressData.ProgressSummary.CollectionProportion || '0%'
-                            }}</span>
-                    </div>
-                </a-card>
-            </a-col>
-        </a-row>
-        <!-- 各阶段进度标题 -->
-        <div class="mb-20 mt-20">
-            <h3>各阶段进度：</h3>
+    <div class="project-team-container">
+        <!-- 页面标题 -->
+        <div class="page-title">
+            <h2>项目组成员</h2>
         </div>
-        <!-- 阶段进度表格 -->
-        <a-table :dataSource="progressData.allContractClauses" :columns="phaseProgressColumns" :pagination="false"
-            size="small" bordered class="phase-progress-table">
-            <template #bodyCell="{ column, record }">
-                <template v-if="column.key === 'actualProgress'">
-                    <a-input-number v-model:value="record.PhaseProgress" :min="0" :max="100" :step="1" size="small"
-                        addon-after="%" />
-                </template>
-                <template v-if="column.key === 'contractPerformance'">
-                    <a-select v-model:value="record.contractPerformance" placeholder="--全部合同条款--" size="small"
-                        style="width: 100%">
-                        <a-select-option value="">--全部合同条款--</a-select-option>
-                    </a-select>
-                </template>
-            </template>
-        </a-table>
-        <!-- 合同收款拆分条款 -->
-        <div class="flexTWO mb-20 mt-20">
-            <div class="flexTWO">
-                <div class="fwb">合同收款拆分条款（进度）：</div>
-                <a-button type="primary" size="small" @click="showEditPhaseModal">
-                    <FormOutlined /> 设置阶段进度
-                </a-button>
+
+        <!-- 项目组成员表格 - 遍历所有部门 -->
+        <div v-for="(members, deptId) in groupedTeamData" :key="deptId" class="team-section">
+            <div class="section-header">
+                <span class="section-title">{{ members[0]?.deptName || deptId }}</span>
             </div>
-            <a-select placeholder="--全部合同条款--" style="width: 200px; margin-bottom: 16px" size="small">
-                <a-select-option value="">--全部合同条款--</a-select-option>
-            </a-select>
+            <a-table 
+                :loading="teamDataloading" 
+                :dataSource="members" 
+                :columns="teamColumns" 
+                :pagination="false"
+                size="middle" 
+                bordered 
+                class="team-table"
+                :rowKey="'id'"
+            >
+                <template #empty>
+                    <div class="empty-text">暂无数据</div>
+                </template>
+            </a-table>
         </div>
-        <!--     合同收款拆分条款 -->
-        <a-descriptions bordered layout="vertical" size="middle" :column="7" :labelStyle="{ width: '180px' }">
-            <a-descriptions-item label="预可研">
-                {{ progressData.allPhaseProgress[0].PhaseProgress || '--' }}%
-            </a-descriptions-item>
-            <a-descriptions-item label="可研">
-                {{ progressData.allPhaseProgress[1].PhaseProgress || '--' }}%
-            </a-descriptions-item>
-            <a-descriptions-item label="初步设计">
-                {{ progressData.allPhaseProgress[2].PhaseProgress || '--' }}%
-            </a-descriptions-item>
-            <a-descriptions-item label="施工图">
-                {{ progressData.allPhaseProgress[3].PhaseProgress || '--' }}%
-            </a-descriptions-item>
-            <a-descriptions-item label="配合施工">
-                {{ progressData.allPhaseProgress[4].PhaseProgress || '--' }}%
-            </a-descriptions-item>
-            <a-descriptions-item label="清概（结算）">
-                {{ progressData.allPhaseProgress[5].PhaseProgress || '--' }}%
-            </a-descriptions-item>
-            <a-descriptions-item label="质保期">
-                {{ progressData.allPhaseProgress[6].PhaseProgress || '--' }}%
-            </a-descriptions-item>
-        </a-descriptions>
-        <!-- 执行阶段 -->
-        <div class="mb-20 mt-20">
-            <!-- 执行阶段表格 -->
-            <a-table :dataSource="progressData.stepList" :columns="executionPhaseColumns" />
+
+        <!-- 如果没有数据，显示提示 -->
+        <div v-if="!teamDataloading && Object.keys(groupedTeamData).length === 0" class="no-data-tip">
+            暂无项目组成员数据
         </div>
     </div>
 </template>
+
 <script setup lang="ts">
-import { ref } from 'vue';
-import { FormOutlined } from "@ant-design/icons-vue";
-const progressData = ref({
-    "stepList": [],
-    "contractList": [],
-    "allContractClauses": [],
-    "allPhaseProgress": [
-        {
-            "Step": 603,
-            "StpeName": "预可研",
-            "PhaseProgress": 2
-        },
-        {
-            "Step": 604,
-            "StpeName": "可研",
-            "PhaseProgress": 10
-        },
-        {
-            "Step": 605,
-            "StpeName": "初步设计",
-            "PhaseProgress": 25
-        },
-        {
-            "Step": 606,
-            "StpeName": "施工图",
-            "PhaseProgress": 35
-        },
-        {
-            "Step": 607,
-            "StpeName": "配合施工",
-            "PhaseProgress": 20
-        },
-        {
-            "Step": 611,
-            "StpeName": "清概（结算）",
-            "PhaseProgress": 5
-        },
-        {
-            "Step": 612,
-            "StpeName": "质保期",
-            "PhaseProgress": 3
-        }
-    ],
-    "ProgressSummary": {
-        "TotalProgress": 0,
-        "ProjectPerformanceProgress": 0,
-        "AmountOfWorkInspection": "",
-        "ProgressOfWorkInspection": "",
-        "AmountCollected": "",
-        "CollectionProportion": ""
-    }
-});
-// 执行阶段表格列定义
-const executionPhaseColumns = [
+import { ref, onMounted, watch, computed } from 'vue';
+import getDatas from "@/network/index";
+import { useRoute } from 'vue-router';
+
+// 项目组成员数据
+const teamDataloading = ref(false);
+const rawTeamData = ref<Record<string, any[]>>({});
+
+// 其他专业团队数据（如果需要可以单独处理）
+const otherTeamData = ref<any[]>([]);
+
+// 表格列定义
+const teamColumns = [
     {
-        title: '执行阶段',
-        key: 'stage',
-        width: 120,
-        align: 'center'
-    },
-    {
-        title: '专项工作内容',
-        dataIndex: 'specialWorkContent',
-        key: 'specialWorkContent',
+        title: '专业',
+        dataIndex: 'majorName',
+        key: 'majorName',
         width: 150,
         align: 'center'
     },
     {
-        title: '费用类型',
-        dataIndex: 'costType',
-        key: 'costType',
-        width: 120,
+        title: '第一牵头人',
+        dataIndex: 'majorPrincipleName',
+        key: 'majorPrincipleName',
+        width: 180,
         align: 'center'
     },
     {
-        title: '合同支付条款',
-        key: 'contractPaymentClause',
-        width: 150,
+        title: '其他牵头人',
+        dataIndex: 'otherMajorPrincipleName',
+        key: 'otherMajorPrincipleName',
+        width: 180,
         align: 'center'
     },
     {
-        title: '验工情况',
-        dataIndex: 'acceptanceCondition',
-        key: 'acceptanceCondition',
-        width: 120,
-        align: 'center'
-    },
-    {
-        title: '收付条件',
-        dataIndex: 'paymentCondition',
-        key: 'paymentCondition',
-        width: 120,
-        align: 'center'
-    },
-    {
-        title: '是否已关联任务',
-        key: 'isTaskLinked',
-        width: 120,
-        align: 'center'
-    },
-    {
-        title: '完成情况',
-        key: 'completionStatus',
-        width: 120,
+        title: '生产所（室）',
+        dataIndex: 'suoshi',
+        key: 'suoshi',
+        width: 180,
         align: 'center'
     }
 ];
-const phaseProgressColumns = ref([{
-    title: '序号',
-    dataIndex: 'Step',
-    key: 'step',
-    width: 80,
-    align: 'center'
-},
-{
-    title: '阶段或事项',
-    dataIndex: 'StpeName',
-    key: 'stageName',
-    width: 150
-},
-{
-    title: '实际生产进度 (%)',
-    key: 'actualProgress',
-    width: 200,
-    align: 'center'
-},
-{
-    title: '合同履约进度 (%)',
-    key: 'contractPerformance',
-    width: 200,
-    align: 'center'
-}])
 
-// 点击设置阶段进度
-const showEditPhaseModal = () => {
-    console.log(123);
+// 获取路由实例
+const route = useRoute();
 
+// 按部门分组的数据（用于渲染多个表格）
+const groupedTeamData = computed(() => {
+    return rawTeamData.value;
+});
+
+// 获取项目组成员数据
+const getProjectList = async () => {
+    // 防止重复请求
+    if (teamDataloading.value) return;
+    teamDataloading.value = true;
+    const taskArrangementId = route.query.taskArrangementId;
+    // 如果没有 taskArrangementId，不发起请求
+    if (!taskArrangementId) {
+        console.warn('未找到 taskArrangementId');
+        teamDataloading.value = false;
+        return;
+    }
+    try {
+        const res = await getDatas('project/GetProjectMembers', {
+            taskArrangementId: taskArrangementId,
+        });
+        console.log("项目组成员数据:", res);
+        // 处理返回的数据
+        if (res && res.data.code == 200) {
+            // 假设返回的数据是一个对象，键是部门 ID，值是成员数组
+            rawTeamData.value = res.data.result || {};
+            console.log("处理后的数据:", rawTeamData.value);
+        } else {
+            console.error("获取项目组成员数据失败:", res.data.message);
+            rawTeamData.value = {};
+        }
+    } catch (error) {
+        console.error("获取项目组成员数据异常:", error);
+        rawTeamData.value = {};
+    } finally {
+        teamDataloading.value = false;
+    }
 };
 
+// 监听路由参数变化
+watch(
+    () => route.query.taskArrangementId,
+    (newVal, oldVal) => {
+        // 只有当值真正变化时才请求
+        if (newVal && newVal !== oldVal) {
+            console.log('taskArrangementId 变化:', newVal);
+            getProjectList();
+        }
+    },
+    { immediate: false }
+);
+
+// 组件挂载后执行一次
+onMounted(() => {
+    console.log('ProjectTeam 组件已挂载');
+    getProjectList();
+});
 </script>
+
+<style scoped>
+.project-team-container {
+    padding: 20px;
+    background: #fff;
+}
+
+.page-title {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.page-title h2 {
+    font-size: 24px;
+    color: #000;
+    font-weight: bold;
+}
+
+.team-section {
+    margin-bottom: 30px;
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 16px;
+    padding: 8px 16px;
+    background-color: #f5f5f5;
+    border-left: 4px solid #1890ff;
+}
+
+.section-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #000;
+}
+
+.team-table {
+    border: 1px solid #d9d9d9;
+    border-radius: 4px;
+}
+
+.team-table .ant-table-thead>tr>th {
+    background-color: #f5f5f5;
+    font-weight: 600;
+    color: #000;
+    border-bottom: 1px solid #d9d9d9;
+}
+
+.team-table .ant-table-tbody>tr:hover {
+    background-color: #f5f5f5;
+}
+
+.empty-text {
+    text-align: center;
+    color: #999;
+    padding: 40px 0;
+}
+
+.no-data-tip {
+    text-align: center;
+    color: #999;
+    padding: 40px 0;
+    font-size: 14px;
+}
+</style>
