@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 import Layout from "@/views/layout/layout.vue";
 import addDynamicRoutes from "@/utils/addRoutes";
-
+import { ElMessageBox, Action } from "element-plus";
 const routes: Array<RouteRecordRaw> = [
   {
     path: "/projectMgment",
@@ -38,7 +38,7 @@ const routes: Array<RouteRecordRaw> = [
         meta: { check: true, title: "组建项目组成员" },
       },
       // 查看全部工作安排
-        {
+      {
         path: "WorkArrangementList",
         name: "WorkArrangementList",
         component: () =>
@@ -46,7 +46,7 @@ const routes: Array<RouteRecordRaw> = [
         meta: { check: true, title: "查看全部工作安排" },
       },
       // 工作安排
-        {
+      {
         path: "WorkArrangement",
         name: "WorkArrangement",
         component: () =>
@@ -104,7 +104,21 @@ router.beforeEach((to, from, next) => {
 
   // 如果用户未登录且访问需要认证的路由，则重定向到登录页面
   if (!token && to.meta.check) {
-    next({ name: "login" });
+
+
+    // 如果用户未登录且访问需要认证的路由，则重定向到登录页面
+    if (!token && to.meta.check) {
+      ElMessageBox.alert('登录失效，请重新登录', '提示',
+        {
+          confirmButtonText: '确定',
+          cancelButtonText: '',
+          type: 'warning',
+          callback: (action: any) => {
+            router.push({ name: "login" });
+          }
+        }
+      )
+    }
     return;
   }
   // 已登录且需要初始化路由

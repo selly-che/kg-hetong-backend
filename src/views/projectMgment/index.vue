@@ -193,7 +193,7 @@ const getProjectList = async () => {
         {
           Id: `${project.id}-production`,
           text: "生产组织",
-          href: `/projectMgment/ProductionOrganization?projectId=${project.id}&projectStep=${project.taskArrangements?.[0]?.projectStep || ''}`,
+          href: `/projectMgment/ProductionOrganization?projectId=${project.id}&projectStep=${project.projectStep}`,
           projectId: project.id
         }
       ];

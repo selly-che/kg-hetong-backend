@@ -38,16 +38,22 @@ service.interceptors.response.use(
     }, (error) => {
         let resPonse = error.response.data;
         if (resPonse.status == 500 && resPonse.message.includes("Token失效")) {
-            ElMessageBox.alert('登录失效，请重新登录', '提示',
-                {
-                    confirmButtonText: '确定',
-                    cancelButtonText: '',
-                    type: 'warning',
-                    callback: (action: Action) => {
-                        router.push({ name: "login" });
+
+            const isShowingAlert = localStorage.getItem('tokenErrorAlertShowing');
+            if (!isShowingAlert) { // 如果没有显示过错误提示，则显示错误提示
+                localStorage.setItem('tokenErrorAlertShowing', 'true'); // 设置标志，表示已经显示过错误提示
+                ElMessageBox.alert('登录失效，请重新登录', '提示',
+                    {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '',
+                        type: 'warning',
+                        callback: (action: Action) => {
+                            localStorage.removeItem('tokenErrorAlertShowing');
+                            router.push({ name: "login" });
+                        }
                     }
-                }
-            )
+                )
+            }
         }
         return Promise.reject(error);
     }
