@@ -38,6 +38,7 @@ import getDates from "@/network/index";
 import { useRouter } from "vue-router";
 import Edit from "@/views/contractMgment/Edit.vue";
 import axios from "axios";
+import { saveAs } from "file-saver";
 
 const router = useRouter();
 const props = defineProps({
@@ -224,7 +225,7 @@ const columns = [
     align: "center",
   },
 ];
-
+//导出
 const exportExcel = async () => {
   try {
     const token = localStorage.getItem("accesstoken");
@@ -240,15 +241,16 @@ const exportExcel = async () => {
     const blob = new Blob([res.data], {
       type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     });
-
-    const url = window.URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `合同数据_${new Date().getTime()}.xlsx`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    window.URL.revokeObjectURL(url);
+    // 触发下载
+    saveAs(blob, `合同数据_${new Date().getTime()}.xlsx`);
+    // const url = window.URL.createObjectURL(blob);
+    // const link = document.createElement("a");
+    // link.href = url;
+    // link.download = `合同数据_${new Date().getTime()}.xlsx`;
+    // document.body.appendChild(link);
+    // link.click();
+    // document.body.removeChild(link);
+    // window.URL.revokeObjectURL(url);
   } catch (error) {
     console.error("导出Excel失败:", error);
   }
