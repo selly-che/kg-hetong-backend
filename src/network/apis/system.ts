@@ -72,6 +72,22 @@ export default {
     };
   },
 
+  // 编辑用户数据
+  EditUserinfo(params: any) {
+       return {
+      method: "PUT",
+      url: "/sys/user/edit",
+      params,
+    };
+  },
+  AddUserinfo(params: any) {
+       return {
+      method: "post",
+      url: "/sys/user/add",
+      params,
+    };
+  },
+
   // 添加角色数据
   AddUserRole(data: any) {
     return {

@@ -7,85 +7,47 @@
           <!-- 基本信息 -->
           <a-col :span="24">
             <a-card class="info-card">
-              <a-descriptions
-                bordered
-                size="middle"
-                :column="1"
-                :labelStyle="{ width: '180px' }"
-              >
+              <a-descriptions bordered size="middle" :column="1" :labelStyle="{ width: '180px' }">
                 <a-descriptions-item label="查看其他阶段">
-                  <a-select
-                    style="width: 100%"
-                    v-model:value="projectStepValue"
-                  >
+                  <a-select style="width: 100%" v-model:value="projectStepValue">
                     <!-- 默认第一条 -->
-                    <a-select-option
-                      v-for="type in ProductionObj.projectStep"
-                      :key="type.Num"
-                      :value="type.Text"
-                    >
+                    <a-select-option v-for="type in ProductionObj.projectStep" :key="type.Num" :value="type.Text">
                       {{ type.Text }}
                     </a-select-option>
                   </a-select>
                 </a-descriptions-item>
               </a-descriptions>
               <div class="project_mainTitle">分管领导</div>
-              <a-descriptions
-                bordered
-                size="middle"
-                :column="1"
-                :labelStyle="{ width: '180px' }"
-              >
+              <a-descriptions bordered size="middle" :column="1" :labelStyle="{ width: '180px' }">
                 <a-descriptions-item label="集团分管领导">
                   <a-select style="width: 100%">
-                    <a-select-option
-                      v-for="type in allChargeEntity['分管副总经理']"
-                      :key="type.Id"
-                      :value="type.Name"
-                    >
+                    <a-select-option v-for="type in allChargeEntity['分管副总经理']" :key="type.Id" :value="type.Name">
                       {{ type.Name }}
                     </a-select-option>
                   </a-select>
                 </a-descriptions-item>
                 <a-descriptions-item label="分管总(副总)工">
                   <a-select style="width: 100%">
-                    <a-select-option
-                      v-for="type in allChargeEntity['分管副总工']"
-                      :key="type.Id"
-                      :value="type.Name"
-                    >
+                    <a-select-option v-for="type in allChargeEntity['分管副总工']" :key="type.Id" :value="type.Name">
                       {{ type.Name }}
                     </a-select-option>
                   </a-select>
                 </a-descriptions-item>
                 <a-descriptions-item label="公司总(副总)工">
                   <div>
-                    <a-checkbox
-                      style="width: 90px; margin: 0"
-                      v-for="value in allChargeEntity['专业副总工']"
-                      :key="value.Id"
-                      >{{ value.Name }}</a-checkbox
-                    >
+                    <a-checkbox style="width: 90px; margin: 0" v-for="value in allChargeEntity['专业副总工']"
+                      :key="value.Id">{{ value.Name }}</a-checkbox>
                   </div>
                 </a-descriptions-item>
                 <a-descriptions-item label="经营计划部分管领导">
                   <a-select style="width: 100%">
-                    <a-select-option
-                      v-for="type in allChargeEntity['计经部分管领导']"
-                      :key="type.Id"
-                      :value="type.Name"
-                    >
+                    <a-select-option v-for="type in allChargeEntity['计经部分管领导']" :key="type.Id" :value="type.Name">
                       {{ type.Name }}
                     </a-select-option>
                   </a-select>
                 </a-descriptions-item>
               </a-descriptions>
-              <a-descriptions
-                bordered
-                size="middle"
-                :column="2"
-                :labelStyle="{ width: '180px' }"
-              >
+              <a-descriptions bordered size="middle" :column="2" :labelStyle="{ width: '180px' }">
                 <a-descriptions-item label="主管计调">
                   {{ ProductionObj.Manager_ChargeName || "--" }}
                 </a-descriptions-item>
@@ -94,71 +56,41 @@
                 </a-descriptions-item>
               </a-descriptions>
               <div class="project_mainTitle">总体</div>
-              <a-descriptions
-                bordered
-                size="middle"
-                :column="1"
-                :labelStyle="{ width: '180px' }"
-              >
+              <a-descriptions bordered size="middle" :column="1" :labelStyle="{ width: '180px' }">
                 <a-descriptions-item label="总体">
                   <a-select style="width: 100%">
-                    <a-select-option
-                      v-for="type in ProductionObj.popuDic"
-                      :key="type.value"
-                      :value="type.text"
-                    >
+                    <a-select-option v-for="type in ProductionObj.popuDic" :key="type.value" :value="type.text">
                       {{ type.text }}
                     </a-select-option>
                   </a-select>
                 </a-descriptions-item>
                 <a-descriptions-item label="常务副总体">
                   <a-select style="width: 100%">
-                    <a-select-option
-                      v-for="type in ProductionObj.popuCWDic"
-                      :key="type.value"
-                      :value="type.text"
-                    >
+                    <a-select-option v-for="type in ProductionObj.popuCWDic" :key="type.value" :value="type.text">
                       {{ type.text }}
                     </a-select-option>
                   </a-select>
                 </a-descriptions-item>
                 <a-descriptions-item label="专业副总体">
                   <a-select style="width: 100%">
-                    <a-select-option
-                      v-for="type in ProductionObj.popuZYDic"
-                      :key="type.value"
-                      :value="type.text"
-                    >
+                    <a-select-option v-for="type in ProductionObj.popuZYDic" :key="type.value" :value="type.text">
                       {{ type.text }}
                     </a-select-option>
                   </a-select>
                 </a-descriptions-item>
               </a-descriptions>
               <div class="project_mainTitle">项目部</div>
-              <a-descriptions
-                bordered
-                size="middle"
-                :column="1"
-                :labelStyle="{ width: '180px' }"
-              >
+              <a-descriptions bordered size="middle" :column="1" :labelStyle="{ width: '180px' }">
                 <a-descriptions-item label="项目部">
                   <a-select style="width: 100%">
-                    <a-select-option
-                      v-for="type in ProductionObj.XMBEntity"
-                      :key="type.value"
-                      :value="type.text"
-                    >
+                    <a-select-option v-for="type in ProductionObj.XMBEntity" :key="type.value" :value="type.text">
                       {{ type.text }}
                     </a-select-option>
                   </a-select>
                 </a-descriptions-item>
                 <a-descriptions-item label="项目部经理(计调)">
                   <a-select style="width: 100%">
-                    <a-select-option
-                      v-for="type in ProductionObj.xmbUDic"
-                      :key="type.value"
-                      :value="type.text"
-                    >
+                    <a-select-option v-for="type in ProductionObj.xmbUDic" :key="type.value" :value="type.text">
                       {{ type.text }}
                     </a-select-option>
                   </a-select>
@@ -166,38 +98,21 @@
               </a-descriptions>
 
               <div class="project_mainTitle">主体责任单位</div>
-              <a-descriptions
-                bordered
-                size="middle"
-                :column="1"
-                :labelStyle="{ width: '180px' }"
-              >
+              <a-descriptions bordered size="middle" :column="1" :labelStyle="{ width: '180px' }">
                 <a-descriptions-item label="单位">
                   <a-select style="width: 100%">
-                    <a-select-option
-                      v-for="type in ProductionObj.ZhuTiZeRenEntity"
-                      :key="type.value"
-                      :value="type.text"
-                    >
+                    <a-select-option v-for="type in ProductionObj.ZhuTiZeRenEntity" :key="type.value"
+                      :value="type.text">
                       {{ type.text }}
                     </a-select-option>
                   </a-select>
                 </a-descriptions-item>
               </a-descriptions>
               <div class="project_mainTitle">参与单位</div>
-              <a-descriptions
-                bordered
-                size="middle"
-                :column="1"
-                :labelStyle="{ width: '180px' }"
-              >
+              <a-descriptions bordered size="middle" :column="1" :labelStyle="{ width: '180px' }">
                 <a-descriptions-item label="单位">
                   <a-select style="width: 100%">
-                    <a-select-option
-                      v-for="type in ProductionObj.QiTaCanYuEntity"
-                      :key="type.value"
-                      :value="type.text"
-                    >
+                    <a-select-option v-for="type in ProductionObj.QiTaCanYuEntity" :key="type.value" :value="type.text">
                       {{ type.text }}
                     </a-select-option>
                   </a-select>
@@ -215,7 +130,9 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, ref, computed } from "vue";
+import { reactive, ref, computed, onMounted } from "vue";
+import getDatas from "@/network/index";
+import { useRouter } from "vue-router";
 const projectStepValue = ref(["预可研（当前阶段）"]);
 const ProductionObj = ref({
   yesorno: true,
@@ -901,6 +818,21 @@ const allChargeEntity = computed(() => {
   });
   return result;
 });
+const router = useRouter();
+const getProjectDetails = async () => {
+  let projectId = router.currentRoute.value.query.projectId;
+  let projectStep = router.currentRoute.value.query.projectStep;
+  const res = await getDatas('project/GetProjectProductionOrg', {
+    projectId: projectId,
+    projectStep: projectStep
+  });
+  console.log(res, 'resresres');
+
+};
+onMounted(() => {
+  getProjectDetails();
+})
+
 </script>
 <style lang="less" scoped>
 .project_mainTitle {

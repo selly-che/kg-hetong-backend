@@ -82,7 +82,7 @@ const routes: Array<RouteRecordRaw> = [
         path: "/contractMgment/htDetail/:id/:name",
         name: "htDetail",
         component: () => import("../views/contractMgment/HtDetail.vue"),
-        meta: { check: true, title: "合同详情", noTab: true },
+        meta: { check: true, title: "合同详情", noTab: false },
       },
     ],
   },

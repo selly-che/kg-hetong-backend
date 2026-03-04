@@ -251,8 +251,12 @@ const handleReset = () => {
 const handleAdd = () => {
     console.log('点击新增');
 };
+console.log('页面加载了多次');
+
 onMounted(() => {
     handleSearch();
+    console.log('WorkArrangement mounted');
+    
 })
 </script>
 
