@@ -7,8 +7,13 @@
     >
       <div class="sidebar-container">
         <!-- 查询项目标题 -->
-        <a-input-search v-model:value="searchText" placeholder="请输入项目名称" enter-button
-          style="margin-bottom: 16px; margin-top: 16px" @search="handleSearch" />
+        <a-input-search
+          v-model:value="searchText"
+          placeholder="请输入项目名称"
+          enter-button
+          style="margin-bottom: 16px; margin-top: 16px"
+          @search="handleSearch"
+        />
 
         <!-- 责任类型筛选标签 -->
         <div class="filter-tags">
@@ -59,20 +64,29 @@
               </template>
 
               <!-- 固定的二级菜单项 -->
-              <a-menu-item v-for="fixedItem in project.fixedNodes" :key="fixedItem.Id"
-                @click="handleMenuItemClick(fixedItem)">
+              <a-menu-item
+                v-for="fixedItem in project.fixedNodes"
+                :key="fixedItem.Id"
+                @click="handleMenuItemClick(fixedItem)"
+              >
                 {{ fixedItem.text }}
               </a-menu-item>
 
               <!-- 动态的二级菜单项（来自taskArrangements） -->
-              <a-sub-menu v-for="taskItem in project.taskNodes" :key="taskItem.Id">
+              <a-sub-menu
+                v-for="taskItem in project.taskNodes"
+                :key="taskItem.Id"
+              >
                 <template #title>
                   <span>{{ taskItem.text }}</span>
                 </template>
 
                 <!-- 固定的三级菜单项 -->
-                <a-menu-item v-for="thirdLevelItem in taskItem.children" :key="thirdLevelItem.Id"
-                  @click="handleMenuItemClick(thirdLevelItem)">
+                <a-menu-item
+                  v-for="thirdLevelItem in taskItem.children"
+                  :key="thirdLevelItem.Id"
+                  @click="handleMenuItemClick(thirdLevelItem)"
+                >
                   {{ thirdLevelItem.text }}
                 </a-menu-item>
               </a-sub-menu>
@@ -119,11 +133,11 @@
               <template #tab>
                 <span @click="handleTabClick(tab)">{{ tab.title }}</span>
               </template>
-              <div class="tab-content">
-                <router-view></router-view>
-              </div>
             </a-tab-pane>
           </a-tabs>
+          <div class="tab-content">
+            <router-view></router-view>
+          </div>
         </div>
       </a-layout-content>
     </a-layout>
@@ -201,55 +215,57 @@ const getProjectList = async () => {
           Id: `${project.id}-overview`,
           text: "项目概况",
           href: `/projectMgment/ProjectOverview?projectId=${project.id}`,
-          projectId: project.id
+          projectId: project.id,
         },
         {
           Id: `${project.id}-production`,
           text: "生产组织",
           href: `/projectMgment/ProductionOrganization?projectId=${project.id}`,
-          projectId: project.id
-        }
+          projectId: project.id,
+        },
       ];
 
       // 处理taskArrangements为二级菜单项
-      const taskNodes = (project.taskArrangements || []).map((task: any, index: number) => {
-        const taskId = `${project.id}-task-${index}`;
+      const taskNodes = (project.taskArrangements || []).map(
+        (task: any, index: number) => {
+          const taskId = `${project.id}-task-${index}`;
 
-        // 为每个task添加固定的三级菜单
-        const children = [
-          {
-            Id: `${taskId}-team-${Date.now()}`,
-            text: "组建项目组成员",
-            href: `/projectMgment/ProjectTeam?projectId=${project.id}&projectStep=${task.projectStep}`,
-            projectId: project.id,
-            projectStep: task.projectStep,
-            taskId: task.id
-          },
-          {
-            Id: `${taskId}-all-work-${Date.now()}`,
-            text: "查看全部工作安排",
-            href: `/projectMgment/WorkArrangementList?projectId=${project.id}&projectStep=${task.projectStep}`,
-            projectId: project.id,
-            projectStep: task.projectStep,
-            taskId: task.id
-          },
-          {
-            Id: `${taskId}-work-${Date.now()}`,
-            text: "工作安排",
-            href: `/projectMgment/WorkArrangement?projectId=${project.id}&projectStep=${task.projectStep}`,
-            projectId: project.id,
-            projectStep: task.projectStep,
-            taskId: task.id
-          }
-        ];
+          // 为每个task添加固定的三级菜单
+          const children = [
+            {
+              Id: `${taskId}-team-${Date.now()}`,
+              text: "组建项目组成员",
+              href: `/projectMgment/ProjectTeam?projectId=${project.id}&projectStep=${task.projectStep}`,
+              projectId: project.id,
+              projectStep: task.projectStep,
+              taskId: task.id,
+            },
+            {
+              Id: `${taskId}-all-work-${Date.now()}`,
+              text: "查看全部工作安排",
+              href: `/projectMgment/WorkArrangementList?projectId=${project.id}&projectStep=${task.projectStep}`,
+              projectId: project.id,
+              projectStep: task.projectStep,
+              taskId: task.id,
+            },
+            {
+              Id: `${taskId}-work-${Date.now()}`,
+              text: "工作安排",
+              href: `/projectMgment/WorkArrangement?projectId=${project.id}&projectStep=${task.projectStep}`,
+              projectId: project.id,
+              projectStep: task.projectStep,
+              taskId: task.id,
+            },
+          ];
 
-        return {
-          Id: taskId,
-          text: task.projectStepStr || `任务阶段${index + 1}`,
-          projectId: project.id,
-          children: children
-        };
-      });
+          return {
+            Id: taskId,
+            text: task.projectStepStr || `任务阶段${index + 1}`,
+            projectId: project.id,
+            children: children,
+          };
+        },
+      );
 
       return {
         Id: project.id,
@@ -261,7 +277,7 @@ const getProjectList = async () => {
         Project_Nature: project.projectNature,
         IsFavorites: false,
         fixedNodes: fixedNodes,
-        taskNodes: taskNodes
+        taskNodes: taskNodes,
       };
     });
   } catch (error) {
@@ -282,11 +298,14 @@ const getProjectType = (projectTypeDetail: string) => {
 const filteredProjects = computed(() => {
   return projects.value.filter((project) => {
     // 类型匹配
-    const typeMatch = project.type === activeFilter.value || activeFilter.value === "";
+    const typeMatch =
+      project.type === activeFilter.value || activeFilter.value === "";
     // 选项卡匹配
     const tabMatch = project.tab === activeTab.value || activeTab.value === "";
     // 责任类型匹配
-    const responsibilityMatch = project.responsibility === activeResponsibility.value || activeResponsibility.value === " ";
+    const responsibilityMatch =
+      project.responsibility === activeResponsibility.value ||
+      activeResponsibility.value === " ";
     // 搜索匹配
     const searchLower = searchText.value.toLowerCase();
     const textMatch = project.text.toLowerCase().includes(searchLower);
@@ -304,10 +323,13 @@ const handleMenuItemClick = (menuItem: any) => {
 
   // 处理路由跳转
   if (menuItem.href) {
-    const routeName = menuItem.href.split("/").pop()?.split("?")[0] || menuItem.href;
+    const routeName =
+      menuItem.href.split("/").pop()?.split("?")[0] || menuItem.href;
 
     // 检查是否已存在相同路径的标签页
-    const existingTab = openedTabs.value.find((tab) => tab.path === menuItem.href);
+    const existingTab = openedTabs.value.find(
+      (tab) => tab.path === menuItem.href,
+    );
     if (!existingTab) {
       openedTabs.value.push({
         key: routeName,
@@ -458,7 +480,7 @@ watch(openMenuKeys, (newVal) => {
   flex: 1;
   overflow-y: auto;
   margin-bottom: 16px;
-   scrollbar-width: none; /* Firefox */
+  scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none; /* IE 10+ */
 }
 

@@ -15,11 +15,18 @@
       :scroll="{ x: 1500, y: 500 }"
       bordered
     >
-      <template #action>
-        <a>action</a>
-      </template>
-      <template #status="text">
-        <a-tag :color="text === '已通过' ? 'green' : 'red'">{{ text }}</a-tag>
+      <template #bodyCell="{ column, record }">
+        <template v-if="column.key === 'contractState'">
+          <a-tag :color="record.contractState === '已通过' ? 'green' : 'red'">{{
+            record.contractState
+          }}</a-tag>
+        </template>
+        <template v-if="column.key === 'name'">
+          <a @click="handleNameClick(record)">{{ record.name }}</a>
+        </template>
+        <template v-if="column.key === 'action'">
+          <a @click="handleActionClick(record)"><Edit /></a>
+        </template>
       </template>
     </a-table>
   </div>
@@ -28,7 +35,10 @@
 <script setup>
 import { computed, onMounted, ref, watch } from "vue";
 import getDates from "@/network/index";
+import { useRouter } from "vue-router";
+import Edit from "@/views/contractMgment/Edit.vue";
 
+const router = useRouter();
 const props = defineProps({
   searchParams: {
     type: Object,
@@ -51,7 +61,7 @@ const columns = [
     width: 120,
     dataIndex: "contractState",
     key: "contractState",
-    scopedSlots: { customRender: "status" },
+    // slots: { customRender: "status" },
     align: "center",
   },
   {
@@ -60,6 +70,7 @@ const columns = [
     key: "action",
     width: 150,
     align: "center",
+    // slots: { customRender: "action" },
   },
   {
     title: "合同编号",
@@ -82,6 +93,7 @@ const columns = [
     width: 150,
     ellipsis: true,
     align: "center",
+    // slots: { customRender: "name" },
   },
   {
     title: "委托单位",
@@ -232,17 +244,29 @@ onMounted(() => {
 watch(
   () => props.searchParams,
   (newParams) => {
-    console.log("searchParams 变化:", newParams);
+    // console.log("searchParams变化:", newParams);
     getContractList();
   },
   { deep: true },
 );
+//点击合同名称跳转操作
+const handleNameClick = (record) => {
+  console.log("点击的合同名称:", record.name, "合同id:", record.key);
+  router.push({
+    path: `/contractMgment/htDetail/${record.key}/${record.name}`,
+  });
+};
+//操作-编辑
+const handleActionClick = (record) => {
+  console.log("合同id:", record.key);
+  // editref.value.showModal(record.key);
+};
 
 const refreshContractList = () => {
-  console.log(
-    "refreshContractList 被调用, 当前 searchParams:",
-    props.searchParams,
-  );
+  // console.log(
+  //   "refreshContractList 被调用, 当前 searchParams:",
+  //   props.searchParams,
+  // );
   getContractList();
 };
 
@@ -279,7 +303,7 @@ const getContractList = async () => {
   console.log("请求参数:", requestParams);
   const res = await getDates("contract/GetContractList", requestParams);
   const resData = res.data.result.records;
-  // console.log("分页查询合同列表", res.data.result.records);
+  console.log("分页查询合同列表", res.data.result.records);
   if (res.data.code === 200) {
     const records = resData || [];
     data.value = records.map((item, index) => {

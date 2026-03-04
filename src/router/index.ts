@@ -33,12 +33,11 @@ const routes: Array<RouteRecordRaw> = [
       {
         path: "ProjectTeam",
         name: "ProjectTeam",
-        component: () =>
-          import("../views/projectMgment/ProjectTeam.vue"),
+        component: () => import("../views/projectMgment/ProjectTeam.vue"),
         meta: { check: true, title: "组建项目组成员" },
       },
       // 查看全部工作安排
-        {
+      {
         path: "WorkArrangementList",
         name: "WorkArrangementList",
         component: () =>
@@ -46,11 +45,10 @@ const routes: Array<RouteRecordRaw> = [
         meta: { check: true, title: "查看全部工作安排" },
       },
       // 工作安排
-        {
+      {
         path: "WorkArrangement",
         name: "WorkArrangement",
-        component: () =>
-          import("../views/projectMgment/WorkArrangement.vue"),
+        component: () => import("../views/projectMgment/WorkArrangement.vue"),
         meta: { check: true, title: "工作安排" },
       },
     ],
@@ -79,6 +77,12 @@ const routes: Array<RouteRecordRaw> = [
         name: "create",
         component: () => import("../views/projectMgment/Create.vue"),
         meta: { check: true, title: "新建项目", noTab: true },
+      },
+      {
+        path: "/contractMgment/htDetail/:id/:name",
+        name: "htDetail",
+        component: () => import("../views/contractMgment/HtDetail.vue"),
+        meta: { check: true, title: "合同详情", noTab: true },
       },
     ],
   },
@@ -109,7 +113,7 @@ router.beforeEach((to, from, next) => {
   }
   // 已登录且需要初始化路由
   // 注意：检查是否有子路由，但至少应该有一个首页路由
-  if (token && layoutRoute && layoutRoute.children.length <= 3) {
+  if (token && layoutRoute && layoutRoute.children.length <= 4) {
     const menus = JSON.parse(localStorage.getItem("wuyemenusJSON") || "[]");
     addDynamicRoutes(router, menus);
     // 在动态路由添加完成后，再添加 404 路由

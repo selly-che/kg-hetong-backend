@@ -65,8 +65,13 @@
           :row-selection="rowSelection"
           :scroll="{ x: 'max-content', y: 600 }"
         >
-          <template #action="{ record }">
-            <a style="margin-right: 10px" @click="handleEdit(record)">编辑</a>
+          <template #bodyCell="{ column, record }">
+            <template v-if="column.key === 'action'">
+              <a style="margin-right: 10px" @click="handleEdit(record)">编辑</a>
+            </template>
+            <template v-if="column.key === 'name'">
+              <a @click="handleNameClick(record)">{{ record.name }}</a>
+            </template>
           </template>
         </a-table>
       </div>
@@ -132,6 +137,7 @@ const columns = [
     dataIndex: "name",
     key: "name",
     ellipsis: true,
+    // slots: { customRender: "name" },
   },
   {
     title: "外协合同编号",
@@ -209,7 +215,7 @@ const columns = [
     key: "action",
     width: 80,
     fixed: "right",
-    slots: { customRender: "action" },
+    // slots: { customRender: "action" },
   },
 ];
 //行数据(修改)
@@ -221,6 +227,11 @@ const tabledata = ref([
     contractName: "合同名称",
   },
 ]);
+
+//点击合同名称跳转操作
+const handleNameClick = (record) => {
+  console.log("点击的合同名称:", record.name, "合同id:", record.key);
+};
 //编辑
 const handleEdit = (record: any) => {
   console.log("编辑", record);
