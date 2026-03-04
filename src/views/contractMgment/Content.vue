@@ -37,6 +37,7 @@ import { computed, onMounted, ref, watch } from "vue";
 import getDates from "@/network/index";
 import { useRouter } from "vue-router";
 import Edit from "@/views/contractMgment/Edit.vue";
+import axios from "axios";
 
 const router = useRouter();
 const props = defineProps({
@@ -224,8 +225,33 @@ const columns = [
   },
 ];
 
-const exportExcel = () => {
-  console.log("导出excel");
+const exportExcel = async () => {
+  try {
+    const token = localStorage.getItem("accesstoken");
+    const res = await axios({
+      method: "GET",
+      url: "/jeecg-boot/contract/export",
+      headers: {
+        "x-access-token": token,
+      },
+      responseType: "blob", //当二进制文件处理
+    });
+
+    const blob = new Blob([res.data], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
+
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `合同数据_${new Date().getTime()}.xlsx`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+  } catch (error) {
+    console.error("导出Excel失败:", error);
+  }
 };
 //合同统计数据
 const contractStatistics = ref({

@@ -72,7 +72,6 @@
 </template>
 
 <script setup lang="ts">
-import { number } from "echarts";
 import { ref } from "vue";
 
 const emit = defineEmits(["search", "reset"]);
