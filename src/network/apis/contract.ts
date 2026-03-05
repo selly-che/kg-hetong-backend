@@ -15,12 +15,4 @@ export default {
       params,
     };
   },
-  //导出/jeecg-boot/contract/export
-  // ExportContract(params: any) {
-  //   return {
-  //     method: "GET",
-  //     url: "/contract/export",
-  //     params,
-  //   };
-  // },
 };

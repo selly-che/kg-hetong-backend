@@ -56,7 +56,7 @@
       <a-button type="primary" style="margin-right: 10px" @click="handleAdd()"
         >新增</a-button
       >
-      <a-button>导出excel</a-button>
+      <a-button @click="exportExcelHandle">导出excel</a-button>
       <div class="table" style="margin-top: 10px">
         <a-table
           :columns="columns"
@@ -83,7 +83,13 @@
 import { onMounted, ref } from "vue";
 import outsourcingAdd from "../contractMgment/outsourcingAdd.vue";
 import getDates from "@/network/index";
+import { message } from "ant-design-vue";
+import { exportExcel } from "@/utils/common";
+import { useRouter } from "vue-router";
+// import axios from "axios";
+// import { saveAs } from "file-saver";
 
+const router = useRouter();
 const outsourcingAddRef = ref();
 const formData = ref({
   year: "all",
@@ -94,18 +100,24 @@ const formData = ref({
   mainContractNumber: "",
   executionUnit: "",
 });
+const selectedRowinfo = ref<any[]>([]); //选中行数据
+const selectedRowid = ref<string[]>([]);
 //行选择器
 const rowSelection = ref({
   checkStrictly: false,
   onChange: (selectedRowKeys: string[], selectedRows: any[]) => {
+    selectedRowid.value = selectedRowKeys;
+    selectedRowinfo.value = selectedRows;
     console.log("已选择的行键:", selectedRowKeys);
     console.log("已选择的行数据:", selectedRows);
+    console.log(selectedRowinfo.value);
+    console.log(selectedRowid);
   },
   onSelect: (
     record: any,
     selected: boolean,
-    selectedRows: any[],
-    nativeEvent: Event,
+    selectedRows: any[], //选中的行数据
+    nativeEvent: Event, //点击事件
   ) => {
     const rowIndex = tabledata.value.findIndex(
       (row) => row.index === record.index,
@@ -137,7 +149,6 @@ const columns = [
     dataIndex: "name",
     key: "name",
     ellipsis: true,
-    // slots: { customRender: "name" },
   },
   {
     title: "外协合同编号",
@@ -228,9 +239,59 @@ const tabledata = ref([
   },
 ]);
 
+//导出
+// const exportExcel = async () => {
+//   const token = localStorage.getItem("accesstoken");
+//   const res = await axios({
+//     method: "GET",
+//     url: "/jeecg-boot/contract/export",
+//     headers: {
+//       "x-access-token": token,
+//     },
+//     responseType: "blob",
+//   });
+//   console.log(res.data);
+//   const blob = new Blob([res.data], {
+//     type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+//   });
+//   // 触发下载
+//   saveAs(blob, `合同数据_${new Date().getTime()}.xlsx`);
+// };
+//导出new
+const exportExcelHandle = () => {
+  if (selectedRowinfo.value.length === 0) {
+    message.warning("请勾选要导出的合同");
+    return;
+  }
+  // 过滤选中的合同数据
+  const selectedData = tabledata.value.filter((item) =>
+    selectedRowid.value.includes(item.key),
+  );
+
+  const exportColumns = columns
+    // 过滤不用导出的列
+    .filter(
+      (col) =>
+        col.dataIndex &&
+        col.dataIndex !== "action" &&
+        col.dataIndex !== "index",
+    )
+    .map((col) => ({
+      title: col.title,
+      dataIndex: col.dataIndex as string,
+    }));
+  // 导出选中的合同数据
+  exportExcel(selectedData, exportColumns, {
+    fileName: "合同数据",
+    sheetName: "合同数据",
+  });
+};
 //点击合同名称跳转操作
-const handleNameClick = (record) => {
-  console.log("点击的合同名称:", record.name, "合同id:", record.key);
+const handleNameClick = (record: any) => {
+  router.push({
+    path: `/contractMgment/outsourcingDetail/${record.key}/${record.name}`,
+  });
+  // console.log("点击的合同名称:", record.name, "合同id:", record.key);
 };
 //编辑
 const handleEdit = (record: any) => {
@@ -263,7 +324,7 @@ const getOutsourcingList = async () => {
   });
   const data = res.data.result.records;
   console.log("外协合同列表", data);
-  tabledata.value = data.map((item, index) => {
+  tabledata.value = data.map((item: any, index: number) => {
     const contractInfo = item.contractInfo || {};
     return {
       ...contractInfo,
@@ -318,7 +379,7 @@ const handleSearch = async () => {
   try {
     const res = await getDates("contract/GetContractList", params);
     const data = res.data.result.records;
-    tabledata.value = data.map((item, index) => {
+    tabledata.value = data.map((item: any, index: number) => {
       const contractInfo = item.contractInfo || {};
       return {
         ...contractInfo,

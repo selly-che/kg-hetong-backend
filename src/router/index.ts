@@ -82,7 +82,14 @@ const routes: Array<RouteRecordRaw> = [
         path: "/contractMgment/htDetail/:id/:name",
         name: "htDetail",
         component: () => import("../views/contractMgment/HtDetail.vue"),
-        meta: { check: true, title: "合同详情", noTab: false },
+        meta: { check: true, title: "内部合同详情", noTab: false },
+      },
+      {
+        path: "/contractMgment/outsourcingDetail/:id/:name",
+        name: "outsourcingDetail",
+        component: () =>
+          import("../views/contractMgment/outsourcingDetail.vue"),
+        meta: { check: true, title: "外协合同详情", noTab: false },
       },
     ],
   },
@@ -113,7 +120,7 @@ router.beforeEach((to, from, next) => {
   }
   // 已登录且需要初始化路由
   // 注意：检查是否有子路由，但至少应该有一个首页路由
-  if (token && layoutRoute && layoutRoute.children.length <= 4) {
+  if (token && layoutRoute && layoutRoute.children.length <= 5) {
     const menus = JSON.parse(localStorage.getItem("wuyemenusJSON") || "[]");
     addDynamicRoutes(router, menus);
     // 在动态路由添加完成后，再添加 404 路由

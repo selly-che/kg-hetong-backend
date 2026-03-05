@@ -263,7 +263,10 @@ const addTab = (route: any) => {
       }
     }
     if (path.includes("/htDetail/") && params && params.name) {
-      tabTitle = `合同详情-${params.name}`;
+      tabTitle = `内部合同详情-${params.name}`;
+    }
+    if (path.includes("/outsourcingDetail/") && params && params.name) {
+      tabTitle = `外协合同详情-${params.name}`;
     }
 
     tabs.value.push({

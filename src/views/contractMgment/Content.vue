@@ -6,7 +6,7 @@
       <span>审定金额：{{ contractStatistics.approvedAmount }}万元</span>
       <span>开票金额：{{ contractStatistics.invoiceAmount }}万元</span>
       <span>收款金额：{{ contractStatistics.receivedAmount }}万元</span>
-      <a-button type="primary" @click="exportExcel">导出excel</a-button>
+      <a-button type="primary" @click="exportExcelHandler">导出excel</a-button>
     </div>
     <a-table
       :row-selection="rowSelection"
@@ -37,8 +37,8 @@ import { computed, onMounted, ref, watch } from "vue";
 import getDates from "@/network/index";
 import { useRouter } from "vue-router";
 import Edit from "@/views/contractMgment/Edit.vue";
-import axios from "axios";
-import { saveAs } from "file-saver";
+import { exportExcel } from "@/utils/common";
+import { message } from "ant-design-vue";
 
 const router = useRouter();
 const props = defineProps({
@@ -205,8 +205,8 @@ const columns = [
   },
   {
     title: "上报营销系统时间",
-    dataIndex: "reportTime",
-    key: "reportTime",
+    dataIndex: "auditTime",
+    key: "auditTime",
     width: 160,
     align: "center",
   },
@@ -226,34 +226,55 @@ const columns = [
   },
 ];
 //导出
-const exportExcel = async () => {
-  try {
-    const token = localStorage.getItem("accesstoken");
-    const res = await axios({
-      method: "GET",
-      url: "/jeecg-boot/contract/export",
-      headers: {
-        "x-access-token": token,
-      },
-      responseType: "blob", //当二进制文件处理
-    });
+// const exportExcel = async () => {
+//   try {
+//     const token = localStorage.getItem("accesstoken");
+//     const res = await axios({
+//       method: "GET",
+//       url: "/jeecg-boot/contract/export",
+//       headers: {
+//         "x-access-token": token,
+//       },
+//       responseType: "blob", //当二进制文件处理
+//     });
 
-    const blob = new Blob([res.data], {
-      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    });
-    // 触发下载
-    saveAs(blob, `合同数据_${new Date().getTime()}.xlsx`);
-    // const url = window.URL.createObjectURL(blob);
-    // const link = document.createElement("a");
-    // link.href = url;
-    // link.download = `合同数据_${new Date().getTime()}.xlsx`;
-    // document.body.appendChild(link);
-    // link.click();
-    // document.body.removeChild(link);
-    // window.URL.revokeObjectURL(url);
-  } catch (error) {
-    console.error("导出Excel失败:", error);
+//     const blob = new Blob([res.data], {
+//       type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+//     });
+//     // 触发下载
+//     saveAs(blob, `合同数据_${new Date().getTime()}.xlsx`);
+//   } catch (error) {
+//     console.error("导出Excel失败:", error);
+//   }
+// };
+//导出new
+const exportExcelHandler = () => {
+  if (selectedRowKeys.value.length === 0) {
+    message.warning("请勾选要导出的合同");
+    return;
   }
+  // 过滤选中的合同数据
+  const selectedData = data.value.filter((item) =>
+    selectedRowKeys.value.includes(item.key),
+  );
+
+  const exportColumns = columns
+    // 过滤不用导出的列
+    .filter(
+      (col) =>
+        col.dataIndex &&
+        col.dataIndex !== "action" &&
+        col.dataIndex !== "index",
+    )
+    .map((col) => ({
+      title: col.title,
+      dataIndex: col.dataIndex,
+    }));
+
+  exportExcel(selectedData, exportColumns, {
+    fileName: "合同数据",
+    sheetName: "合同数据",
+  });
 };
 //合同统计数据
 const contractStatistics = ref({
@@ -291,10 +312,6 @@ const handleActionClick = (record) => {
 };
 
 const refreshContractList = () => {
-  // console.log(
-  //   "refreshContractList 被调用, 当前 searchParams:",
-  //   props.searchParams,
-  // );
   getContractList();
 };
 
@@ -310,6 +327,7 @@ const rowSelection = computed(() => {
     fixed: "left",
   };
 });
+
 const handleSelectChange = (keys, selectedRows) => {
   selectedRowKeys.value = keys;
   console.log(keys, selectedRows);
@@ -328,7 +346,7 @@ const getContractList = async () => {
     pageSize: 10,
     ...props.searchParams,
   };
-  console.log("请求参数:", requestParams);
+  // console.log("请求参数:", requestParams);
   const res = await getDates("contract/GetContractList", requestParams);
   const resData = res.data.result.records;
   console.log("分页查询合同列表", res.data.result.records);
@@ -359,6 +377,7 @@ const getContractList = async () => {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    margin-bottom: 5px;
   }
 }
 </style>
