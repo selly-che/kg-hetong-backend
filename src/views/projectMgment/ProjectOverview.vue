@@ -14,16 +14,8 @@
                       <!-- {{ projects.Project_Step || "--" }} -->
                       {{ getStepText(projects.Project_Step) }}
                     </a-descriptions-item>
-                    <a-descriptions-item label="地铁类型">
-                      <a-select mode="multiple" style="width: 100%">
-                        <a-select-option
-                          v-for="type in projects.datamaps"
-                          :key="type.Id"
-                          :value="type.DM_Name"
-                        >
-                          {{ type.DM_Name }}
-                        </a-select-option>
-                      </a-select>
+                    <a-descriptions-item label="铁路等级">
+                      {{ technologyObj.tsRaiywayLevel || "--" }}
                     </a-descriptions-item>
                     <a-descriptions-item label="线路长度">
                       {{ projects.Project_Length }} km

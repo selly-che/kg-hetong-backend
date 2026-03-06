@@ -216,7 +216,7 @@
     <AddExistingUserModal :selected-users="tableData" ref="addUserModalRef" @confirm="handleUserSelected"
       @cancel="handleModalCancel" />
     <!-- 编辑抽屉 -->
-    <form-drawer-right ref="modalFormDawer" @ok="modalFormOk" :title="title" :type="'role'">
+    <form-drawer-right ref="modalFormDawer" @ok="modalFormOk" :selectedroles="selectedroles" :title="title" :type="'role'  ">
     </form-drawer-right>
   </div>
 </template>
@@ -287,6 +287,7 @@ const columns = ref([
 ]);
 const modalFormDawer = ref(null);
 const title = ref()
+const selectedroles = ref(null)
 
 /*  新增角色内容及配置 */
 const modalVisible = ref(false);
@@ -415,7 +416,7 @@ const onSelectChange = (newSelectedRowKeys) => {
   selectedRowKeys.value = newSelectedRowKeys;
   searchForm.username = '';
   searchForm.roleId = newSelectedRowKeys[0] || '';
-
+  selectedroles.value = newSelectedRowKeys[0] || '';
   handleUserSearch();
 };
 

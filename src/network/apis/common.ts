@@ -30,4 +30,12 @@ export default {
             params,
         };
     },
+    // 合同文件导出接口
+    ContractExport(params: any) {
+        return {
+            method: "GET",
+            url: "/sys/file/download",
+            params,
+        };
+    }
 }

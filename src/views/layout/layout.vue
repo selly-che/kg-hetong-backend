@@ -315,7 +315,7 @@ const handleMenuSelect = (path: string) => {
 
   if (path == "/projectMgment") {
     // 使用 window.open 打开新页面
-    const projectManagementUrl = "/projectMgment"; // 替换为目标页面路径
+    const projectManagementUrl = "/projectMgment/ProjectHome"; // 替换为目标页面路径
     window.open(projectManagementUrl, "_blank");
     Router.push("/home");
     return;

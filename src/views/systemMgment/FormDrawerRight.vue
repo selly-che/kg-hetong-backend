@@ -97,7 +97,7 @@
           </a-form-item>
         </a-col>
         <a-col :span="12">
-          <a-form-item label="*手机号码：" name="phone" required>
+          <a-form-item label="手机号码：" name="phone" required>
             <a-input v-model:value="form.phone" placeholder="请输入手机号码" :disabled="isDetail" />
           </a-form-item>
         </a-col>
@@ -143,6 +143,10 @@ const props = defineProps({
   type: {
     type: String,
     default: 'role' // 'role' 或 'user'
+  },
+  selectedroles: {
+    type: String,
+    default: null
   }
 });
 
@@ -152,10 +156,9 @@ const form = reactive({
   selecteddeparts: "",
   birthday: null,
   relTenantIds: "",
-  activitiSync: "",
-  userIdentity: "",
+  activitiSync: "1",
+  userIdentity: "1",
   status_dictText: "",
-  delFlag: 0,
   workNo: "",
   post: "",
   updateBy: "",
@@ -236,62 +239,60 @@ const showDrawer = (record, detail) => {
 
   if (record) {
     Object.assign(form, {
-      selectedroles: record.selectedroles || '',
-      selecteddeparts: record.selecteddeparts || '',
-      birthday: record.birthday || '',
-      relTenantIds: record.relTenantIds || '',
-      activitiSync: record.activitiSync || '',
-      userIdentity: record.userIdentity || '',
-      status_dictText: record.status_dictText || '',
-      delFlag: record.delFlag || 0,
-      workNo: record.workNo || '',
-      post: record.post || '',
-      updateBy: record.updateBy || '',
-      orgCode: record.orgCode || '',
-      id: record.id || '',
-      email: record.email || '',
-      clientId: record.clientId || '',
+      selectedroles: record.selectedroles || null,
+      selecteddeparts: record.selecteddeparts || null,
+      birthday: record.birthday || null,
+      relTenantIds: record.relTenantIds || null,
+      activitiSync: record.activitiSync || '1',
+      userIdentity: record.userIdentity || '1',
+      status_dictText: record.status_dictText || '正常',
+      workNo: record.workNo || null,
+      post: record.post || null,
+      updateBy: record.updateBy || null,
+      orgCode: record.orgCode || null,
+      id: record.id || null,
+      email: record.email || null,
+      clientId: record.clientId || null,
       sex: record.sex || 1,
-      telephone: record.telephone || '',
-      departIds: record.departIds || '',
-      avatar: record.avatar || '',
-      realname: record.realname || '',
-      createBy: record.createBy || '',
-      phone: record.phone || '',
-      totalPoints: record.totalPoints || '',
-      orgCodeTxt: record.orgCodeTxt || '',
-      username: record.username || '',
-      index: record.index || '',
+      telephone: record.telephone || null,
+      departIds: record.departIds || null,
+      avatar: record.avatar || null,
+      realname: record.realname || null,
+      createBy: record.createBy || null,
+      phone: record.phone || null,
+      totalPoints: record.totalPoints || null,
+      orgCodeTxt: record.orgCodeTxt || null,
+      username: record.username ||null,
+      index: record.index ||null,
       status: record.status || 1,
     });
   } else {
     Object.assign(form, {
-      selectedroles: "",
-      selecteddeparts: "",
+      selectedroles: null,
+      selecteddeparts: null,
       birthday: null,
-      relTenantIds: "",
-      activitiSync: "",
-      userIdentity: "",
-      status_dictText: "",
-      delFlag: 0,
-      workNo: "",
-      post: "",
-      updateBy: "",
-      orgCode: "",
-      id: "",
-      email: "",
-      clientId: "",
-      sex: "",
-      telephone: "",
-      departIds: "",
-      avatar: "",
-      realname: "",
-      createBy: "",
-      phone: "",
-      totalPoints: "",
-      orgCodeTxt: "",
-      username: "",
-      index: "",
+      relTenantIds: null,
+      activitiSync: "1",
+      userIdentity: "1",
+      status_dictText: null,
+      workNo: null,
+      post: null,
+      updateBy: null,
+      orgCode: null,
+      id: null,
+      email: null,
+      clientId: null,
+      sex: null,
+      telephone: null,
+      departIds: null,
+      avatar: null,
+      realname: null,
+      createBy: null,
+      phone: null,
+      totalPoints: null,
+      orgCodeTxt: null,
+      username: null,
+      index: null,
       status: 1,
     });
   }
@@ -312,7 +313,7 @@ const submitForm = async () => {
   try {
     await formRef.value?.validate();
     console.log(props.title, form,'formform');
-    
+    form.selectedroles =props.selectedroles
     // 根据title判断是添加还是编辑
     if (props.title == "添加用户") {
       try {

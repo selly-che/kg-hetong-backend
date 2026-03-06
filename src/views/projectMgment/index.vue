@@ -1,49 +1,31 @@
 <template>
   <a-layout style="min-height: 100vh">
-    <a-layout-sider
-      v-model:collapsed="collapsed"
-      width="280"
-      style="background-color: rgb(25, 97, 172)"
-    >
+    <a-layout-sider v-model:collapsed="collapsed" width="280" style="background-color: rgb(25, 97, 172)">
       <div class="sidebar-container">
         <!-- 查询项目标题 -->
-        <a-input-search
-          v-model:value="searchText"
-          placeholder="请输入项目名称"
-          enter-button
-          style="margin-bottom: 16px; margin-top: 16px"
-          @search="handleSearch"
-        />
+        <a-input-search v-model:value="searchText" placeholder="请输入项目名称" enter-button
+          style="margin-bottom: 16px; margin-top: 16px" @search="handleSearch" />
 
         <!-- 责任类型筛选标签 -->
         <div class="filter-tags">
-          <a-tag
-            v-for="tag in responsibilityTags"
-            :key="tag.value"
-            :color="activeResponsibility === tag.value ? 'blue' : 'default'"
-            class="filter-tag1"
-            @click="handleResponsibilityChange(tag.value)"
-          >
+          <a-tag v-for="tag in responsibilityTags" :key="tag.value"
+            :color="activeResponsibility === tag.value ? 'blue' : 'default'" class="filter-tag1"
+            @click="handleResponsibilityChange(tag.value)">
             {{ tag.label }}
           </a-tag>
         </div>
 
         <!-- 过滤标签 -->
         <div class="filter-tags">
-          <a-tag
-            v-for="tag in filterTags"
-            :key="tag.value"
-            :color="activeFilter === tag.value ? 'blue' : 'default'"
-            class="filter-tag"
-            @click="handleFilterChange(tag.value)"
-          >
+          <a-tag v-for="tag in filterTags" :key="tag.value" :color="activeFilter === tag.value ? 'blue' : 'default'"
+            class="filter-tag" @click="handleFilterChange(tag.value)">
             {{ tag.label }}
           </a-tag>
         </div>
 
         <!-- 选项卡 -->
         <div class="project-tabs">
-          <a-tabs v-model:activeKey="activeTab">
+          <a-tabs v-model:activeKey="activeTab" @change="TabClickFn">
             <a-tab-pane key="main" tab="主管项目" />
             <a-tab-pane key="assist" tab="协管项目" />
           </a-tabs>
@@ -51,12 +33,8 @@
 
         <!-- 项目列表 -->
         <div class="project-list">
-          <a-menu
-            v-model:selectedKeys="selectedMenuKeys"
-            v-model:openKeys="openMenuKeys"
-            mode="inline"
-            :inline-collapsed="collapsed"
-          >
+          <a-menu v-model:selectedKeys="selectedMenuKeys" v-model:openKeys="openMenuKeys" mode="inline"
+            :inline-collapsed="collapsed">
             <!-- 动态渲染项目 -->
             <a-sub-menu v-for="project in filteredProjects" :key="project.Id">
               <template #title>
@@ -64,29 +42,20 @@
               </template>
 
               <!-- 固定的二级菜单项 -->
-              <a-menu-item
-                v-for="fixedItem in project.fixedNodes"
-                :key="fixedItem.Id"
-                @click="handleMenuItemClick(fixedItem)"
-              >
+              <a-menu-item v-for="fixedItem in project.fixedNodes" :key="fixedItem.Id"
+                @click="handleMenuItemClick(fixedItem)">
                 {{ fixedItem.text }}
               </a-menu-item>
 
               <!-- 动态的二级菜单项（来自taskArrangements） -->
-              <a-sub-menu
-                v-for="taskItem in project.taskNodes"
-                :key="taskItem.Id"
-              >
+              <a-sub-menu v-for="taskItem in project.taskNodes" :key="taskItem.Id">
                 <template #title>
                   <span>{{ taskItem.text }}</span>
                 </template>
 
                 <!-- 固定的三级菜单项 -->
-                <a-menu-item
-                  v-for="thirdLevelItem in taskItem.children"
-                  :key="thirdLevelItem.Id"
-                  @click="handleMenuItemClick(thirdLevelItem)"
-                >
+                <a-menu-item v-for="thirdLevelItem in taskItem.children" :key="thirdLevelItem.Id"
+                  @click="handleMenuItemClick(thirdLevelItem)">
                   {{ thirdLevelItem.text }}
                 </a-menu-item>
               </a-sub-menu>
@@ -109,25 +78,13 @@
       </a-layout-header>
 
       <a-layout-content style="margin: 16px">
-        <div
-          :style="{
-            background: '#fff',
-            minHeight: 'calc(100vh - 132px)',
-          }"
-        >
+        <div :style="{
+          background: '#fff',
+          minHeight: 'calc(100vh - 132px)',
+        }">
           <!-- 页签 -->
-          <a-tabs
-            v-model:activeKey="activeTabKey"
-            type="editable-card"
-            hide-add
-            @edit="onTabEdit"
-            class="content-tabs"
-          >
-            <a-tab-pane
-              v-for="tab in openedTabs"
-              :key="tab.key"
-              :closable="tab.closable"
-            >
+          <a-tabs v-model:activeKey="activeTabKey" type="editable-card" hide-add @edit="onTabEdit" class="content-tabs">
+            <a-tab-pane v-for="tab in openedTabs" :key="tab.key" :closable="tab.closable">
               <template #tab>
                 <span @click="handleTabClick(tab)">{{ tab.title }}</span>
               </template>
@@ -172,27 +129,27 @@ const cachedViews = ref<string[]>([
 ]);
 const openedTabs = ref([
   {
-    key: "ProjectOverview",
+    key: "ProjectHome",
     title: "首页",
     closable: false,
-    path: "/projectMgment/ProjectOverview",
+    path: "/projectMgment/ProjectHome",
   },
 ]);
 
 // 过滤标签数据
 const filterTags = ref([
-  { label: "全部", value: "" },
-  { label: "铁路", value: "0" },
-  { label: "城轨", value: "1" },
-  { label: "公路", value: "2" },
+  { label: "全部", value: "", index: 1 },
+  { label: "铁路", value: "0", index: 2 },
+  { label: "城轨", value: "1", index: 3 },
+  { label: "公路", value: "2", index: 4 },
 ]);
 
 // 责任类型筛选标签数据
 const responsibilityTags = ref([
-  { label: "司控主责", value: "company_main" },
-  { label: "司控参与", value: "company_assist" },
-  { label: "自揽主责", value: "self_main" },
-  { label: "自揽参与", value: "self_assist" },
+  { label: "司控主责", value: "company_main", index: 1 },
+  { label: "司控参与", value: "company_assist", index: 2 },
+  { label: "自揽主责", value: "self_main", index: 3 },
+  { label: "自揽参与", value: "self_assist", index: 4 },
 ]);
 
 // 项目数据
@@ -202,13 +159,33 @@ const goHomeFn = () => {
   // 跳转到首页，打开新页面
   window.open("/", "_blank");
 };
+
+const getResponsibilityIndex = (value: string): number => {
+  const tag = responsibilityTags.value.find(item => item.value === value);
+  return tag ? tag.index : 0;
+};
+const getFilterIndex = (value: string): number => {
+  const tag = filterTags.value.find(item => item.value === value);
+  return tag ? tag.index : 0;
+};
+
+const TabClickFn = (key: string) => {
+  // 切换标签页时，更新 activeTabKey
+  activeTabKey.value = key;
+  getProjectList();
+};
 // 获取项目列表
 const getProjectList = async () => {
+  projects.value = []; // 清空当前项目列表
   try {
+    let saixuantLx1 = getResponsibilityIndex(activeResponsibility.value);
+    let saixuantLx2 = getFilterIndex(activeFilter.value);
     const res = await getDatas("project/GetProjectList", {
       pageNum: 1,
       pageSize: 10,
-      projectSection: activeFilter.value,
+      saixuantLx1:saixuantLx1,
+      saixuantLx2: saixuantLx2,
+      saixuantLx3: activeTab.value === 'main' ? 1 : 2,
     });
 
     if (res.data.code !== 200) {
@@ -217,7 +194,7 @@ const getProjectList = async () => {
     }
 
     const records = res.data.result.records;
-
+    console.log("项目列表信息:", records);
     // 处理项目数据结构
     projects.value = records.map((project: any) => {
       // 生成固定二级菜单项
@@ -291,6 +268,8 @@ const getProjectList = async () => {
         taskNodes: taskNodes,
       };
     });
+    selectedMenuKeys.value = [];
+      openMenuKeys.value = [];
   } catch (error) {
     console.error("获取项目列表失败:", error);
     ElMessage.error("获取项目列表失败");
@@ -307,6 +286,7 @@ const getProjectType = (projectTypeDetail: string) => {
 
 // 根据过滤条件和选项卡筛选项目
 const filteredProjects = computed(() => {
+  return projects.value
   return projects.value.filter((project) => {
     // 类型匹配
     const typeMatch =
@@ -320,9 +300,9 @@ const filteredProjects = computed(() => {
     // 搜索匹配
     const searchLower = searchText.value.toLowerCase();
     const textMatch = project.text.toLowerCase().includes(searchLower);
-
     return typeMatch && tabMatch && responsibilityMatch && textMatch;
   });
+
 });
 
 // 处理菜单项点击
@@ -372,6 +352,8 @@ const handleFilterChange = (filterValue: string) => {
 
 // 处理责任类型筛选标签点击
 const handleResponsibilityChange = (responsibilityValue: string) => {
+  console.log(responsibilityValue, '责任类型');
+
   activeResponsibility.value = responsibilityValue;
   getProjectList();
 };

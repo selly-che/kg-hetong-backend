@@ -343,6 +343,7 @@ const login = async () => {
     // const resp = await getDatas("common/getUserPermission"); // 获取角色菜单
     const wuyemenusJSON = JSON.stringify(menus);
     localStorage.setItem('wuyemenusJSON', wuyemenusJSON)
+        localStorage.removeItem('tokenErrorAlertShowing');
     router.push("/home");
     ElMessage({ message: '登录成功!', type: 'success' })
   } else {

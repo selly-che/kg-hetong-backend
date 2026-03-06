@@ -10,6 +10,12 @@ const routes: Array<RouteRecordRaw> = [
     meta: { check: true },
     children: [
       {
+        path: "ProjectHome",
+        name: "ProjectHome",
+        component: () => import("../views/projectMgment/ProjectHome.vue"),
+        meta: { check: true, title: "项目首页" },
+      },
+      {
         path: "ProjectOverview",
         name: "ProjectOverview",
         component: () => import("../views/projectMgment/ProjectOverview.vue"),

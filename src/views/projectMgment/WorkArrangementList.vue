@@ -36,8 +36,8 @@
             <a-menu-item key="operation">
               <a-checkbox v-model:checked="columnVisible.operation">操作</a-checkbox>
             </a-menu-item>
-            <a-menu-item key="taDemand">
-              <a-checkbox v-model:checked="columnVisible.taDemand">通知名称</a-checkbox>
+            <a-menu-item key="taTaskName">
+              <a-checkbox v-model:checked="columnVisible.taTaskName">通知名称</a-checkbox>
             </a-menu-item>
             <a-menu-item key="taCreator">
               <a-checkbox v-model:checked="columnVisible.taCreator">下发人</a-checkbox>
@@ -83,10 +83,12 @@
       <template #drawingName="{ record }">
         <span>{{ record.taHasPictureWork ? '有' : '无' }}</span>
       </template>
-      <template #taDemand="{ record }">
+      <template #taTaskName="{ record }">
+        <!--  :style="{ color: hasTaskContents(record) ? '#1890ff' : 'inherit', cursor: hasTaskContents(record) ? 'pointer' : 'default' }" -->
         <span class="notice-name-link" @click="showTaskContentModal(record)"
-          :style="{ color: hasTaskContents(record) ? '#1890ff' : 'inherit', cursor: hasTaskContents(record) ? 'pointer' : 'default' }">
-          {{ record.taDemand }}
+          style="color: #1890ff; cursor: pointer;" 
+        >
+          {{ record.taTaskName }}
         </span>
       </template>
     </a-table>
@@ -135,7 +137,8 @@ const tableLoading = ref(false);
 // 列可见性控制
 const columnVisible = ref({
   operation: true,
-  taDemand: true,
+  
+  taTaskName: true,
   taCreator: true,
   tcName: false,
   fileName: false,
@@ -189,10 +192,10 @@ const visibleColumns = computed(() => {
     },
     {
       title: '通知名称',
-      dataIndex: 'taDemand',
-      key: 'taDemand',
+      dataIndex: 'taTaskName',
+      key: 'taTaskName',
       ellipsis: true,
-      slots: { customRender: 'taDemand' },
+      slots: { customRender: 'taTaskName' },
     },
     {
       title: '下发人',
@@ -285,7 +288,7 @@ const showTaskContentModal = (record: any) => {
     return;
   }
 
-  currentTaskContentTitle.value = `任务内容列表 - ${record.taDemand || record.taTaskName}`;
+  currentTaskContentTitle.value = `任务内容列表 - ${record.taTaskName || record.taTaskName}`;
   currentTaskContentData.value = record.twaTaskContents.map((task: any) => ({
     tcName: task.tcName || '-',
     tcLimitDate: task.tcLimitDate || '-'

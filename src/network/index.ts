@@ -37,9 +37,11 @@ service.interceptors.response.use(
         return res
     }, (error) => {
         let resPonse = error.response.data;
+        console.log(resPonse,'resPonseresPonse');
         if (resPonse.status == 500 && resPonse.message.includes("Token失效")) {
-
+            
             const isShowingAlert = localStorage.getItem('tokenErrorAlertShowing');
+            console.log(isShowingAlert,'isShowingAlert');
             if (!isShowingAlert) { // 如果没有显示过错误提示，则显示错误提示
                 localStorage.setItem('tokenErrorAlertShowing', 'true'); // 设置标志，表示已经显示过错误提示
                 ElMessageBox.alert('登录失效，请重新登录', '提示',
