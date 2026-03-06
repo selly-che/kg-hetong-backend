@@ -6,7 +6,7 @@
       <span>审定金额：{{ contractStatistics.approvedAmount }}万元</span>
       <span>开票金额：{{ contractStatistics.invoiceAmount }}万元</span>
       <span>收款金额：{{ contractStatistics.receivedAmount }}万元</span>
-      <a-button type="primary" @click="exportExcel">导出excel</a-button>
+      <a-button type="primary" @click="exportExcelHandler">导出excel</a-button>
     </div>
     <a-table
       :row-selection="rowSelection"
@@ -15,11 +15,18 @@
       :scroll="{ x: 1500, y: 500 }"
       bordered
     >
-      <template #action>
-        <a>action</a>
-      </template>
-      <template #status="text">
-        <a-tag :color="text === '已通过' ? 'green' : 'red'">{{ text }}</a-tag>
+      <template #bodyCell="{ column, record }">
+        <template v-if="column.key === 'contractState'">
+          <a-tag :color="record.contractState === '已通过' ? 'green' : 'red'">{{
+            record.contractState
+          }}</a-tag>
+        </template>
+        <template v-if="column.key === 'name'">
+          <a @click="handleNameClick(record)">{{ record.name }}</a>
+        </template>
+        <template v-if="column.key === 'action'">
+          <a @click="handleActionClick(record)"><Edit /></a>
+        </template>
       </template>
     </a-table>
   </div>
@@ -28,7 +35,12 @@
 <script setup>
 import { computed, onMounted, ref, watch } from "vue";
 import getDates from "@/network/index";
+import { useRouter } from "vue-router";
+import Edit from "@/views/contractMgment/Edit.vue";
+import { exportExcel } from "@/utils/common";
+import { message } from "ant-design-vue";
 
+const router = useRouter();
 const props = defineProps({
   searchParams: {
     type: Object,
@@ -51,7 +63,7 @@ const columns = [
     width: 120,
     dataIndex: "contractState",
     key: "contractState",
-    scopedSlots: { customRender: "status" },
+    // slots: { customRender: "status" },
     align: "center",
   },
   {
@@ -60,6 +72,7 @@ const columns = [
     key: "action",
     width: 150,
     align: "center",
+    // slots: { customRender: "action" },
   },
   {
     title: "合同编号",
@@ -82,6 +95,7 @@ const columns = [
     width: 150,
     ellipsis: true,
     align: "center",
+    // slots: { customRender: "name" },
   },
   {
     title: "委托单位",
@@ -191,8 +205,8 @@ const columns = [
   },
   {
     title: "上报营销系统时间",
-    dataIndex: "reportTime",
-    key: "reportTime",
+    dataIndex: "auditTime",
+    key: "auditTime",
     width: 160,
     align: "center",
   },
@@ -211,9 +225,56 @@ const columns = [
     align: "center",
   },
 ];
+//导出
+// const exportExcel = async () => {
+//   try {
+//     const token = localStorage.getItem("accesstoken");
+//     const res = await axios({
+//       method: "GET",
+//       url: "/jeecg-boot/contract/export",
+//       headers: {
+//         "x-access-token": token,
+//       },
+//       responseType: "blob", //当二进制文件处理
+//     });
 
-const exportExcel = () => {
-  console.log("导出excel");
+//     const blob = new Blob([res.data], {
+//       type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+//     });
+//     // 触发下载
+//     saveAs(blob, `合同数据_${new Date().getTime()}.xlsx`);
+//   } catch (error) {
+//     console.error("导出Excel失败:", error);
+//   }
+// };
+//导出new
+const exportExcelHandler = () => {
+  if (selectedRowKeys.value.length === 0) {
+    message.warning("请勾选要导出的合同");
+    return;
+  }
+  // 过滤选中的合同数据
+  const selectedData = data.value.filter((item) =>
+    selectedRowKeys.value.includes(item.key),
+  );
+
+  const exportColumns = columns
+    // 过滤不用导出的列
+    .filter(
+      (col) =>
+        col.dataIndex &&
+        col.dataIndex !== "action" &&
+        col.dataIndex !== "index",
+    )
+    .map((col) => ({
+      title: col.title,
+      dataIndex: col.dataIndex,
+    }));
+
+  exportExcel(selectedData, exportColumns, {
+    fileName: "合同数据",
+    sheetName: "合同数据",
+  });
 };
 //合同统计数据
 const contractStatistics = ref({
@@ -232,17 +293,25 @@ onMounted(() => {
 watch(
   () => props.searchParams,
   (newParams) => {
-    console.log("searchParams 变化:", newParams);
+    // console.log("searchParams变化:", newParams);
     getContractList();
   },
   { deep: true },
 );
+//点击合同名称跳转操作
+const handleNameClick = (record) => {
+  console.log("点击的合同名称:", record.name, "合同id:", record.key);
+  router.push({
+    path: `/contractMgment/htDetail/${record.key}/${record.name}`,
+  });
+};
+//操作-编辑
+const handleActionClick = (record) => {
+  console.log("合同id:", record.key);
+  // editref.value.showModal(record.key);
+};
 
 const refreshContractList = () => {
-  console.log(
-    "refreshContractList 被调用, 当前 searchParams:",
-    props.searchParams,
-  );
   getContractList();
 };
 
@@ -258,6 +327,7 @@ const rowSelection = computed(() => {
     fixed: "left",
   };
 });
+
 const handleSelectChange = (keys, selectedRows) => {
   selectedRowKeys.value = keys;
   console.log(keys, selectedRows);
@@ -276,10 +346,10 @@ const getContractList = async () => {
     pageSize: 10,
     ...props.searchParams,
   };
-  console.log("请求参数:", requestParams);
+  // console.log("请求参数:", requestParams);
   const res = await getDates("contract/GetContractList", requestParams);
   const resData = res.data.result.records;
-  // console.log("分页查询合同列表", res.data.result.records);
+  console.log("分页查询合同列表", res.data.result.records);
   if (res.data.code === 200) {
     const records = resData || [];
     data.value = records.map((item, index) => {
@@ -307,6 +377,7 @@ const getContractList = async () => {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    margin-bottom: 5px;
   }
 }
 </style>

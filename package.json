@@ -20,6 +20,7 @@
     "dayjs": "^1.11.19",
     "echarts": "^6.0.0",
     "element-plus": "^2.9.6",
+    "file-saver": "^2.0.5",
     "register-service-worker": "^1.7.2",
     "vue": "^3.2.13",
     "vue-class-component": "^8.0.0-0",
@@ -30,6 +31,7 @@
   "devDependencies": {
     "@commitlint/cli": "^20.3.0",
     "@commitlint/config-conventional": "^20.3.0",
+    "@types/file-saver": "^2.0.7",
     "@types/xlsx": "^0.0.36",
     "@typescript-eslint/eslint-plugin": "^5.4.0",
     "@typescript-eslint/parser": "^5.4.0",
@@ -69,7 +71,9 @@
     "parserOptions": {
       "ecmaVersion": 2020
     },
-    "rules": {}
+    "rules": {
+      "vue/multi-word-component-names": "off"
+    }
   },
   "browserslist": [
     "> 1%",

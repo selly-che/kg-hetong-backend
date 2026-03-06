@@ -238,7 +238,7 @@ const logout = () => {
 
 // 添加标签页
 const addTab = (route: any) => {
-  const { path, meta } = route;
+  const { path, meta, params } = route;
   // 如果路由有 noTab 元数据，则不添加标签页
   if (meta && meta.noTab) {
     return;
@@ -261,6 +261,12 @@ const addTab = (route: any) => {
           break;
         }
       }
+    }
+    if (path.includes("/htDetail/") && params && params.name) {
+      tabTitle = `内部合同详情-${params.name}`;
+    }
+    if (path.includes("/outsourcingDetail/") && params && params.name) {
+      tabTitle = `外协合同详情-${params.name}`;
     }
 
     tabs.value.push({
@@ -306,7 +312,7 @@ const handleClick = (tab: any) => {
 const handleMenuSelect = (path: string) => {
   // 判断当前点击的菜单项是否为“项目管理”
   console.log(path, "handleMenuSelect");
-  
+
   if (path == "/projectMgment") {
     // 使用 window.open 打开新页面
     const projectManagementUrl = "/projectMgment"; // 替换为目标页面路径
@@ -335,7 +341,7 @@ watch(
       });
     });
   },
-  { immediate: true }
+  { immediate: true },
 );
 </script>
 
@@ -362,15 +368,14 @@ watch(
       // background: none !important;
     }
   }
-   .is-active :hover {
-   color: #409eff !important;
+  .is-active :hover {
+    color: #409eff !important;
   }
   .is-opened {
-    .is-active :hover{
+    .is-active :hover {
       color: #409eff !important;
-    } 
+    }
   }
- 
 }
 
 .layout {
