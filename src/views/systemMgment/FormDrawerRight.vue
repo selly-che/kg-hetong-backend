@@ -1,7 +1,7 @@
 <template>
   <a-drawer :width="720" :title="title" :visible="visible" :body-style="{ paddingBottom: '80px' }"
     :footer-style="{ textAlign: 'right' }" @close="onClose" :maskClosable="false">
-    <a-form :model="form" :rules="rules" layout="vertical">
+    <a-form ref="formRef" :model="form" :rules="rules" layout="vertical">
       <a-row :gutter="16">
         <a-col :span="12">
           <a-form-item label="用户账号：" name="username" required>
@@ -11,6 +11,16 @@
         <a-col :span="12">
           <a-form-item label="用户姓名：" name="realname" required>
             <a-input v-model:value="form.realname" placeholder="请输入用户姓名" :disabled="isDetail" />
+          </a-form-item>
+        </a-col>
+        <a-col :span="12" v-if="!form.id">
+          <a-form-item label="登录密码" name="password" required>
+            <a-input v-model:value="form.password" placeholder="请输入登录密码" :disabled="isDetail" />
+          </a-form-item>
+        </a-col>
+        <a-col :span="12" v-if="!form.id">
+          <a-form-item label="确认密码" name="confirmPassword" required>
+            <a-input v-model:value="form.confirmPassword" placeholder="请输入确认密码" :disabled="isDetail" />
           </a-form-item>
         </a-col>
       </a-row>
@@ -23,7 +33,7 @@
         </a-col>
         <a-col :span="12">
           <a-form-item label="租户分配：" name="relTenantIds">
-            <a-input v-model:value="form.relTenantIds" placeholder="请选择租户" :disabled="isDetail" />
+            <a-input v-model:value="form.relTenantIds" placeholder="请输入工号" :disabled="isDetail" />
           </a-form-item>
         </a-col>
       </a-row>
@@ -35,8 +45,8 @@
           </a-form-item>
         </a-col>
         <a-col :span="12">
-          <a-form-item label="部门分配：" name="orgCodeTxt">
-            <a-input v-model:value="form.orgCodeTxt" placeholder="请选择部门" suffixIcon="close" :disabled="isDetail" />
+          <a-form-item label="部门分配：" name="selecteddeparts">
+            <a-input v-model:value="form.selecteddeparts" placeholder="请选择部门" suffixIcon="close" :disabled="isDetail" />
           </a-form-item>
         </a-col>
       </a-row>
@@ -47,7 +57,7 @@
             <a-input-group compact>
               <div class="flex_c">
                 <a-input v-model:value="form.post" placeholder="请选择职务" style="width: 300px" :disabled="isDetail" />
-                <a-button type="primary" @click="selectPost" :disabled="isDetail">选择</a-button>
+                <!-- <a-button type="primary" @click="selectPost" :disabled="isDetail">选择</a-button> -->
               </div>
             </a-input-group>
           </a-form-item>
@@ -73,8 +83,8 @@
         <a-col :span="12">
           <a-form-item label="性别：" name="sex">
             <a-select v-model:value="form.sex" placeholder="请选择性别" style="width: 300px" :disabled="isDetail">
-              <a-select-option value="1">男</a-select-option>
-              <a-select-option value="2">女</a-select-option>
+              <a-select-option :value="1">男</a-select-option>
+              <a-select-option :value="2">女</a-select-option>
             </a-select>
           </a-form-item>
         </a-col>
@@ -87,7 +97,7 @@
           </a-form-item>
         </a-col>
         <a-col :span="12">
-          <a-form-item label="* 手机号码：" name="phone" required>
+          <a-form-item label="*手机号码：" name="phone" required>
             <a-input v-model:value="form.phone" placeholder="请输入手机号码" :disabled="isDetail" />
           </a-form-item>
         </a-col>
@@ -95,8 +105,8 @@
 
       <a-row :gutter="16">
         <a-col :span="12">
-          <a-form-item label="身份证号：" name="clientId">
-            <a-input v-model:value="form.clientId" placeholder="请输入座机" :disabled="isDetail" />
+          <a-form-item label="身份证号：" name="telephone">
+            <a-input v-model:value="form.telephone" placeholder="请输入座机" :disabled="isDetail" />
           </a-form-item>
         </a-col>
         <a-col :span="12">
@@ -129,27 +139,42 @@ const props = defineProps({
   title: {
     type: String,
     default: '默认标题'
+  },
+  type: {
+    type: String,
+    default: 'role' // 'role' 或 'user'
   }
 });
 
 const isDetail = ref(false);
 const form = reactive({
-  username: "",
-  realname: "",
+  selectedroles: "",
+  selecteddeparts: "",
+  birthday: null,
+  relTenantIds: "",
+  activitiSync: "",
+  userIdentity: "",
+  status_dictText: "",
+  delFlag: 0,
   workNo: "",
   post: "",
-  selectedroles: "",
-  orgCodeTxt: "",
-  relTenantIds: "",
-  userIdentity: 1,
-  birthday: null,
-  sex: "",
+  updateBy: "",
+  orgCode: "",
+  id: "",
   email: "",
-  phone: "",
   clientId: "",
-  activitiSync: 1,
+  sex: "",
+  telephone: "",
+  departIds: "",
+  avatar: "",
+  realname: "",
+  createBy: "",
+  phone: "",
+  totalPoints: "",
+  orgCodeTxt: "",
+  username: "",
+  index: "",
 });
-
 const rules = {
   username: [
     {
@@ -175,6 +200,31 @@ const rules = {
       message: "请输入手机号码",
     },
   ],
+  password: [
+    {
+      required: true,
+      message: "请输入登录密码",
+    },
+    {
+      pattern: /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$/,
+      message: "密码必须包含 8 位以上，且同时包含数字、大写字母、小写字母和特殊符号",
+    },
+  ],
+  confirmPassword: [
+    {
+      required: true,
+      message: "请再次输入密码以确认",
+    },
+    {
+      validator: (rule, value) => {
+        if (!value) return Promise.resolve();
+        if (value !== form.password) {
+          return Promise.reject("两次输入的密码不一致");
+        }
+        return Promise.resolve();
+      },
+    },
+  ],
 };
 
 const visible = ref(false);
@@ -186,37 +236,63 @@ const showDrawer = (record, detail) => {
 
   if (record) {
     Object.assign(form, {
-      username: record.username || "",
-      realname: record.realname || "",
-      workNo: record.workNo || "",
-      post: record.post || "",
-      selectedroles: record.selectedroles || "",
-      orgCodeTxt: record.orgCodeTxt || "",
-      relTenantIds: record.relTenantIds || "",
-      userIdentity: record.userIdentity || 1,
-      birthday: record.birthday || null,
-      sex: record.sex || "",
-      email: record.email || "",
-      phone: record.phone || "",
-      clientId: record.clientId || "",
-      activitiSync: record.activitiSync || 1,
+      selectedroles: record.selectedroles || '',
+      selecteddeparts: record.selecteddeparts || '',
+      birthday: record.birthday || '',
+      relTenantIds: record.relTenantIds || '',
+      activitiSync: record.activitiSync || '',
+      userIdentity: record.userIdentity || '',
+      status_dictText: record.status_dictText || '',
+      delFlag: record.delFlag || 0,
+      workNo: record.workNo || '',
+      post: record.post || '',
+      updateBy: record.updateBy || '',
+      orgCode: record.orgCode || '',
+      id: record.id || '',
+      email: record.email || '',
+      clientId: record.clientId || '',
+      sex: record.sex || 1,
+      telephone: record.telephone || '',
+      departIds: record.departIds || '',
+      avatar: record.avatar || '',
+      realname: record.realname || '',
+      createBy: record.createBy || '',
+      phone: record.phone || '',
+      totalPoints: record.totalPoints || '',
+      orgCodeTxt: record.orgCodeTxt || '',
+      username: record.username || '',
+      index: record.index || '',
+      status: record.status || 1,
     });
   } else {
     Object.assign(form, {
-      username: "",
-      realname: "",
+      selectedroles: "",
+      selecteddeparts: "",
+      birthday: null,
+      relTenantIds: "",
+      activitiSync: "",
+      userIdentity: "",
+      status_dictText: "",
+      delFlag: 0,
       workNo: "",
       post: "",
-      selectedroles: "",
-      orgCodeTxt: "",
-      relTenantIds: "",
-      userIdentity: 1,
-      birthday: null,
-      sex: "",
+      updateBy: "",
+      orgCode: "",
+      id: "",
       email: "",
-      phone: "",
       clientId: "",
-      activitiSync: 1,
+      sex: "",
+      telephone: "",
+      departIds: "",
+      avatar: "",
+      realname: "",
+      createBy: "",
+      phone: "",
+      totalPoints: "",
+      orgCodeTxt: "",
+      username: "",
+      index: "",
+      status: 1,
     });
   }
 
@@ -231,9 +307,12 @@ const selectPost = () => {
   console.log('打开职务选择弹窗');
   // 这里可以打开选择弹窗
 };
-
+const formRef = ref(null);
 const submitForm = async () => {
   try {
+    await formRef.value?.validate();
+    console.log(props.title, form,'formform');
+    
     // 根据title判断是添加还是编辑
     if (props.title == "添加用户") {
       try {
@@ -281,6 +360,7 @@ defineExpose({
   color: red;
   margin-right: 4px;
 }
+
 .flex_c {
   display: flex;
   align-items: center;

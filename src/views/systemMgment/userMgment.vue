@@ -156,7 +156,7 @@
     <!-- table 区域-end -->
   </a-card>
   <!-- 编辑抽屉 -->
-  <form-drawer-right ref="modalFormDawer" @ok="modalFormOk" :title="title">
+  <form-drawer-right ref="modalFormDawer" @ok="modalFormOk" :title="title" :type="'user'">
   </form-drawer-right>
 </template>
 

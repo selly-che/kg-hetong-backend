@@ -18,7 +18,7 @@
       <!-- 菜单类型 -->
       <a-form-item label="菜单类型" name="menuType">
         <a-radio-group v-model:value="formState.menuType" @change="handleMenuTypeChange">
-          <a-radio :value="MenuType.DIRECTORY">一级菜单</a-radio>
+          <a-radio :value="MenuType.DIRECTORY">菜单</a-radio>
           <a-radio :value="MenuType.MENU">子菜单</a-radio>
           <a-radio :value="MenuType.BUTTON">按钮/权限</a-radio>
         </a-radio-group>
@@ -302,7 +302,7 @@ const formState = reactive({ ...defaultFormState });
 const menuTypeLabel = computed(() => {
   switch (formState.menuType) {
     case MenuType.DIRECTORY:
-      return '一级菜单';
+      return '菜单';
     case MenuType.MENU:
       return '子菜单';
     case MenuType.BUTTON:

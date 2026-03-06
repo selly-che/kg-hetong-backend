@@ -211,17 +211,21 @@
       @save-success="handleSave" @close="handleClose">
     </PermissionConfigDrawer>
     <!-- 角色对应用户管理 -->
-      <UserAddDrawer ref="userAddDrawerRef" @submit-success="handleSubmitSuccess" />
+    <!-- <UserAddDrawer ref="userAddDrawerRef" @submit-success="handleSubmitSuccess" /> -->
     <!-- 添加已有客户 -->
-    <AddExistingUserModal  :selected-users="tableData" ref="addUserModalRef" @confirm="handleUserSelected" @cancel="handleModalCancel" />
+    <AddExistingUserModal :selected-users="tableData" ref="addUserModalRef" @confirm="handleUserSelected"
+      @cancel="handleModalCancel" />
+    <!-- 编辑抽屉 -->
+    <form-drawer-right ref="modalFormDawer" @ok="modalFormOk" :title="title" :type="'role'">
+    </form-drawer-right>
   </div>
-
 </template>
 
 <script setup>
 import { ref, reactive, onMounted } from "vue";
 import getDatas from "@/network/index";
 import { ElMessage, ElMessageBox } from 'element-plus'
+import FormDrawerRight from "./FormDrawerRight.vue";
 import {
   PlusOutlined,
   VerticalAlignBottomOutlined,
@@ -281,7 +285,8 @@ const columns = ref([
     slots: { customRender: "action" },
   },
 ]);
-
+const modalFormDawer = ref(null);
+const title = ref()
 
 /*  新增角色内容及配置 */
 const modalVisible = ref(false);
@@ -658,7 +663,7 @@ const onSelectUserChange = (newSelectedRowKeys) => {
 };
 
 
-/* 添加已有用户弹窗相关 ---------------------*/ 
+/* 添加已有用户弹窗相关 ---------------------*/
 
 const addUserModalRef = ref();
 const handleImportUser = () => {
@@ -666,7 +671,7 @@ const handleImportUser = () => {
   addUserModalRef.value.openModal();
 }
 
-const handleUserSelected =  async (selectedUsers) => {
+const handleUserSelected = async (selectedUsers) => {
   console.log('选择的用户:123123', selectedUsers);
   // 这里可以处理选择的用户，比如添加到当前角色或组织中
   const resp = await getDatas("system/AddSysUserRole", {
@@ -684,16 +689,24 @@ const handleUserSelected =  async (selectedUsers) => {
 const handleModalCancel = () => {
   console.log('弹框已取消');
 };
-/* 添加用户弹窗相关 ---------------------*/ 
-const userAddDrawerRef = ref();
 const handleAddUser = () => {
   console.log('新增用户');
-  userAddDrawerRef.value.openDrawer();
+  title.value = "添加用户";
+  modalFormDawer.value.showDrawer();
 }
 const handleSubmitSuccess = (userData) => {
   console.log('新增的用户数据:', userData);
   // 这里可以刷新列表或进行其他操作
 };
+
+
+// 模态框确认
+const modalFormOk = () => {
+  // searchQuery();
+  console.log('模拟框确认');
+
+};
+
 onMounted(() => {
   handleSearch();
 })
