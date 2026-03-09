@@ -15,4 +15,12 @@ export default {
       params,
     };
   },
+  ///jeecg-boot/contract/getContractDetailsById
+  GetContractDetailsById(params: string) {
+    return {
+      method: "GET",
+      url: "/contract/getContractDetailsById",
+      params,
+    };
+  },
 };

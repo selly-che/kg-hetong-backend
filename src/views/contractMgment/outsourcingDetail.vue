@@ -41,24 +41,24 @@
           <a-row :gutter="16">
             <a-col :span="8">
               <a-form-item label="合同名称">
-                <a-input v-model:value="formData.contractName"></a-input>
+                <a-input v-model:value="formData.name"></a-input>
               </a-form-item>
             </a-col>
             <a-col :span="8">
               <a-form-item label="合同编号">
-                <a-input v-model:value="formData.contractNumber"></a-input>
+                <a-input v-model:value="formData.code"></a-input>
               </a-form-item>
             </a-col>
             <a-col :span="8">
               <a-form-item label="合同识别号">
-                <a-input v-model:value="formData.contractIdNumber"></a-input>
+                <a-input v-model:value="formData.number"></a-input>
               </a-form-item>
             </a-col>
           </a-row>
           <a-row :gutter="16">
             <a-col :span="8">
               <a-form-item label="合同唯一ID">
-                <a-input v-model:value="formData.contractUniqueId"></a-input>
+                <a-input v-model:value="formData.uniqueNumber"></a-input>
               </a-form-item>
             </a-col>
             <a-col :span="8">
@@ -68,24 +68,30 @@
             </a-col>
             <a-col :span="8">
               <a-form-item label="主合同承揽类型">
-                <a-input v-model:value="formData.mainContractType"></a-input>
+                <a-input v-model:value="formData.contractType"></a-input>
               </a-form-item>
             </a-col>
           </a-row>
           <a-row :gutter="16">
             <a-col :span="8">
               <a-form-item label="主合同金额">
-                <a-input-number style="width: 100%" v-model:value="formData.mainContractAmount"></a-input-number>
+                <a-input-number
+                  style="width: 100%"
+                  v-model:value="formData.amount"
+                ></a-input-number>
               </a-form-item>
             </a-col>
             <a-col :span="8">
               <a-form-item label="主合同累计收款">
-                <a-input-number style="width: 100%" v-model:value="formData.mainContractReceivedAmount"></a-input-number>
+                <a-input-number
+                  style="width: 100%"
+                  v-model:value="formData.mainContractReceivedAmount"
+                ></a-input-number>
               </a-form-item>
             </a-col>
             <a-col :span="8">
               <a-form-item label="主合同板块">
-                <a-input v-model:value="formData.mainContractSector"></a-input>
+                <a-input v-model:value="formData.section"></a-input>
               </a-form-item>
             </a-col>
           </a-row>
@@ -97,46 +103,49 @@
             </a-col>
             <a-col :span="8">
               <a-form-item label="主合同类型一">
-                <a-input v-model:value="formData.mainContractType1"></a-input>
+                <a-input v-model:value="formData.typeOne"></a-input>
               </a-form-item>
             </a-col>
             <a-col :span="8">
               <a-form-item label="其他开票单位">
-                <a-input v-model:value="formData.otherInvoiceUnit"></a-input>
+                <a-input v-model:value="formData.invoiceEntity"></a-input>
               </a-form-item>
             </a-col>
           </a-row>
           <a-row :gutter="16">
             <a-col :span="8">
               <a-form-item label="外协主责单位">
-                <a-input v-model:value="formData.outsourcingMainUnit"></a-input>
+                <a-input v-model:value="formData.ownershipUnit"></a-input>
               </a-form-item>
             </a-col>
             <a-col :span="8">
               <a-form-item label="生产主责单位">
-                <a-input v-model:value="formData.productionMainUnit"></a-input>
+                <a-input v-model:value="formData.mainUnit"></a-input>
               </a-form-item>
             </a-col>
             <a-col :span="8">
               <a-form-item label="性质">
-                <a-input v-model:value="formData.nature"></a-input>
+                <a-input v-model:value="formData.properties"></a-input>
               </a-form-item>
             </a-col>
           </a-row>
           <a-row :gutter="16">
             <a-col :span="8">
               <a-form-item label="经办人">
-                <a-input v-model:value="formData.agent"></a-input>
+                <a-input v-model:value="formData.charge"></a-input>
               </a-form-item>
             </a-col>
             <a-col :span="8">
               <a-form-item label="外协合同金额">
-                <a-input-number style="width: 100%" v-model:value="formData.outsourcingContractAmount"></a-input-number>
+                <a-input-number
+                  style="width: 100%"
+                  v-model:value="formData.outsourcingContractAmount"
+                ></a-input-number>
               </a-form-item>
             </a-col>
             <a-col :span="8">
               <a-form-item label="合同价格类型">
-                <a-input v-model:value="formData.contractPriceType"></a-input>
+                <a-input v-model:value="formData.priceType"></a-input>
               </a-form-item>
             </a-col>
           </a-row>
@@ -156,7 +165,7 @@
                 <a-date-picker
                   style="width: 100%"
                   picker="year"
-                  v-model:value="formData.belongYear"
+                  v-model:value="formData.year"
                 ></a-date-picker>
               </a-form-item>
             </a-col>
@@ -169,7 +178,10 @@
           <a-row :gutter="16">
             <a-col :span="8">
               <a-form-item label="签订日期">
-                <a-date-picker style="width: 100%" v-model:value="formData.signDate"></a-date-picker>
+                <a-date-picker
+                  style="width: 100%"
+                  v-model:value="formData.signTime"
+                ></a-date-picker>
               </a-form-item>
             </a-col>
             <a-col :span="8">
@@ -179,41 +191,59 @@
             </a-col>
             <a-col :span="8">
               <a-form-item label="计划开工日期">
-                <a-date-picker style="width: 100%" v-model:value="formData.planStartDate"></a-date-picker>
+                <a-date-picker
+                  style="width: 100%"
+                  v-model:value="formData.plannedCommencementDate"
+                ></a-date-picker>
               </a-form-item>
             </a-col>
           </a-row>
           <a-row :gutter="16">
             <a-col :span="8">
               <a-form-item label="计划竣工日期">
-                <a-date-picker style="width: 100%" v-model:value="formData.planEndDate"></a-date-picker>
+                <a-date-picker
+                  style="width: 100%"
+                  v-model:value="formData.plannedCompletionDate"
+                ></a-date-picker>
               </a-form-item>
             </a-col>
             <a-col :span="8">
               <a-form-item label="合同总工期">
-                <a-input-number style="width: 100%" v-model:value="formData.totalDuration"></a-input-number>
+                <a-input-number
+                  style="width: 100%"
+                  v-model:value="formData.totalDuration"
+                ></a-input-number>
               </a-form-item>
             </a-col>
             <a-col :span="8">
               <a-form-item label="实际开工日期">
-                <a-date-picker style="width: 100%" v-model:value="formData.actualStartDate"></a-date-picker>
+                <a-date-picker
+                  style="width: 100%"
+                  v-model:value="formData.actualCommencementDate"
+                ></a-date-picker>
               </a-form-item>
             </a-col>
           </a-row>
           <a-row :gutter="16">
             <a-col :span="8">
               <a-form-item label="实际竣工日期">
-                <a-date-picker style="width: 100%" v-model:value="formData.actualEndDate"></a-date-picker>
+                <a-date-picker
+                  style="width: 100%"
+                  v-model:value="formData.actualCompletionDate"
+                ></a-date-picker>
               </a-form-item>
             </a-col>
             <a-col :span="8">
               <a-form-item label="是否框架合同">
-                <a-switch v-model:checked="formData.isFrameworkContract"></a-switch>
+                <a-select v-model:value="formData.isFramework">
+                  <a-select-option :value="1">是</a-select-option>
+                  <a-select-option :value="0">否</a-select-option>
+                </a-select>
               </a-form-item>
             </a-col>
             <a-col :span="8">
               <a-form-item label="项目部">
-                <a-input v-model:value="formData.projectDepartment"></a-input>
+                <a-input v-model:value="formData.projectDept"></a-input>
               </a-form-item>
             </a-col>
           </a-row>
@@ -225,36 +255,48 @@
             </a-col>
             <a-col :span="8">
               <a-form-item label="备注">
-                <a-input v-model:value="formData.remark"></a-input>
+                <a-input v-model:value="formData.remarks"></a-input>
               </a-form-item>
             </a-col>
             <a-col :span="8">
               <a-form-item label="登记日期">
-                <a-date-picker style="width: 100%" v-model:value="formData.registerDate"></a-date-picker>
+                <a-date-picker
+                  style="width: 100%"
+                  v-model:value="formData.registerTime"
+                ></a-date-picker>
               </a-form-item>
             </a-col>
           </a-row>
           <a-row :gutter="16">
             <a-col :span="8">
               <a-form-item label="主合同相应阶段完成天数">
-                <a-input-number style="width: 100%" v-model:value="formData.mainContractStageDays"></a-input-number>
+                <a-input-number
+                  style="width: 100%"
+                  v-model:value="formData.mainContractStageDays"
+                ></a-input-number>
               </a-form-item>
             </a-col>
             <a-col :span="8">
               <a-form-item label="基本信息是否已治理">
-                <a-switch v-model:checked="formData.isBasicInfoGoverned"></a-switch>
+                <a-select v-model:value="formData.basicInfoManaged">
+                  <a-select-option :value="1">是</a-select-option>
+                  <a-select-option :value="0">否</a-select-option>
+                </a-select>
               </a-form-item>
             </a-col>
             <a-col :span="8">
               <a-form-item label="是否推送司库">
-                <a-switch v-model:checked="formData.isPushToTreasury"></a-switch>
+                <a-select v-model:value="formData.ifPush">
+                  <a-select-option :value="1">是</a-select-option>
+                  <a-select-option :value="0">否</a-select-option>
+                </a-select>
               </a-form-item>
             </a-col>
           </a-row>
           <a-row :gutter="16">
             <a-col :span="8">
               <a-form-item label="合同状态">
-                <a-select v-model:value="formData.contractStatus">
+                <a-select v-model:value="formData.contractState">
                   <a-select-option value="已签订">已签订</a-select-option>
                   <a-select-option value="已完成">已完成</a-select-option>
                   <a-select-option value="履行中">履行中</a-select-option>
@@ -263,7 +305,10 @@
             </a-col>
             <a-col :span="8">
               <a-form-item label="是否封存">
-                <a-switch v-model:checked="formData.isSealed"></a-switch>
+                <a-select v-model:value="formData.isArchived">
+                  <a-select-option :value="1">是</a-select-option>
+                  <a-select-option :value="0">否</a-select-option>
+                </a-select>
               </a-form-item>
             </a-col>
           </a-row>
@@ -324,21 +369,23 @@
           ></div>
           <p style="margin: 0">审核意见</p>
         </div>
-        <a-timeline>
-          <a-timeline-item>Create a services site 2015-09-01</a-timeline-item>
-          <a-timeline-item
-            >Solve initial network problems 2015-09-01</a-timeline-item
-          >
-          <a-timeline-item color="red">
-            <template #dot
-              ><clock-circle-outlined style="font-size: 16px"
-            /></template>
-            Technical testing 2015-09-01
-          </a-timeline-item>
-          <a-timeline-item
-            >Network problems being solved 2015-09-01</a-timeline-item
-          >
-        </a-timeline>
+        <div class="timeline">
+          <a-timeline>
+            <a-timeline-item>Create a services site 2015-09-01</a-timeline-item>
+            <a-timeline-item
+              >Solve initial network problems 2015-09-01</a-timeline-item
+            >
+            <a-timeline-item color="red">
+              <template #dot
+                ><clock-circle-outlined style="font-size: 16px"
+              /></template>
+              Technical testing 2015-09-01
+            </a-timeline-item>
+            <a-timeline-item
+              >Network problems being solved 2015-09-01</a-timeline-item
+            >
+          </a-timeline>
+        </div>
       </a-tab-pane>
       <a-tab-pane key="2" tab="付款信息" force-render>
         <span>累计付款金额：{{ 1000 }}</span>
@@ -353,50 +400,56 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
+import { ClockCircleOutlined } from "@ant-design/icons-vue";
+import getData from "@/network";
+import dayjs from "dayjs";
+import { useRoute } from "vue-router";
 
+const route = useRoute();
+const contractId = ref(route.params.id);
 const formData = ref({
-  mainContract: '',
-  project: '',
-  outsourcingType: '',
-  contractName: '',
-  contractNumber: '',
-  contractIdNumber: '',
-  contractUniqueId: '',
-  mainContractNumber: '',
-  mainContractType: '',
-  mainContractAmount: undefined,
+  mainContract: "",
+  project: "",
+  outsourcingType: "",
+  name: "",
+  code: "",
+  number: "",
+  uniqueNumber: "",
+  mainContractNumber: "",
+  contractType: "",
+  amount: undefined,
   mainContractReceivedAmount: undefined,
-  mainContractSector: '',
-  outsourcingUnit: '',
-  mainContractType1: '',
-  otherInvoiceUnit: '',
-  outsourcingMainUnit: '',
-  productionMainUnit: '',
-  nature: '',
-  agent: '',
+  section: "",
+  outsourcingUnit: "",
+  typeOne: "",
+  invoiceEntity: "",
+  ownershipUnit: "",
+  mainUnit: "",
+  properties: "",
+  charge: "",
   outsourcingContractAmount: undefined,
-  contractPriceType: '',
+  priceType: "",
   paymentRatio: undefined,
-  belongYear: undefined,
-  paymentCycle: '',
-  signDate: undefined,
-  businessScope: '',
-  planStartDate: undefined,
-  planEndDate: undefined,
+  year: undefined,
+  paymentCycle: "",
+  signTime: undefined,
+  businessScope: "",
+  plannedCommencementDate: undefined,
+  plannedCompletionDate: undefined,
   totalDuration: undefined,
-  actualStartDate: undefined,
-  actualEndDate: undefined,
-  isFrameworkContract: false,
-  projectDepartment: '',
-  province: '',
-  remark: '',
-  registerDate: undefined,
+  actualCommencementDate: undefined,
+  actualCompletionDate: undefined,
+  isFramework: 0,
+  projectDept: "",
+  province: "",
+  remarks: "",
+  registerTime: undefined,
   mainContractStageDays: undefined,
-  isBasicInfoGoverned: false,
-  isPushToTreasury: false,
-  contractStatus: '',
-  isSealed: false
+  basicInfoManaged: 0,
+  ifPush: 0,
+  contractState: "",
+  isArchived: 0,
 });
 
 //申请日期，经办人，申请金额，备注
@@ -422,6 +475,7 @@ const columns1 = ref([
     key: "remark",
   },
 ]);
+const data1 = ref([]);
 //附件类型，附件名称，下载，查看
 const columns2 = ref([
   {
@@ -445,6 +499,7 @@ const columns2 = ref([
     key: "view",
   },
 ]);
+const data2 = ref([]);
 //序号，付款日期，付款金额（万元）
 const columns3 = ref([
   {
@@ -519,6 +574,19 @@ const data4 = ref([
     afterChange: "2000",
   },
 ]);
+
+onMounted(async () => {
+  const res = await getData("contract/GetContractDetailsById", {
+    contractId: String(contractId.value),
+  });
+  const data = res.data.result.contractDetails;
+  const data1 = res.data.result.contractInfo;
+  console.log(data, data1);
+  formData.value = {
+    ...data,
+    ...data1,
+  };
+});
 </script>
 
 <style lang="less" scoped>
@@ -538,6 +606,10 @@ const data4 = ref([
   background-color: #ffffff;
 }
 :deep(.ant-table-tbody > tr:hover > td) {
+  background-color: #ffffff;
+}
+.timeline {
+  padding: 12px;
   background-color: #ffffff;
 }
 </style>
