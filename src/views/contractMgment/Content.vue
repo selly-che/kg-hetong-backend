@@ -60,17 +60,15 @@ const columns = [
     width: 120,
     dataIndex: "contractState",
     key: "contractState",
-    // slots: { customRender: "status" },
     align: "center",
   },
-  {
-    title: "操作",
-    dataIndex: "action",
-    key: "action",
-    width: 150,
-    align: "center",
-    // slots: { customRender: "action" },
-  },
+  // {
+  //   title: "操作",
+  //   dataIndex: "action",
+  //   key: "action",
+  //   width: 150,
+  //   align: "center",
+  // },
   {
     title: "合同编号",
     dataIndex: "number",
@@ -92,7 +90,6 @@ const columns = [
     width: 150,
     ellipsis: true,
     align: "center",
-    // slots: { customRender: "name" },
   },
   {
     title: "委托单位",
@@ -125,8 +122,8 @@ const columns = [
   },
   {
     title: "投资金额（万元）",
-    dataIndex: "investmentAmount",
-    key: "investmentAmount",
+    dataIndex: "investment",
+    key: "investment",
     width: 150,
     align: "center",
   },
@@ -330,10 +327,9 @@ const handleNameClick = (record) => {
   });
 };
 //操作-编辑
-const handleActionClick = (record) => {
-  console.log("合同id:", record.key);
-  // editref.value.showModal(record.key);
-};
+// const handleActionClick = (record) => {
+//   console.log("合同id:", record.key);
+// };
 
 const refreshContractList = () => {
   getContractList();
@@ -370,16 +366,17 @@ const getContractList = async () => {
     pageSize: 10,
     ...props.searchParams,
   };
-  // console.log("请求参数:", requestParams);
   const res = await getDates("contract/GetContractList", requestParams);
   const resData = res.data.result.records;
-  console.log("分页查询合同列表", res.data.result.records);
+  console.log("分页查询合同列表111", resData[0].contractInfo);
   if (res.data.code === 200) {
     const records = resData || [];
     data.value = records.map((item, index) => {
       const contractInfo = item.contractInfo || {};
+      const contractDetails = item.contractDetails || {};
       return {
         ...contractInfo,
+        ...contractDetails,
         key: contractInfo.id,
         index: index + 1,
         contractState: contractInfo.contractState === 1 ? "已通过" : "已超期",

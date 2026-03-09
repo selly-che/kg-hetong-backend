@@ -24,7 +24,9 @@
       </div>
       <div class="stat-item">
         <div class="stat-label">应收账款金额</div>
-        <div class="stat-value">¥{{ headerdata.totalReceivableAmount.toLocaleString() }}万</div> 
+        <div class="stat-value">
+          ¥{{ headerdata.totalReceivableAmount.toLocaleString() }}万
+        </div>
       </div>
     </div>
   </div>
@@ -54,9 +56,10 @@ onMounted(async () => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background-color: #fff;
+  background-color: #ffffff;
   padding: 30px 20px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border-radius: 0px;
 }
 
 .user-info {

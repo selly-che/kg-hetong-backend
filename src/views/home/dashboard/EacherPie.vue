@@ -1,10 +1,9 @@
 <template>
   <div class="pie-container">
     <div class="pie-title">应收款项目统计</div>
-    <hr />
     <div class="pie-tabs">
       <div class="tab active" @click="handleTabClick(0)">全部合同</div>
-      <div class="tab" @click="handleTabClick(1)">国内合同</div>
+      <div class="tab" @click="handleTabClick(1)">内部合同</div>
       <div class="tab" @click="handleTabClick(2)">外协合同</div>
     </div>
     <div class="pie-chart" ref="pieChart"></div>
@@ -61,7 +60,7 @@ export default {
               color: "#333",
               fontSize: 15,
               fontWeight: "bold",
-              formatter:"111"
+              formatter: "111",
             },
             //选中状态
             emphasis: {
@@ -119,15 +118,20 @@ export default {
       if (res.data.code === 200) {
         const data = res.data.result;
         const colorMap = {
-          "市政": "#4A90E2",
-          "隧道": "#50E3C2",
-          "公路": "#7ED321",
-          "铁路": "#F5A623",
-          "建筑": "#D0021B",
-          "其它": "#DDA0DD",
-          "城轨": "#BD10E0"
+          市政: "#4A90E2",
+          隧道: "#50E3C2",
+          公路: "#7ED321",
+          铁路: "#F5A623",
+          建筑: "#D0021B",
+          其它: "#DDA0DD",
+          城轨: "#BD10E0",
         };
-        const statsKey = this.activeTab === 0 ? "allContractStats" : this.activeTab === 1 ? "domesticContractStats" : "externalContractStats";
+        const statsKey =
+          this.activeTab === 0
+            ? "allContractStats"
+            : this.activeTab === 1
+            ? "domesticContractStats"
+            : "externalContractStats";
         const stats = data[statsKey];
         const total = stats["总计"] || 0;
         const pieData = Object.entries(stats)
@@ -136,7 +140,7 @@ export default {
             value,
             name,
             itemStyle: { color: colorMap[name] || "#999" },
-            percentage: total > 0 ? ((value / total) * 100).toFixed(1) : "0.0"
+            percentage: total > 0 ? ((value / total) * 100).toFixed(1) : "0.0",
           }));
         this.option.series[0].data = pieData;
         this.option.series[0].total = total;
@@ -144,7 +148,9 @@ export default {
         this.option.series[0].label.formatter = totalText;
         this.option.legend.formatter = (name) => {
           const item = pieData.find((item) => item.name === name);
-          return item ? `${name} | ${item.percentage}%  ¥${item.value.toLocaleString()}` : name;
+          return item
+            ? `${name} | ${item.percentage}%  ¥${item.value.toLocaleString()}`
+            : name;
         };
         this.chart.setOption(this.option);
       }
@@ -155,23 +161,24 @@ export default {
 
 <style scoped lang="less">
 .pie-container {
-  // padding: 20px;
   height: 440px;
   background-color: #fff;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 
   .pie-title {
     font-size: 14px;
     font-weight: bold;
     color: #333;
-    padding-top: 10px;
-    margin-left: 20px;
+    padding-top: 8px;
+    padding-left: 10px;
+    padding-bottom: 9px;
   }
 
   .pie-tabs {
     display: flex;
     margin-bottom: 10px;
-    margin-left: 20px;
+    margin-top: 9px;
+    margin-left: 10px;
     .tab {
       padding: 8px 16px;
       margin-right: 10px;
@@ -187,7 +194,7 @@ export default {
       }
 
       &.active {
-        background-color: #4a90e2;
+        background-color: rgb(64, 158, 255);
         color: #fff;
       }
     }

@@ -143,6 +143,10 @@ const formData = ref({
   paymentInfoGoverned: "all",
   isArchived: "all",
   isSealed: "all",
+  parentContractInfo: {
+    name: "",
+    number: "",
+  }, //父合同信息
 });
 const selectedRowinfo = ref<any[]>([]); //选中行数据
 const selectedRowid = ref<string[]>([]);
@@ -216,20 +220,20 @@ const columns = [
   },
   {
     title: "累计支付金额（万元）",
-    dataIndex: "paidAmount",
-    key: "paidAmount",
+    dataIndex: "totalReceivedAmount",
+    key: "totalReceivedAmount",
     width: 180,
   },
   {
     title: "主合同名称",
-    dataIndex: "mainContractName",
-    key: "mainContractName",
+    dataIndex: "parentContractInfoname",
+    key: "parentContractInfoname",
     width: 120,
   },
   {
     title: "主合同编号",
-    dataIndex: "mainContractNumber",
-    key: "mainContractNumber",
+    dataIndex: "parentContractInfonumber",
+    key: "parentContractInfonumber",
     width: 150,
     ellipsis: true,
   },
@@ -402,11 +406,15 @@ const getOutsourcingList = async () => {
     pageSize: 10,
   });
   const data = res.data.result.records;
-  console.log("外协合同列表", data);
+  console.log("外协合同列表222", data);
   tabledata.value = data.map((item: any, index: number) => {
     const contractInfo = item.contractInfo || {};
+    const parentContractInfo = item.contractInfo.parentContractInfo || {};
     return {
       ...contractInfo,
+      // ...parentContractInfo,
+      parentContractInfoname: parentContractInfo.name || "",
+      parentContractInfonumber: parentContractInfo.number || "",
       key: contractInfo.id,
       index: index + 1,
       contractState: contractInfo.contractState === 1 ? "已通过" : "已超期",
@@ -516,6 +524,10 @@ const handleReset = () => {
     paymentInfoGoverned: "all",
     isArchived: "all",
     isSealed: "all",
+    parentContractInfo: {
+      name: "",
+      number: "",
+    },
   };
   pagination.value.current = 1;
   getOutsourcingList();

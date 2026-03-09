@@ -347,7 +347,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import { ClockCircleOutlined } from "@ant-design/icons-vue";
 import getData from "@/network";
 import dayjs from 'dayjs'
@@ -527,7 +527,7 @@ const data4 = ref([
   },
 ]);
 
-onMounted(async () => {
+const loadContractData = async () => {
   const res = await getData("contract/GetContractDetailsById", {
     contractId: String(contractId.value),
   });
@@ -546,8 +546,21 @@ onMounted(async () => {
   formData.value.actualCompletionDate = dayjs(String(formData.value.actualCompletionDate)).format('YYYY-MM-DD HH:mm:ss')
   formData.value.registerTime = dayjs(String(formData.value.registerTime)).format('YYYY-MM-DD HH:mm:ss')
   console.log(formData.value, 'formDataformData');
+};
 
+onMounted(async () => {
+  loadContractData();
 });
+
+watch(
+  () => route.params.id,
+  (newId) => {
+    if (newId) {
+      contractId.value = newId;
+      loadContractData();
+    }
+  }
+);
 </script>
 
 <style lang="less" scoped>

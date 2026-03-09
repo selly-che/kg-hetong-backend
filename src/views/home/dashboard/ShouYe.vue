@@ -3,8 +3,8 @@
     <div class="header">
       <HeaderYe />
     </div>
-    <div class="side  pd20">
-      <div class="side1 " >
+    <div class="side pd20">
+      <div class="side1">
         <div class="side1-header">
           <span class="side1-title">进行中的项目</span>
           <a class="side1-more" @click="$router.push('/projectMgment')">全部</a>
@@ -37,15 +37,14 @@ const projects = ref([]);
 onMounted(() => {
   getProjectList();
 });
-  const getProjectList = async () => {
+const getProjectList = async () => {
   const res = await getDatas("project/GetProjectList", {
     pageNum: 1,
     pageSize: 10,
   });
-    console.log("项目列表信息:", res.data.result.records);
-    projects.value = res.data.result.records;
+  console.log("项目列表信息:", res.data.result.records);
+  projects.value = res.data.result.records;
 };
-
 </script>
 
 <style scoped lang="less">
@@ -64,6 +63,8 @@ onMounted(() => {
     flex-direction: column;
     overflow: hidden;
     box-sizing: border-box;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    border-radius: 0px;
     .side1-header {
       display: flex;
       justify-content: space-between;

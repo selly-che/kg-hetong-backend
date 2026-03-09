@@ -2,7 +2,7 @@
   <div class="bar-container">
     <div class="bar-tabs">
       <a-tabs v-model:activeKey="activeKey" class="custom-tabs">
-        <a-tab-pane key="0" tab="国内合同"></a-tab-pane>
+        <a-tab-pane key="0" tab="内部合同"></a-tab-pane>
         <a-tab-pane key="1" tab="外协合同"></a-tab-pane>
       </a-tabs>
       <div class="date-section">
