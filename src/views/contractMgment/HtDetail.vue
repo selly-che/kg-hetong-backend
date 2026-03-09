@@ -47,7 +47,7 @@
               </a-col>
               <a-col :span="8">
                 <a-form-item label="中标金额">
-                  <a-input v-model:value="formData.bidAmount" />
+                  <a-input v-model:value="formData.amountCollected" />
                 </a-form-item>
               </a-col>
               <a-col :span="8">
@@ -76,7 +76,8 @@
             <a-row>
               <a-col :span="8">
                 <a-form-item label="板块">
-                  <a-input v-model:value="formData.plate" />
+                  <!-- 计算属性 -->
+                  <a-input v-model:value="typeText" />
                 </a-form-item>
               </a-col>
               <a-col :span="8">
@@ -135,7 +136,7 @@
               </a-col>
               <a-col :span="8">
                 <a-form-item label="投资金额">
-                  <a-input v-model:value="formData.investmentAmount" />
+                  <a-input v-model:value="formData.investment" />
                 </a-form-item>
               </a-col>
               <a-col :span="8">
@@ -224,7 +225,7 @@
               </a-col>
               <a-col :span="8">
                 <a-form-item label="备注">
-                  <a-input v-model:value="formData.remark" />
+                  <a-input v-model:value="formData.remarks" />
                 </a-form-item>
               </a-col>
             </a-row>
@@ -244,7 +245,7 @@
               </a-col>
               <a-col :span="8">
                 <a-form-item label="质保金">
-                  <a-input v-model:value="formData.warrantyFund" />
+                  <a-input v-model:value="formData.deposit" />
                 </a-form-item>
               </a-col>
             </a-row>
@@ -300,10 +301,10 @@
             <a-row>
               <a-col :span="8">
                 <a-form-item label="是否含增值税">
-                  <a-select v-model:value="formData.isIncludeVat">
-                    <a-select-option value="是">是</a-select-option>
-                    <a-select-option value="否">否</a-select-option>
-                  </a-select>
+                  <a-input
+                    :value="formData.isSd === 0 ? '否' : '是'"
+                    disabled
+                  />
                 </a-form-item>
               </a-col>
               <a-col :span="8">
@@ -320,21 +321,16 @@
             <a-row>
               <a-col :span="8">
                 <a-form-item label="登记日期">
-                  <a-date-picker
-                    v-model:value="formData.registrationDate"
+                  <a-input
+                    disabled
+                    v-model:value="formData.registerTime"
                     style="width: 100%"
                   />
                 </a-form-item>
               </a-col>
               <a-col :span="8">
                 <a-form-item label="合同状态">
-                  <a-select v-model:value="formData.status">
-                    <a-select-option :value="1">草稿</a-select-option>
-                    <a-select-option :value="2">审批中</a-select-option>
-                    <a-select-option :value="3">已生效</a-select-option>
-                    <a-select-option :value="4">已终止</a-select-option>
-                    <a-select-option :value="5">已完成</a-select-option>
-                  </a-select>
+                  <a-input v-model:value="formData.contractState" />
                 </a-form-item>
               </a-col>
               <a-col :span="8">
@@ -365,16 +361,16 @@
               </a-col>
               <a-col :span="8">
                 <a-form-item label="上报营销系统时间">
-                  <a-date-picker
+                  <a-input
                     v-model:value="formData.auditTime"
-                    show-time
+                    disabled
                     style="width: 100%"
                   />
                 </a-form-item>
               </a-col>
             </a-row>
             <a-row>
-              <a-col :span="16">
+              <a-col :span="8">
                 <a-form-item label="付款方是否与业主单位一致">
                   <a-select v-model:value="formData.isEqually">
                     <a-select-option :value="1">是</a-select-option>
@@ -494,7 +490,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed, watch } from "vue";
 import { useRoute } from "vue-router";
 import { DownloadOutlined, EyeOutlined } from "@ant-design/icons-vue";
 import getData from "@/network";
@@ -516,7 +512,7 @@ const formData = ref({
   number: "",
   uniqueNumber: "",
   id: "",
-  plate: "",
+  type: "",
   typeOne: "",
   typeTwo: "",
   typeThree: "",
@@ -559,6 +555,16 @@ const formData = ref({
   isArchived: 0,
   reportMarketingSystemTime: null,
   auditAmount: "",
+});
+const typeMap = {
+  0: "国内",
+  1: "外协",
+  2: "海外",
+  4: "其他经营类收款",
+  5: "其他经营类付款",
+};
+const typeText = computed(() => {
+  return typeMap[formData.value.type] || "未知类型";
 });
 // 类型,承担单位,年份,新签合同指标额,合同收款指标额
 const columns1 = [
@@ -813,6 +819,15 @@ const columns8 = [
 onMounted(() => {
   contractinfo();
 });
+watch(
+  () => route.params.id,
+  (newId) => {
+    if (newId) {
+      contractId.value = newId;
+      contractinfo();
+    }
+  },
+);
 const contractinfo = async () => {
   const res = await getData("contract/GetContractDetailsById", {
     contractId: String(contractId.value),
@@ -849,23 +864,8 @@ const contractinfo = async () => {
   formData.value = {
     ...data1,
     ...data,
-    // bidTime: data?.winBidTime ? dayjs(data.winBidTime) : null,
-    // bidAmount: data?.invoiceAmount || "",
-    // uniqueNumber: data1?.uniqueNumber || "",
-    // plate: "",
-    // productionMainUnit: data?.ownershipUnitName || "",
-    // isConsortium: data?.isCombo === 1 ? 1 : 0,
-    // investmentAmount: data?.investment || "",
-    // autonomousContractAmount: data?.autonomyAmount || "",
-    // year: data1?.createTime ? dayjs(data1.createTime) : null,
-    // reserveFund: data?.pettyCash || "",
-    // warrantyFund: data?.deposit || "",
-    // totalDuration: data?.ontractDuration || "",
-    // isIncludeVat: data?.taxRate && data?.taxRate > 0 ? "是" : "否",
-    // amountWithoutTax: data?.afterTaxAmount || "",
-    // reportMarketingSystemTime: data?.registerTime
-    //   ? dayjs(data.registerTime)
-    //   : null,
+    winBidTime: data?.winBidTime ? dayjs(data.winBidTime) : null,
+    // auditTime: data?.auditTime ? dayjs(data.auditTime) : null,
   };
   dataSource4.value = data2;
   dataSource5.value = data3;
