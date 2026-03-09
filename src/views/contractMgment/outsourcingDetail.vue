@@ -401,8 +401,6 @@ const formData = ref({
 });
 
 const handleTabChange = (key: string) => {
-  console.log(key, 'tab切换');
-
   activeKey.value = key;
 };
 

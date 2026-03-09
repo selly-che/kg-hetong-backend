@@ -8,13 +8,8 @@
       <span>收款金额：{{ contractStatistics.receivedAmount }}万元</span>
       <a-button type="primary" @click="exportExcelHandler">导出excel</a-button>
     </div>
-    <a-table
-      :row-selection="rowSelection"
-      :columns="columns"
-      :data-source="data"
-      :scroll="{ x: 1500, y: 500 }"
-      bordered
-    >
+    <a-table :row-selection="rowSelection" :columns="columns" :data-source="data" :scroll="{ x: 1500, y: 500 }"
+      bordered>
       <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'contractState'">
           <a-tag :color="record.contractState === '已通过' ? 'green' : 'red'">{{
@@ -25,7 +20,9 @@
           <a @click="handleNameClick(record)">{{ record.name }}</a>
         </template>
         <template v-if="column.key === 'action'">
-          <a @click="handleActionClick(record)"><Edit /></a>
+          <a @click="handleActionClick(record)">
+            <Edit />
+          </a>
         </template>
       </template>
     </a-table>
@@ -38,8 +35,8 @@ import getDates from "@/network/index";
 import { useRouter } from "vue-router";
 import Edit from "@/views/contractMgment/Edit.vue";
 import { exportExcel } from "@/utils/common";
-import { message } from "ant-design-vue";
-
+import { ElMessageBox, ElMessage } from 'element-plus';
+import axios from "axios";
 const router = useRouter();
 const props = defineProps({
   searchParams: {
@@ -114,15 +111,15 @@ const columns = [
   },
   {
     title: "累计收款金额（万元）",
-    dataIndex: "collectedAmount",
-    key: "collectedAmount",
+    dataIndex: "totalReceivedAmount",
+    key: "totalReceivedAmount",
     width: 150,
     align: "center",
   },
   {
     title: "累计开票金额（万元）",
-    dataIndex: "invoicedAmount",
-    key: "invoicedAmount",
+    dataIndex: "totallnvoiceAmount",
+    key: "totallnvoiceAmount",
     width: 150,
     align: "center",
   },
@@ -226,31 +223,58 @@ const columns = [
   },
 ];
 //导出
-// const exportExcel = async () => {
-//   try {
-//     const token = localStorage.getItem("accesstoken");
-//     const res = await axios({
-//       method: "GET",
-//       url: "/jeecg-boot/contract/export",
-//       headers: {
-//         "x-access-token": token,
-//       },
-//       responseType: "blob", //当二进制文件处理
-//     });
+const exportExcelFn = async () => {
+  try {
+    const token = localStorage.getItem("accesstoken");
+    const res = await axios({
+      method: "GET",
+      url: "/jeecg-boot/contract/export",
+      headers: {
+        "x-access-token": token,
+      },
+      responseType: "blob", //当二进制文件处理
+    });
 
-//     const blob = new Blob([res.data], {
-//       type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-//     });
-//     // 触发下载
-//     saveAs(blob, `合同数据_${new Date().getTime()}.xlsx`);
-//   } catch (error) {
-//     console.error("导出Excel失败:", error);
-//   }
-// };
+    const blob = new Blob([res.data], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
+    // 触发下载
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `内部合同数据.xlsx`;
+    document.body.appendChild(link);
+    link.click();
+
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+
+    ElMessage.success("导出成功");
+  } catch (error) {
+    console.error("导出Excel失败:", error);
+  }
+};
 //导出new
 const exportExcelHandler = () => {
   if (selectedRowKeys.value.length === 0) {
-    message.warning("请勾选要导出的合同");
+    //弹出确认框提示是否需要导出所有的合同数据
+    ElMessageBox.confirm(
+      "是否需要导出所有的合同数据？",
+      "提示",
+      {
+        confirmButtonText: "是",
+        cancelButtonText: "否",
+        type: "warning",
+      }
+    )
+      .then(() => {
+        // 用户点击了“是”，执行导出操作
+        exportExcelFn();
+      })
+      .catch(() => {
+        // 用户点击了“否”或关闭了弹窗，不执行任何操作
+        ElMessage.info("已取消导出");
+      });
     return;
   }
   // 过滤选中的合同数据
@@ -373,6 +397,7 @@ const getContractList = async () => {
   width: 100%;
   height: 600px;
   background-color: #fff;
+
   .spbu {
     display: flex;
     align-items: center;
