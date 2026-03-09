@@ -34,21 +34,87 @@
             v-model:value="formData.mainContractName"
           />
         </a-form-item>
-        <a-form-item label="主合同编号">
+        <a-form-item label="主合同编号" v-show="isExpanded">
           <a-input
             placeholder="请输入主合同编号"
             v-model:value="formData.mainContractNumber"
           />
         </a-form-item>
-        <a-form-item label="外协单位">
+        <a-form-item label="外协单位" v-show="isExpanded">
           <a-input
             placeholder="请输入外协单位"
             v-model:value="formData.executionUnit"
           />
         </a-form-item>
+        <a-form-item label="外协类型" v-show="isExpanded">
+          <a-select v-model:value="formData.outsourcingType" placeholder="全部">
+            <a-select-option value="all">全部</a-select-option>
+            <a-select-option value="1">类型1</a-select-option>
+            <a-select-option value="2">类型2</a-select-option>
+          </a-select>
+        </a-form-item>
+        <a-form-item label="主合同识别号" v-show="isExpanded">
+          <a-input
+            placeholder="请输入主合同识别号"
+            v-model:value="formData.mainContractUniqueNumber"
+          />
+        </a-form-item>
+        <a-form-item label="性质" v-show="isExpanded">
+          <a-select v-model:value="formData.nature" placeholder="全部">
+            <a-select-option value="all">全部</a-select-option>
+            <a-select-option value="1">性质1</a-select-option>
+            <a-select-option value="2">性质2</a-select-option>
+          </a-select>
+        </a-form-item>
+        <a-form-item label="是否上传附件" v-show="isExpanded">
+          <a-select v-model:value="formData.hasAttachment" placeholder="全部">
+            <a-select-option value="all">全部</a-select-option>
+            <a-select-option value="1">是</a-select-option>
+            <a-select-option value="2">否</a-select-option>
+          </a-select>
+        </a-form-item>
+        <a-form-item label="基本信息是否已治理" v-show="isExpanded">
+          <a-select
+            v-model:value="formData.basicInfoGoverned"
+            placeholder="全部"
+          >
+            <a-select-option value="all">全部</a-select-option>
+            <a-select-option value="1">是</a-select-option>
+            <a-select-option value="2">否</a-select-option>
+          </a-select>
+        </a-form-item>
+        <a-form-item label="收款信息是否已治理" v-show="isExpanded">
+          <a-select
+            v-model:value="formData.paymentInfoGoverned"
+            placeholder="全部"
+          >
+            <a-select-option value="all">全部</a-select-option>
+            <a-select-option value="1">是</a-select-option>
+            <a-select-option value="2">否</a-select-option>
+          </a-select>
+        </a-form-item>
+        <a-form-item label="是否归档" v-show="isExpanded">
+          <a-select v-model:value="formData.isArchived" placeholder="全部">
+            <a-select-option value="all">全部</a-select-option>
+            <a-select-option value="1">是</a-select-option>
+            <a-select-option value="2">否</a-select-option>
+          </a-select>
+        </a-form-item>
+        <a-form-item label="是否封存" v-show="isExpanded">
+          <a-select v-model:value="formData.isSealed" placeholder="全部">
+            <a-select-option value="all">全部</a-select-option>
+            <a-select-option value="1">是</a-select-option>
+            <a-select-option value="2">否</a-select-option>
+          </a-select>
+        </a-form-item>
         <a-form-item>
           <a-button type="primary" @click="handleSearch">搜索</a-button>
           <a-button @click="handleReset">重置</a-button>
+          <a-button type="link" @click="handleExpand">
+            {{ isExpanded ? "收起" : "展开" }}
+            <DownOutlined v-if="!isExpanded" />
+            <UpOutlined v-else />
+          </a-button>
         </a-form-item>
       </a-form>
     </div>
@@ -86,11 +152,13 @@ import getDates from "@/network/index";
 import { message } from "ant-design-vue";
 import { exportExcel } from "@/utils/common";
 import { useRouter } from "vue-router";
+import { DownOutlined, UpOutlined } from "@ant-design/icons-vue";
 // import axios from "axios";
 // import { saveAs } from "file-saver";
 
 const router = useRouter();
 const outsourcingAddRef = ref();
+const isExpanded = ref(false);
 const formData = ref({
   year: "all",
   contractNumber: "",
@@ -99,6 +167,14 @@ const formData = ref({
   mainContractName: "",
   mainContractNumber: "",
   executionUnit: "",
+  outsourcingType: "all",
+  mainContractUniqueNumber: "",
+  nature: "all",
+  hasAttachment: "all",
+  basicInfoGoverned: "all",
+  paymentInfoGoverned: "all",
+  isArchived: "all",
+  isSealed: "all",
 });
 const selectedRowinfo = ref<any[]>([]); //选中行数据
 const selectedRowid = ref<string[]>([]);
@@ -375,6 +451,30 @@ const handleSearch = async () => {
   if (formData.value.executionUnit) {
     params.customer = formData.value.executionUnit;
   }
+  if (formData.value.outsourcingType !== "all") {
+    params.outsourcingType = formData.value.outsourcingType;
+  }
+  if (formData.value.mainContractUniqueNumber) {
+    params.mainContractUniqueNumber = formData.value.mainContractUniqueNumber;
+  }
+  if (formData.value.nature !== "all") {
+    params.nature = formData.value.nature;
+  }
+  if (formData.value.hasAttachment !== "all") {
+    params.hasAttachment = formData.value.hasAttachment;
+  }
+  if (formData.value.basicInfoGoverned !== "all") {
+    params.basicInfoGoverned = formData.value.basicInfoGoverned;
+  }
+  if (formData.value.paymentInfoGoverned !== "all") {
+    params.paymentInfoGoverned = formData.value.paymentInfoGoverned;
+  }
+  if (formData.value.isArchived !== "all") {
+    params.isArchived = formData.value.isArchived;
+  }
+  if (formData.value.isSealed !== "all") {
+    params.isSealed = formData.value.isSealed;
+  }
 
   try {
     const res = await getDates("contract/GetContractList", params);
@@ -405,9 +505,20 @@ const handleReset = () => {
     mainContractName: "",
     mainContractNumber: "",
     executionUnit: "",
+    outsourcingType: "all",
+    mainContractUniqueNumber: "",
+    nature: "all",
+    hasAttachment: "all",
+    basicInfoGoverned: "all",
+    paymentInfoGoverned: "all",
+    isArchived: "all",
+    isSealed: "all",
   };
   pagination.value.current = 1;
   getOutsourcingList();
+};
+const handleExpand = () => {
+  isExpanded.value = !isExpanded.value;
 };
 </script>
 
@@ -426,95 +537,140 @@ const handleReset = () => {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   }
 
+  // .search-form {
+  //   :deep(.ant-form-item) {
+  //     margin-bottom: 16px;
+  //     margin-right: 16px;
+
+  //     .ant-form-item-label {
+  //       padding-right: 12px;
+
+  //       > label {
+  //         font-size: 14px;
+  //         color: #333333;
+  //         font-weight: 500;
+  //         margin-bottom: 0;
+  //       }
+  //     }
+
+  //     .ant-form-item-control-input {
+  //       min-height: 32px;
+  //     }
+
+  //     .ant-form-item-control-input-content {
+  //       width: 180px;
+  //     }
+  //   }
+
+  //   :deep(.ant-select),
+  //   :deep(.ant-input) {
+  //     width: 100%;
+  //     border-radius: 4px;
+  //     font-size: 14px;
+  //     transition: all 0.3s ease;
+  //   }
+
+  //   :deep(.ant-input) {
+  //     padding: 4px 11px;
+  //     height: 32px;
+
+  //     &:hover {
+  //       border-color: #40a9ff;
+  //     }
+
+  //     &:focus {
+  //       border-color: #1890ff;
+  //       box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+  //     }
+  //   }
+
+  //   :deep(.ant-select-selector) {
+  //     height: 32px;
+  //     border-radius: 4px;
+  //   }
+
+  //   :deep(.ant-btn) {
+  //     height: 32px;
+  //     padding: 4px 20px;
+  //     font-size: 14px;
+  //     border-radius: 4px;
+  //     margin-right: 8px;
+  //     transition: all 0.3s ease;
+  //     white-space: nowrap;
+
+  //     &.ant-btn-primary {
+  //       background-color: #1890ff;
+  //       border-color: #1890ff;
+
+  //       &:hover {
+  //         background-color: #40a9ff;
+  //         border-color: #40a9ff;
+  //       }
+
+  //       &:active {
+  //         background-color: #096dd9;
+  //         border-color: #096dd9;
+  //       }
+  //     }
+
+  //     &:not(.ant-btn-primary):not(.ant-btn-link) {
+  //       background-color: #ffffff;
+  //       border-color: #d9d9d9;
+  //       color: #333333;
+
+  //       &:hover {
+  //         color: #1890ff;
+  //         border-color: #1890ff;
+  //       }
+  //     }
+
+  //     &.ant-btn-link {
+  //       padding: 4px 8px;
+  //       height: 32px;
+  //       display: inline-flex;
+  //       align-items: center;
+  //       gap: 4px;
+
+  //       &:hover {
+  //         color: #1890ff;
+  //       }
+  //     }
+
+  //     &:last-child {
+  //       margin-right: 0;
+  //     }
+  //   }
+  // }
   .search-form {
-    :deep(.ant-form-item) {
-      margin-bottom: 16px;
+    .ant-form-item {
       margin-right: 16px;
-
-      .ant-form-item-label {
-        padding-right: 12px;
-
-        > label {
-          font-size: 14px;
-          color: #333333;
-          font-weight: 500;
-          margin-bottom: 0;
-        }
-      }
-
-      .ant-form-item-control-input {
-        min-height: 32px;
-      }
-
-      .ant-form-item-control-input-content {
-        width: 180px;
-      }
+      margin-bottom: 16px;
     }
 
-    :deep(.ant-select),
-    :deep(.ant-input) {
-      width: 100%;
-      border-radius: 4px;
-      font-size: 14px;
-      transition: all 0.3s ease;
+    .ant-form-item-label {
+      padding-right: 8px;
     }
 
-    :deep(.ant-input) {
-      padding: 4px 11px;
-      height: 32px;
-
-      &:hover {
-        border-color: #40a9ff;
-      }
-
-      &:focus {
-        border-color: #1890ff;
-        box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
-      }
+    .ant-form-item-control-input-content {
+      width: 180px;
     }
 
-    :deep(.ant-select-selector) {
-      height: 32px;
-      border-radius: 4px;
-    }
-
-    :deep(.ant-btn) {
-      height: 32px;
-      padding: 4px 20px;
-      font-size: 14px;
-      border-radius: 4px;
+    .ant-btn {
       margin-right: 8px;
-      transition: all 0.3s ease;
 
       &.ant-btn-primary {
         background-color: #1890ff;
         border-color: #1890ff;
-
-        &:hover {
-          background-color: #40a9ff;
-          border-color: #40a9ff;
-        }
-
-        &:active {
-          background-color: #096dd9;
-          border-color: #096dd9;
-        }
-      }
-
-      &:not(.ant-btn-primary) {
-        background-color: #ffffff;
-        border-color: #d9d9d9;
-        color: #333333;
-
-        &:hover {
-          color: #1890ff;
-          border-color: #1890ff;
-        }
       }
 
       &:last-child {
         margin-right: 0;
       }
+    }
+
+    .ant-select,
+    .ant-input {
+      width: 100%;
     }
   }
 }
@@ -527,53 +683,4 @@ const handleReset = () => {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
   padding: 20px;
 }
-
-// @media screen and (max-width: 1440px) {
-//   .header {
-//     .search-form {
-//       :deep(.ant-form-item) {
-//         margin-right: 12px;
-//       }
-//     }
-//   }
-// }
-
-// @media screen and (max-width: 1200px) {
-//   .header {
-//     .search-form {
-//       :deep(.ant-form-item) {
-//         margin-right: 10px;
-//       }
-
-//       :deep(.ant-form-item-control-input-content) {
-//         width: 160px;
-//       }
-//     }
-//   }
-// }
-
-// @media screen and (max-width: 768px) {
-//   .header {
-//     padding: 12px 16px;
-//     min-height: auto;
-
-//     .search-form {
-//       :deep(.ant-form-item) {
-//         margin-right: 0;
-//         margin-bottom: 12px;
-//         width: 100%;
-//       }
-
-//       :deep(.ant-form-item-control-input-content) {
-//         width: 100%;
-//       }
-
-//       :deep(.ant-btn) {
-//         width: 100%;
-//         margin-right: 0;
-//         margin-bottom: 8px;
-//       }
-//     }
-//   }
-// }
 </style>
