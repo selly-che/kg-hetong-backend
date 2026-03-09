@@ -88,8 +88,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
+import { ref, computed, onMounted,watch } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
 import { SettingOutlined } from '@ant-design/icons-vue';
 import getDatas from "@/network/index";
 import { ElMessage } from 'element-plus';
@@ -253,6 +253,12 @@ const handleAdd = () => {
 };
 console.log('页面加载了多次');
 
+const route = useRoute();
+// 判断url中的projectId和projectStep是否变化，如果变化则重新查询数据
+watch(() => [route.query.projectId, route.query.projectStep], () => {
+  console.log('路由参数变化，重新查询数据');
+  handleSearch();
+});
 onMounted(() => {
     handleSearch();
     console.log('WorkArrangement mounted');

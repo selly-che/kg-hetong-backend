@@ -127,14 +127,7 @@ const cachedViews = ref<string[]>([
   "WorkArrangementList",
   "WorkArrangement",
 ]);
-const openedTabs = ref([
-  {
-    key: "ProjectHome",
-    title: "首页",
-    closable: false,
-    path: "/projectMgment/ProjectHome",
-  },
-]);
+const openedTabs = ref<any[]>([]);
 
 // 过滤标签数据
 const filterTags = ref([

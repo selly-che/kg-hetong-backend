@@ -112,7 +112,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted,watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { SettingOutlined } from '@ant-design/icons-vue';
 import getDatas from "@/network/index";
@@ -363,6 +363,11 @@ const handleEdit = (record: any) => {
   console.log('编辑记录:', record);
   // 这里可以跳转到编辑页面或打开编辑模态框
 };
+// 判断url中的projectId和projectStep是否变化，如果变化则重新查询数据
+watch(() => [route.query.projectId, route.query.projectStep], () => {
+  console.log('路由参数变化，重新查询数据');
+  handleSearch();
+});
 
 onMounted(() => {
   console.log('WorkArrangementList mounted');
