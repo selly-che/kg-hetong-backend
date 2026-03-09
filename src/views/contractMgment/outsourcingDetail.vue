@@ -1,23 +1,19 @@
 <template>
   <div>
-    <a-tabs>
+    <a-tabs v-model:activeKey="activeKey" @change="handleTabChange">
       <a-tab-pane key="1" tab="基本信息">
-        <div
-          style="
+        <div style="
             display: flex;
             align-items: center;
             margin-bottom: 10px;
             margin-top: 10px;
-          "
-        >
-          <div
-            style="
+          ">
+          <div style="
               width: 4px;
               height: 18px;
               background-color: #1890ff;
               margin-right: 8px;
-            "
-          ></div>
+            "></div>
           <p style="margin: 0">基本信息</p>
         </div>
         <a-form :label-col="{ span: 8 }" :wrapper-col="{ span: 14 }">
@@ -75,18 +71,13 @@
           <a-row :gutter="16">
             <a-col :span="8">
               <a-form-item label="主合同金额">
-                <a-input-number
-                  style="width: 100%"
-                  v-model:value="formData.amount"
-                ></a-input-number>
+                <a-input-number style="width: 100%" v-model:value="formData.amount"></a-input-number>
               </a-form-item>
             </a-col>
             <a-col :span="8">
               <a-form-item label="主合同累计收款">
-                <a-input-number
-                  style="width: 100%"
-                  v-model:value="formData.mainContractReceivedAmount"
-                ></a-input-number>
+                <a-input-number style="width: 100%"
+                  v-model:value="formData.mainContractReceivedAmount"></a-input-number>
               </a-form-item>
             </a-col>
             <a-col :span="8">
@@ -137,10 +128,7 @@
             </a-col>
             <a-col :span="8">
               <a-form-item label="外协合同金额">
-                <a-input-number
-                  style="width: 100%"
-                  v-model:value="formData.outsourcingContractAmount"
-                ></a-input-number>
+                <a-input-number style="width: 100%" v-model:value="formData.outsourcingContractAmount"></a-input-number>
               </a-form-item>
             </a-col>
             <a-col :span="8">
@@ -152,21 +140,14 @@
           <a-row :gutter="16">
             <a-col :span="8">
               <a-form-item label="同意付款比例">
-                <a-input-number
-                  style="width: 100%"
-                  :min="0"
-                  :max="100"
-                  v-model:value="formData.paymentRatio"
-                ></a-input-number>
+                <a-input-number style="width: 100%" :min="0" :max="100"
+                  v-model:value="formData.paymentRatio"></a-input-number>
               </a-form-item>
             </a-col>
             <a-col :span="8">
               <a-form-item label="归属年份">
-                <a-date-picker
-                  style="width: 100%"
-                  picker="year"
-                  v-model:value="formData.year"
-                ></a-date-picker>
+                <a-date-picker style="width: 100%" picker="year" value-format="YYYY"
+                  v-model:value="formData.year"></a-date-picker>
               </a-form-item>
             </a-col>
             <a-col :span="8">
@@ -178,10 +159,8 @@
           <a-row :gutter="16">
             <a-col :span="8">
               <a-form-item label="签订日期">
-                <a-date-picker
-                  style="width: 100%"
-                  v-model:value="formData.signTime"
-                ></a-date-picker>
+                <a-date-picker style="width: 100%" v-model:value="formData.signTime"
+                  value-format="YYYY-MM-DD HH:mm:ss"></a-date-picker>
               </a-form-item>
             </a-col>
             <a-col :span="8">
@@ -191,46 +170,36 @@
             </a-col>
             <a-col :span="8">
               <a-form-item label="计划开工日期">
-                <a-date-picker
-                  style="width: 100%"
-                  v-model:value="formData.plannedCommencementDate"
-                ></a-date-picker>
+                <a-date-picker style="width: 100%" value-format="YYYY-MM-DD HH:mm:ss"
+                  v-model:value="formData.plannedCommencementDate"></a-date-picker>
               </a-form-item>
             </a-col>
           </a-row>
           <a-row :gutter="16">
             <a-col :span="8">
               <a-form-item label="计划竣工日期">
-                <a-date-picker
-                  style="width: 100%"
-                  v-model:value="formData.plannedCompletionDate"
-                ></a-date-picker>
+                <a-date-picker style="width: 100%" value-format="YYYY-MM-DD HH:mm:ss"
+                  v-model:value="formData.plannedCompletionDate"></a-date-picker>
               </a-form-item>
             </a-col>
             <a-col :span="8">
               <a-form-item label="合同总工期">
-                <a-input-number
-                  style="width: 100%"
-                  v-model:value="formData.totalDuration"
-                ></a-input-number>
+                <a-input-number style="width: 100%" value-format="YYYY-MM-DD HH:mm:ss"
+                  v-model:value="formData.totalDuration"></a-input-number>
               </a-form-item>
             </a-col>
             <a-col :span="8">
               <a-form-item label="实际开工日期">
-                <a-date-picker
-                  style="width: 100%"
-                  v-model:value="formData.actualCommencementDate"
-                ></a-date-picker>
+                <a-date-picker style="width: 100%" value-format="YYYY-MM-DD HH:mm:ss"
+                  v-model:value="formData.actualCommencementDate"></a-date-picker>
               </a-form-item>
             </a-col>
           </a-row>
           <a-row :gutter="16">
             <a-col :span="8">
               <a-form-item label="实际竣工日期">
-                <a-date-picker
-                  style="width: 100%"
-                  v-model:value="formData.actualCompletionDate"
-                ></a-date-picker>
+                <a-date-picker value-format="YYYY-MM-DD HH:mm:ss" style="width: 100%"
+                  v-model:value="formData.actualCompletionDate"></a-date-picker>
               </a-form-item>
             </a-col>
             <a-col :span="8">
@@ -260,20 +229,15 @@
             </a-col>
             <a-col :span="8">
               <a-form-item label="登记日期">
-                <a-date-picker
-                  style="width: 100%"
-                  v-model:value="formData.registerTime"
-                ></a-date-picker>
+                <a-date-picker style="width: 100%" value-format="YYYY-MM-DD HH:mm:ss"
+                  v-model:value="formData.registerTime"></a-date-picker>
               </a-form-item>
             </a-col>
           </a-row>
           <a-row :gutter="16">
             <a-col :span="8">
               <a-form-item label="主合同相应阶段完成天数">
-                <a-input-number
-                  style="width: 100%"
-                  v-model:value="formData.mainContractStageDays"
-                ></a-input-number>
+                <a-input-number style="width: 100%" v-model:value="formData.mainContractStageDays"></a-input-number>
               </a-form-item>
             </a-col>
             <a-col :span="8">
@@ -313,77 +277,59 @@
             </a-col>
           </a-row>
         </a-form>
-        <div
-          style="
+        <div style="
             display: flex;
             align-items: center;
             margin-bottom: 10px;
             margin-top: 10px;
-          "
-        >
-          <div
-            style="
+          ">
+          <div style="
               width: 4px;
               height: 18px;
               background-color: #1890ff;
               margin-right: 8px;
-            "
-          ></div>
+            "></div>
           <p style="margin: 0">支付申请</p>
         </div>
         <a-table :columns="columns1" :data-source="data1"></a-table>
-        <div
-          style="
+        <div style="
             display: flex;
             align-items: center;
             margin-bottom: 10px;
             margin-top: 10px;
-          "
-        >
-          <div
-            style="
+          ">
+          <div style="
               width: 4px;
               height: 18px;
               background-color: #1890ff;
               margin-right: 8px;
-            "
-          ></div>
+            "></div>
           <p style="margin: 0">上传附件</p>
         </div>
         <a-table :columns="columns2" :data-source="data2"></a-table>
-        <div
-          style="
+        <div style="
             display: flex;
             align-items: center;
             margin-bottom: 10px;
             margin-top: 10px;
-          "
-        >
-          <div
-            style="
+          ">
+          <div style="
               width: 4px;
               height: 18px;
               background-color: #1890ff;
               margin-right: 8px;
-            "
-          ></div>
+            "></div>
           <p style="margin: 0">审核意见</p>
         </div>
         <div class="timeline">
           <a-timeline>
             <a-timeline-item>Create a services site 2015-09-01</a-timeline-item>
-            <a-timeline-item
-              >Solve initial network problems 2015-09-01</a-timeline-item
-            >
+            <a-timeline-item>Solve initial network problems 2015-09-01</a-timeline-item>
             <a-timeline-item color="red">
-              <template #dot
-                ><clock-circle-outlined style="font-size: 16px"
-              /></template>
+              <template #dot><clock-circle-outlined style="font-size: 16px" /></template>
               Technical testing 2015-09-01
             </a-timeline-item>
-            <a-timeline-item
-              >Network problems being solved 2015-09-01</a-timeline-item
-            >
+            <a-timeline-item>Network problems being solved 2015-09-01</a-timeline-item>
           </a-timeline>
         </div>
       </a-tab-pane>
@@ -393,6 +339,7 @@
         <a-table :columns="columns3" :data-source="data3"></a-table>
       </a-tab-pane>
       <a-tab-pane key="3" tab="变更信息">
+        <span>变更信息</span>
         <a-table :columns="columns4" :data-source="data4"></a-table>
       </a-tab-pane>
     </a-tabs>
@@ -403,9 +350,10 @@
 import { ref, onMounted } from "vue";
 import { ClockCircleOutlined } from "@ant-design/icons-vue";
 import getData from "@/network";
-import dayjs from "dayjs";
+import dayjs from 'dayjs'
 import { useRoute } from "vue-router";
 
+const activeKey = ref("1"); //tab切换
 const route = useRoute();
 const contractId = ref(route.params.id);
 const formData = ref({
@@ -431,26 +379,32 @@ const formData = ref({
   outsourcingContractAmount: undefined,
   priceType: "",
   paymentRatio: undefined,
-  year: undefined,
+  year: undefined as string | undefined,
   paymentCycle: "",
-  signTime: undefined,
+  signTime: undefined as string | undefined,
   businessScope: "",
-  plannedCommencementDate: undefined,
-  plannedCompletionDate: undefined,
+  plannedCommencementDate: undefined as string | undefined,
+  plannedCompletionDate: undefined as string | undefined,
   totalDuration: undefined,
-  actualCommencementDate: undefined,
-  actualCompletionDate: undefined,
+  actualCommencementDate: undefined as string | undefined,
+  actualCompletionDate: undefined as string | undefined,
   isFramework: 0,
   projectDept: "",
   province: "",
   remarks: "",
-  registerTime: undefined,
+  registerTime: undefined as string | undefined,
   mainContractStageDays: undefined,
   basicInfoManaged: 0,
   ifPush: 0,
   contractState: "",
   isArchived: 0,
 });
+
+const handleTabChange = (key: string) => {
+  console.log(key, 'tab切换');
+
+  activeKey.value = key;
+};
 
 //申请日期，经办人，申请金额，备注
 const columns1 = ref([
@@ -581,11 +535,20 @@ onMounted(async () => {
   });
   const data = res.data.result.contractDetails;
   const data1 = res.data.result.contractInfo;
-  console.log(data, data1);
+  console.log(data, data1, '合同详情数据');
   formData.value = {
     ...data,
     ...data1,
   };
+  formData.value.year = dayjs(String(formData.value.year)).format('YYYY')
+  formData.value.signTime = dayjs(String(formData.value.signTime)).format('YYYY-MM-DD HH:mm:ss')
+  formData.value.plannedCommencementDate = dayjs(String(formData.value.plannedCommencementDate)).format('YYYY-MM-DD HH:mm:ss')
+  formData.value.plannedCompletionDate = dayjs(String(formData.value.plannedCompletionDate)).format('YYYY-MM-DD HH:mm:ss')
+  formData.value.actualCommencementDate = dayjs(String(formData.value.actualCommencementDate)).format('YYYY-MM-DD HH:mm:ss')
+  formData.value.actualCompletionDate = dayjs(String(formData.value.actualCompletionDate)).format('YYYY-MM-DD HH:mm:ss')
+  formData.value.registerTime = dayjs(String(formData.value.registerTime)).format('YYYY-MM-DD HH:mm:ss')
+  console.log(formData.value, 'formDataformData');
+
 });
 </script>
 
@@ -593,21 +556,27 @@ onMounted(async () => {
 :deep(.ant-table) {
   background-color: #ffffff;
 }
+
 :deep(.ant-table-container) {
   background-color: #ffffff;
 }
+
 :deep(.ant-table-tbody) {
   background-color: #ffffff;
 }
+
 :deep(.ant-table-thead > tr > th) {
   background-color: #ffffff;
 }
+
 :deep(.ant-table-tbody > tr > td) {
   background-color: #ffffff;
 }
+
 :deep(.ant-table-tbody > tr:hover > td) {
   background-color: #ffffff;
 }
+
 .timeline {
   padding: 12px;
   background-color: #ffffff;
