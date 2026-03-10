@@ -496,6 +496,10 @@ import { DownloadOutlined, EyeOutlined } from "@ant-design/icons-vue";
 import getData from "@/network";
 import dayjs from "dayjs";
 
+const activeKey = ref("1");
+const dataSource1 = ref([]);
+const dataSource2 = ref([]);
+const dataSource8 = ref([]);
 const route = useRoute();
 const contractId = ref(route.params.id);
 const contractName = ref(route.params.name);

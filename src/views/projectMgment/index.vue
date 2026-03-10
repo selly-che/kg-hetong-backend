@@ -3,7 +3,7 @@
     <a-layout-sider v-model:collapsed="collapsed" width="280" style="background-color: rgb(25, 97, 172)">
       <div class="sidebar-container">
         <!-- 查询项目标题 -->
-        <a-input-search v-model:value="searchText" placeholder="请输入项目名称" enter-button
+        <a-input-search allow-clear v-model:value="searchText" placeholder="请输入项目名称" enter-button
           style="margin-bottom: 16px; margin-top: 16px" @search="handleSearch" />
 
         <!-- 责任类型筛选标签 -->
@@ -131,10 +131,10 @@ const openedTabs = ref<any[]>([]);
 
 // 过滤标签数据
 const filterTags = ref([
-  { label: "全部", value: "", index: 1 },
-  { label: "铁路", value: "0", index: 2 },
-  { label: "城轨", value: "1", index: 3 },
-  { label: "公路", value: "2", index: 4 },
+  { label: "全部", value: "", index: null },
+  { label: "铁路", value: "0", index: 1 },
+  { label: "城轨", value: "1", index: 2 },
+  { label: "公路", value: "2", index: 3 },
 ]);
 
 // 责任类型筛选标签数据
@@ -157,9 +157,9 @@ const getResponsibilityIndex = (value: string): number => {
   const tag = responsibilityTags.value.find(item => item.value === value);
   return tag ? tag.index : 0;
 };
-const getFilterIndex = (value: string): number => {
+const getFilterIndex = (value: string): number | null => {
   const tag = filterTags.value.find(item => item.value === value);
-  return tag ? tag.index : 0;
+  return tag ? tag.index : null;
 };
 
 const TabClickFn = (key: string) => {
@@ -174,6 +174,7 @@ const getProjectList = async () => {
     let saixuantLx1 = getResponsibilityIndex(activeResponsibility.value);
     let saixuantLx2 = getFilterIndex(activeFilter.value);
     const res = await getDatas("project/GetProjectList", {
+      projectFullName: searchText.value,
       pageNum: 1,
       pageSize: 10,
       saixuantLx1:saixuantLx1,
