@@ -69,7 +69,7 @@ const getProjectList = async () => {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 8px 10px;
+      padding: 8px 10px 0px 10px;
       flex-shrink: 0;
       .side1-title {
         font-size: 14px;

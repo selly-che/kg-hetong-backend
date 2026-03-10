@@ -171,7 +171,7 @@ export default {
     color: #333;
     padding-top: 8px;
     padding-left: 10px;
-    padding-bottom: 9px;
+    // padding-bottom: 9px;
   }
 
   .pie-tabs {
