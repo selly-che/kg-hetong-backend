@@ -16,6 +16,11 @@
       bordered
     >
       <template #bodyCell="{ column, record }">
+        <template v-if="column.key === 'paymentAuditStatus'">
+          <a-tag :color="paymentAuditStatusColor(record.paymentAuditStatus)">{{
+            paymentAuditStatusText(record.paymentAuditStatus)
+          }}</a-tag>
+        </template>
         <template v-if="column.key === 'contractState'">
           <a-tag :color="record.contractState === '已通过' ? 'green' : 'red'">{{
             record.contractState
@@ -29,9 +34,9 @@
             <Edit />
           </a>
         </template>
-        <template v-if="column.key === 'statusText'">
-          <a-tag :color="record.statusText === '生效' ? 'green' : 'red'">{{
-            record.statusText
+        <template v-if="column.key === 'status'">
+          <a-tag :color="statusColor(record.status)">{{
+            statusText(record.status)
           }}</a-tag>
         </template>
       </template>
@@ -68,14 +73,14 @@ const columns = [
   {
     title: "审核状态",
     width: 120,
-    dataIndex: "statusText",
-    key: "statusText",
+    dataIndex: "status",
+    key: "status",
     align: "center",
   },
   {
     title: "审核条款",
-    dataIndex: "terms",
-    key: "terms",
+    dataIndex: "paymentAuditStatus",
+    key: "paymentAuditStatus",
     width: 120,
     align: "center",
   },
@@ -112,7 +117,7 @@ const columns = [
     title: "业主单位",
     dataIndex: "customerName",
     key: "customerName",
-    width: 100,
+    width: 180,
     ellipsis: true,
     align: "center",
   },
@@ -124,16 +129,16 @@ const columns = [
     align: "center",
   },
   {
-    title: "累计收款金额（万元）",
+    title: "收款金额（万元）",
     dataIndex: "totalReceivedAmount",
     key: "totalReceivedAmount",
     width: 150,
     align: "center",
   },
   {
-    title: "累计开票金额（万元）",
-    dataIndex: "totallnvoiceAmount",
-    key: "totallnvoiceAmount",
+    title: "开票金额（万元）",
+    dataIndex: "invoiceAmount",
+    key: "invoiceAmount",
     width: 150,
     align: "center",
   },
@@ -233,6 +238,20 @@ const columns = [
     dataIndex: "year",
     key: "year",
     width: 100,
+    align: "center",
+  },
+  {
+    title: "审核人",
+    dataIndex: "reviewer",
+    key: "reviewer",
+    width: 150,
+    align: "center",
+  },
+  {
+    title: "条款审核人",
+    dataIndex: "paymentApprover",
+    key: "paymentApprover",
+    width: 150,
     align: "center",
   },
 ];
@@ -351,6 +370,48 @@ const refreshContractList = () => {
 defineExpose({
   refreshContractList,
 });
+// 审核状态文本映射
+const paymentAuditStatusText = (status) => {
+  const statusMap = {
+    0: "未提交",
+    1: "审核中",
+    2: "通过",
+    3: "退回",
+  };
+  return statusMap[status] || "未知";
+};
+
+// 审核状态随机颜色
+const paymentAuditStatusColor = (status) => {
+  const colorMap = {
+    0: "red",
+    1: "blue",
+    2: "green",
+    3: "pink",
+  };
+  return colorMap[status] || "default";
+};
+
+// 状态文本映射
+const statusText = (status) => {
+  const statusMap = {
+    0: "未通过",
+    1: "审核中",
+    2: "已通过",
+  };
+  return statusMap[status] || "未知";
+};
+
+// 状态颜色映射
+const statusColor = (status) => {
+  const colorMap = {
+    0: "red",
+    1: "blue",
+    2: "green",
+  };
+  return colorMap[status] || "default";
+};
+
 // 行选择
 const rowSelection = computed(() => {
   return {
@@ -412,7 +473,7 @@ const getContractList = async () => {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 5px;
+    margin-bottom: 6px;
   }
 }
 </style>

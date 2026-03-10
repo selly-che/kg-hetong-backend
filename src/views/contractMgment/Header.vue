@@ -5,9 +5,9 @@
         <a-date-picker picker="year" v-model:value="formData.year" />
       </a-form-item>
       <a-form-item label="板块">
-        <a-select v-model:value="formData.sector" placeholder="全部">
+        <a-select v-model:value="formData.section" placeholder="全部">
           <a-select-option value="all">全部</a-select-option>
-          <a-select-option value="1">板块1</a-select-option>
+          <a-select-option value="铁路">铁路</a-select-option>
           <a-select-option value="2">板块2</a-select-option>
         </a-select>
       </a-form-item>
@@ -190,7 +190,7 @@ const emit = defineEmits(["search", "reset"]);
 const isExpanded = ref(false);
 const formData = ref({
   year: null as any,
-  sector: "all",
+  section: "all", //
   contractType: "all",
   code: "",
   number: "",
@@ -221,7 +221,7 @@ const handleSearch = () => {
   console.log("表单数据:", formData.value);
   const searchParams = {
     year: formData.value.year ? formData.value.year.format("YYYY") : "",
-    sector: formData.value.sector === "all" ? "" : formData.value.sector,
+    section: formData.value.section === "all" ? "" : formData.value.section,
     contractType:
       formData.value.contractType === "all" ? "" : formData.value.contractType,
     code: formData.value.code,
@@ -276,7 +276,7 @@ const handleSearch = () => {
 const handleReset = () => {
   formData.value = {
     year: null,
-    sector: "all",
+    section: "all",
     contractType: "all",
     code: "",
     number: "",
