@@ -1,6 +1,6 @@
 <template>
   <div class="container br8">
-    <div class="header mb-10 bgf">
+    <div class="header mb-10 bgf br8">
       <Header @search="handleSearch" @reset="handleReset" />
     </div>
     <div class="content bgf pd20 br8">
@@ -12,14 +12,16 @@
 <script setup lang="ts">
 import Header from "./Header.vue";
 import Content from "./Content.vue";
-import { ref } from "vue";
+import { ref, nextTick } from "vue";
 
 const contentRef = ref();
 const currentSearchParams = ref({});
 
 const handleSearch = (params: any) => {
   currentSearchParams.value = params;
-  contentRef.value?.refreshContractList();
+  nextTick(() => {
+    contentRef.value?.refreshContractList();
+  });
 };
 
 const handleReset = () => {

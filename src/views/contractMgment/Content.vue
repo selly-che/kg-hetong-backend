@@ -8,8 +8,13 @@
       <span>收款金额：{{ contractStatistics.receivedAmount }}万元</span>
       <a-button type="primary" @click="exportExcelHandler">导出excel</a-button>
     </div>
-    <a-table :row-selection="rowSelection" :columns="columns" :data-source="data" :scroll="{ x: 1500, y: 500 }"
-      bordered>
+    <a-table
+      :row-selection="rowSelection"
+      :columns="columns"
+      :data-source="data"
+      :scroll="{ x: 1500, y: 500 }"
+      bordered
+    >
       <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'contractState'">
           <a-tag :color="record.contractState === '已通过' ? 'green' : 'red'">{{
@@ -24,6 +29,11 @@
             <Edit />
           </a>
         </template>
+        <template v-if="column.key === 'statusText'">
+          <a-tag :color="record.statusText === '生效' ? 'green' : 'red'">{{
+            record.statusText
+          }}</a-tag>
+        </template>
       </template>
     </a-table>
   </div>
@@ -35,7 +45,7 @@ import getDates from "@/network/index";
 import { useRouter } from "vue-router";
 import Edit from "@/views/contractMgment/Edit.vue";
 import { exportExcel } from "@/utils/common";
-import { ElMessageBox, ElMessage } from 'element-plus';
+import { ElMessageBox, ElMessage } from "element-plus";
 import axios from "axios";
 const router = useRouter();
 const props = defineProps({
@@ -56,10 +66,17 @@ const columns = [
     align: "center",
   },
   {
-    title: "合同节点状态",
+    title: "审核状态",
     width: 120,
-    dataIndex: "contractState",
-    key: "contractState",
+    dataIndex: "statusText",
+    key: "statusText",
+    align: "center",
+  },
+  {
+    title: "审核条款",
+    dataIndex: "terms",
+    key: "terms",
+    width: 120,
     align: "center",
   },
   // {
@@ -71,15 +88,15 @@ const columns = [
   // },
   {
     title: "合同编号",
-    dataIndex: "number",
-    key: "number",
+    dataIndex: "code",
+    key: "code",
     width: 150,
     align: "center",
   },
   {
     title: "合同识别号",
-    dataIndex: "uniqueNumber",
-    key: "uniqueNumber",
+    dataIndex: "number",
+    key: "number",
     width: 150,
     align: "center",
   },
@@ -92,7 +109,7 @@ const columns = [
     align: "center",
   },
   {
-    title: "委托单位",
+    title: "业主单位",
     dataIndex: "customerName",
     key: "customerName",
     width: 100,
@@ -178,8 +195,8 @@ const columns = [
   },
   {
     title: "合同状态",
-    dataIndex: "statusText",
-    key: "statusText",
+    dataIndex: "contractState",
+    key: "contractState",
     width: 120,
     align: "center",
   },
@@ -192,8 +209,8 @@ const columns = [
   },
   {
     title: "是否进营销系统",
-    dataIndex: "isReportText",
-    key: "isReportText",
+    dataIndex: "isReport",
+    key: "isReport",
     width: 140,
     align: "center",
   },
@@ -237,7 +254,7 @@ const exportExcelFn = async () => {
     });
     // 触发下载
     const url = window.URL.createObjectURL(blob);
-    const link = document.createElement('a');
+    const link = document.createElement("a");
     link.href = url;
     link.download = `内部合同数据.xlsx`;
     document.body.appendChild(link);
@@ -255,15 +272,11 @@ const exportExcelFn = async () => {
 const exportExcelHandler = () => {
   if (selectedRowKeys.value.length === 0) {
     //弹出确认框提示是否需要导出所有的合同数据
-    ElMessageBox.confirm(
-      "是否需要导出所有的合同数据？",
-      "提示",
-      {
-        confirmButtonText: "是",
-        cancelButtonText: "否",
-        type: "warning",
-      }
-    )
+    ElMessageBox.confirm("是否需要导出所有的合同数据？", "提示", {
+      confirmButtonText: "是",
+      cancelButtonText: "否",
+      type: "warning",
+    })
       .then(() => {
         // 用户点击了“是”，执行导出操作
         exportExcelFn();
@@ -368,7 +381,7 @@ const getContractList = async () => {
   };
   const res = await getDates("contract/GetContractList", requestParams);
   const resData = res.data.result.records;
-  console.log("分页查询合同列表111", resData[0].contractInfo);
+  // console.log("分页查询合同列表111", resData[0].contractInfo);
   if (res.data.code === 200) {
     const records = resData || [];
     data.value = records.map((item, index) => {
@@ -382,7 +395,7 @@ const getContractList = async () => {
         contractState: contractInfo.contractState === 1 ? "已通过" : "已超期",
         statusText: contractInfo.status === 1 ? "生效" : "未生效",
         isJrText: contractInfo.isJr === 1 ? "是" : "否",
-        isReportText: contractInfo.isReport === 1 ? "是" : "否",
+        isReport: contractInfo.isReport === 1 ? "是" : "否",
       };
     });
   }

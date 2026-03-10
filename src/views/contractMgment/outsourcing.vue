@@ -11,22 +11,40 @@
           </a-select>
         </a-form-item>
         <a-form-item label="外协合同编号">
-          <a-input placeholder="请输入合同编号" v-model:value="formData.contractNumber" />
+          <a-input
+            placeholder="请输入合同编号"
+            v-model:value="formData.contractNumber"
+          />
         </a-form-item>
         <a-form-item label="外协合同识别号">
-          <a-input placeholder="请输入合同识别号" v-model:value="formData.uniqueNumber" />
+          <a-input
+            placeholder="请输入合同识别号"
+            v-model:value="formData.uniqueNumber"
+          />
         </a-form-item>
         <a-form-item label="外协合同名称">
-          <a-input placeholder="请输入合同名称" v-model:value="formData.contractName" />
+          <a-input
+            placeholder="请输入合同名称"
+            v-model:value="formData.contractName"
+          />
         </a-form-item>
         <a-form-item label="主合同名称">
-          <a-input placeholder="请输入主合同名称" v-model:value="formData.mainContractName" />
+          <a-input
+            placeholder="请输入主合同名称"
+            v-model:value="formData.mainContractName"
+          />
         </a-form-item>
         <a-form-item label="主合同编号" v-show="isExpanded">
-          <a-input placeholder="请输入主合同编号" v-model:value="formData.mainContractNumber" />
+          <a-input
+            placeholder="请输入主合同编号"
+            v-model:value="formData.mainContractNumber"
+          />
         </a-form-item>
         <a-form-item label="外协单位" v-show="isExpanded">
-          <a-input placeholder="请输入外协单位" v-model:value="formData.executionUnit" />
+          <a-input
+            placeholder="请输入外协单位"
+            v-model:value="formData.executionUnit"
+          />
         </a-form-item>
         <a-form-item label="外协类型" v-show="isExpanded">
           <a-select v-model:value="formData.outsourcingType" placeholder="全部">
@@ -36,7 +54,10 @@
           </a-select>
         </a-form-item>
         <a-form-item label="主合同识别号" v-show="isExpanded">
-          <a-input placeholder="请输入主合同识别号" v-model:value="formData.mainContractUniqueNumber" />
+          <a-input
+            placeholder="请输入主合同识别号"
+            v-model:value="formData.mainContractUniqueNumber"
+          />
         </a-form-item>
         <a-form-item label="性质" v-show="isExpanded">
           <a-select v-model:value="formData.nature" placeholder="全部">
@@ -53,14 +74,20 @@
           </a-select>
         </a-form-item>
         <a-form-item label="基本信息是否已治理" v-show="isExpanded">
-          <a-select v-model:value="formData.basicInfoGoverned" placeholder="全部">
+          <a-select
+            v-model:value="formData.basicInfoGoverned"
+            placeholder="全部"
+          >
             <a-select-option value="all">全部</a-select-option>
             <a-select-option value="1">是</a-select-option>
             <a-select-option value="2">否</a-select-option>
           </a-select>
         </a-form-item>
         <a-form-item label="收款信息是否已治理" v-show="isExpanded">
-          <a-select v-model:value="formData.paymentInfoGoverned" placeholder="全部">
+          <a-select
+            v-model:value="formData.paymentInfoGoverned"
+            placeholder="全部"
+          >
             <a-select-option value="all">全部</a-select-option>
             <a-select-option value="1">是</a-select-option>
             <a-select-option value="2">否</a-select-option>
@@ -92,11 +119,18 @@
       </a-form>
     </div>
     <div class="context">
-      <a-button type="primary" style="margin-right: 10px" @click="handleAdd()">新增</a-button>
+      <a-button type="primary" style="margin-right: 10px" @click="handleAdd()"
+        >新增</a-button
+      >
       <a-button @click="exportExcelHandle">导出excel</a-button>
       <div class="table" style="margin-top: 10px">
-        <a-table :columns="columns" :data-source="tabledata" :pagination="pagination" :row-selection="rowSelection"
-          :scroll="{ x: 'max-content', y: 600 }">
+        <a-table
+          :columns="columns"
+          :data-source="tabledata"
+          :pagination="pagination"
+          :row-selection="rowSelection"
+          :scroll="{ x: 'max-content', y: 600 }"
+        >
           <template #bodyCell="{ column, record }">
             <template v-if="column.key === 'action'">
               <a style="margin-right: 10px" @click="handleEdit(record)">编辑</a>
@@ -306,7 +340,7 @@ const exportExcelFn = async () => {
     // 触发下载
     // 触发下载
     const url = window.URL.createObjectURL(blob);
-    const link = document.createElement('a');
+    const link = document.createElement("a");
     link.href = url;
     link.download = `外协合同数据.xlsx`;
     document.body.appendChild(link);
@@ -320,21 +354,16 @@ const exportExcelFn = async () => {
     ElMessage.error("导出失败");
     console.log(error);
   }
-
 };
 //导出new
 const exportExcelHandle = () => {
   if (selectedRowinfo.value.length === 0) {
     //弹出确认框提示是否需要导出所有的合同数据
-    ElMessageBox.confirm(
-      "是否需要导出所有的合同数据？",
-      "提示",
-      {
-        confirmButtonText: "是",
-        cancelButtonText: "否",
-        type: "warning",
-      }
-    )
+    ElMessageBox.confirm("是否需要导出所有的合同数据？", "提示", {
+      confirmButtonText: "是",
+      cancelButtonText: "否",
+      type: "warning",
+    })
       .then(() => {
         // 用户点击了“是”，执行导出操作
         exportExcelFn();
@@ -344,7 +373,6 @@ const exportExcelHandle = () => {
         ElMessage.info("已取消导出");
       });
     return;
-
   }
   // 过滤选中的合同数据
   const selectedData = tabledata.value.filter((item) =>
@@ -542,7 +570,7 @@ const handleExpand = () => {
   width: 100%;
   min-height: 88px;
   background-color: #ffffff;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
   padding: 16px 20px;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
