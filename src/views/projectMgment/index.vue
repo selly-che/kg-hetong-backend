@@ -104,7 +104,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, watch } from "vue";
 import { useRouter } from "vue-router";
 import getDatas from "@/network/index";
 import { ElMessage } from "element-plus";
@@ -177,7 +177,7 @@ const getProjectList = async () => {
       projectFullName: searchText.value,
       pageNum: 1,
       pageSize: 10,
-      saixuantLx1:saixuantLx1,
+      saixuantLx1: saixuantLx1,
       saixuantLx2: saixuantLx2,
       saixuantLx3: activeTab.value === 'main' ? 1 : 2,
     });
@@ -263,7 +263,7 @@ const getProjectList = async () => {
       };
     });
     selectedMenuKeys.value = [];
-      openMenuKeys.value = [];
+    openMenuKeys.value = [];
   } catch (error) {
     console.error("获取项目列表失败:", error);
     ElMessage.error("获取项目列表失败");
@@ -361,6 +361,11 @@ const handleTabClick = (tab: any) => {
 // 处理标签页编辑（关闭）
 const onTabEdit = (targetKey: any, action: "add" | "remove") => {
   if (action === "remove") {
+    // 只有一个标签页时，不允许关闭
+    if (openedTabs.value.length <= 1) {
+      ElMessage.warning("最后一个标签页不能关闭");
+      return;
+    }
     const index = openedTabs.value.findIndex((tab) => tab.key === targetKey);
     if (index > -1) {
       openedTabs.value.splice(index, 1);
@@ -375,7 +380,30 @@ const onTabEdit = (targetKey: any, action: "add" | "remove") => {
 
 onMounted(() => {
   getProjectList();
+  // 从 sessionStorage 恢复 openedTabs
+  const savedTabs = sessionStorage.getItem("openedTabs");
+  if (savedTabs) {
+    try {
+      openedTabs.value = JSON.parse(savedTabs);
+      // 如果有保存的标签页，默认打开第一个
+      if (openedTabs.value.length > 0) {
+        const lastTab = openedTabs.value[openedTabs.value.length - 1];
+        activeTabKey.value = lastTab.key;
+      }
+    } catch (e) {
+      console.error("解析保存的标签页失败:", e);
+    }
+  }
 });
+
+// 监听 openedTabs 变化并保存到 sessionStorage
+watch(
+  openedTabs,
+  (newVal) => {
+    sessionStorage.setItem("openedTabs", JSON.stringify(newVal));
+  },
+  { deep: true }
+);
 </script>
 
 <style scoped>
