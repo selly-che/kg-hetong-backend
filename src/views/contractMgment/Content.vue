@@ -136,9 +136,9 @@ const columns = [
     align: "center",
   },
   {
-    title: "开票金额（万元）",
-    dataIndex: "invoiceAmount",
-    key: "invoiceAmount",
+    title: "累计开票金额（万元）",
+    dataIndex: "accumulatedInvoicingAmount",
+    key: "accumulatedInvoicingAmount",
     width: 150,
     align: "center",
   },
@@ -448,10 +448,12 @@ const getContractList = async () => {
     data.value = records.map((item, index) => {
       const contractInfo = item.contractInfo || {};
       const contractDetails = item.contractDetails || {};
+      const accumulatedInvoicingAmount = item.billInfoList && item.billInfoList[0] ? item.billInfoList[0].accumulatedInvoicingAmount : null;
       return {
         ...contractInfo,
         ...contractDetails,
         key: contractInfo.id,
+        accumulatedInvoicingAmount,
         index: index + 1,
         contractState: contractInfo.contractState === 1 ? "已通过" : "已超期",
         statusText: contractInfo.status === 1 ? "生效" : "未生效",
@@ -459,6 +461,8 @@ const getContractList = async () => {
         isReport: contractInfo.isReport === 1 ? "是" : "否",
       };
     });
+    console.log(data.value, "分页查询合同列表222");
+    
   }
 };
 </script>

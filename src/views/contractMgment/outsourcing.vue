@@ -124,13 +124,8 @@
       >
       <a-button @click="exportExcelHandle">导出excel</a-button>
       <div class="table" style="margin-top: 10px">
-        <a-table
-          :columns="columns"
-          :data-source="tabledata"
-          :pagination="pagination"
-          :row-selection="rowSelection"
-          :scroll="{ x: 'max-content', y: 600 }"
-        >
+        <a-table :columns="columns" :data-source="tabledata" :loading="loading" :pagination="pagination"
+          :row-selection="rowSelection" :scroll="{ x: 'max-content', y: 600 }">
           <template #bodyCell="{ column, record }">
             <template v-if="column.key === 'action'">
               <a style="margin-right: 10px" @click="handleEdit(record)">编辑</a>
@@ -141,7 +136,7 @@
           </template>
         </a-table>
       </div>
-      <outsourcingAdd ref="outsourcingAddRef" />
+      <outsourcingAdd ref="outsourcingAddRef" @refreshList="getOutsourcingList" :title="title" :data="fromData" />
     </div>
   </div>
 </template>
@@ -157,10 +152,12 @@ import { DownOutlined, UpOutlined } from "@ant-design/icons-vue";
 import axios from "axios";
 // import axios from "axios";
 // import { saveAs } from "file-saver";
-
+const title = ref("新增外协合同");
+const fromData = ref({});
 const router = useRouter();
 const outsourcingAddRef = ref();
 const isExpanded = ref(false);
+const loading = ref(false);
 const formData = ref({
   year: "all",
   contractNumber: "",
@@ -338,17 +335,14 @@ const exportExcelFn = async () => {
       type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     });
     // 触发下载
-    // 触发下载
     const url = window.URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
     link.download = `外协合同数据.xlsx`;
     document.body.appendChild(link);
     link.click();
-
     document.body.removeChild(link);
     window.URL.revokeObjectURL(url);
-
     ElMessage.success("导出成功");
   } catch (error) {
     ElMessage.error("导出失败");
@@ -378,7 +372,6 @@ const exportExcelHandle = () => {
   const selectedData = tabledata.value.filter((item) =>
     selectedRowid.value.includes(item.key),
   );
-
   const exportColumns = columns
     // 过滤不用导出的列
     .filter(
@@ -406,7 +399,10 @@ const handleNameClick = (record: any) => {
 };
 //编辑
 const handleEdit = (record: any) => {
-  console.log("编辑", record);
+  title.value = "编辑外协合同";
+  outsourcingAddRef.value.showModal();
+  fromData.value = record;
+  console.log("编辑",  fromData.value );
 };
 //分页
 const pagination = ref({
@@ -425,32 +421,42 @@ const pagination = ref({
 //新增
 const handleAdd = () => {
   console.log("弹抽屉");
+  title.value = "新增外协合同";
+  //弹出确认框提示是否需要新增合同数据
   outsourcingAddRef.value.showModal();
+  fromData.value = {};
 };
 //获取数据
 const getOutsourcingList = async () => {
-  const res = await getDates("contract/GetContractList", {
-    pageNum: 1,
-    pageSize: 10,
-  });
-  const data = res.data.result.records;
-  console.log("外协合同列表222", data);
-  tabledata.value = data.map((item: any, index: number) => {
-    const contractInfo = item.contractInfo || {};
-    const parentContractInfo = item.contractInfo.parentContractInfo || {};
-    return {
-      ...contractInfo,
-      // ...parentContractInfo,
-      parentContractInfoname: parentContractInfo.name || "",
-      parentContractInfonumber: parentContractInfo.number || "",
-      key: contractInfo.id,
-      index: index + 1,
-      contractState: contractInfo.contractState === 1 ? "已通过" : "已超期",
-      statusText: contractInfo.status === 1 ? "生效" : "未生效",
-      isJrText: contractInfo.isJr === 1 ? "是" : "否",
-      isReportText: contractInfo.isReport === 1 ? "是" : "否",
-    };
-  });
+  loading.value = true;
+  try {
+    const res = await getDates("contract/GetContractList", {
+      pageNum: 1,
+      pageSize: 10,
+    });
+    const data = res.data.result.records;
+    console.log("外协合同列表222", data);
+    tabledata.value = data.map((item: any, index: number) => {
+      const contractInfo = item.contractInfo || {};
+      const parentContractInfo = item.contractInfo.parentContractInfo || {};
+      return {
+        ...contractInfo,
+        // ...parentContractInfo,
+        parentContractInfoname: parentContractInfo.name || "",
+        parentContractInfonumber: parentContractInfo.number || "",
+        key: contractInfo.id,
+        index: index + 1,
+        contractState: contractInfo.contractState === 1 ? "已通过" : "已超期",
+        statusText: contractInfo.status === 1 ? "生效" : "未生效",
+        isJrText: contractInfo.isJr === 1 ? "是" : "否",
+        isReportText: contractInfo.isReport === 1 ? "是" : "否",
+      };
+    });
+  } catch (error) {
+    console.log(error);
+  } finally {
+    loading.value = false;
+  }
 };
 onMounted(() => {
   getOutsourcingList();
