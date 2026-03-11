@@ -7,6 +7,14 @@ export default {
       params,
     };
   },
+  // 外协合同列表
+  GetOutContractList(params: any) {
+    return {
+      method: "GET",
+      url: "/contract/queryOutContractList",
+      params,
+    };
+  },
   //合同统计数据/jeecg-boot/contract/statistics
   GetContractStatistics(params: any) {
     return {

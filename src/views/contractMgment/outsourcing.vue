@@ -430,7 +430,7 @@ const handleAdd = () => {
 const getOutsourcingList = async () => {
   loading.value = true;
   try {
-    const res = await getDates("contract/GetContractList", {
+    const res = await getDates("contract/GetOutContractList", {
       pageNum: 1,
       pageSize: 10,
     });
@@ -460,7 +460,7 @@ const getOutsourcingList = async () => {
 };
 onMounted(() => {
   getOutsourcingList();
-  console.log("组件挂载完成");
+  console.log("组件挂载完成111");
   adc(1);
 });
 
@@ -522,7 +522,7 @@ const handleSearch = async () => {
   }
 
   try {
-    const res = await getDates("contract/GetContractList", params);
+    const res = await getDates("contract/GetOutContractList", params);
     const data = res.data.result.records;
     tabledata.value = data.map((item: any, index: number) => {
       const contractInfo = item.contractInfo || {};

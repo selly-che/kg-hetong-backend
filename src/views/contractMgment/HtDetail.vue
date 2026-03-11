@@ -5,14 +5,12 @@
         <!-- 基本信息 开票申请信息 收款信息 外协合同 补充合同 变更信息 中标审批表 -->
         <a-tab-pane key="1" tab="基本信息">
           <div style="display: flex; align-items: center; margin-bottom: 10px">
-            <div
-              style="
+            <div style="
                 width: 4px;
                 height: 18px;
                 background-color: #1890ff;
                 margin-right: 8px;
-              "
-            ></div>
+              "></div>
             <p style="margin: 0">基本信息</p>
           </div>
           <a-form :label-col="{ span: 8 }" :wrapper-col="{ span: 14 }">
@@ -39,11 +37,7 @@
             <a-row>
               <a-col :span="8">
                 <a-form-item label="中标时间">
-                  <a-date-picker
-                    v-model:value="formData.winBidTime"
-                    style="width: 100%"
-                    disabled
-                  />
+                  <a-date-picker v-model:value="formData.winBidTime" style="width: 100%" disabled />
                 </a-form-item>
               </a-col>
               <a-col :span="8">
@@ -189,21 +183,12 @@
             <a-row>
               <a-col :span="8">
                 <a-form-item label="签订日期">
-                  <a-date-picker
-                    v-model:value="formData.signTime"
-                    style="width: 100%"
-                    disabled
-                  />
+                  <a-date-picker v-model:value="formData.signTime" style="width: 100%" disabled />
                 </a-form-item>
               </a-col>
               <a-col :span="8">
                 <a-form-item label="合同归属年份">
-                  <a-date-picker
-                    v-model:value="formData.year"
-                    picker="year"
-                    style="width: 100%"
-                    disabled
-                  />
+                  <a-date-picker v-model:value="formData.year" picker="year" style="width: 100%" disabled />
                 </a-form-item>
               </a-col>
               <a-col :span="8">
@@ -255,20 +240,14 @@
             <a-row>
               <a-col :span="8">
                 <a-form-item label="计划开工日期">
-                  <a-date-picker
-                    v-model:value="formData.plannedCommencementDate"
-                    style="width: 100%"
-                    disabled
-                  />
+                  <a-date-picker placeholder="选择日期" v-model:value="formData.plannedCommencementDate" style="width: 100%"
+                    disabled />
                 </a-form-item>
               </a-col>
               <a-col :span="8">
                 <a-form-item label="计划竣工日期">
-                  <a-date-picker
-                    v-model:value="formData.plannedCompletionDate"
-                    style="width: 100%"
-                    disabled
-                  />
+                  <a-date-picker placeholder="选择日期" v-model:value="formData.plannedCompletionDate" style="width: 100%"
+                    disabled />
                 </a-form-item>
               </a-col>
               <a-col :span="8">
@@ -280,20 +259,14 @@
             <a-row>
               <a-col :span="8">
                 <a-form-item label="实际开工日期">
-                  <a-date-picker
-                    v-model:value="formData.actualCommencementDate"
-                    style="width: 100%"
-                    disabled
-                  />
+                  <a-date-picker placeholder="选择日期" v-model:value="formData.actualCommencementDate" style="width: 100%"
+                    disabled />
                 </a-form-item>
               </a-col>
               <a-col :span="8">
                 <a-form-item label="实际竣工日期">
-                  <a-date-picker
-                    v-model:value="formData.actualCompletionDate"
-                    style="width: 100%"
-                    disabled
-                  />
+                  <a-date-picker placeholder="选择日期" v-model:value="formData.actualCompletionDate" style="width: 100%"
+                    disabled />
                 </a-form-item>
               </a-col>
               <a-col :span="8">
@@ -308,10 +281,7 @@
             <a-row>
               <a-col :span="8">
                 <a-form-item label="是否含增值税">
-                  <a-input
-                    :value="formData.isSd === 0 ? '否' : '是'"
-                    disabled
-                  />
+                  <a-input :value="formData.isSd === 0 ? '否' : '是'" disabled />
                 </a-form-item>
               </a-col>
               <a-col :span="8">
@@ -328,11 +298,7 @@
             <a-row>
               <a-col :span="8">
                 <a-form-item label="登记日期">
-                  <a-input
-                    disabled
-                    v-model:value="formData.registerTime"
-                    style="width: 100%"
-                  />
+                  <a-input placeholder="选择日期" disabled v-model:value="formData.registerTime" style="width: 100%" />
                 </a-form-item>
               </a-col>
               <a-col :span="8">
@@ -368,11 +334,7 @@
               </a-col>
               <a-col :span="8">
                 <a-form-item label="上报营销系统时间">
-                  <a-input
-                    v-model:value="formData.auditTime"
-                    disabled
-                    style="width: 100%"
-                  />
+                  <a-input v-model:value="formData.auditTime" disabled style="width: 100%" />
                 </a-form-item>
               </a-col>
             </a-row>
@@ -387,60 +349,48 @@
               </a-col>
             </a-row>
           </a-form>
-          <div
-            style="
+          <div style="
               display: flex;
               align-items: center;
               margin-bottom: 10px;
               margin-top: 10px;
-            "
-          >
-            <div
-              style="
+            ">
+            <div style="
                 width: 4px;
                 height: 18px;
                 background-color: #1890ff;
                 margin-right: 8px;
-              "
-            ></div>
+              "></div>
             <p style="margin: 0">新签合同指标分配（如无分配请忽略）</p>
           </div>
           <a-table :dataSource="dataSource1" :columns="columns1" />
-          <div
-            style="
+          <div style="
               display: flex;
               align-items: center;
               margin-bottom: 10px;
               margin-top: 10px;
-            "
-          >
-            <div
-              style="
+            ">
+            <div style="
                 width: 4px;
                 height: 18px;
                 background-color: #1890ff;
                 margin-right: 8px;
-              "
-            ></div>
+              "></div>
             <p style="margin: 0">合同金额变更</p>
           </div>
           <a-table :dataSource="dataSource2" :columns="columns2" />
-          <div
-            style="
+          <div style="
               display: flex;
               align-items: center;
               margin-bottom: 10px;
               margin-top: 10px;
-            "
-          >
-            <div
-              style="
+            ">
+            <div style="
                 width: 4px;
                 height: 18px;
                 background-color: #1890ff;
                 margin-right: 8px;
-              "
-            ></div>
+              "></div>
             <p style="margin: 0">上传附件</p>
           </div>
           <a-table :dataSource="dataSource3" :columns="columns3">
@@ -890,33 +840,43 @@ const contractinfo = async () => {
 :deep(.ant-table) {
   background-color: #ffffff;
 }
+
 :deep(.ant-table-container) {
   background-color: #ffffff;
 }
+
 :deep(.ant-table-tbody) {
   background-color: #ffffff;
 }
+
 :deep(.ant-table-thead > tr > th) {
   background-color: #ffffff;
 }
+
 :deep(.ant-table-tbody > tr > td) {
   background-color: #ffffff;
 }
+
 :deep(.ant-table-tbody > tr:hover > td) {
   background-color: #ffffff;
 }
+
 :deep(.ant-input-disabled) {
   background-color: #fff;
   color: #000;
 }
+
 :deep(.ant-select-disabled .ant-select-selector) {
   background-color: #fff !important;
   color: #000 !important;
 }
+
 :deep(.ant-picker-disabled) {
   background-color: #fff;
 }
+
 :deep(.ant-picker-disabled .ant-picker-input > input) {
-  color: #000 !important; /* 输入容器文字颜色 */
+  color: #000 !important;
+  /* 输入容器文字颜色 */
 }
 </style>

@@ -2,7 +2,7 @@
   <div class="header-container">
     <a-form layout="inline" class="search-form">
       <a-form-item label="归属年份">
-        <a-date-picker picker="year" v-model:value="formData.year" />
+        <a-date-picker picker="year" v-model:value="formData.year" placeholder="选择年份" />
       </a-form-item>
       <a-form-item label="板块">
         <a-select v-model:value="formData.section" placeholder="全部">

@@ -8,18 +8,32 @@
         <span>基本信息</span>
       </div>
       <a-form :model="form" :rules="rules" ref="formRef">
-        <!-- 第一行：主合同、所属项目、外协类型、合同名称 -->
-        <a-row :gutter="16">
-          <a-col :span="8">
-            <a-form-item label="主合同" name="mainContract">
-              <a-input v-model:value="form.mainContract" placeholder="请输入主合同名称" />
+        <!-- 基本信息部分 -->
+        <a-row :gutter="24">
+          <a-col :span="24">
+            <a-form-item label="主合同" name="parentId">
+              <!-- <a-input v-model:value="form.name" @change="onNameChange" placeholder="请输入主合同名称" /> -->
+              <a-select v-model:value="form.parentId" placeholder="请搜索" :options="ProjectData" show-search
+                @search="handleSearch" @change="handleChange" :option-filter-prop="'label'">
+              </a-select>
             </a-form-item>
           </a-col>
-          <a-col :span="8">
-            <a-form-item label="所属项目" name="projectName">
-              <a-input v-model:value="form.projectName" placeholder="请输入所属项目名称" />
+
+        </a-row>
+        <a-row :gutter="24">
+          <a-col :span="24">
+            <!-- 根据项目projectId 获取项目信息 -->
+
+            <a-form-item label="所属项目" name="projectId">
+
+              <!-- <a-input v-model:value="form.projectName" placeholder="请输入所属项目名称" /> -->
+              <a-select v-model:value="form.projectId" placeholder="请搜索" :options="ProjectsList"
+                @change="handleProjectChange" show-search :option-filter-prop="'label'">
+              </a-select>
             </a-form-item>
           </a-col>
+        </a-row>
+        <a-row :gutter="24">
           <a-col :span="8">
             <a-form-item label="外协类型" name="outsourcingType">
               <a-select v-model:value="form.outsourcingType" placeholder="请选择外协类型">
@@ -32,11 +46,15 @@
               </a-select>
             </a-form-item>
           </a-col>
+          <a-col :span="16">
+            <a-form-item label="合同名称" name="name">
+              <a-input v-model:value="form.name" placeholder="请输入合同名称" />
+            </a-form-item>
+          </a-col>
         </a-row>
 
-        <!-- 第二行：合同编号、合同识别号、合同唯一ID -->
-        <a-row :gutter="16">
-          <a-col :span="8">
+        <a-row :gutter="24">
+          <a-col :span="16">
             <a-form-item label="合同编号" name="code">
               <a-input v-model:value="form.code" placeholder="系统自动生成" disabled />
             </a-form-item>
@@ -46,15 +64,14 @@
               <a-input v-model:value="form.number" placeholder="系统自动生成" disabled />
             </a-form-item>
           </a-col>
+        </a-row>
+
+        <a-row :gutter="16">
           <a-col :span="8">
             <a-form-item label="合同唯一ID" name="id">
               <a-input v-model:value="form.id" placeholder="系统自动生成" disabled />
             </a-form-item>
           </a-col>
-        </a-row>
-
-        <!-- 第三行：主合同编号、主合同承揽类型、主合同金额 -->
-        <a-row :gutter="16">
           <a-col :span="8">
             <a-form-item label="主合同编号" name="mainContractNo">
               <a-select v-model:value="form.mainContractNo" placeholder="请选择主合同" disabled>
@@ -69,15 +86,14 @@
               </a-select>
             </a-form-item>
           </a-col>
+        </a-row>
+
+        <a-row :gutter="16">
           <a-col :span="8">
             <a-form-item label="主合同金额" name="mainContractAmount">
               <a-input v-model:value="form.mainContractAmount" placeholder="请选择主合同 (万元)" disabled />
             </a-form-item>
           </a-col>
-        </a-row>
-
-        <!-- 第四行：主合同累计收款、主合同板块、外协单位 -->
-        <a-row :gutter="16">
           <a-col :span="8">
             <a-form-item label="主合同累计收款" name="mainContractReceivedAmount">
               <a-input v-model:value="form.mainContractReceivedAmount" placeholder="请选择主合同 (万元)" disabled />
@@ -90,16 +106,15 @@
               </a-select>
             </a-form-item>
           </a-col>
-          <a-col :span="8">
+
+        </a-row>
+        <a-row :gutter="24">
+          <a-col :span="16">
             <a-form-item label="外协单位" name="outsourcingUnit">
               <a-auto-complete v-model:value="form.outsourcingUnit" placeholder="请搜索" :options="[]">
               </a-auto-complete>
             </a-form-item>
           </a-col>
-        </a-row>
-
-        <!-- 第五行：主合同类型一、其他开票单位、外协主责单位 -->
-        <a-row :gutter="16">
           <a-col :span="8">
             <a-form-item label="主合同类型一" name="mainContractTypeOne">
               <a-select v-model:value="form.mainContractTypeOne" placeholder="请选择主合同" disabled>
@@ -107,30 +122,34 @@
               </a-select>
             </a-form-item>
           </a-col>
-          <a-col :span="8">
+        </a-row>
+        <a-row :gutter="24">
+          <a-col :span="24">
             <a-form-item label="其他开票单位" name="otherBillingUnit">
               <a-auto-complete v-model:value="form.otherBillingUnit" placeholder="请搜索" :options="[]">
               </a-auto-complete>
             </a-form-item>
           </a-col>
-          <a-col :span="8">
+        </a-row>
+
+        <a-row :gutter="24">
+          <a-col :span="16">
             <a-form-item label="外协主责单位" name="outsourcingResponsibleUnit">
               <a-select v-model:value="form.outsourcingResponsibleUnit" placeholder="请选择外协主责单位" disabled>
                 <a-select-option value="kuanggu">1</a-select-option>
               </a-select>
             </a-form-item>
           </a-col>
-        </a-row>
-
-        <!-- 第六行：生产主责单位、性质、经办人 -->
-        <a-row :gutter="16">
           <a-col :span="8">
             <a-form-item label="生产主责单位" name="productionResponsibleUnit">
-              <a-select v-model:value="form.productionResponsibleUnit" placeholder="请选择生产主责单位" disabled>
+              <a-select v-model:value="form.productionResponsibleUnit" placeholder="请选择生产主责单位">
                 <a-select-option value="kuanggu">1</a-select-option>
               </a-select>
             </a-form-item>
           </a-col>
+
+        </a-row>
+        <a-row :gutter="24">
           <a-col :span="8">
             <a-form-item label="性质" name="nature">
               <a-select v-model:value="form.nature" placeholder="请选择性质">
@@ -148,15 +167,14 @@
               <a-input v-model:value="form.handler" placeholder="填写经办人" />
             </a-form-item>
           </a-col>
-        </a-row>
-
-        <!-- 第七行：外协合同金额、合同价格类型、同意付款比例 -->
-        <a-row :gutter="16">
           <a-col :span="8">
             <a-form-item label="外协合同金额(万元)" name="outsourcingContractAmount">
               <a-input v-model:value="form.outsourcingContractAmount" placeholder="待填写具体金额 (万元)" />
             </a-form-item>
           </a-col>
+        </a-row>
+
+        <a-row :gutter="24">
           <a-col :span="8">
             <a-form-item label="合同价格类型" name="priceType">
               <a-select v-model:value="form.priceType" placeholder="请选择合同价格类型">
@@ -169,13 +187,10 @@
           </a-col>
           <a-col :span="8">
             <a-form-item label="同意付款比例" name="paymentRatio">
-              <a-input v-model:value="form.paymentRatio" placeholder="100%" />
+              <!-- 设置最大值 100 最小值 0 -->
+              <a-input-number v-model:value="form.paymentRatio" :max="100" :min="0" addon-after="%" />
             </a-form-item>
           </a-col>
-        </a-row>
-
-        <!-- 第八行：归属年份、签订日期、约定付款周期 -->
-        <a-row :gutter="16">
           <a-col :span="8">
             <a-form-item label="归属年份" name="belongYear">
               <a-select v-model:value="form.belongYear" placeholder="请选择归属年份">
@@ -193,21 +208,24 @@
               </a-select>
             </a-form-item>
           </a-col>
+        </a-row>
+
+        <a-row :gutter="24">
+          <a-col :span="16">
+            <a-form-item label="约定付款周期" name="paymentCycle">
+              <a-textarea v-model:value="form.paymentCycle" :auto-size="{ minRows: 4, maxRows: 5 }"
+                placeholder="约定付款周期(最大输入100字符)" :maxlength="100" />
+            </a-form-item>
+          </a-col>
           <a-col :span="8">
             <a-form-item label="签订日期" name="signDate">
               <a-date-picker v-model:value="form.signDate" value-format="YYYY-MM-DD HH:mm:ss" placeholder="请选择签订日期"
                 style="width: 100%" />
             </a-form-item>
           </a-col>
-          <a-col :span="8">
-            <a-form-item label="约定付款周期" name="paymentCycle">
-              <a-input v-model:value="form.paymentCycle" placeholder="约定付款周期(最大输入100字符)" :maxlength="100" />
-            </a-form-item>
-          </a-col>
         </a-row>
 
-        <!-- 第九行：业务范围、计划开工日期、计划竣工日期 -->
-        <a-row :gutter="16">
+        <a-row :gutter="24">
           <a-col :span="8">
             <a-form-item label="业务范围" name="projectDepartment">
               <a-select v-model:value="form.projectDepartment" placeholder="请选择业务范围">
@@ -223,6 +241,9 @@
               </a-select>
             </a-form-item>
           </a-col>
+        </a-row>
+
+        <a-row :gutter="24">
           <a-col :span="8">
             <a-form-item label="计划开工日期" name="plannedStartDate">
               <a-date-picker value-format="YYYY-MM-DD HH:mm:ss" v-model:value="form.plannedStartDate"
@@ -235,14 +256,20 @@
                 placeholder="请选择日期" style="width: 100%" />
             </a-form-item>
           </a-col>
+          <a-col :span="8">
+            <a-form-item label="合同总工期" name="totalDuration">
+              <a-input v-model:value="form.totalDuration" placeholder="合同总工期" disabled />
+            </a-form-item>
+          </a-col>
+
+
         </a-row>
 
-        <!-- 第十行：实际开工日期、实际竣工日期、合同总工期 -->
-        <a-row :gutter="16">
+        <a-row :gutter="24">
           <a-col :span="8">
-            <a-form-item label="实际开工日期" name="actualStartDate">
-              <a-date-picker value-format="YYYY-MM-DD HH:mm:ss" v-model:value="form.actualStartDate" placeholder="请选择日期"
-                style="width: 100%" />
+            <a-form-item label="实际开工日期" name="actualCommencementDate">
+              <a-date-picker value-format="YYYY-MM-DD HH:mm:ss" v-model:value="form.actualCommencementDate"
+                placeholder="请选择日期" style="width: 100%" />
             </a-form-item>
           </a-col>
           <a-col :span="8">
@@ -252,15 +279,6 @@
             </a-form-item>
           </a-col>
           <a-col :span="8">
-            <a-form-item label="合同总工期" name="totalDuration">
-              <a-input v-model:value="form.totalDuration" placeholder="合同总工期" />
-            </a-form-item>
-          </a-col>
-        </a-row>
-
-        <!-- 第十一行：是否框架合同、项目部、省份 -->
-        <a-row :gutter="16">
-          <a-col :span="8">
             <a-form-item label="是否框架合同" name="isFramework">
               <a-select v-model:value="form.isFramework" placeholder="是否框架合同">
                 <a-select-option value="1">是</a-select-option>
@@ -268,7 +286,10 @@
               </a-select>
             </a-form-item>
           </a-col>
-          <a-col :span="8">
+        </a-row>
+
+        <a-row :gutter="24">
+          <a-col :span="16">
             <a-form-item label="项目部" name="commandPost">
               <a-select v-model:value="form.commandPost" placeholder="项目部">
                 <a-select-option value="pending">待选择</a-select-option>
@@ -284,7 +305,22 @@
           </a-col>
         </a-row>
 
-        <!-- 第十二行：登记日期、主合同相应阶段完成天数、合同状态 -->
+        <a-row :gutter="24">
+          <a-col :span="16">
+            <a-form-item label="备注" name="remark">
+              <a-textarea v-model:value="form.remark" :auto-size="{ minRows: 4, maxRows: 5 }" placeholder="请输入备注信息" />
+            </a-form-item>
+          </a-col>
+          <a-col :span="8">
+            <a-form-item label="是否推送司库" name="ifPush">
+              <a-select v-model:value="form.ifPush" placeholder="是否推送司库" disabled>
+                <a-select-option value="1">是</a-select-option>
+                <a-select-option value="0">否</a-select-option>
+              </a-select>
+            </a-form-item>
+          </a-col>
+        </a-row>
+
         <a-row :gutter="16">
           <a-col :span="8">
             <a-form-item label="登记日期" name="registrationDate">
@@ -306,11 +342,10 @@
           </a-col>
         </a-row>
 
-        <!-- 第十三行：基本信息是否已治理、是否封存、是否推送司库 -->
         <a-row :gutter="16">
           <a-col :span="8">
             <a-form-item label="基本信息是否已治理" name="basicInfoManaged">
-              <a-select v-model:value="form.basicInfoManaged" placeholder="基本信息是否已治理" disabled>
+              <a-select v-model:value="form.basicInfoManaged" placeholder="基本信息是否已治理">
                 <a-select-option value="1">是</a-select-option>
                 <a-select-option value="0">否</a-select-option>
               </a-select>
@@ -318,31 +353,13 @@
           </a-col>
           <a-col :span="8">
             <a-form-item label="是否封存" name="isArchived">
-              <a-select v-model:value="form.isArchived" placeholder="是否封存" disabled>
-                <a-select-option value="1">是</a-select-option>
-                <a-select-option value="0">否</a-select-option>
-              </a-select>
-            </a-form-item>
-          </a-col>
-          <a-col :span="8">
-            <a-form-item label="是否推送司库" name="ifPush">
-              <a-select v-model:value="form.ifPush" placeholder="是否推送司库" disabled>
+              <a-select v-model:value="form.isArchived" placeholder="是否封存">
                 <a-select-option value="1">是</a-select-option>
                 <a-select-option value="0">否</a-select-option>
               </a-select>
             </a-form-item>
           </a-col>
         </a-row>
-
-        <!-- 备注 -->
-        <a-row :gutter="16">
-          <a-col :span="24">
-            <a-form-item label="备注" name="remark">
-              <a-textarea v-model:value="form.remark" :rows="3" placeholder="请输入备注信息" />
-            </a-form-item>
-          </a-col>
-        </a-row>
-
         <!-- 支付申请表格 -->
         <div class="outsoure_tit">
           <b></b>
@@ -353,10 +370,10 @@
             <a-form-item label="" name="paymentApplication">
               <div class="payment-application-container">
                 <div class="header">
-                  <div class="total-amount">累计申请金额: {{ totalAmount }}万</div>
-                  <a-button type="primary" size="small" @click="addPaymentApplication">
+                  <a-button type="" size="small" @click="addPaymentApplication">
                     <plus-outlined /> 添加
                   </a-button>
+                  <div class="total-amount">累计申请金额: {{ totalAmount }}万</div>
                 </div>
                 <a-table :columns="paymentColumns" :data-source="paymentData" :pagination="false" bordered>
                   <template #bodyCell="{ column, record, index }">
@@ -385,12 +402,11 @@
             </a-form-item>
           </a-col>
         </a-row>
-
-        <!-- 上传附件 -->
         <div class="outsoure_tit">
           <b></b>
           <span>上传附件</span>
         </div>
+        <!-- 上传附件 -->
         <a-row :gutter="16">
           <a-col :span="24">
             <a-form-item label="" name="attachments">
@@ -438,12 +454,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, reactive, computed, watch } from "vue";
+import { defineComponent, ref, reactive, computed, watch, onMounted } from "vue";
 import { UploadOutlined, PlusOutlined } from "@ant-design/icons-vue";
 import { message } from "ant-design-vue";
 import type { UploadProps } from "ant-design-vue";
 import getDates from "@/network/index";
-
+import type { Rule } from 'ant-design-vue/es/form';
 export default defineComponent({
   // 收到父组件的参数
   props: {
@@ -466,13 +482,14 @@ export default defineComponent({
     const formRef = ref();
 
     // 初始化表单数据
-    const form = reactive({
-      mainContract: "",
+    let form: any = reactive({
+      name: "",
       projectName: "",
       outsourcingType: undefined,
       code: "",
       number: "",
       id: "",
+      projectId: "",
       mainContractNo: undefined,
       mainContractType: undefined,
       mainContractAmount: "",
@@ -494,13 +511,13 @@ export default defineComponent({
       projectDepartment: undefined,
       plannedStartDate: undefined as Date | undefined | string,
       plannedCompletionDate: undefined,
-      actualStartDate: undefined,
+      actualCommencementDate: undefined,
       actualCompletionDate: undefined,
       totalDuration: "",
       isFramework: undefined as string | undefined,
       commandPost: undefined,
       province: undefined,
-      registrationDate: undefined as Date | undefined,
+      registrationDate: undefined as Date | undefined | string,
       mainContractPhaseDays: "",
       status: undefined,
       basicInfoManaged: undefined as string | undefined,
@@ -572,6 +589,8 @@ export default defineComponent({
       }
     };
 
+
+
     // 下载文件
     const downloadFile = (record: any) => {
       // 实现文件下载逻辑
@@ -604,7 +623,7 @@ export default defineComponent({
         form.outsourcingContractAmount = data.amount.toString();
       }
       if (data.name) {
-        form.mainContract = data.name;
+        form.name = data.name;
       }
       if (data.customer) {
         form.projectName = data.customer;
@@ -640,7 +659,7 @@ export default defineComponent({
         form.plannedCompletionDate = data.plannedCompletionDate;
       }
       if (data.actualCommencementDate) {
-        form.actualStartDate = data.actualCommencementDate;
+        form.actualCommencementDate = data.actualCommencementDate;
       }
       if (data.actualCompletionDate) {
         form.actualCompletionDate = data.actualCompletionDate;
@@ -693,19 +712,105 @@ export default defineComponent({
         resetForm();
       }
     }, { deep: true });
-
-    const rules = {};
+    const rules: Record<string, Rule[]> = {
+      projectName: [{ required: true, message: '请输入名称', trigger: 'blur' }],
+      outsourcingType: [{ required: true, message: '请输入名称', trigger: 'blur' }],
+      outsourcingUnit: [{ required: true, message: '请输入名称', trigger: 'blur' }],
+      outsourcingResponsibleUnit: [{ required: true, message: '请输入名称', trigger: 'blur' }],
+      productionResponsibleUnit: [{ required: true, message: '请输入名称', trigger: 'blur' }],
+      nature: [{ required: true, message: '请输入名称', trigger: 'blur' }],
+      handler: [{ required: true, message: '请输入名称', trigger: 'blur' }],
+      outsourcingContractAmount: [{ required: true, message: '请输入名称', trigger: 'blur' }],
+      priceType: [{ required: true, message: '请输入名称', trigger: 'blur' }],
+      paymentRatio: [{ required: true, message: '请输入名称', trigger: 'blur' }],
+      belongYear: [{ required: true, message: '请输入名称', trigger: 'blur' }],
+      paymentCycle: [{ required: true, message: '请输入名称', trigger: 'blur' }],
+      signDate: [{ required: true, message: '请输入名称', trigger: 'blur' }],
+      projectDepartment: [{ required: true, message: '请输入名称', trigger: 'blur' }],
+      plannedStartDate: [{ required: true, message: '请输入名称', trigger: 'blur' }],
+      plannedCompletionDate: [{ required: true, message: '请输入名称', trigger: 'blur' }],
+      totalDuration: [{ required: true, message: '请输入名称', trigger: 'blur' }],
+      actualCommencementDate: [{ required: true, message: '请输入名称', trigger: 'blur' }],
+      actualCompletionDate: [{ required: true, message: '请输入名称', trigger: 'blur' }],
+      isFramework: [{ required: true, message: '请输入名称', trigger: 'blur' }],
+      status: [{ required: true, message: '请输入名称', trigger: 'blur' }],
+      basicInfoManaged: [{ required: true, message: '请输入名称', trigger: 'blur' }],
+      isArchived: [{ required: true, message: '请输入名称', trigger: 'blur' }],
+    };
 
     const showModal = () => {
       resetForm();
       visible.value = true;
     };
 
+    onMounted(() => {
+      console.log(props.data, "组件挂载时 props.data 的值");
+      getMainContractList();
+      getProjectsFn();
+    });
+
+    // 获取项目列表
+    const getProjectsFn = async () => {
+      try {
+        const res = await getDates('outsourcing/getProjects', {
+          projectId: props.data.projectId,
+        });
+        console.log("主合同数据列表:", res);
+        ProjectsList.value = res.data.result.records.map((item: any) => {
+          return {
+            ...item,
+            label: item.projectFullName,
+            value: item.id,
+            key: item.id,
+          }
+        });
+      } catch (error) {
+        console.error("获取主合同数据列表失败:", error);
+      }
+    };
+    // 拿到主合同数据列表信息
+    const getMainContractList = async () => {
+      try {
+        const resp = await getDates("contract/GetOutContractList", {
+          pagesize: 999,
+          pageNum: 1,
+        });
+        console.log(resp, 'respresprespresp');
+        if (resp.data.code === 200) {
+          // 处理主合同数据列表
+          ProjectData.value = resp.data.result.records.map((item: any, index: number) => {
+            const contractInfo = item.contractInfo || {};
+            const parentContractInfo = item.contractInfo.parentContractInfo || {};
+            return {
+              ...contractInfo,
+              ...parentContractInfo,
+              key: contractInfo.id,
+              index: index + 1,
+              label: contractInfo.name,
+              value: contractInfo.id,
+              contractState: contractInfo.contractState === 1 ? "已通过" : "已超期",
+              statusText: contractInfo.status === 1 ? "生效" : "未生效",
+              isJrText: contractInfo.isJr === 1 ? "是" : "否",
+              isReportText: contractInfo.isReport === 1 ? "是" : "否",
+            };
+
+          });
+          console.log(ProjectData.value, 'ProjectData');
+
+        } else {
+          message.error(resp.data.message || "获取主合同数据列表失败");
+        }
+      } catch (error: any) {
+        console.log(error, 'errorerrorerror');
+
+        message.error(error.message || "获取主合同数据列表失败");
+      }
+    };
+
     const handleOk = async () => {
       try {
         const fromData = JSON.parse(JSON.stringify(form));
         fromData.year = Number(fromData.year || 0);
-        fromData.type = Number(fromData.type || 0);
         fromData.totalDuration = Number(fromData.totalDuration || 0);
         fromData.status = Number(fromData.status || 0);
         fromData.qualification = Number(fromData.qualification || 0);
@@ -733,13 +838,14 @@ export default defineComponent({
         fromData.contractState = Number(fromData.contractState || 0);
         fromData.basicInfoManaged = Number(fromData.basicInfoManaged || 0);
         fromData.addSource = Number(fromData.addSource || 0);
-
+        fromData.type = Number(fromData.type || 2);
+        fromData.id = props.data.title === "新增外协合同" ? undefined : fromData.id;
+        fromData.projectId = ProjectDetails.value ? ProjectDetails.value.projectId : undefined;
         const resp = await getDates("outsourcing/setContract", {
           contractInfo: fromData,
-          // paymentApplications: paymentData.value,
         });
         console.log(resp);
-        
+
         if (resp.data.code === 200) {
           message.success(props.data.id ? "合同更新成功" : "合同添加成功");
           visible.value = false;
@@ -751,9 +857,29 @@ export default defineComponent({
         message.error(error.message);
       }
     };
-
+    // 获取当前时间 年月日时分秒
+    const getCurrentDateTime = () => {
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      const day = String(now.getDate()).padStart(2, '0');
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const seconds = String(now.getSeconds()).padStart(2, '0');
+      return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+    };
+    // 返回当前年
+    const getCurrentYear = () => {
+      const now = new Date();
+      return now.getFullYear();
+    };
     const resetForm = () => {
+      let timer = getCurrentDateTime();
+      let year = getCurrentYear();
+      console.log(timer, 'timertimertimer');
+      formRef.value?.resetFields();
       Object.assign(form, {
+        name: "",
         mainContract: "",
         projectName: "",
         outsourcingType: undefined,
@@ -768,15 +894,15 @@ export default defineComponent({
         outsourcingUnit: "",
         mainContractTypeOne: undefined,
         otherBillingUnit: "",
-        outsourcingResponsibleUnit: undefined,
+        outsourcingResponsibleUnit: '旷古公司',
         productionResponsibleUnit: undefined,
         nature: undefined,
         handler: "",
         outsourcingContractAmount: "",
         contractPriceType: undefined,
-        paymentRatio: "",
+        paymentRatio: 100,
         belongYear: undefined,
-        signDate: undefined,
+        signDate: timer,
         paymentCycle: "",
         projectDepartment: undefined,
         plannedStartDate: undefined,
@@ -784,23 +910,25 @@ export default defineComponent({
         actualStartDate: undefined as Date | undefined | string,
         actualCompletionDate: undefined as Date | undefined | string,
         totalDuration: "",
-        isFramework: undefined,
+        isFramework: '0',
+        priceType: '1',
         commandPost: undefined,
         province: undefined,
-        registrationDate: undefined as Date | undefined | string,
-        mainContractPhaseDays: "",
+        registrationDate: timer,
+        mainContractPhaseDays: "0",
         status: undefined,
-        basicInfoManaged: undefined,
-        isArchived: undefined,
-        ifPush: undefined,
+        basicInfoManaged: '0',
+        isArchived: '0',
+        ifPush: '0',
         remark: "",
         attachments: [],
         contractName: "",
         customerName: "",
         invoiceEntity: "",
         ownershipUnit: "",
+        id: "",
+        projectId: "",
       });
-      formRef.value?.resetFields();
       // 重置支付申请数据
       paymentData.value = [{
         key: '1',
@@ -821,8 +949,43 @@ export default defineComponent({
         form.attachments.splice(index, 1);
       }
     };
+    // 合同名称输入框值改变时触发搜索
+    const onNameChange = (e: any) => {
+      console.log(e, '合同名称改变');
+
+      form.name = e.target.value;
+    };
+    // 获取主合同数据列表
+    const ProjectData = ref([
+      { value: 'jack', label: 'Jack' },
+    ]);
+    //获取项目列表数据
+    const ProjectsList = ref<any[]>([]);
+    const ProjectDetails = ref<any>(null);
+    const handleChange = (value: any) => {
+      console.log(`selected ${value}`);
+      const contractDetail = ProjectData.value.find(item => item.label === value);
+      console.log(contractDetail, 'contractDetailcontractDetail');
+      if (contractDetail) {
+        Object.assign(form, contractDetail);
+      }
+    };
+    const handleProjectChange = (value: any) => {
+      console.log(`selected ${value}`, ProjectsList.value);
+      const currentProject = ProjectsList.value.find(item => item.label === value);
+      console.log('查找得到的完整对象:', currentProject);
+      ProjectDetails.value = currentProject;
+    };
+    const handleSearch = (value: any) => {
+      console.log(`searched ${value}`);
+    };
 
     return {
+      ProjectsList,
+      ProjectData,
+      handleChange,
+      handleProjectChange,
+      handleSearch,
       visible,
       loading,
       form,
@@ -841,6 +1004,7 @@ export default defineComponent({
       removeAttachment,
       downloadFile,
       viewFile,
+      onNameChange
     };
   },
 });
@@ -872,14 +1036,15 @@ export default defineComponent({
 
 .header {
   display: flex;
-  justify-content: space-between;
+  // justify-content: space-between;
   align-items: center;
   margin-bottom: 16px;
 }
 
 .total-amount {
   font-weight: bold;
-  color: #1890ff;
+  // color: #1890ff;
+  margin-left: 20px;
 }
 
 .attachment-container {
