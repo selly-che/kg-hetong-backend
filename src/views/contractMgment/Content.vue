@@ -476,4 +476,21 @@ const getContractList = async () => {
     margin-bottom: 6px;
   }
 }
+
+:deep(.ant-table-body) {
+  &::-webkit-scrollbar {
+    width: 0px;
+    height: 12px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: #b8b7b7;
+    border-radius: 3px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background-color: #f0f0f0;
+    border-radius: 3px;
+  }
+}
 </style>
