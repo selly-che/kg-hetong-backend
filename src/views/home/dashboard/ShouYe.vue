@@ -10,7 +10,7 @@
           <a class="side1-more" @click="$router.push('/projectMgment')">全部</a>
         </div>
         <ul>
-          <li v-for="project in projects" :key="project.id">
+          <li v-for="project in projects.slice(0, 6)" :key="project.id">
             <Side1Cards :project="project" />
           </li>
         </ul>
@@ -64,7 +64,7 @@ const getProjectList = async () => {
     overflow: hidden;
     box-sizing: border-box;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-    border-radius: 0px;
+    border-radius: 8px;
     .side1-header {
       display: flex;
       justify-content: space-between;
@@ -121,6 +121,7 @@ const getProjectList = async () => {
   }
   .side2 {
     width: 40%;
+    border-radius: 8px;
   }
 }
 .footer {

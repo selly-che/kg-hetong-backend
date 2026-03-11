@@ -1,12 +1,11 @@
 <template>
   <div class="project-card">
     <div class="project-card-header">
-      <a-tag class="project-type-tag">{{ props.project.projectType }}</a-tag>
-      <a-tag
-        class="project-status-tag"
-        :class="getStatusClass(getStatusText(props.project.projectStatus))"
-      >
-        {{ getStatusText(props.project.projectStatus) }}
+      <a-tag color="blue" class="project-type-tag">{{
+        props.project.projectType
+      }}</a-tag>
+      <a-tag class="project-status-tag" color="cyan">
+        {{ props.project.projectStepStr }}
       </a-tag>
     </div>
     <h3 class="project-name">{{ props.project.projectShortName }}</h3>
@@ -27,14 +26,16 @@
       <a-button class="action-btn view-btn" @click="watchProject"
         >查看项目</a-button
       >
-      <a-button class="action-btn edit-btn">编辑</a-button>
+      <!-- <a-button class="action-btn edit-btn">编辑</a-button> -->
     </div>
   </div>
 </template>
 
 <script setup>
 import { defineProps } from "vue";
+import { useRouter } from "vue-router";
 
+const router = useRouter();
 const props = defineProps({
   project: {
     type: Object,
@@ -43,35 +44,13 @@ const props = defineProps({
 });
 
 const watchProject = () => {
-  // router.push({
-  //   path: `/projectMgment/watchproject`,
-  //   name: "watchProject",
-  //   params: { id: props.project.id },
-};
-const getStatusText = (status) => {
-  switch (status) {
-    case 1:
-      return "进行中";
-    case 2:
-      return "已暂停";
-    case 3:
-      return "已结束";
-    default:
-      return "";
-  }
-};
-
-const getStatusClass = (status) => {
-  switch (status) {
-    case "进行中":
-      return "status-in-progress";
-    case "已暂停":
-      return "status-paused";
-    case "已结束":
-      return "status-completed";
-    default:
-      return "";
-  }
+  const route = router.resolve({
+    name: "ProjectOverview",
+    query: {
+      projectId: props.project.id,
+    },
+  });
+  window.open(route.href, "_blank");
 };
 </script>
 
@@ -79,9 +58,9 @@ const getStatusClass = (status) => {
 .project-card {
   background: #fff;
   border-radius: 8px;
-  border: 0.2px solid #bebebe;
+  border: 0px solid #bebebe;
   padding: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
   height: 100%;
   display: flex;
@@ -92,7 +71,7 @@ const getStatusClass = (status) => {
 }
 
 .project-card:hover {
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
 }
 
 .project-card-header {
@@ -106,9 +85,9 @@ const getStatusClass = (status) => {
 .project-type-tag {
   font-size: 11px;
   padding: 1px 6px;
-  background: #f0f2f5;
+  /* background: #f0f2f5;
   border-color: #f0f2f5;
-  color: #666;
+  color: #666; */
 }
 
 .project-status-tag {

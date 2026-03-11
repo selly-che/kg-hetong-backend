@@ -732,4 +732,20 @@ const handleExpand = () => {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
   padding: 20px;
 }
+:deep(.ant-table-body) {
+  &::-webkit-scrollbar {
+    width: 0px;
+    height: 12px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: #b8b7b7;
+    border-radius: 3px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background-color: #f0f0f0;
+    border-radius: 3px;
+  }
+}
 </style>
