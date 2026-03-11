@@ -153,7 +153,7 @@ export default {
     },
     async getbarinfo() {
       const res = await getDatas("home/GetContractCountStats", this.params);
-      // console.log("柱状图数据", res.data.result);
+      console.log("柱状图数据", res.data.result);
       //tab切换
       let tab = "internalContractCountStats";
       if (this.activeKey === "1") {

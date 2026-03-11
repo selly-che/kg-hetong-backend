@@ -310,9 +310,8 @@ const exportExcelHandler = () => {
   const selectedData = data.value.filter((item) =>
     selectedRowKeys.value.includes(item.key),
   );
-
+  // 过滤不用导出的列
   const exportColumns = columns
-    // 过滤不用导出的列
     .filter(
       (col) =>
         col.dataIndex &&
@@ -346,12 +345,11 @@ onMounted(() => {
 watch(
   () => props.searchParams,
   (newParams) => {
-    // console.log("searchParams变化:", newParams);
     getContractList();
   },
   { deep: true },
 );
-//点击合同名称跳转操作
+//点击合同名称跳转
 const handleNameClick = (record) => {
   console.log("点击的合同名称:", record.name, "合同id:", record.key);
   router.push({
@@ -363,10 +361,10 @@ const handleNameClick = (record) => {
 //   console.log("合同id:", record.key);
 // };
 
+// 刷新合同列表+暴露
 const refreshContractList = () => {
   getContractList();
 };
-
 defineExpose({
   refreshContractList,
 });
@@ -442,13 +440,15 @@ const getContractList = async () => {
   };
   const res = await getDates("contract/GetContractList", requestParams);
   const resData = res.data.result.records;
-  // console.log("分页查询合同列表111", resData[0].contractInfo);
   if (res.data.code === 200) {
     const records = resData || [];
     data.value = records.map((item, index) => {
       const contractInfo = item.contractInfo || {};
       const contractDetails = item.contractDetails || {};
-      const accumulatedInvoicingAmount = item.billInfoList && item.billInfoList[0] ? item.billInfoList[0].accumulatedInvoicingAmount : null;
+      const accumulatedInvoicingAmount =
+        item.billInfoList && item.billInfoList[0]
+          ? item.billInfoList[0].accumulatedInvoicingAmount
+          : null;
       return {
         ...contractInfo,
         ...contractDetails,
@@ -462,7 +462,6 @@ const getContractList = async () => {
       };
     });
     console.log(data.value, "分页查询合同列表222");
-    
   }
 };
 </script>
@@ -477,7 +476,7 @@ const getContractList = async () => {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 6px;
+    transform: translateY(-10px);
   }
 }
 

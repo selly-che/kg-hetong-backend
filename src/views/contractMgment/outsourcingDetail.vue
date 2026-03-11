@@ -20,307 +20,361 @@
           ></div>
           <p style="margin: 0">基本信息</p>
         </div>
-        <a-form :label-col="{ span: 8 }" :wrapper-col="{ span: 14 }">
-          <a-row :gutter="16">
-            <a-col :span="8">
-              <a-form-item label="主合同">
-                <a-input v-model:value="formData.mainContract"></a-input>
-              </a-form-item>
-            </a-col>
-            <a-col :span="8">
-              <a-form-item label="所属项目">
-                <a-input v-model:value="formData.project"></a-input>
-              </a-form-item>
-            </a-col>
-            <a-col :span="8">
-              <a-form-item label="外协类型">
-                <a-input v-model:value="formData.outsourcingType"></a-input>
-              </a-form-item>
-            </a-col>
-          </a-row>
-          <a-row :gutter="16">
-            <a-col :span="8">
-              <a-form-item label="合同名称">
-                <a-input v-model:value="formData.name"></a-input>
-              </a-form-item>
-            </a-col>
-            <a-col :span="8">
-              <a-form-item label="合同编号">
-                <a-input v-model:value="formData.code"></a-input>
-              </a-form-item>
-            </a-col>
-            <a-col :span="8">
-              <a-form-item label="合同识别号">
-                <a-input v-model:value="formData.number"></a-input>
-              </a-form-item>
-            </a-col>
-          </a-row>
-          <a-row :gutter="16">
-            <a-col :span="8">
-              <a-form-item label="合同唯一ID">
-                <a-input v-model:value="formData.uniqueNumber"></a-input>
-              </a-form-item>
-            </a-col>
-            <a-col :span="8">
-              <a-form-item label="主合同编号">
-                <a-input v-model:value="formData.mainContractNumber"></a-input>
-              </a-form-item>
-            </a-col>
-            <a-col :span="8">
-              <a-form-item label="主合同承揽类型">
-                <a-input v-model:value="formData.contractType"></a-input>
-              </a-form-item>
-            </a-col>
-          </a-row>
-          <a-row :gutter="16">
-            <a-col :span="8">
-              <a-form-item label="主合同金额">
-                <a-input-number
-                  style="width: 100%"
-                  v-model:value="formData.amount"
-                ></a-input-number>
-              </a-form-item>
-            </a-col>
-            <a-col :span="8">
-              <a-form-item label="主合同累计收款">
-                <a-input-number
-                  style="width: 100%"
-                  v-model:value="formData.mainContractReceivedAmount"
-                ></a-input-number>
-              </a-form-item>
-            </a-col>
-            <a-col :span="8">
-              <a-form-item label="主合同板块">
-                <a-input v-model:value="formData.section"></a-input>
-              </a-form-item>
-            </a-col>
-          </a-row>
-          <a-row :gutter="16">
-            <a-col :span="8">
-              <a-form-item label="外协单位">
-                <a-input v-model:value="formData.outsourcingUnit"></a-input>
-              </a-form-item>
-            </a-col>
-            <a-col :span="8">
-              <a-form-item label="主合同类型一">
-                <a-input v-model:value="formData.typeOne"></a-input>
-              </a-form-item>
-            </a-col>
-            <a-col :span="8">
-              <a-form-item label="其他开票单位">
-                <a-input v-model:value="formData.invoiceEntity"></a-input>
-              </a-form-item>
-            </a-col>
-          </a-row>
-          <a-row :gutter="16">
-            <a-col :span="8">
-              <a-form-item label="外协主责单位">
-                <a-input v-model:value="formData.ownershipUnit"></a-input>
-              </a-form-item>
-            </a-col>
-            <a-col :span="8">
-              <a-form-item label="生产主责单位">
-                <a-input v-model:value="formData.mainUnit"></a-input>
-              </a-form-item>
-            </a-col>
-            <a-col :span="8">
-              <a-form-item label="性质">
-                <a-input v-model:value="formData.properties"></a-input>
-              </a-form-item>
-            </a-col>
-          </a-row>
-          <a-row :gutter="16">
-            <a-col :span="8">
-              <a-form-item label="经办人">
-                <a-input v-model:value="formData.charge"></a-input>
-              </a-form-item>
-            </a-col>
-            <a-col :span="8">
-              <a-form-item label="外协合同金额">
-                <a-input-number
-                  style="width: 100%"
-                  v-model:value="formData.outsourcingContractAmount"
-                ></a-input-number>
-              </a-form-item>
-            </a-col>
-            <a-col :span="8">
-              <a-form-item label="合同价格类型">
-                <a-input v-model:value="formData.priceType"></a-input>
-              </a-form-item>
-            </a-col>
-          </a-row>
-          <a-row :gutter="16">
-            <a-col :span="8">
-              <a-form-item label="同意付款比例">
-                <a-input-number
-                  style="width: 100%"
-                  :min="0"
-                  :max="100"
-                  v-model:value="formData.paymentRatio"
-                ></a-input-number>
-              </a-form-item>
-            </a-col>
-            <a-col :span="8">
-              <a-form-item label="归属年份">
-                <a-date-picker
-                  style="width: 100%"
-                  picker="year"
-                  value-format="YYYY"
-                  v-model:value="formData.year"
-                ></a-date-picker>
-              </a-form-item>
-            </a-col>
-            <a-col :span="8">
-              <a-form-item label="约定付款周期">
-                <a-input v-model:value="formData.paymentCycle"></a-input>
-              </a-form-item>
-            </a-col>
-          </a-row>
-          <a-row :gutter="16">
-            <a-col :span="8">
-              <a-form-item label="签订日期">
-                <a-date-picker
-                  style="width: 100%"
-                  v-model:value="formData.signTime"
-                  value-format="YYYY-MM-DD HH:mm:ss"
-                ></a-date-picker>
-              </a-form-item>
-            </a-col>
-            <a-col :span="8">
-              <a-form-item label="业务范围">
-                <a-input v-model:value="formData.businessScope"></a-input>
-              </a-form-item>
-            </a-col>
-            <a-col :span="8">
-              <a-form-item label="计划开工日期">
-                <a-date-picker
-                  style="width: 100%"
-                  value-format="YYYY-MM-DD HH:mm:ss"
-                  v-model:value="formData.plannedCommencementDate"
-                ></a-date-picker>
-              </a-form-item>
-            </a-col>
-          </a-row>
-          <a-row :gutter="16">
-            <a-col :span="8">
-              <a-form-item label="计划竣工日期">
-                <a-date-picker
-                  style="width: 100%"
-                  value-format="YYYY-MM-DD HH:mm:ss"
-                  v-model:value="formData.plannedCompletionDate"
-                ></a-date-picker>
-              </a-form-item>
-            </a-col>
-            <a-col :span="8">
-              <a-form-item label="合同总工期">
-                <a-input-number
-                  style="width: 100%"
-                  value-format="YYYY-MM-DD HH:mm:ss"
-                  v-model:value="formData.totalDuration"
-                ></a-input-number>
-              </a-form-item>
-            </a-col>
-            <a-col :span="8">
-              <a-form-item label="实际开工日期">
-                <a-date-picker
-                  style="width: 100%"
-                  value-format="YYYY-MM-DD HH:mm:ss"
-                  v-model:value="formData.actualCommencementDate"
-                ></a-date-picker>
-              </a-form-item>
-            </a-col>
-          </a-row>
-          <a-row :gutter="16">
-            <a-col :span="8">
-              <a-form-item label="实际竣工日期">
-                <a-date-picker
-                  value-format="YYYY-MM-DD HH:mm:ss"
-                  style="width: 100%"
-                  v-model:value="formData.actualCompletionDate"
-                ></a-date-picker>
-              </a-form-item>
-            </a-col>
-            <a-col :span="8">
-              <a-form-item label="是否框架合同">
-                <a-select v-model:value="formData.isFramework">
-                  <a-select-option :value="1">是</a-select-option>
-                  <a-select-option :value="0">否</a-select-option>
-                </a-select>
-              </a-form-item>
-            </a-col>
-            <a-col :span="8">
-              <a-form-item label="项目部">
-                <a-input v-model:value="formData.projectDept"></a-input>
-              </a-form-item>
-            </a-col>
-          </a-row>
-          <a-row :gutter="16">
-            <a-col :span="8">
-              <a-form-item label="省份">
-                <a-input v-model:value="formData.province"></a-input>
-              </a-form-item>
-            </a-col>
-            <a-col :span="8">
-              <a-form-item label="备注">
-                <a-input v-model:value="formData.remarks"></a-input>
-              </a-form-item>
-            </a-col>
-            <a-col :span="8">
-              <a-form-item label="登记日期">
-                <a-date-picker
-                  style="width: 100%"
-                  value-format="YYYY-MM-DD HH:mm:ss"
-                  v-model:value="formData.registerTime"
-                ></a-date-picker>
-              </a-form-item>
-            </a-col>
-          </a-row>
-          <a-row :gutter="16">
-            <a-col :span="8">
-              <a-form-item label="主合同相应阶段完成天数">
-                <a-input-number
-                  style="width: 100%"
-                  v-model:value="formData.mainContractStageDays"
-                ></a-input-number>
-              </a-form-item>
-            </a-col>
-            <a-col :span="8">
-              <a-form-item label="基本信息是否已治理">
-                <a-select v-model:value="formData.basicInfoManaged">
-                  <a-select-option :value="1">是</a-select-option>
-                  <a-select-option :value="0">否</a-select-option>
-                </a-select>
-              </a-form-item>
-            </a-col>
-            <a-col :span="8">
-              <a-form-item label="是否推送司库">
-                <a-select v-model:value="formData.ifPush">
-                  <a-select-option :value="1">是</a-select-option>
-                  <a-select-option :value="0">否</a-select-option>
-                </a-select>
-              </a-form-item>
-            </a-col>
-          </a-row>
-          <a-row :gutter="16">
-            <a-col :span="8">
-              <a-form-item label="合同状态">
-                <a-select v-model:value="formData.contractState">
-                  <a-select-option value="已签订">已签订</a-select-option>
-                  <a-select-option value="已完成">已完成</a-select-option>
-                  <a-select-option value="履行中">履行中</a-select-option>
-                </a-select>
-              </a-form-item>
-            </a-col>
-            <a-col :span="8">
-              <a-form-item label="是否封存">
-                <a-select v-model:value="formData.isArchived">
-                  <a-select-option :value="1">是</a-select-option>
-                  <a-select-option :value="0">否</a-select-option>
-                </a-select>
-              </a-form-item>
-            </a-col>
-          </a-row>
-        </a-form>
+        <div class="formback">
+          <a-form :label-col="{ span: 8 }" :wrapper-col="{ span: 14 }">
+            <a-row :gutter="16">
+              <a-col :span="8">
+                <a-form-item label="主合同">
+                  <a-input
+                    v-model:value="formData.mainContract"
+                    disabled
+                  ></a-input>
+                </a-form-item>
+              </a-col>
+              <a-col :span="8">
+                <a-form-item label="所属项目">
+                  <a-input v-model:value="formData.project" disabled></a-input>
+                </a-form-item>
+              </a-col>
+              <a-col :span="8">
+                <a-form-item label="外协类型">
+                  <a-input
+                    v-model:value="formData.outsourcingType"
+                    disabled
+                  ></a-input>
+                </a-form-item>
+              </a-col>
+            </a-row>
+            <a-row :gutter="16">
+              <a-col :span="8">
+                <a-form-item label="合同名称">
+                  <a-input v-model:value="formData.name" disabled></a-input>
+                </a-form-item>
+              </a-col>
+              <a-col :span="8">
+                <a-form-item label="合同编号">
+                  <a-input v-model:value="formData.code" disabled></a-input>
+                </a-form-item>
+              </a-col>
+              <a-col :span="8">
+                <a-form-item label="合同识别号">
+                  <a-input v-model:value="formData.number" disabled></a-input>
+                </a-form-item>
+              </a-col>
+            </a-row>
+            <a-row :gutter="16">
+              <a-col :span="8">
+                <a-form-item label="合同唯一ID">
+                  <a-input
+                    v-model:value="formData.uniqueNumber"
+                    disabled
+                  ></a-input>
+                </a-form-item>
+              </a-col>
+              <a-col :span="8">
+                <a-form-item label="主合同编号">
+                  <a-input
+                    v-model:value="formData.mainContractNumber"
+                    disabled
+                  ></a-input>
+                </a-form-item>
+              </a-col>
+              <a-col :span="8">
+                <a-form-item label="主合同承揽类型">
+                  <a-input
+                    v-model:value="formData.contractType"
+                    disabled
+                  ></a-input>
+                </a-form-item>
+              </a-col>
+            </a-row>
+            <a-row :gutter="16">
+              <a-col :span="8">
+                <a-form-item label="主合同金额">
+                  <a-input-number
+                    style="width: 100%"
+                    v-model:value="formData.amount"
+                    disabled
+                  ></a-input-number>
+                </a-form-item>
+              </a-col>
+              <a-col :span="8">
+                <a-form-item label="主合同累计收款">
+                  <a-input-number
+                    style="width: 100%"
+                    v-model:value="formData.mainContractReceivedAmount"
+                    disabled
+                  ></a-input-number>
+                </a-form-item>
+              </a-col>
+              <a-col :span="8">
+                <a-form-item label="主合同板块">
+                  <a-input v-model:value="formData.section" disabled></a-input>
+                </a-form-item>
+              </a-col>
+            </a-row>
+            <a-row :gutter="16">
+              <a-col :span="8">
+                <a-form-item label="外协单位">
+                  <a-input
+                    v-model:value="formData.outsourcingUnit"
+                    disabled
+                  ></a-input>
+                </a-form-item>
+              </a-col>
+              <a-col :span="8">
+                <a-form-item label="主合同类型一">
+                  <a-input v-model:value="formData.typeOne" disabled></a-input>
+                </a-form-item>
+              </a-col>
+              <a-col :span="8">
+                <a-form-item label="其他开票单位">
+                  <a-input
+                    v-model:value="formData.invoiceEntity"
+                    disabled
+                  ></a-input>
+                </a-form-item>
+              </a-col>
+            </a-row>
+            <a-row :gutter="16">
+              <a-col :span="8">
+                <a-form-item label="外协主责单位">
+                  <a-input
+                    v-model:value="formData.ownershipUnit"
+                    disabled
+                  ></a-input>
+                </a-form-item>
+              </a-col>
+              <a-col :span="8">
+                <a-form-item label="生产主责单位">
+                  <a-input v-model:value="formData.mainUnit" disabled></a-input>
+                </a-form-item>
+              </a-col>
+              <a-col :span="8">
+                <a-form-item label="性质">
+                  <a-input
+                    v-model:value="formData.properties"
+                    disabled
+                  ></a-input>
+                </a-form-item>
+              </a-col>
+            </a-row>
+            <a-row :gutter="16">
+              <a-col :span="8">
+                <a-form-item label="经办人">
+                  <a-input v-model:value="formData.charge" disabled></a-input>
+                </a-form-item>
+              </a-col>
+              <a-col :span="8">
+                <a-form-item label="外协合同金额">
+                  <a-input-number
+                    style="width: 100%"
+                    v-model:value="formData.outsourcingContractAmount"
+                    diaabled
+                  ></a-input-number>
+                </a-form-item>
+              </a-col>
+              <a-col :span="8">
+                <a-form-item label="合同价格类型">
+                  <a-input
+                    v-model:value="formData.priceType"
+                    disabled
+                  ></a-input>
+                </a-form-item>
+              </a-col>
+            </a-row>
+            <a-row :gutter="16">
+              <a-col :span="8">
+                <a-form-item label="同意付款比例">
+                  <a-input-number
+                    style="width: 100%"
+                    :min="0"
+                    :max="100"
+                    v-model:value="formData.paymentRatio"
+                    disabled
+                  ></a-input-number>
+                </a-form-item>
+              </a-col>
+              <a-col :span="8">
+                <a-form-item label="归属年份">
+                  <a-date-picker
+                    style="width: 100%"
+                    picker="year"
+                    value-format="YYYY"
+                    v-model:value="formData.year"
+                    disabled
+                  ></a-date-picker>
+                </a-form-item>
+              </a-col>
+              <a-col :span="8">
+                <a-form-item label="约定付款周期">
+                  <a-input
+                    v-model:value="formData.paymentCycle"
+                    disabled
+                  ></a-input>
+                </a-form-item>
+              </a-col>
+            </a-row>
+            <a-row :gutter="16">
+              <a-col :span="8">
+                <a-form-item label="签订日期">
+                  <a-date-picker
+                    style="width: 100%"
+                    v-model:value="formData.signTime"
+                    value-format="YYYY-MM-DD HH:mm:ss"
+                    disabled
+                  ></a-date-picker>
+                </a-form-item>
+              </a-col>
+              <a-col :span="8">
+                <a-form-item label="业务范围">
+                  <a-input
+                    v-model:value="formData.businessScope"
+                    disabled
+                  ></a-input>
+                </a-form-item>
+              </a-col>
+              <a-col :span="8">
+                <a-form-item label="计划开工日期">
+                  <a-date-picker
+                    style="width: 100%"
+                    value-format="YYYY-MM-DD HH:mm:ss"
+                    v-model:value="formData.plannedCommencementDate"
+                    disabled
+                  ></a-date-picker>
+                </a-form-item>
+              </a-col>
+            </a-row>
+            <a-row :gutter="16">
+              <a-col :span="8">
+                <a-form-item label="计划竣工日期">
+                  <a-date-picker
+                    style="width: 100%"
+                    value-format="YYYY-MM-DD HH:mm:ss"
+                    v-model:value="formData.plannedCompletionDate"
+                    disabled
+                  ></a-date-picker>
+                </a-form-item>
+              </a-col>
+              <a-col :span="8">
+                <a-form-item label="合同总工期">
+                  <a-input-number
+                    style="width: 100%"
+                    value-format="YYYY-MM-DD HH:mm:ss"
+                    v-model:value="formData.totalDuration"
+                    disabled
+                  ></a-input-number>
+                </a-form-item>
+              </a-col>
+              <a-col :span="8">
+                <a-form-item label="实际开工日期">
+                  <a-date-picker
+                    style="width: 100%"
+                    value-format="YYYY-MM-DD HH:mm:ss"
+                    v-model:value="formData.actualCommencementDate"
+                    disabled
+                  ></a-date-picker>
+                </a-form-item>
+              </a-col>
+            </a-row>
+            <a-row :gutter="16">
+              <a-col :span="8">
+                <a-form-item label="实际竣工日期">
+                  <a-date-picker
+                    value-format="YYYY-MM-DD HH:mm:ss"
+                    style="width: 100%"
+                    v-model:value="formData.actualCompletionDate"
+                    disabled
+                  ></a-date-picker>
+                </a-form-item>
+              </a-col>
+              <a-col :span="8">
+                <a-form-item label="是否框架合同">
+                  <a-select v-model:value="formData.isFramework" disabled>
+                    <a-select-option :value="1">是</a-select-option>
+                    <a-select-option :value="0">否</a-select-option>
+                  </a-select>
+                </a-form-item>
+              </a-col>
+              <a-col :span="8">
+                <a-form-item label="项目部">
+                  <a-input
+                    v-model:value="formData.projectDept"
+                    disabled
+                  ></a-input>
+                </a-form-item>
+              </a-col>
+            </a-row>
+            <a-row :gutter="16">
+              <a-col :span="8">
+                <a-form-item label="省份">
+                  <a-input v-model:value="formData.province" disabled></a-input>
+                </a-form-item>
+              </a-col>
+              <a-col :span="8">
+                <a-form-item label="备注">
+                  <a-input v-model:value="formData.remarks" disabled></a-input>
+                </a-form-item>
+              </a-col>
+              <a-col :span="8">
+                <a-form-item label="登记日期">
+                  <a-date-picker
+                    style="width: 100%"
+                    value-format="YYYY-MM-DD HH:mm:ss"
+                    v-model:value="formData.registerTime"
+                    disabled
+                  ></a-date-picker>
+                </a-form-item>
+              </a-col>
+            </a-row>
+            <a-row :gutter="16">
+              <a-col :span="8">
+                <a-form-item label="主合同相应阶段完成天数">
+                  <a-input-number
+                    style="width: 100%"
+                    v-model:value="formData.mainContractStageDays"
+                    disabled
+                  ></a-input-number>
+                </a-form-item>
+              </a-col>
+              <a-col :span="8">
+                <a-form-item label="基本信息是否已治理">
+                  <a-select v-model:value="formData.basicInfoManaged" disabled>
+                    <a-select-option :value="1">是</a-select-option>
+                    <a-select-option :value="0">否</a-select-option>
+                  </a-select>
+                </a-form-item>
+              </a-col>
+              <a-col :span="8">
+                <a-form-item label="是否推送司库">
+                  <a-select v-model:value="formData.ifPush" disabled>
+                    <a-select-option :value="1">是</a-select-option>
+                    <a-select-option :value="0">否</a-select-option>
+                  </a-select>
+                </a-form-item>
+              </a-col>
+            </a-row>
+            <a-row :gutter="16">
+              <a-col :span="8">
+                <a-form-item label="合同状态">
+                  <a-select v-model:value="formData.contractState" disabled>
+                    <a-select-option value="已签订">已签订</a-select-option>
+                    <a-select-option value="已完成">已完成</a-select-option>
+                    <a-select-option value="履行中">履行中</a-select-option>
+                  </a-select>
+                </a-form-item>
+              </a-col>
+              <a-col :span="8">
+                <a-form-item label="是否封存">
+                  <a-select v-model:value="formData.isArchived" disabled>
+                    <a-select-option :value="1">是</a-select-option>
+                    <a-select-option :value="0">否</a-select-option>
+                  </a-select>
+                </a-form-item>
+              </a-col>
+            </a-row>
+          </a-form>
+        </div>
         <div
           style="
             display: flex;
@@ -638,28 +692,18 @@ watch(
 </script>
 
 <style lang="less" scoped>
-:deep(.ant-table) {
-  background-color: #ffffff;
+:deep(.ant-input-disabled) {
+  color: #000;
 }
-
-:deep(.ant-table-container) {
-  background-color: #ffffff;
+:deep(.ant-select-disabled .ant-select-selector) {
+  color: #000 !important;
 }
-
-:deep(.ant-table-tbody) {
-  background-color: #ffffff;
+:deep(.ant-picker-disabled .ant-picker-input > input) {
+  color: #000 !important;
 }
-
-:deep(.ant-table-thead > tr > th) {
-  background-color: #ffffff;
-}
-
-:deep(.ant-table-tbody > tr > td) {
-  background-color: #ffffff;
-}
-
-:deep(.ant-table-tbody > tr:hover > td) {
-  background-color: #ffffff;
+.formback {
+  background-color: #fff;
+  padding: 20px;
 }
 
 .timeline {

@@ -164,6 +164,7 @@ export default {
   height: 440px;
   background-color: #fff;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border-radius: 8px;
 
   .pie-title {
     font-size: 14px;
