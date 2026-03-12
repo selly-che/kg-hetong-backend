@@ -39,6 +39,7 @@
                 <a-col :span="8">
                   <a-form-item label="中标时间">
                     <a-date-picker
+                    placeholder="请选择中标时间"
                       v-model:value="formData.winBidTime"
                       style="width: 100%"
                       disabled
@@ -192,6 +193,7 @@
                 <a-col :span="8">
                   <a-form-item label="签订日期">
                     <a-date-picker
+                    placeholder="请选择签订日期"
                       v-model:value="formData.signTime"
                       style="width: 100%"
                       disabled
@@ -200,7 +202,9 @@
                 </a-col>
                 <a-col :span="8">
                   <a-form-item label="合同归属年份">
+                    
                     <a-date-picker
+                    placeholder="请选择合同归属年份"
                       v-model:value="formData.year"
                       picker="year"
                       style="width: 100%"
@@ -261,6 +265,7 @@
                       v-model:value="formData.plannedCommencementDate"
                       style="width: 100%"
                       disabled
+                      placeholder="请选择计划开工日期"
                     />
                   </a-form-item>
                 </a-col>
@@ -269,6 +274,7 @@
                     <a-date-picker
                       v-model:value="formData.plannedCompletionDate"
                       style="width: 100%"
+                      placeholder="请选择计划竣工日期"
                       disabled
                     />
                   </a-form-item>
@@ -286,6 +292,7 @@
                       v-model:value="formData.actualCommencementDate"
                       style="width: 100%"
                       disabled
+                      placeholder="请选择实际开工日期"
                     />
                   </a-form-item>
                 </a-col>
@@ -294,6 +301,7 @@
                     <a-date-picker
                       v-model:value="formData.actualCompletionDate"
                       style="width: 100%"
+                      placeholder="请选择实际竣工日期"
                       disabled
                     />
                   </a-form-item>

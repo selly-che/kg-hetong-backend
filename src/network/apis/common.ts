@@ -37,5 +37,13 @@ export default {
             url: "/sys/file/download",
             params,
         };
-    }
+    },
+    // 文件上传接口
+    FileUpload(params: any) {
+        return {
+            method: "POST",
+            url: "/sys/file/upload",
+            data:params,
+        };
+    },
 }
