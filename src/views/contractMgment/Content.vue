@@ -469,8 +469,11 @@ const getContractList = async () => {
 <style scoped lang="less">
 .container {
   width: 100%;
-  height: 600px;
+  height: 700px;
   background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  padding: 20px;
 
   .spbu {
     display: flex;

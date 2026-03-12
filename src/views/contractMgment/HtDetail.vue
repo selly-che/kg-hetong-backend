@@ -902,23 +902,6 @@ const contractinfo = async () => {
 </script>
 
 <style lang="less" scoped>
-:deep(.ant-table-body) {
-  &::-webkit-scrollbar {
-    width: 0px;
-    height: 12px;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background-color: #b8b7b7;
-    border-radius: 3px;
-  }
-
-  &::-webkit-scrollbar-track {
-    background-color: #f0f0f0;
-    border-radius: 3px;
-  }
-}
-
 :deep(.ant-table-thead > tr > th) {
   background-color: #f5f9ff !important;
 }
