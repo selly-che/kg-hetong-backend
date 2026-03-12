@@ -2,7 +2,11 @@
   <div class="header-container">
     <a-form layout="inline" class="search-form">
       <a-form-item label="归属年份">
-        <a-date-picker picker="year" v-model:value="formData.year" placeholder="选择年份" />
+        <a-date-picker
+          picker="year"
+          v-model:value="formData.year"
+          placeholder="选择年份"
+        />
       </a-form-item>
       <a-form-item label="板块">
         <a-select v-model:value="formData.section" placeholder="全部">
@@ -13,6 +17,7 @@
       </a-form-item>
       <a-form-item label="承揽类型">
         <a-select v-model:value="formData.contractType" placeholder="全部">
+          <a-select-option value="all">全部</a-select-option>
           <a-select-option value="0">0</a-select-option>
           <a-select-option value="1">1</a-select-option>
         </a-select>
@@ -187,7 +192,7 @@ import { ref } from "vue";
 import { DownOutlined, UpOutlined } from "@ant-design/icons-vue";
 
 const emit = defineEmits(["search", "reset"]);
-const isExpanded = ref(false);
+const isExpanded = ref(true);
 const formData = ref({
   year: null as any,
   section: "all", //

@@ -124,8 +124,14 @@
       >
       <a-button @click="exportExcelHandle">导出excel</a-button>
       <div class="table" style="margin-top: 10px">
-        <a-table :columns="columns" :data-source="tabledata" :loading="loading" :pagination="pagination"
-          :row-selection="rowSelection" :scroll="{ x: 'max-content', y: 600 }">
+        <a-table
+          :columns="columns"
+          :data-source="tabledata"
+          :loading="loading"
+          :pagination="pagination"
+          :row-selection="rowSelection"
+          :scroll="{ x: 'max-content', y: 600 }"
+        >
           <template #bodyCell="{ column, record }">
             <template v-if="column.key === 'action'">
               <a style="margin-right: 10px" @click="handleEdit(record)">编辑</a>
@@ -136,7 +142,12 @@
           </template>
         </a-table>
       </div>
-      <outsourcingAdd ref="outsourcingAddRef" @refreshList="getOutsourcingList" :title="title" :data="fromData" />
+      <outsourcingAdd
+        ref="outsourcingAddRef"
+        @refreshList="getOutsourcingList"
+        :title="title"
+        :data="fromData"
+      />
     </div>
   </div>
 </template>
@@ -156,7 +167,7 @@ const title = ref("新增外协合同");
 const fromData = ref({});
 const router = useRouter();
 const outsourcingAddRef = ref();
-const isExpanded = ref(false);
+const isExpanded = ref(true);
 const loading = ref(false);
 const formData = ref({
   year: "all",
@@ -402,7 +413,7 @@ const handleEdit = (record: any) => {
   title.value = "编辑外协合同";
   outsourcingAddRef.value.showModal();
   fromData.value = record;
-  console.log("编辑",  fromData.value );
+  console.log("编辑", fromData.value);
 };
 //分页
 const pagination = ref({
