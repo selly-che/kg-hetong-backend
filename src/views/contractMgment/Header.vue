@@ -188,7 +188,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, onMounted, onUnmounted } from "vue";
 import { DownOutlined, UpOutlined } from "@ant-design/icons-vue";
 
 const emit = defineEmits(["search", "reset"]);
@@ -278,6 +278,7 @@ const handleSearch = () => {
   console.log("搜索参数:", searchParams);
   emit("search", searchParams);
 };
+
 const handleReset = () => {
   formData.value = {
     year: null,
@@ -312,6 +313,19 @@ const handleReset = () => {
 const handleExpand = () => {
   isExpanded.value = !isExpanded.value;
 };
+//enter触发搜索
+const handleKeyup = (e: KeyboardEvent) => {
+  if (e.key === "Enter") {
+    handleSearch();
+  }
+};
+onMounted(() => {
+  window.addEventListener("keyup", handleKeyup);
+});
+// 组件卸载时移除事件监听
+onUnmounted(() => {
+  window.removeEventListener("keyup", handleKeyup);
+});
 </script>
 <style lang="less" scoped>
 .header-container {

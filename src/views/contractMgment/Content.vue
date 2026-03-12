@@ -344,7 +344,7 @@ onMounted(() => {
 
 watch(
   () => props.searchParams,
-  (newParams) => {
+  () => {
     getContractList();
   },
   { deep: true },
