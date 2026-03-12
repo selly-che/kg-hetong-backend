@@ -55,13 +55,13 @@
 
         <a-row :gutter="24">
           <a-col :span="16">
-            <a-form-item label="合同编号" name="code">
-              <a-input v-model:value="form.code" placeholder="系统自动生成" disabled />
+            <a-form-item label="合同编号" name="number">
+              <a-input v-model:value="form.parentContractInfo.number" placeholder="系统自动生成" disabled />
             </a-form-item>
           </a-col>
           <a-col :span="8">
-            <a-form-item label="合同识别号" name="number">
-              <a-input v-model:value="form.number" placeholder="系统自动生成" disabled />
+            <a-form-item label="合同识别号" name="uniqueNumber">
+              <a-input v-model:value="form.parentContractInfo.uniqueNumber" placeholder="系统自动生成" disabled />
             </a-form-item>
           </a-col>
         </a-row>
@@ -69,19 +69,19 @@
         <a-row :gutter="16">
           <a-col :span="8">
             <a-form-item label="合同唯一ID" name="id">
-              <a-input v-model:value="form.id" placeholder="系统自动生成" disabled />
+              <a-input v-model:value="form.parentContractInfo.id" placeholder="系统自动生成" disabled />
             </a-form-item>
           </a-col>
           <a-col :span="8">
-            <a-form-item label="主合同编号" name="mainContractNo">
-              <a-select v-model:value="form.mainContractNo" placeholder="请选择主合同" disabled>
+            <a-form-item label="主合同编号" name="parentContractInfonumber">
+              <a-select v-model:value="form.parentContractInfo.number" placeholder="请选择主合同" disabled>
                 <a-select-option value="pending">待选择</a-select-option>
               </a-select>
             </a-form-item>
           </a-col>
           <a-col :span="8">
             <a-form-item label="主合同承揽类型" name="mainContractType">
-              <a-select v-model:value="form.mainContractType" placeholder="请选择主合同" disabled>
+              <a-select v-model:value="form.parentContractInfo.mainContractType" placeholder="请选择主合同" disabled>
                 <a-select-option value="pending">待选择</a-select-option>
               </a-select>
             </a-form-item>
@@ -91,17 +91,17 @@
         <a-row :gutter="16">
           <a-col :span="8">
             <a-form-item label="主合同金额" name="mainContractAmount">
-              <a-input v-model:value="form.mainContractAmount" placeholder="请选择主合同 (万元)" disabled />
+              <a-input v-model:value="form.parentContractInfo.mainContractAmount" placeholder="请选择主合同 (万元)" disabled />
             </a-form-item>
           </a-col>
           <a-col :span="8">
             <a-form-item label="主合同累计收款" name="mainContractReceivedAmount">
-              <a-input v-model:value="form.mainContractReceivedAmount" placeholder="请选择主合同 (万元)" disabled />
+              <a-input v-model:value="form.parentContractInfo.mainContractReceivedAmount" placeholder="请选择主合同 (万元)" disabled />
             </a-form-item>
           </a-col>
           <a-col :span="8">
             <a-form-item label="主合同板块" name="mainContractSector">
-              <a-select v-model:value="form.mainContractSector" placeholder="请选择主合同" disabled>
+              <a-select v-model:value="form.parentContractInfo.mainContractSector" placeholder="请选择主合同" disabled>
                 <a-select-option value="pending">待选择</a-select-option>
               </a-select>
             </a-form-item>
@@ -110,14 +110,14 @@
         </a-row>
         <a-row :gutter="24">
           <a-col :span="16">
-            <a-form-item label="外协单位" name="outsourcingUnit">
-              <a-auto-complete v-model:value="form.outsourcingUnit" placeholder="请搜索" :options="[]">
+            <a-form-item label="外协单位" name="customer">
+              <a-auto-complete v-model:value="form.customer" placeholder="请搜索" :options="[]">
               </a-auto-complete>
             </a-form-item>
           </a-col>
           <a-col :span="8">
             <a-form-item label="主合同类型一" name="mainContractTypeOne">
-              <a-select v-model:value="form.mainContractTypeOne" placeholder="请选择主合同" disabled>
+              <a-select v-model:value="form.parentContractInfo.mainContractTypeOne" placeholder="请选择主合同" disabled>
                 <a-select-option value="pending">待选择</a-select-option>
               </a-select>
             </a-form-item>
@@ -135,7 +135,7 @@
         <a-row :gutter="24">
           <a-col :span="16">
             <a-form-item label="外协主责单位" name="outsourcingResponsibleUnit">
-              <a-select v-model:value="form.outsourcingResponsibleUnit" placeholder="请选择外协主责单位" disabled>
+              <a-select v-model:value="form.parentContractInfo.outsourcingResponsibleUnit" placeholder="请选择外协主责单位" disabled>
                 <a-select-option value="kuanggu">1</a-select-option>
               </a-select>
             </a-form-item>
@@ -168,8 +168,8 @@
             </a-form-item>
           </a-col>
           <a-col :span="8">
-            <a-form-item label="外协合同金额(万元)" name="outsourcingContractAmount">
-              <a-input v-model:value="form.outsourcingContractAmount" placeholder="待填写具体金额 (万元)" />
+            <a-form-item label="外协合同金额(万元)" name="amount">
+              <a-input v-model:value="form.amount" placeholder="待填写具体金额 (万元)" />
             </a-form-item>
           </a-col>
         </a-row>
@@ -218,8 +218,8 @@
             </a-form-item>
           </a-col>
           <a-col :span="8">
-            <a-form-item label="签订日期" name="signDate">
-              <a-date-picker v-model:value="form.signDate" value-format="YYYY-MM-DD HH:mm:ss" placeholder="请选择签订日期"
+            <a-form-item label="签订日期" name="signTime">
+              <a-date-picker v-model:value="form.signTime" value-format="YYYY-MM-DD HH:mm:ss" placeholder="请选择签订日期"
                 style="width: 100%" />
             </a-form-item>
           </a-col>
@@ -488,25 +488,26 @@ export default defineComponent({
       outsourcingType: undefined,
       code: "",
       number: "",
+      uniqueNumber: "",
       id: "",
       projectId: "",
-      mainContractNo: undefined,
+      parentContractInfonumber: undefined,
       mainContractType: undefined,
       mainContractAmount: "",
       mainContractReceivedAmount: "",
       mainContractSector: undefined,
-      outsourcingUnit: "",
+      customer: "",
       mainContractTypeOne: undefined,
       otherBillingUnit: "",
       outsourcingResponsibleUnit: undefined,
       productionResponsibleUnit: undefined,
       nature: undefined,
       handler: "",
-      outsourcingContractAmount: "",
+      amount: "",
       priceType: undefined as string | undefined,
       paymentRatio: "",
       belongYear: undefined,
-      signDate: undefined as Date | undefined | string,
+      signTime: undefined as Date | undefined | string,
       paymentCycle: "",
       projectDepartment: undefined,
       plannedStartDate: undefined as Date | undefined | string,
@@ -620,7 +621,7 @@ export default defineComponent({
         form.paymentRatio = data.paymentRatio.toString()
       }
       if (data.amount) {
-        form.outsourcingContractAmount = data.amount.toString();
+        form.amount = data.amount.toString();
       }
       if (data.name) {
         form.name = data.name;
@@ -628,14 +629,14 @@ export default defineComponent({
       if (data.customer) {
         form.projectName = data.customer;
       }
-      if (data.invoiceEntity) {
-        form.outsourcingUnit = data.invoiceEntity;
+      if (data.customer) {
+        form.customer = data.customer;
       }
       if (data.ownershipUnit) {
         form.otherBillingUnit = data.ownershipUnit;
       }
       if (data.signTime) {
-        form.signDate = data.signTime;
+        form.signTime = data.signTime;
       }
       if (data.createTime) {
         form.registrationDate = data.createTime;
@@ -715,12 +716,12 @@ export default defineComponent({
     const rules: Record<string, Rule[]> = {
       projectName: [{ required: true, message: '请输入名称', trigger: 'blur' }],
       outsourcingType: [{ required: true, message: '请输入名称', trigger: 'blur' }],
-      outsourcingUnit: [{ required: true, message: '请输入名称', trigger: 'blur' }],
+      customer: [{ required: true, message: '请输入名称', trigger: 'blur' }],
       outsourcingResponsibleUnit: [{ required: true, message: '请输入名称', trigger: 'blur' }],
       productionResponsibleUnit: [{ required: true, message: '请输入名称', trigger: 'blur' }],
       nature: [{ required: true, message: '请输入名称', trigger: 'blur' }],
       handler: [{ required: true, message: '请输入名称', trigger: 'blur' }],
-      outsourcingContractAmount: [{ required: true, message: '请输入名称', trigger: 'blur' }],
+      amount: [{ required: true, message: '请输入名称', trigger: 'blur' }],
       priceType: [{ required: true, message: '请输入名称', trigger: 'blur' }],
       paymentRatio: [{ required: true, message: '请输入名称', trigger: 'blur' }],
       belongYear: [{ required: true, message: '请输入名称', trigger: 'blur' }],
@@ -840,7 +841,6 @@ export default defineComponent({
         fromData.addSource = Number(fromData.addSource || 0);
         fromData.type = Number(fromData.type || 2);
         fromData.id = props.data.title === "新增外协合同" ? undefined : fromData.id;
-        fromData.projectId = ProjectDetails.value ? ProjectDetails.value.projectId : undefined;
         const resp = await getDates("outsourcing/setContract", {
           contractInfo: fromData,
         });
@@ -879,26 +879,30 @@ export default defineComponent({
       console.log(timer, 'timertimertimer');
       formRef.value?.resetFields();
       Object.assign(form, {
+        parentId: undefined,
         name: "",
+        signTime: "",
+        actualCommencementDate: "",
         mainContract: "",
         projectName: "",
         outsourcingType: undefined,
         contractNo: "",
         number: "",
+        uniqueNumber: "",
         contractUniqueId: "",
-        mainContractNo: undefined,
+        parentContractInfonumber: undefined,
         mainContractType: undefined,
         mainContractAmount: "",
         mainContractReceivedAmount: "",
         mainContractSector: undefined,
-        outsourcingUnit: "",
+        customer: "",
         mainContractTypeOne: undefined,
         otherBillingUnit: "",
         outsourcingResponsibleUnit: '旷古公司',
         productionResponsibleUnit: undefined,
         nature: undefined,
         handler: "",
-        outsourcingContractAmount: "",
+        amount: "",
         contractPriceType: undefined,
         paymentRatio: 100,
         belongYear: undefined,

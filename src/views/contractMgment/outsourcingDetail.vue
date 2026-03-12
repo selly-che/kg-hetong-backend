@@ -21,10 +21,7 @@
             <a-row :gutter="16">
               <a-col :span="8">
                 <a-form-item label="主合同">
-                  <a-input
-                    v-model:value="formData.mainContract"
-                    disabled
-                  ></a-input>
+                  <a-input v-model:value="formData.mainContract" disabled></a-input>
                 </a-form-item>
               </a-col>
               <a-col :span="8">
@@ -34,10 +31,7 @@
               </a-col>
               <a-col :span="8">
                 <a-form-item label="外协类型">
-                  <a-input
-                    v-model:value="formData.outsourcingType"
-                    disabled
-                  ></a-input>
+                  <a-input v-model:value="formData.outsourcingType" disabled></a-input>
                 </a-form-item>
               </a-col>
             </a-row>
@@ -61,46 +55,30 @@
             <a-row :gutter="16">
               <a-col :span="8">
                 <a-form-item label="合同唯一ID">
-                  <a-input
-                    v-model:value="formData.uniqueNumber"
-                    disabled
-                  ></a-input>
+                  <a-input v-model:value="formData.uniqueNumber" disabled></a-input>
                 </a-form-item>
               </a-col>
               <a-col :span="8">
                 <a-form-item label="主合同编号">
-                  <a-input
-                    v-model:value="formData.mainContractNumber"
-                    disabled
-                  ></a-input>
+                  <a-input v-model:value="formData.mainContractNumber" disabled></a-input>
                 </a-form-item>
               </a-col>
               <a-col :span="8">
                 <a-form-item label="主合同承揽类型">
-                  <a-input
-                    v-model:value="formData.contractType"
-                    disabled
-                  ></a-input>
+                  <a-input v-model:value="formData.contractType" disabled></a-input>
                 </a-form-item>
               </a-col>
             </a-row>
             <a-row :gutter="16">
               <a-col :span="8">
                 <a-form-item label="主合同金额">
-                  <a-input-number
-                    style="width: 100%"
-                    v-model:value="formData.amount"
-                    disabled
-                  ></a-input-number>
+                  <a-input-number style="width: 100%" v-model:value="formData.amount" disabled></a-input-number>
                 </a-form-item>
               </a-col>
               <a-col :span="8">
                 <a-form-item label="主合同累计收款">
-                  <a-input-number
-                    style="width: 100%"
-                    v-model:value="formData.mainContractReceivedAmount"
-                    disabled
-                  ></a-input-number>
+                  <a-input-number style="width: 100%" v-model:value="formData.mainContractReceivedAmount"
+                    disabled></a-input-number>
                 </a-form-item>
               </a-col>
               <a-col :span="8">
@@ -112,10 +90,7 @@
             <a-row :gutter="16">
               <a-col :span="8">
                 <a-form-item label="外协单位">
-                  <a-input
-                    v-model:value="formData.outsourcingUnit"
-                    disabled
-                  ></a-input>
+                  <a-input v-model:value="formData.outsourcingUnit" disabled></a-input>
                 </a-form-item>
               </a-col>
               <a-col :span="8">
@@ -125,20 +100,14 @@
               </a-col>
               <a-col :span="8">
                 <a-form-item label="其他开票单位">
-                  <a-input
-                    v-model:value="formData.invoiceEntity"
-                    disabled
-                  ></a-input>
+                  <a-input v-model:value="formData.invoiceEntity" disabled></a-input>
                 </a-form-item>
               </a-col>
             </a-row>
             <a-row :gutter="16">
               <a-col :span="8">
                 <a-form-item label="外协主责单位">
-                  <a-input
-                    v-model:value="formData.ownershipUnit"
-                    disabled
-                  ></a-input>
+                  <a-input v-model:value="formData.ownershipUnit" disabled></a-input>
                 </a-form-item>
               </a-col>
               <a-col :span="8">
@@ -148,10 +117,7 @@
               </a-col>
               <a-col :span="8">
                 <a-form-item label="性质">
-                  <a-input
-                    v-model:value="formData.properties"
-                    disabled
-                  ></a-input>
+                  <a-input v-model:value="formData.properties" disabled></a-input>
                 </a-form-item>
               </a-col>
             </a-row>
@@ -163,125 +129,79 @@
               </a-col>
               <a-col :span="8">
                 <a-form-item label="外协合同金额">
-                  <a-input-number
-                    style="width: 100%"
-                    v-model:value="formData.outsourcingContractAmount"
-                    diaabled
-                  ></a-input-number>
+                  <a-input-number style="width: 100%" v-model:value="formData.outsourcingContractAmount"
+                    diaabled></a-input-number>
                 </a-form-item>
               </a-col>
               <a-col :span="8">
                 <a-form-item label="合同价格类型">
-                  <a-input
-                    v-model:value="formData.priceType"
-                    disabled
-                  ></a-input>
+                  <a-input v-model:value="formData.priceType" disabled></a-input>
                 </a-form-item>
               </a-col>
             </a-row>
             <a-row :gutter="16">
               <a-col :span="8">
                 <a-form-item label="同意付款比例">
-                  <a-input-number
-                    style="width: 100%"
-                    :min="0"
-                    :max="100"
-                    v-model:value="formData.paymentRatio"
-                    disabled
-                  ></a-input-number>
+                  <a-input-number style="width: 100%" :min="0" :max="100" v-model:value="formData.paymentRatio"
+                    disabled></a-input-number>
                 </a-form-item>
               </a-col>
               <a-col :span="8">
                 <a-form-item label="归属年份">
-                  <a-date-picker
-                    style="width: 100%"
-                    picker="year"
-                    value-format="YYYY"
-                    v-model:value="formData.year"
-                    disabled
-                  ></a-date-picker>
+                  <a-date-picker style="width: 100%" picker="year" value-format="YYYY" v-model:value="formData.year"
+                    disabled placeholder="请选择归属年份"></a-date-picker>
                 </a-form-item>
               </a-col>
               <a-col :span="8">
                 <a-form-item label="约定付款周期">
-                  <a-input
-                    v-model:value="formData.paymentCycle"
-                    disabled
-                  ></a-input>
+                  <a-input v-model:value="formData.paymentCycle" disabled></a-input>
                 </a-form-item>
               </a-col>
             </a-row>
             <a-row :gutter="16">
               <a-col :span="8">
                 <a-form-item label="签订日期">
-                  <a-date-picker
-                    style="width: 100%"
-                    v-model:value="formData.signTime"
-                    value-format="YYYY-MM-DD HH:mm:ss"
-                    disabled
-                  ></a-date-picker>
+                  <a-date-picker style="width: 100%" v-model:value="formData.signTime"
+                    value-format="YYYY-MM-DD HH:mm:ss" placeholder="请选择签订日期" disabled></a-date-picker>
                 </a-form-item>
               </a-col>
               <a-col :span="8">
                 <a-form-item label="业务范围">
-                  <a-input
-                    v-model:value="formData.businessScope"
-                    disabled
-                  ></a-input>
+                  <a-input v-model:value="formData.businessScope" disabled></a-input>
                 </a-form-item>
               </a-col>
               <a-col :span="8">
                 <a-form-item label="计划开工日期">
-                  <a-date-picker
-                    style="width: 100%"
-                    value-format="YYYY-MM-DD HH:mm:ss"
-                    v-model:value="formData.plannedCommencementDate"
-                    disabled
-                  ></a-date-picker>
+                  <a-date-picker style="width: 100%" value-format="YYYY-MM-DD HH:mm:ss"
+                    v-model:value="formData.plannedCommencementDate" disabled placeholder="请选择计划开工日期"></a-date-picker>
                 </a-form-item>
               </a-col>
             </a-row>
             <a-row :gutter="16">
               <a-col :span="8">
                 <a-form-item label="计划竣工日期">
-                  <a-date-picker
-                    style="width: 100%"
-                    value-format="YYYY-MM-DD HH:mm:ss"
-                    v-model:value="formData.plannedCompletionDate"
-                    disabled
-                  ></a-date-picker>
+                  <a-date-picker placeholder="请选择计划竣工日期" style="width: 100%" value-format="YYYY-MM-DD HH:mm:ss"
+                    v-model:value="formData.plannedCompletionDate" disabled></a-date-picker>
                 </a-form-item>
               </a-col>
               <a-col :span="8">
                 <a-form-item label="合同总工期">
-                  <a-input-number
-                    style="width: 100%"
-                    value-format="YYYY-MM-DD HH:mm:ss"
-                    v-model:value="formData.totalDuration"
-                    disabled
-                  ></a-input-number>
+                  <a-input-number style="width: 100%" value-format="YYYY-MM-DD HH:mm:ss"
+                    v-model:value="formData.totalDuration" disabled></a-input-number>
                 </a-form-item>
               </a-col>
               <a-col :span="8">
                 <a-form-item label="实际开工日期">
-                  <a-date-picker
-                    style="width: 100%"
-                    value-format="YYYY-MM-DD HH:mm:ss"
-                    v-model:value="formData.actualCommencementDate"
-                    disabled
-                  ></a-date-picker>
+                  <a-date-picker style="width: 100%" value-format="YYYY-MM-DD HH:mm:ss"
+                    v-model:value="formData.actualCommencementDate" disabled placeholder="请选择实际开工日期"></a-date-picker>
                 </a-form-item>
               </a-col>
             </a-row>
             <a-row :gutter="16">
               <a-col :span="8">
                 <a-form-item label="实际竣工日期">
-                  <a-date-picker
-                    value-format="YYYY-MM-DD HH:mm:ss"
-                    style="width: 100%"
-                    v-model:value="formData.actualCompletionDate"
-                    disabled
-                  ></a-date-picker>
+                  <a-date-picker placeholder="请选择实际竣工日期" value-format="YYYY-MM-DD HH:mm:ss" style="width: 100%"
+                    v-model:value="formData.actualCompletionDate" disabled></a-date-picker>
                 </a-form-item>
               </a-col>
               <a-col :span="8">
@@ -294,10 +214,7 @@
               </a-col>
               <a-col :span="8">
                 <a-form-item label="项目部">
-                  <a-input
-                    v-model:value="formData.projectDept"
-                    disabled
-                  ></a-input>
+                  <a-input v-model:value="formData.projectDept" disabled></a-input>
                 </a-form-item>
               </a-col>
             </a-row>
@@ -314,23 +231,16 @@
               </a-col>
               <a-col :span="8">
                 <a-form-item label="登记日期">
-                  <a-date-picker
-                    style="width: 100%"
-                    value-format="YYYY-MM-DD HH:mm:ss"
-                    v-model:value="formData.registerTime"
-                    disabled
-                  ></a-date-picker>
+                  <a-date-picker placeholder="请选择登记日期" style="width: 100%" value-format="YYYY-MM-DD HH:mm:ss"
+                    v-model:value="formData.registerTime" disabled></a-date-picker>
                 </a-form-item>
               </a-col>
             </a-row>
             <a-row :gutter="16">
               <a-col :span="8">
                 <a-form-item label="主合同相应阶段完成天数">
-                  <a-input-number
-                    style="width: 100%"
-                    v-model:value="formData.mainContractStageDays"
-                    disabled
-                  ></a-input-number>
+                  <a-input-number style="width: 100%" v-model:value="formData.mainContractStageDays"
+                    disabled></a-input-number>
                 </a-form-item>
               </a-col>
               <a-col :span="8">
@@ -371,8 +281,7 @@
             </a-row>
           </a-form>
         </div>
-        <div
-          style="
+        <div style="
             display: flex;
             align-items: center;
             margin-bottom: 10px;
@@ -422,11 +331,11 @@
             <a-timeline-item>Solve initial network problems 2015-09-01</a-timeline-item>
             <a-timeline-item color="red">
               <template #dot><clock-circle-outlined style="font-size: 16px" /></template>
-              Technical testing 2015-09-01
-            </a-timeline-item>
-            <a-timeline-item>Network problems being solved 2015-09-01</a-timeline-item>
-          </a-timeline>
-        </div> -->
+Technical testing 2015-09-01
+</a-timeline-item>
+<a-timeline-item>Network problems being solved 2015-09-01</a-timeline-item>
+</a-timeline>
+</div> -->
       </a-tab-pane>
       <a-tab-pane key="2" tab="付款信息" force-render>
         <span>累计付款金额：{{ 1000 }}</span>
@@ -693,12 +602,15 @@ watch(
 :deep(.ant-input-disabled) {
   color: #000;
 }
+
 :deep(.ant-select-disabled .ant-select-selector) {
   color: #000 !important;
 }
+
 :deep(.ant-picker-disabled .ant-picker-input > input) {
   color: #000 !important;
 }
+
 .formback {
   background-color: #fff;
   padding: 20px;
