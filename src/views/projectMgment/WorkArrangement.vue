@@ -293,4 +293,7 @@ onMounted(() => {
 .column-filter-dropdown {
     margin-left: 16px;
 }
+:deep(.ant-table-thead > tr > th) {
+  background-color: #f5f9ff !important;
+}
 </style>

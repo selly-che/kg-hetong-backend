@@ -9,7 +9,7 @@
               <!-- 基本信息 -->
               <a-col :span="24">
                 <a-card class="info-card">
-                  <a-descriptions bordered size="middle" :column="2">
+                  <a-descriptions bordered size="middle" :column="2"   :labelStyle="{ width: '150px' }">
                     <a-descriptions-item label="当前阶段">
                       <!-- {{ projects.Project_Step || "--" }} -->
                       {{ getStepText(projects.Project_Step) }}
@@ -46,7 +46,7 @@
                       <!-- {{ projects.Project_ProvinceAndLength || '--' }} -->
                     </a-descriptions-item>
                   </a-descriptions>
-                  <a-descriptions bordered size="middle" :column="2">
+                  <a-descriptions bordered size="middle" :column="2" :labelStyle="{ width: '150px' }">
                     <a-descriptions-item label="合同时间 ">
                       {{ projects.Project_ContractTime || "--" }}
                     </a-descriptions-item>
@@ -78,7 +78,7 @@
             <!-- 基本信息 -->
             <a-col :span="24">
               <a-card class="info-card">
-                <a-descriptions bordered size="middle" :column="2">
+                <a-descriptions bordered size="middle" :column="2" :labelStyle="{ width: '150px' }">
                   <a-descriptions-item label="速度目标值">
                     {{ technologyObj.tsSpeedTarget || "--" }} km/h
                   </a-descriptions-item>

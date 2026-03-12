@@ -620,4 +620,7 @@ watch(
   padding: 12px;
   background-color: #ffffff;
 }
+:deep(.ant-table-thead > tr > th) {
+  background-color: #f5f9ff !important;
+}
 </style>

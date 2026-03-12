@@ -203,4 +203,7 @@ onMounted(() => {
     padding: 40px 0;
     font-size: 14px;
 }
+:deep(.ant-table-thead > tr > th) {
+  background-color: #f5f9ff !important;
+}
 </style>

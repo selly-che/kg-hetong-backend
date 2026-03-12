@@ -422,4 +422,7 @@ onMounted(() => {
   text-decoration: underline;
   opacity: 0.8;
 }
+:deep(.ant-table-thead > tr > th) {
+  background-color: #f5f9ff !important;
+}
 </style>
