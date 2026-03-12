@@ -7,7 +7,7 @@
       <div class="side1">
         <div class="side1-header">
           <span class="side1-title">进行中的项目</span>
-          <a class="side1-more" @click="$router.push('/projectMgment')">全部</a>
+          <a class="side1-more" @click="clickroutxm">全部</a>
         </div>
         <ul>
           <li v-for="project in projects.slice(0, 6)" :key="project.id">
@@ -32,7 +32,10 @@ import EacherPie from "./EacherPie.vue";
 import EacherBar from "./EacherBar.vue";
 import getDatas from "@/network/index";
 import { onMounted, ref } from "vue";
+import { useRouter, useRoute } from "vue-router";
 
+const router = useRouter();
+const route = useRoute();
 const projects = ref([]);
 onMounted(() => {
   getProjectList();
@@ -44,6 +47,12 @@ const getProjectList = async () => {
   });
   console.log("项目列表信息:", res.data.result.records);
   projects.value = res.data.result.records;
+};
+const clickroutxm = () => {
+  const route = router.resolve({
+    path: "/projectMgment/ProjectHome",
+  });
+  window.open(route.href, "_blank");
 };
 </script>
 
@@ -63,7 +72,7 @@ const getProjectList = async () => {
     flex-direction: column;
     overflow: hidden;
     box-sizing: border-box;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    box-shadow: 0 0px 8px rgba(0, 0, 0, 0.06);
     border-radius: 8px;
     .side1-header {
       display: flex;

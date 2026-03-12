@@ -124,8 +124,14 @@
       >
       <a-button @click="exportExcelHandle">导出excel</a-button>
       <div class="table" style="margin-top: 10px">
-        <a-table :columns="columns" :data-source="tabledata" :loading="loading" :pagination="pagination"
-          :row-selection="rowSelection" :scroll="{ x: 'max-content', y: 600 }">
+        <a-table
+          :columns="columns"
+          :data-source="tabledata"
+          :loading="loading"
+          :pagination="pagination"
+          :row-selection="rowSelection"
+          :scroll="{ x: 'max-content', y: 600 }"
+        >
           <template #bodyCell="{ column, record }">
             <template v-if="column.key === 'action'">
               <a style="margin-right: 10px" @click="handleEdit(record)">编辑</a>
@@ -136,27 +142,30 @@
           </template>
         </a-table>
       </div>
-      <outsourcingAdd ref="outsourcingAddRef" @refreshList="getOutsourcingList" :title="title" :data="fromData" />
+      <outsourcingAdd
+        ref="outsourcingAddRef"
+        @refreshList="getOutsourcingList"
+        :title="title"
+        :data="fromData"
+      />
     </div>
   </div>
 </template>
 <script lang="ts" setup>
-import { onMounted, ref } from "vue";
+import { onMounted, ref, onUnmounted } from "vue";
 import outsourcingAdd from "../contractMgment/outsourcingAdd.vue";
 import getDates from "@/network/index";
-import { message } from "ant-design-vue";
 import { exportExcel } from "@/utils/common";
 import { useRouter } from "vue-router";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { DownOutlined, UpOutlined } from "@ant-design/icons-vue";
 import axios from "axios";
-// import axios from "axios";
-// import { saveAs } from "file-saver";
+
 const title = ref("新增外协合同");
 const fromData = ref({});
 const router = useRouter();
 const outsourcingAddRef = ref();
-const isExpanded = ref(false);
+const isExpanded = ref(true);
 const loading = ref(false);
 const formData = ref({
   year: "all",
@@ -402,7 +411,7 @@ const handleEdit = (record: any) => {
   title.value = "编辑外协合同";
   outsourcingAddRef.value.showModal();
   fromData.value = record;
-  console.log("编辑",  fromData.value );
+  console.log("编辑", fromData.value);
 };
 //分页
 const pagination = ref({
@@ -462,6 +471,7 @@ onMounted(() => {
   getOutsourcingList();
   console.log("组件挂载完成111");
   adc(1);
+  window.addEventListener("keyup", handleKeyup);
 });
 
 const adc = (item: any) => {
@@ -569,6 +579,16 @@ const handleReset = () => {
 const handleExpand = () => {
   isExpanded.value = !isExpanded.value;
 };
+//enter触发搜索
+const handleKeyup = (e: KeyboardEvent) => {
+  if (e.key === "Enter") {
+    handleSearch();
+  }
+};
+// 组件卸载时移除事件监听
+onUnmounted(() => {
+  window.removeEventListener("keyup", handleKeyup);
+});
 </script>
 
 <style scoped lang="less">
@@ -585,111 +605,6 @@ const handleExpand = () => {
   &:hover {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   }
-
-  // .search-form {
-  //   :deep(.ant-form-item) {
-  //     margin-bottom: 16px;
-  //     margin-right: 16px;
-
-  //     .ant-form-item-label {
-  //       padding-right: 12px;
-
-  //       > label {
-  //         font-size: 14px;
-  //         color: #333333;
-  //         font-weight: 500;
-  //         margin-bottom: 0;
-  //       }
-  //     }
-
-  //     .ant-form-item-control-input {
-  //       min-height: 32px;
-  //     }
-
-  //     .ant-form-item-control-input-content {
-  //       width: 180px;
-  //     }
-  //   }
-
-  //   :deep(.ant-select),
-  //   :deep(.ant-input) {
-  //     width: 100%;
-  //     border-radius: 4px;
-  //     font-size: 14px;
-  //     transition: all 0.3s ease;
-  //   }
-
-  //   :deep(.ant-input) {
-  //     padding: 4px 11px;
-  //     height: 32px;
-
-  //     &:hover {
-  //       border-color: #40a9ff;
-  //     }
-
-  //     &:focus {
-  //       border-color: #1890ff;
-  //       box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
-  //     }
-  //   }
-
-  //   :deep(.ant-select-selector) {
-  //     height: 32px;
-  //     border-radius: 4px;
-  //   }
-
-  //   :deep(.ant-btn) {
-  //     height: 32px;
-  //     padding: 4px 20px;
-  //     font-size: 14px;
-  //     border-radius: 4px;
-  //     margin-right: 8px;
-  //     transition: all 0.3s ease;
-  //     white-space: nowrap;
-
-  //     &.ant-btn-primary {
-  //       background-color: #1890ff;
-  //       border-color: #1890ff;
-
-  //       &:hover {
-  //         background-color: #40a9ff;
-  //         border-color: #40a9ff;
-  //       }
-
-  //       &:active {
-  //         background-color: #096dd9;
-  //         border-color: #096dd9;
-  //       }
-  //     }
-
-  //     &:not(.ant-btn-primary):not(.ant-btn-link) {
-  //       background-color: #ffffff;
-  //       border-color: #d9d9d9;
-  //       color: #333333;
-
-  //       &:hover {
-  //         color: #1890ff;
-  //         border-color: #1890ff;
-  //       }
-  //     }
-
-  //     &.ant-btn-link {
-  //       padding: 4px 8px;
-  //       height: 32px;
-  //       display: inline-flex;
-  //       align-items: center;
-  //       gap: 4px;
-
-  //       &:hover {
-  //         color: #1890ff;
-  //       }
-  //     }
-
-  //     &:last-child {
-  //       margin-right: 0;
-  //     }
-  //   }
-  // }
   .search-form {
     .ant-form-item {
       margin-right: 16px;

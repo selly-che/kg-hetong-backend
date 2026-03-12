@@ -344,7 +344,7 @@ onMounted(() => {
 
 watch(
   () => props.searchParams,
-  (newParams) => {
+  () => {
     getContractList();
   },
   { deep: true },
@@ -495,5 +495,9 @@ const getContractList = async () => {
     background-color: #f0f0f0;
     border-radius: 3px;
   }
+}
+
+:deep(.ant-table-thead > tr > th) {
+  background-color: #f5f9ff !important;
 }
 </style>
