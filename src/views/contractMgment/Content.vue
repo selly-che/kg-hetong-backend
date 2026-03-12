@@ -496,4 +496,8 @@ const getContractList = async () => {
     border-radius: 3px;
   }
 }
+
+:deep(.ant-table-thead > tr > th) {
+  background-color: #f5f9ff !important;
+}
 </style>

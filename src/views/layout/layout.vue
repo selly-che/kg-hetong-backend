@@ -113,7 +113,10 @@
             </el-tab-pane>
           </el-tabs>
         </div>
-        <div :class="{ pd20: $router.currentRoute.value.path !== '/home' }">
+        <div
+          :class="{ pd20: $router.currentRoute.value.path !== '/home' }"
+          style="background-color: white"
+        >
           <router-view></router-view>
         </div>
       </div>
@@ -141,6 +144,7 @@ import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { message } from "ant-design-vue";
+import { color } from "echarts";
 const collWidth = computed(() => {
   return store.state.common.isCollapse ? "80px" : "216px";
 });

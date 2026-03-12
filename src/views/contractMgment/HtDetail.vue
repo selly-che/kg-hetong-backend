@@ -5,12 +5,14 @@
         <!-- 基本信息 开票申请信息 收款信息 外协合同 补充合同 变更信息 中标审批表 -->
         <a-tab-pane key="1" tab="基本信息">
           <div style="display: flex; align-items: center; margin-bottom: 10px">
-            <div style="
+            <div
+              style="
                 width: 4px;
                 height: 18px;
                 background-color: #1890ff;
                 margin-right: 8px;
-              "></div>
+              "
+            ></div>
             <p style="margin: 0">基本信息</p>
           </div>
           <div class="formback">
@@ -39,7 +41,7 @@
                 <a-col :span="8">
                   <a-form-item label="中标时间">
                     <a-date-picker
-                    placeholder="请选择中标时间"
+                      placeholder="请选择中标时间"
                       v-model:value="formData.winBidTime"
                       style="width: 100%"
                       disabled
@@ -193,7 +195,7 @@
                 <a-col :span="8">
                   <a-form-item label="签订日期">
                     <a-date-picker
-                    placeholder="请选择签订日期"
+                      placeholder="请选择签订日期"
                       v-model:value="formData.signTime"
                       style="width: 100%"
                       disabled
@@ -202,9 +204,8 @@
                 </a-col>
                 <a-col :span="8">
                   <a-form-item label="合同归属年份">
-                    
                     <a-date-picker
-                    placeholder="请选择合同归属年份"
+                      placeholder="请选择合同归属年份"
                       v-model:value="formData.year"
                       picker="year"
                       style="width: 100%"
@@ -407,43 +408,54 @@
               align-items: center;
               margin-bottom: 10px;
               margin-top: 10px;
-            ">
-            <div style="
+            "
+          >
+            <div
+              style="
                 width: 4px;
                 height: 18px;
                 background-color: #1890ff;
                 margin-right: 8px;
-              "></div>
+              "
+            ></div>
             <p style="margin: 0">新签合同指标分配（如无分配请忽略）</p>
           </div>
           <a-table :dataSource="dataSource1" :columns="columns1" />
-          <div style="
+          <div
+            style="
               display: flex;
               align-items: center;
               margin-bottom: 10px;
               margin-top: 10px;
-            ">
-            <div style="
+            "
+          >
+            <div
+              style="
                 width: 4px;
                 height: 18px;
                 background-color: #1890ff;
                 margin-right: 8px;
-              "></div>
+              "
+            ></div>
             <p style="margin: 0">合同金额变更</p>
           </div>
           <a-table :dataSource="dataSource2" :columns="columns2" />
-          <div style="
+          <div
+            style="
               display: flex;
               align-items: center;
               margin-bottom: 10px;
               margin-top: 10px;
-            ">
-            <div style="
+            "
+          >
+            <div
+              style="
                 width: 4px;
                 height: 18px;
                 background-color: #1890ff;
                 margin-right: 8px;
-              "></div>
+              "
+            ></div>
             <p style="margin: 0">上传附件</p>
           </div>
           <a-table :dataSource="dataSource3" :columns="columns3">
@@ -890,6 +902,26 @@ const contractinfo = async () => {
 </script>
 
 <style lang="less" scoped>
+:deep(.ant-table-body) {
+  &::-webkit-scrollbar {
+    width: 0px;
+    height: 12px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: #b8b7b7;
+    border-radius: 3px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background-color: #f0f0f0;
+    border-radius: 3px;
+  }
+}
+
+:deep(.ant-table-thead > tr > th) {
+  background-color: #f5f9ff !important;
+}
 :deep(.ant-input-disabled) {
   color: #000;
 }
