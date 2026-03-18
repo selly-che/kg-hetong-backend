@@ -16,6 +16,12 @@ const routes: Array<RouteRecordRaw> = [
         meta: { check: true, title: "项目首页" },
       },
       {
+        path: "projectAdded",
+        name: "projectAdded",
+        component: () => import("../views/projectMgment/projectAdded.vue"),
+        meta: { check: true, title: "项目新增" },
+      },
+      {
         path: "ProjectOverview",
         name: "ProjectOverview",
         component: () => import("../views/projectMgment/ProjectOverview.vue"),
@@ -116,7 +122,6 @@ router.beforeEach((to, from, next) => {
   const token = localStorage.getItem("accesstoken");
   const currentRoutes = router.getRoutes(); // 获取当前所有路由
   const layoutRoute = currentRoutes.find((item) => item.name === "Layout");
-  console.log(currentRoutes, "currentRoutes");
 
   // 如果用户未登录且访问需要认证的路由，则重定向到登录页面
   if (!token && to.meta.check) {

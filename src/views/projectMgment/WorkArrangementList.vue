@@ -108,6 +108,10 @@
         </template>
       </a-table>
     </a-modal>
+    <!-- 帮我生成一个弹窗，展示pdf文件 -->
+     <a-modal v-model:visible="pdfModalVisible" :title="pdfTitle" width="1200px" :footer="null">
+      <embed :src="pdfUrl" type="application/pdf" width="100%" height="700px" />
+    </a-modal>
   </div>
 </template>
 
@@ -117,6 +121,10 @@ import { useRoute } from 'vue-router';
 import { SettingOutlined } from '@ant-design/icons-vue';
 import getDatas from "@/network/index";
 import { ElMessage } from 'element-plus';
+
+const pdfModalVisible = ref(false);
+const pdfTitle = ref('');
+const pdfUrl = ref('https://storage.xuetangx.com/public_assets/xuetangx/PDF/PlayerAPI_v1.0.6.pdf');
 
 const route = useRoute();
 
@@ -137,7 +145,6 @@ const tableLoading = ref(false);
 // 列可见性控制
 const columnVisible = ref({
   operation: true,
-  
   taTaskName: true,
   taCreator: true,
   tcName: false,
@@ -283,6 +290,8 @@ const hasTaskContents = (record: any) => {
 
 // 显示任务内容弹窗
 const showTaskContentModal = (record: any) => {
+  pdfModalVisible.value = true;
+  return;
   if (!hasTaskContents(record)) {
     ElMessage.info('该记录没有任务内容');
     return;
