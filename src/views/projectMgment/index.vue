@@ -2,9 +2,13 @@
   <a-layout style="min-height: 100vh">
     <a-layout-sider v-model:collapsed="collapsed" width="280" style="background-color: rgb(25, 97, 172)">
       <div class="sidebar-container">
-        <!-- 查询项目标题 -->
-        <a-input-search allow-clear v-model:value="searchText" placeholder="请输入项目名称" enter-button
-          style="margin-bottom: 16px; margin-top: 16px" @search="handleSearch" />
+        <div class="flexTWO">
+          <!-- 查询项目标题 -->
+          <a-input-search allow-clear v-model:value="searchText" placeholder="请输入项目名称" enter-button
+            style="margin-bottom: 16px; margin-top: 16px" @search="handleSearch" />
+          <!-- 添加按钮 新建新增项目 -->
+          <a-button type="primary" @click="handleAddProject"> 新增 </a-button>
+        </div>
 
         <!-- 责任类型筛选标签 -->
         <div class="filter-tags">
@@ -84,7 +88,7 @@
         }">
           <!-- 页签 -->
           <a-tabs v-model:activeKey="activeTabKey" type="editable-card" hide-add @edit="onTabEdit" class="content-tabs">
-            <a-tab-pane v-for="tab in openedTabs" :key="tab.key" :closable="tab.closable">
+            <a-tab-pane v-for="tab in openedTabs" :key="tab.id" :closable="tab.closable">
               <template #tab>
                 <span @click="handleTabClick(tab)">{{ tab.title }}</span>
               </template>
@@ -117,7 +121,7 @@ const activeResponsibility = ref("company_main");
 const activeTab = ref("main");
 const selectedMenuKeys = ref<string[]>([]);
 const openMenuKeys = ref<string[]>([]);
-const activeTabKey = ref("ProjectOverview");
+const activeTabKey = ref("");
 // 缓存的视图组件名称
 const cachedViews = ref<string[]>([
   "ProjectOverview",
@@ -126,6 +130,8 @@ const cachedViews = ref<string[]>([
   "ProjectTeam",
   "WorkArrangementList",
   "WorkArrangement",
+  "projectAdded",
+
 ]);
 const openedTabs = ref<any[]>([]);
 
@@ -148,6 +154,12 @@ const responsibilityTags = ref([
 // 项目数据
 const projects = ref<any[]>([]);
 
+const handleAddProject = () => {
+  // 添加项目
+  router.push({ path: "/projectMgment/projectAdded" });
+};
+
+
 const goHomeFn = () => {
   // 跳转到首页，打开新页面
   window.open("/", "_blank");
@@ -164,7 +176,7 @@ const getFilterIndex = (value: string): number | null => {
 
 const TabClickFn = (key: string) => {
   // 切换标签页时，更新 activeTabKey
-  activeTabKey.value = key;
+  activeTabKey.value = '';
   getProjectList();
 };
 // 获取项目列表
@@ -301,7 +313,6 @@ const filteredProjects = computed(() => {
 
 // 处理菜单项点击
 const handleMenuItemClick = (menuItem: any) => {
-  console.log("点击菜单项:", menuItem);
 
   // 更新选中状态
   selectedMenuKeys.value = [menuItem.Id];
@@ -313,10 +324,13 @@ const handleMenuItemClick = (menuItem: any) => {
 
     // 检查是否已存在相同路径的标签页
     const existingTab = openedTabs.value.find(
-      (tab) => tab.path === menuItem.href,
+      (tab) => tab.path === menuItem.href
     );
+    console.log(existingTab, 'existingTab');
+
     if (!existingTab) {
       openedTabs.value.push({
+        id: menuItem.Id,
         key: routeName,
         title: menuItem.text,
         closable: true,
@@ -325,9 +339,7 @@ const handleMenuItemClick = (menuItem: any) => {
     }
 
     // 激活当前标签页并跳转路由
-    activeTabKey.value = routeName;
-    console.log(`激活标签页: ${routeName}`);
-
+    activeTabKey.value = menuItem.Id;
     router.push(menuItem.href);
   }
 };
@@ -346,15 +358,15 @@ const handleFilterChange = (filterValue: string) => {
 
 // 处理责任类型筛选标签点击
 const handleResponsibilityChange = (responsibilityValue: string) => {
-  console.log(responsibilityValue, '责任类型');
-
   activeResponsibility.value = responsibilityValue;
   getProjectList();
 };
 
 // 处理标签页点击
 const handleTabClick = (tab: any) => {
-  activeTabKey.value = tab.key;
+  console.log(tab, '标签页');
+
+  activeTabKey.value = tab.id;
   router.push(tab.path);
 };
 
@@ -366,12 +378,12 @@ const onTabEdit = (targetKey: any, action: "add" | "remove") => {
       ElMessage.warning("最后一个标签页不能关闭");
       return;
     }
-    const index = openedTabs.value.findIndex((tab) => tab.key === targetKey);
+    const index = openedTabs.value.findIndex((tab) => tab.id === targetKey);
     if (index > -1) {
       openedTabs.value.splice(index, 1);
       if (activeTabKey.value === targetKey && openedTabs.value.length > 0) {
         const lastTab = openedTabs.value[openedTabs.value.length - 1];
-        activeTabKey.value = lastTab.key;
+        activeTabKey.value = lastTab.id;
         router.push(lastTab.path);
       }
     }
@@ -388,7 +400,8 @@ onMounted(() => {
       // 如果有保存的标签页，默认打开第一个
       if (openedTabs.value.length > 0) {
         const lastTab = openedTabs.value[openedTabs.value.length - 1];
-        activeTabKey.value = lastTab.key;
+        activeTabKey.value = lastTab.id;
+
       }
     } catch (e) {
       console.error("解析保存的标签页失败:", e);

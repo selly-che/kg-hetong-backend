@@ -231,8 +231,8 @@ const getprojectsdetails = async () => {
   });
   const projectbaseInfo = res.data.result.projectInfo;
   const techStandards = res.data.result.techStandards[0];
-  technologyObj.value = techStandards;
-  // console.log("项目基本信息", projectbaseInfo.projectStep);
+  technologyObj.value = techStandards || {};
+  console.log("项目基本信息", projectbaseInfo);
 
   projects.value = {
     Id: projectbaseInfo.id || "",

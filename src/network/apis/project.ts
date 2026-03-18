@@ -40,5 +40,13 @@ export default {
       url: "/projectcontract/tpmProject/production-org",
       params,
     };
+  },
+  // 新增项目
+  AddProject(params: any) {
+    return {
+      method: "POST",
+      url: "/projectcontract/tpmProject/save",
+      data:params,
+    };
   }
 };
