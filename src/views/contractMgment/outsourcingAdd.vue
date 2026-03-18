@@ -740,7 +740,9 @@ export default defineComponent({
     };
 
     const showModal = () => {
-      resetForm();
+      if (props.title === "新增外协合同") {
+        resetForm();
+      }
       visible.value = true;
     };
 
@@ -932,6 +934,17 @@ export default defineComponent({
         ownershipUnit: "",
         id: "",
         projectId: "",
+        parentContractInfo: {
+          number: "",
+          uniqueNumber: "",
+          id: "",
+          mainContractType: undefined,
+          mainContractAmount: "",
+          mainContractReceivedAmount: "",
+          mainContractSector: undefined,
+          mainContractTypeOne: undefined,
+          outsourcingResponsibleUnit: '旷古公司',
+        },
       });
       // 重置支付申请数据
       paymentData.value = [{

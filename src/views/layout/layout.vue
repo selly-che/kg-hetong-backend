@@ -517,7 +517,7 @@ watch(
 
         &.is-active {
           background-color: #409eff;
-          color: #1961ac;
+          color: #ffffff;
           font-weight: 500;
         }
 

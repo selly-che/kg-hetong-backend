@@ -1,6 +1,10 @@
 <template>
   <a-layout style="min-height: 100vh">
-    <a-layout-sider v-model:collapsed="collapsed" width="280" style="background-color: rgb(25, 97, 172)">
+    <a-layout-sider
+      v-model:collapsed="collapsed"
+      width="280"
+      style="background-color: rgb(25, 97, 172)"
+    >
       <div class="sidebar-container">
         <div class="flexTWO">
           <!-- 查询项目标题 -->
@@ -12,17 +16,26 @@
 
         <!-- 责任类型筛选标签 -->
         <div class="filter-tags">
-          <a-tag v-for="tag in responsibilityTags" :key="tag.value"
-            :color="activeResponsibility === tag.value ? 'blue' : 'default'" class="filter-tag1"
-            @click="handleResponsibilityChange(tag.value)">
+          <a-tag
+            v-for="tag in responsibilityTags"
+            :key="tag.value"
+            :color="activeResponsibility === tag.value ? 'blue' : 'default'"
+            class="filter-tag1"
+            @click="handleResponsibilityChange(tag.value)"
+          >
             {{ tag.label }}
           </a-tag>
         </div>
 
         <!-- 过滤标签 -->
         <div class="filter-tags">
-          <a-tag v-for="tag in filterTags" :key="tag.value" :color="activeFilter === tag.value ? 'blue' : 'default'"
-            class="filter-tag" @click="handleFilterChange(tag.value)">
+          <a-tag
+            v-for="tag in filterTags"
+            :key="tag.value"
+            :color="activeFilter === tag.value ? 'blue' : 'default'"
+            class="filter-tag"
+            @click="handleFilterChange(tag.value)"
+          >
             {{ tag.label }}
           </a-tag>
         </div>
@@ -37,8 +50,12 @@
 
         <!-- 项目列表 -->
         <div class="project-list">
-          <a-menu v-model:selectedKeys="selectedMenuKeys" v-model:openKeys="openMenuKeys" mode="inline"
-            :inline-collapsed="collapsed">
+          <a-menu
+            v-model:selectedKeys="selectedMenuKeys"
+            v-model:openKeys="openMenuKeys"
+            mode="inline"
+            :inline-collapsed="collapsed"
+          >
             <!-- 动态渲染项目 -->
             <a-sub-menu v-for="project in filteredProjects" :key="project.Id">
               <template #title>
@@ -46,20 +63,29 @@
               </template>
 
               <!-- 固定的二级菜单项 -->
-              <a-menu-item v-for="fixedItem in project.fixedNodes" :key="fixedItem.Id"
-                @click="handleMenuItemClick(fixedItem)">
+              <a-menu-item
+                v-for="fixedItem in project.fixedNodes"
+                :key="fixedItem.Id"
+                @click="handleMenuItemClick(fixedItem)"
+              >
                 {{ fixedItem.text }}
               </a-menu-item>
 
               <!-- 动态的二级菜单项（来自taskArrangements） -->
-              <a-sub-menu v-for="taskItem in project.taskNodes" :key="taskItem.Id">
+              <a-sub-menu
+                v-for="taskItem in project.taskNodes"
+                :key="taskItem.Id"
+              >
                 <template #title>
                   <span>{{ taskItem.text }}</span>
                 </template>
 
                 <!-- 固定的三级菜单项 -->
-                <a-menu-item v-for="thirdLevelItem in taskItem.children" :key="thirdLevelItem.Id"
-                  @click="handleMenuItemClick(thirdLevelItem)">
+                <a-menu-item
+                  v-for="thirdLevelItem in taskItem.children"
+                  :key="thirdLevelItem.Id"
+                  @click="handleMenuItemClick(thirdLevelItem)"
+                >
                   {{ thirdLevelItem.text }}
                 </a-menu-item>
               </a-sub-menu>
@@ -82,10 +108,12 @@
       </a-layout-header>
 
       <a-layout-content style="margin: 16px">
-        <div :style="{
-          background: '#fff',
-          minHeight: 'calc(100vh - 132px)',
-        }">
+        <div
+          :style="{
+            background: '#fff',
+            minHeight: 'calc(100vh - 132px)',
+          }"
+        >
           <!-- 页签 -->
           <a-tabs v-model:activeKey="activeTabKey" type="editable-card" hide-add @edit="onTabEdit" class="content-tabs">
             <a-tab-pane v-for="tab in openedTabs" :key="tab.id" :closable="tab.closable">
@@ -109,11 +137,12 @@
 
 <script lang="ts" setup>
 import { ref, computed, onMounted, watch } from "vue";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import getDatas from "@/network/index";
 import { ElMessage } from "element-plus";
 
 const router = useRouter();
+const route = useRoute();
 const searchText = ref<string>("");
 const collapsed = ref(false);
 const activeFilter = ref("");
@@ -166,11 +195,11 @@ const goHomeFn = () => {
 };
 
 const getResponsibilityIndex = (value: string): number => {
-  const tag = responsibilityTags.value.find(item => item.value === value);
+  const tag = responsibilityTags.value.find((item) => item.value === value);
   return tag ? tag.index : 0;
 };
 const getFilterIndex = (value: string): number | null => {
-  const tag = filterTags.value.find(item => item.value === value);
+  const tag = filterTags.value.find((item) => item.value === value);
   return tag ? tag.index : null;
 };
 
@@ -191,7 +220,7 @@ const getProjectList = async () => {
       pageSize: 10,
       saixuantLx1: saixuantLx1,
       saixuantLx2: saixuantLx2,
-      saixuantLx3: activeTab.value === 'main' ? 1 : 2,
+      saixuantLx3: activeTab.value === "main" ? 1 : 2,
     });
 
     if (res.data.code !== 200) {
@@ -215,8 +244,8 @@ const getProjectList = async () => {
           Id: `${project.id}-production`,
           text: "生产组织",
           href: `/projectMgment/ProductionOrganization?projectId=${project.id}&projectStep=${project.projectStep}`,
-          projectId: project.id
-        }
+          projectId: project.id,
+        },
       ];
 
       // 处理taskArrangements为二级菜单项
@@ -292,7 +321,7 @@ const getProjectType = (projectTypeDetail: string) => {
 
 // 根据过滤条件和选项卡筛选项目
 const filteredProjects = computed(() => {
-  return projects.value
+  return projects.value;
   return projects.value.filter((project) => {
     // 类型匹配
     const typeMatch =
@@ -308,7 +337,6 @@ const filteredProjects = computed(() => {
     const textMatch = project.text.toLowerCase().includes(searchLower);
     return typeMatch && tabMatch && responsibilityMatch && textMatch;
   });
-
 });
 
 // 处理菜单项点击
@@ -368,6 +396,65 @@ const handleTabClick = (tab: any) => {
 
   activeTabKey.value = tab.id;
   router.push(tab.path);
+
+  // 根据tab的path找到对应的菜单项并高亮
+  findAndHighlightMenuItem(tab.path);
+};
+
+// 根据路径找到对应的菜单项并高亮
+const findAndHighlightMenuItem = (path: string) => {
+  try {
+    // 解析URL参数
+    const url = new URL(path, window.location.origin);
+    const params = new URLSearchParams(url.search);
+    const projectId = params.get('projectId');
+    const taskArrangementId = params.get('taskArrangementId');
+    const projectStep = params.get('projectStep');
+    const routeName = url.pathname.split('/').pop();
+
+    if (!projectId) return;
+
+    // 遍历所有项目找到对应的菜单项
+    for (const project of projects.value) {
+      if (project.Id !== projectId) continue;
+
+      // 打开对应的一级菜单
+      openMenuKeys.value = [project.Id];
+
+      // 检查是否是固定二级菜单项
+      if (routeName === 'ProjectOverview') {
+        const menuItem = project.fixedNodes.find((item: any) => item.href === path);
+        if (menuItem) {
+          selectedMenuKeys.value = [menuItem.Id];
+          return;
+        }
+      }
+
+      if (routeName === 'ProductionOrganization') {
+        const menuItem = project.fixedNodes.find((item: any) => item.href === path);
+        if (menuItem) {
+          selectedMenuKeys.value = [menuItem.Id];
+          return;
+        }
+      }
+
+      // 检查是否是三级菜单项
+      if (taskArrangementId || projectStep) {
+        for (const taskNode of project.taskNodes) {
+          // 打开对应的二级菜单
+          openMenuKeys.value = [project.Id, taskNode.Id];
+
+          const menuItem = taskNode.children.find((item: any) => item.href === path);
+          if (menuItem) {
+            selectedMenuKeys.value = [menuItem.Id];
+            return;
+          }
+        }
+      }
+    }
+  } catch (error) {
+    console.error('解析路径失败:', error);
+  }
 };
 
 // 处理标签页编辑（关闭）
@@ -415,7 +502,7 @@ watch(
   (newVal) => {
     sessionStorage.setItem("openedTabs", JSON.stringify(newVal));
   },
-  { deep: true }
+  { deep: true },
 );
 </script>
 

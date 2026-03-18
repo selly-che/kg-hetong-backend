@@ -488,10 +488,135 @@
           <a-table :dataSource="dataSource4" :columns="columns4" />
         </a-tab-pane>
         <a-tab-pane key="3" tab="收款信息">
-          <p style="font-size: 15px; font-weight: bold">
-            合计金额：{{ totalAmount }}万
-          </p>
-          <a-table :dataSource="dataSource5" :columns="columns5" />
+          <div style="display: flex">
+            <p style="font-size: 15px; font-weight: bold; padding-top: 5px">
+              合计金额：{{ totalAmount }}万
+            </p>
+            <a-button
+              type="primary"
+              style="margin-left: auto"
+              @click="showModal"
+            >
+              新增
+            </a-button>
+            <a-modal
+              v-model:visible="visible"
+              title="新增收款数据"
+              ok-text="确认"
+              cancel-text="取消"
+              @ok="handleOk"
+            >
+              <a-form
+                :label-col="{ style: { width: '100px' } }"
+                :wrapper-col="{ style: { flex: 1 } }"
+              >
+                <!-- 认领单编号	到款日期	认领金额(万元)	认领单位	经办人	认领状态	付款单位	摘要 -->
+                <a-form-item label="认领单编号">
+                  <a-input v-model:value="billList.billNo" />
+                </a-form-item>
+                <a-form-item label="到款日期">
+                  <a-date-picker
+                    v-model:value="billList.claimTime"
+                    style="width: 100%"
+                  />
+                </a-form-item>
+                <a-form-item label="认领金额(万元)">
+                  <a-input v-model:value="billList.amount" />
+                </a-form-item>
+                <a-form-item label="认领单位">
+                  <a-input v-model:value="billList.claimerDepartment" />
+                </a-form-item>
+                <a-form-item label="经办人">
+                  <a-input v-model:value="billList.claimer" />
+                </a-form-item>
+                <a-form-item label="认领状态">
+                  <a-select
+                    v-model:value="billList.approvalStatus"
+                    style="width: 100%"
+                  >
+                    <a-select-option value="0">待认领</a-select-option>
+                    <a-select-option value="1">已认领</a-select-option>
+                  </a-select>
+                </a-form-item>
+                <a-form-item label="付款单位">
+                  <a-input v-model:value="billList.buyerDepartment" />
+                </a-form-item>
+                <a-form-item label="摘要">
+                  <a-input v-model:value="billList.remark" />
+                </a-form-item>
+              </a-form>
+            </a-modal>
+            <a-modal
+              v-model:visible="visible2"
+              title="新增收款数据"
+              ok-text="确认"
+              cancel-text="取消"
+              @ok="handleOk2"
+            >
+              <a-form
+                :label-col="{ style: { width: '100px' } }"
+                :wrapper-col="{ style: { flex: 1 } }"
+              >
+                <a-form-item label="认领单编号">
+                  <a-input v-model:value="billList.billNo" />
+                </a-form-item>
+                <a-form-item label="到款日期">
+                  <a-date-picker
+                    v-model:value="billList.claimTime"
+                    style="width: 100%"
+                  />
+                </a-form-item>
+                <a-form-item label="认领金额(万元)">
+                  <a-input v-model:value="billList.amount" />
+                </a-form-item>
+                <a-form-item label="认领单位">
+                  <a-input v-model:value="billList.claimerDepartment" />
+                </a-form-item>
+                <a-form-item label="经办人">
+                  <a-input v-model:value="billList.claimer" />
+                </a-form-item>
+                <a-form-item label="认领状态">
+                  <a-select
+                    v-model:value="billList.approvalStatus"
+                    style="width: 100%"
+                  >
+                    <a-select-option value="0">待认领</a-select-option>
+                    <a-select-option value="1">已认领</a-select-option>
+                  </a-select>
+                </a-form-item>
+                <a-form-item label="付款单位">
+                  <a-input v-model:value="billList.buyerDepartment" />
+                </a-form-item>
+                <a-form-item label="摘要">
+                  <a-input v-model:value="billList.remark" />
+                </a-form-item>
+              </a-form>
+            </a-modal>
+          </div>
+          <a-table :dataSource="dataSource5" :columns="columns5">
+            <template #bodyCell="{ column, record }">
+              <template v-if="column.dataIndex === 'operation'">
+                <div style="display: flex; gap: 8px">
+                  <a-button
+                    type="primary"
+                    @click="editBill(record)"
+                    v-show="record.source === 2"
+                    >编辑</a-button
+                  >
+                  <a-popconfirm
+                    title="确认删除吗？"
+                    ok-text="是"
+                    cancel-text="否"
+                    @confirm="deleteBill(record.id)"
+                  >
+                    <a-button type="danger" v-show="record.source === 2"
+                      >删除</a-button
+                    >
+                  </a-popconfirm>
+                </div>
+              </template>
+            </template>
+          </a-table>
         </a-tab-pane>
         <a-tab-pane key="4" tab="外协合同">
           <a-table :dataSource="dataSource6" :columns="columns6" />
@@ -517,6 +642,7 @@ import { useRoute } from "vue-router";
 import { DownloadOutlined, EyeOutlined } from "@ant-design/icons-vue";
 import getData from "@/network";
 import dayjs from "dayjs";
+import { ElMessage } from "element-plus";
 
 const activeKey = ref("1");
 const dataSource1 = ref([]);
@@ -526,7 +652,89 @@ const route = useRoute();
 const contractId = ref(route.params.id);
 const contractName = ref(route.params.name);
 const totalAmount = 100;
+const visible = ref(false);
+const visible2 = ref(false);
 
+const showModal = () => {
+  visible.value = true;
+  billList.value = {
+    accumulatedInvoicingAmount: 0,
+    amount: 0,
+    approvalStatus: 0,
+    approvalWorkflowNode: 0,
+    bankAccount: "",
+    billNo: "",
+    billType: 0,
+    bizType: 0,
+    buyerDepartment: "",
+    buyerDepartmentId: "",
+    claimTime: "",
+    claimWithoutInvoicing: 0,
+    claimer: "",
+    claimerAccount: "",
+    claimerDepartment: "",
+    claimerDepartmentId: 0,
+    contractId: "",
+    createTime: "",
+    createUserId: "",
+    createUserName: "",
+    documentNumber: "",
+    id: "",
+    isDeleted: 0, //
+    isSend: 0, //
+    isZbj: 0,
+    modifyTime: "",
+    modifyUserId: "",
+    modifyUserName: "",
+    nextReviewer: "",
+    payId: "",
+    payTime: "",
+    payType: 0,
+    paymentReceiptNumber: "",
+    remark: "",
+    status: 0,
+    version: 0,
+    year: 0,
+  };
+};
+const xzform = async (newBillList) => {
+  const res = await getData("zhangdan/Save", newBillList);
+  if (res.data.code === 200) {
+    ElMessage.success("成功");
+    getBillList();
+  } else {
+    ElMessage.error(res.msg || "失败");
+  }
+  console.log("新增res:", res);
+};
+//新增账单
+const handleOk = (e) => {
+  visible.value = false;
+  const newBillList = {
+    ...billList.value,
+    claimTime: billList.value.claimTime
+      ? billList.value.claimTime.format("YYYY-MM-DD HH:mm:ss")
+      : "",
+  };
+  console.log("新增数据", newBillList);
+  xzform(newBillList);
+  //刷新数据
+  contractinfo();
+};
+//编辑账单
+const handleOk2 = () => {
+  visible2.value = false;
+  const newBillList = {
+    ...billList.value,
+    claimTime: billList.value.claimTime
+      ? billList.value.claimTime.format("YYYY-MM-DD HH:mm:ss")
+      : null,
+  };
+  console.log("编辑数据", newBillList);
+  xzform(newBillList);
+  //刷新数据
+  contractinfo();
+};
 const formData = ref({
   isSupplementary: 0,
   mainUnit: "",
@@ -582,6 +790,51 @@ const formData = ref({
   reportMarketingSystemTime: null,
   auditAmount: "",
 });
+const billList = ref({
+  accumulatedInvoicingAmount: 0,
+  amount: 0,
+  approvalStatus: 0,
+  approvalWorkflowNode: 0,
+  bankAccount: "",
+  billNo: "",
+  billType: 0,
+  bizType: 0,
+  buyerDepartment: "",
+  buyerDepartmentId: "",
+  claimTime: "",
+  claimWithoutInvoicing: 0,
+  claimer: "",
+  claimerAccount: "",
+  claimerDepartment: "",
+  claimerDepartmentId: 0,
+  contractId: "",
+  createTime: "",
+  createUserId: "",
+  createUserName: "",
+  documentNumber: "",
+  id: "",
+  isDeleted: 0, //
+  isSend: 0, //
+  isZbj: 0,
+  modifyTime: "",
+  modifyUserId: "",
+  modifyUserName: "",
+  nextReviewer: "",
+  payId: "",
+  payTime: "",
+  payType: 0,
+  paymentReceiptNumber: "",
+  remark: "",
+  status: 0,
+  version: 0,
+  year: 0,
+});
+const getBillList = async () => {
+  const res = await getData("zhangdan/QueryBillList");
+  const billarr = res.data.result.records;
+  dataSource5.value = billarr;
+  console.log("账单信息", billarr);
+};
 const typeMap = {
   0: "国内",
   1: "外协",
@@ -715,7 +968,7 @@ const dataSource4 = ref([]);
 //认领单编号 到款日期 认领金额(万元) 认领单位 经办人 认领状态 付款单位 摘要
 const columns5 = [
   {
-    title: "认领单编号",
+    title: "账单编号",
     dataIndex: "billNo",
     key: "billNo",
   },
@@ -741,8 +994,8 @@ const columns5 = [
   },
   {
     title: "认领状态",
-    dataIndex: "status",
-    key: "status",
+    dataIndex: "approvalStatus",
+    key: "approvalStatus",
   },
   {
     title: "付款单位",
@@ -753,6 +1006,11 @@ const columns5 = [
     title: "摘要",
     dataIndex: "remark",
     key: "remark",
+  },
+  {
+    title: "操作",
+    dataIndex: "operation",
+    key: "operation",
   },
 ];
 const dataSource5 = ref([]);
@@ -844,6 +1102,7 @@ const columns8 = [
 ];
 onMounted(() => {
   contractinfo();
+  getBillList();
 });
 watch(
   () => route.params.id,
@@ -864,7 +1123,7 @@ const contractinfo = async () => {
   //开票
   const data2 = res.data.result.invoiceApplyList;
   //收款信息
-  const data3 = res.data.result.billInfoList;
+  // const data3 = res.data.result.billInfoList;
   //外协合同
   const data4 = res.data.result.outsourcingContractInfoList;
   //补充合同
@@ -894,31 +1153,37 @@ const contractinfo = async () => {
     // auditTime: data?.auditTime ? dayjs(data.auditTime) : null,
   };
   dataSource4.value = data2;
-  dataSource5.value = data3;
+  // dataSource5.value = data3;
   dataSource6.value = data4;
   dataSource7.value = data5;
   console.log("合同数据", "contractDetails:", data, "contractInfo:", data1);
 };
+//bill操作
+//编辑账单
+const editBill = (bill) => {
+  console.log("编辑账单", Object.assign({}, bill));
+  visible2.value = true;
+  billList.value = {
+    ...bill,
+    claimTime: bill.claimTime ? dayjs(bill.claimTime) : null,
+  };
+};
+//删除账单
+const deleteBill = async (bill) => {
+  const res = await getData("zhangdan/Delete", {
+    id: String(bill),
+  });
+  if (res.data.code === 200) {
+    ElMessage.success("删除成功");
+    getBillList();
+  } else {
+    ElMessage.error(res.data.msg || "删除失败");
+  }
+  console.log("删除账单", bill);
+};
 </script>
 
 <style lang="less" scoped>
-:deep(.ant-table-body) {
-  &::-webkit-scrollbar {
-    width: 0px;
-    height: 12px;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background-color: #b8b7b7;
-    border-radius: 3px;
-  }
-
-  &::-webkit-scrollbar-track {
-    background-color: #f0f0f0;
-    border-radius: 3px;
-  }
-}
-
 :deep(.ant-table-thead > tr > th) {
   background-color: #f5f9ff !important;
 }
