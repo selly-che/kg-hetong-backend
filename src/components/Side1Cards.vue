@@ -8,7 +8,7 @@
         {{ props.project.projectStepStr }}
       </a-tag>
     </div>
-    <h3 class="project-name">{{ props.project.projectShortName }}</h3>
+    <h3 class="project-name">{{ props.project.projectFullName }}</h3>
     <div class="project-stats">
       <div class="stat-item">
         <div class="stat-label">集团合同数量</div>
