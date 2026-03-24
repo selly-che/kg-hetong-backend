@@ -1,10 +1,6 @@
 <template>
   <a-layout style="min-height: 100vh">
-    <a-layout-sider
-      v-model:collapsed="collapsed"
-      width="280"
-      style="background-color: rgb(25, 97, 172)"
-    >
+    <a-layout-sider v-model:collapsed="collapsed" width="280" style="background-color: rgb(25, 97, 172)">
       <div class="sidebar-container">
         <div class="flexTWO">
           <!-- 查询项目标题 -->
@@ -16,26 +12,17 @@
 
         <!-- 责任类型筛选标签 -->
         <div class="filter-tags">
-          <a-tag
-            v-for="tag in responsibilityTags"
-            :key="tag.value"
-            :color="activeResponsibility === tag.value ? 'blue' : 'default'"
-            class="filter-tag1"
-            @click="handleResponsibilityChange(tag.value)"
-          >
+          <a-tag v-for="tag in responsibilityTags" :key="tag.value"
+            :color="activeResponsibility === tag.value ? 'blue' : 'default'" class="filter-tag1"
+            @click="handleResponsibilityChange(tag.value)">
             {{ tag.label }}
           </a-tag>
         </div>
 
         <!-- 过滤标签 -->
         <div class="filter-tags">
-          <a-tag
-            v-for="tag in filterTags"
-            :key="tag.value"
-            :color="activeFilter === tag.value ? 'blue' : 'default'"
-            class="filter-tag"
-            @click="handleFilterChange(tag.value)"
-          >
+          <a-tag v-for="tag in filterTags" :key="tag.value" :color="activeFilter === tag.value ? 'blue' : 'default'"
+            class="filter-tag" @click="handleFilterChange(tag.value)">
             {{ tag.label }}
           </a-tag>
         </div>
@@ -50,12 +37,8 @@
 
         <!-- 项目列表 -->
         <div class="project-list">
-          <a-menu
-            v-model:selectedKeys="selectedMenuKeys"
-            v-model:openKeys="openMenuKeys"
-            mode="inline"
-            :inline-collapsed="collapsed"
-          >
+          <a-menu v-model:selectedKeys="selectedMenuKeys" v-model:openKeys="openMenuKeys" mode="inline"
+            :inline-collapsed="collapsed">
             <!-- 动态渲染项目 -->
             <a-sub-menu v-for="project in filteredProjects" :key="project.Id">
               <template #title>
@@ -63,29 +46,20 @@
               </template>
 
               <!-- 固定的二级菜单项 -->
-              <a-menu-item
-                v-for="fixedItem in project.fixedNodes"
-                :key="fixedItem.Id"
-                @click="handleMenuItemClick(fixedItem)"
-              >
+              <a-menu-item v-for="fixedItem in project.fixedNodes" :key="fixedItem.Id"
+                @click="handleMenuItemClick(fixedItem)">
                 {{ fixedItem.text }}
               </a-menu-item>
 
               <!-- 动态的二级菜单项（来自taskArrangements） -->
-              <a-sub-menu
-                v-for="taskItem in project.taskNodes"
-                :key="taskItem.Id"
-              >
+              <a-sub-menu v-for="taskItem in project.taskNodes" :key="taskItem.Id">
                 <template #title>
                   <span>{{ taskItem.text }}</span>
                 </template>
 
                 <!-- 固定的三级菜单项 -->
-                <a-menu-item
-                  v-for="thirdLevelItem in taskItem.children"
-                  :key="thirdLevelItem.Id"
-                  @click="handleMenuItemClick(thirdLevelItem)"
-                >
+                <a-menu-item v-for="thirdLevelItem in taskItem.children" :key="thirdLevelItem.Id"
+                  @click="handleMenuItemClick(thirdLevelItem)">
                   {{ thirdLevelItem.text }}
                 </a-menu-item>
               </a-sub-menu>
@@ -108,12 +82,10 @@
       </a-layout-header>
 
       <a-layout-content style="margin: 16px">
-        <div
-          :style="{
-            background: '#fff',
-            minHeight: 'calc(100vh - 132px)',
-          }"
-        >
+        <div :style="{
+          background: '#fff',
+          minHeight: 'calc(100vh - 132px)',
+        }">
           <!-- 页签 -->
           <a-tabs v-model:activeKey="activeTabKey" type="editable-card" hide-add @edit="onTabEdit" class="content-tabs">
             <a-tab-pane v-for="tab in openedTabs" :key="tab.id" :closable="tab.closable">
@@ -184,6 +156,13 @@ const responsibilityTags = ref([
 const projects = ref<any[]>([]);
 
 const handleAddProject = () => {
+  openedTabs.value.push({
+    id: '999999999999',
+    key: '新增项目',
+    title: '新增项目',
+    closable: true,
+    path: '/projectMgment/projectAdded',
+  });
   // 添加项目
   router.push({ path: "/projectMgment/projectAdded" });
 };
@@ -386,6 +365,7 @@ const handleFilterChange = (filterValue: string) => {
 
 // 处理责任类型筛选标签点击
 const handleResponsibilityChange = (responsibilityValue: string) => {
+  console.log(responsibilityValue, "责任类型");
   activeResponsibility.value = responsibilityValue;
   getProjectList();
 };

@@ -1,10 +1,14 @@
 <template>
   <div class="app">
+      <a-config-provider :locale="zhCN">
+
+   
     <router-view v-slot="{ Component }">
       <keep-alive :include="/(for)$/">
         <component :is="Component"></component>
       </keep-alive>
     </router-view>
+       </a-config-provider>
   </div>
 </template>
 <script>

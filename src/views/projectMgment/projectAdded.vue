@@ -10,34 +10,40 @@
                         <el-input v-model="formData.projectFullName" placeholder="请输入项目名称" />
                     </el-form-item>
                     <!-- 项目类型（必填） -->
-                    <el-form-item label="项目类型" prop="projectType"
-                        :rules="{ required: true, message: '请选择项目类型', trigger: 'change' }">
-                        <el-select v-model="formData.projectType" placeholder="请选择项目类型">
-                            <el-option label="司控主责" value="司控主责" />
-                            <el-option label="司控参与" value="司控参与" />
-                            <el-option label="自揽主责" value="自揽主责" />
-                            <el-option label="自揽参与" value="自揽参与" />
-                        </el-select>
-                    </el-form-item>
-                    <!-- 项目阶段（必填） -->
-                    <el-form-item label="项目阶段" prop="projectStep"
-                        :rules="{ required: true, message: '请选择项目阶段', trigger: 'change' }">
-                        <el-select v-model="formData.projectStep" placeholder="请选择项目阶段">
-                            <el-option label="预付期" value="600" />
-                            <el-option label="投标" value="601" />
-                            <el-option label="规划" value="602" />
-                            <el-option label="预可研" value="603" />
-                            <el-option label="可研" value="604" />
-                            <el-option label="初步设计" value="605" />
-                            <el-option label="施工图" value="606" />
-                            <el-option label="配合施工" value="607" />
-                            <el-option label="开通运营" value="608" />
-                            <el-option label="招标图" value="609" />
-                            <el-option label="专题专项" value="610" />
-                            <el-option label="清概（结算）" value="611" />
-                            <el-option label="质保期" value="612" />
-                        </el-select>
-                    </el-form-item>
+                    <el-row :gutter="20">
+                        <el-col :span="12">
+                            <el-form-item label="项目类型" prop="projectType"
+                                :rules="{ required: true, message: '请选择项目类型', trigger: 'change' }">
+                                <el-select v-model="formData.projectType" placeholder="请选择项目类型">
+                                    <el-option label="全部" value="全部" />
+                                    <el-option label="铁路" value="铁路" />
+                                    <el-option label="城轨" value="城轨" />
+                                    <el-option label="公路" value="公路" />
+                                </el-select>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="12">
+                            <!-- 项目阶段（必填） -->
+                            <el-form-item label="项目阶段" prop="projectStep"
+                                :rules="{ required: true, message: '请选择项目阶段', trigger: 'change' }">
+                                <el-select v-model="formData.projectStep" placeholder="请选择项目阶段">
+                                    <el-option label="预付期" value="600" />
+                                    <el-option label="投标" value="601" />
+                                    <el-option label="规划" value="602" />
+                                    <el-option label="预可研" value="603" />
+                                    <el-option label="可研" value="604" />
+                                    <el-option label="初步设计" value="605" />
+                                    <el-option label="施工图" value="606" />
+                                    <el-option label="配合施工" value="607" />
+                                    <el-option label="开通运营" value="608" />
+                                    <el-option label="招标图" value="609" />
+                                    <el-option label="专题专项" value="610" />
+                                    <el-option label="清概（结算）" value="611" />
+                                    <el-option label="质保期" value="612" />
+                                </el-select>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
                     <!-- 线路长度 & 速度目标值 -->
                     <el-row :gutter="20">
                         <el-col :span="12">
