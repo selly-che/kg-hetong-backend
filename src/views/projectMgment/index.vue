@@ -387,10 +387,10 @@ const findAndHighlightMenuItem = (path: string) => {
     // 解析URL参数
     const url = new URL(path, window.location.origin);
     const params = new URLSearchParams(url.search);
-    const projectId = params.get('projectId');
-    const taskArrangementId = params.get('taskArrangementId');
-    const projectStep = params.get('projectStep');
-    const routeName = url.pathname.split('/').pop();
+    const projectId = params.get("projectId");
+    const taskArrangementId = params.get("taskArrangementId");
+    const projectStep = params.get("projectStep");
+    const routeName = url.pathname.split("/").pop();
 
     if (!projectId) return;
 
@@ -402,16 +402,20 @@ const findAndHighlightMenuItem = (path: string) => {
       openMenuKeys.value = [project.Id];
 
       // 检查是否是固定二级菜单项
-      if (routeName === 'ProjectOverview') {
-        const menuItem = project.fixedNodes.find((item: any) => item.href === path);
+      if (routeName === "ProjectOverview") {
+        const menuItem = project.fixedNodes.find(
+          (item: any) => item.href === path,
+        );
         if (menuItem) {
           selectedMenuKeys.value = [menuItem.Id];
           return;
         }
       }
 
-      if (routeName === 'ProductionOrganization') {
-        const menuItem = project.fixedNodes.find((item: any) => item.href === path);
+      if (routeName === "ProductionOrganization") {
+        const menuItem = project.fixedNodes.find(
+          (item: any) => item.href === path,
+        );
         if (menuItem) {
           selectedMenuKeys.value = [menuItem.Id];
           return;
@@ -424,7 +428,9 @@ const findAndHighlightMenuItem = (path: string) => {
           // 打开对应的二级菜单
           openMenuKeys.value = [project.Id, taskNode.Id];
 
-          const menuItem = taskNode.children.find((item: any) => item.href === path);
+          const menuItem = taskNode.children.find(
+            (item: any) => item.href === path,
+          );
           if (menuItem) {
             selectedMenuKeys.value = [menuItem.Id];
             return;
@@ -433,7 +439,7 @@ const findAndHighlightMenuItem = (path: string) => {
       }
     }
   } catch (error) {
-    console.error('解析路径失败:', error);
+    console.error("解析路径失败:", error);
   }
 };
 

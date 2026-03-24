@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 import Layout from "@/views/layout/layout.vue";
 import addDynamicRoutes from "@/utils/addRoutes";
-import { ElMessageBox, Action } from "element-plus";
+import { ElMessageBox } from "element-plus";
 const routes: Array<RouteRecordRaw> = [
   {
     path: "/projectMgment",
@@ -120,26 +120,20 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   const token = localStorage.getItem("accesstoken");
-  // console.log("token",JSON.parse(JSON.stringify(token)));
   const currentRoutes = router.getRoutes(); // 获取当前所有路由
   const layoutRoute = currentRoutes.find((item) => item.name === "Layout");
 
   // 如果用户未登录且访问需要认证的路由，则重定向到登录页面
   if (!token && to.meta.check) {
+    ElMessageBox.alert("登录失效，请重新登录", "提示", {
+      confirmButtonText: "确定",
+      cancelButtonText: "",
+      type: "warning",
+      callback: (action: any) => {
+        router.push({ name: "login" });
+      },
+    });
 
-    // 如果用户未登录且访问需要认证的路由，则重定向到登录页面
-    if (!token && to.meta.check) {
-      ElMessageBox.alert('登录失效，请重新登录', '提示',
-        {
-          confirmButtonText: '确定',
-          cancelButtonText: '',
-          type: 'warning',
-          callback: (action: any) => {
-            router.push({ name: "login" });
-          }
-        }
-      )
-    }
     return;
   }
   // 已登录且需要初始化路由

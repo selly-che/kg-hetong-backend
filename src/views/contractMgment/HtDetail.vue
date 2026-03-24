@@ -518,6 +518,7 @@
                   <a-date-picker
                     v-model:value="billList.claimTime"
                     style="width: 100%"
+                    placeholder="请选择到款日期"
                   />
                 </a-form-item>
                 <a-form-item label="认领金额(万元)">
@@ -564,6 +565,7 @@
                   <a-date-picker
                     v-model:value="billList.claimTime"
                     style="width: 100%"
+                    placeholder="请选择到款日期"
                   />
                 </a-form-item>
                 <a-form-item label="认领金额(万元)">
@@ -595,6 +597,10 @@
           </div>
           <a-table :dataSource="dataSource5" :columns="columns5">
             <template #bodyCell="{ column, record }">
+              <template v-if="column.dataIndex === 'approvalStatus'">
+                <template v-if="record.approvalStatus === 0"> 待认领 </template>
+                <template v-else> 已认领 </template>
+              </template>
               <template v-if="column.dataIndex === 'operation'">
                 <div style="display: flex; gap: 8px">
                   <a-button
