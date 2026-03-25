@@ -598,9 +598,9 @@
             <!-- 同步集团数据弹窗 -->
             <a-modal
               v-model:visible="visible3"
-              title="同步集团数"
-              ok-text="确认同步"
-              cancel-text="取消"
+              title="同步集团数据"
+              ok-text="同步集团数据"
+              cancel-text="保留原数据"
               @ok="handleOk3"
               width="1200px"
             >
@@ -764,6 +764,10 @@
                   </a-popconfirm>
                 </div>
               </template>
+              <template v-if="column.dataIndex === 'syncStatus'">
+                {{ record.syncStatus === 1 ? "已同步" : "未同步" }}
+                <!-- {{ record.syncStatus }} -->
+              </template>
             </template>
           </a-table>
         </a-tab-pane>
@@ -791,7 +795,7 @@ import { useRoute } from "vue-router";
 import { DownloadOutlined, EyeOutlined } from "@ant-design/icons-vue";
 import getData from "@/network";
 import dayjs from "dayjs";
-import { ElMessage } from "element-plus";
+import { ElMessage, ElMessageBox } from "element-plus";
 
 const activeKey = ref("1");
 const dataSource1 = ref([]);
@@ -842,6 +846,7 @@ const billListGroup = ref({
   paymentReceiptNumber: "",
   remark: "",
   status: 0,
+  syncStatus: 0,
   version: 0,
   year: 0,
 });
@@ -883,6 +888,7 @@ const showModal = () => {
     paymentReceiptNumber: "",
     remark: "",
     status: 0,
+    syncStatus: 0,
     version: 0,
     year: 0,
   };
@@ -940,18 +946,25 @@ const syncBill = (bill) => {
 };
 //调用修改账单数据接口，修改数据
 const handleOk3 = () => {
-  visible3.value = false;
-  const newBillList = {
-    ...billListGroup.value,
-    id: billList.value.id,
-    claimTime: billListGroup.value.claimTime
-      ? billListGroup.value.claimTime.format("YYYY-MM-DD HH:mm:ss")
-      : null,
-  };
-  console.log("同步数据成功", newBillList);
-  xzform(newBillList);
-  //刷新数据
-  contractinfo();
+  ElMessageBox.confirm("确认将永久丢弃另一版本数据，此操作不可恢复！", "提示", {
+    confirmButtonText: "确认",
+    cancelButtonText: "取消",
+    type: "warning",
+  }).then(async () => {
+    visible3.value = false;
+    const newBillList = {
+      ...billListGroup.value,
+      id: billList.value.id,
+      syncStatus: 1, //同步状态，1为已同步
+      claimTime: billListGroup.value.claimTime
+        ? billListGroup.value.claimTime.format("YYYY-MM-DD HH:mm:ss")
+        : null,
+    };
+    console.log("同步数据成功", newBillList);
+    await xzform(newBillList);
+    //刷新数据
+    contractinfo();
+  });
 };
 const formData = ref({
   isSupplementary: 0,
@@ -1049,7 +1062,10 @@ const billList = ref({
 });
 const getBillList = async () => {
   const res = await getData("zhangdan/QueryBillList");
-  const billarr = res.data.result.records;
+  const billarr = res.data.result.records.map((item) => ({
+    syncStatus: 0, // 默认未同步
+    ...item,
+  }));
   dataSource5.value = billarr;
   console.log("账单信息", billarr);
 };
@@ -1224,6 +1240,11 @@ const columns5 = [
     title: "摘要",
     dataIndex: "remark",
     key: "remark",
+  },
+  {
+    title: "同步状态",
+    dataIndex: "syncStatus",
+    key: "syncStatus",
   },
   {
     title: "操作",
