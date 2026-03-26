@@ -24,6 +24,15 @@
                         </el-col>
                         <el-col :span="12">
                             <!-- 项目阶段（必填） -->
+                            <el-form-item label="项目负责人" prop="projectleader"
+                                :rules="{ required: true, message: '请选择项目负责人', trigger: 'change' }">
+                                <el-select clearable filterable v-model="formData.projectleader" placeholder="请选择项目阶段">
+                                    <el-option :label="item.realname" :value="item.id" v-for="item in ProjectUserList" />
+                                </el-select>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="12">
+                            <!-- 项目阶段（必填） -->
                             <el-form-item label="项目阶段" prop="projectStep"
                                 :rules="{ required: true, message: '请选择项目阶段', trigger: 'change' }">
                                 <el-select v-model="formData.projectStep" placeholder="请选择项目阶段">
@@ -40,6 +49,15 @@
                                     <el-option label="专题专项" value="610" />
                                     <el-option label="清概（结算）" value="611" />
                                     <el-option label="质保期" value="612" />
+                                </el-select>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="12">
+                            <el-form-item label="项目状态">
+                                <el-select v-model="formData.projectStatus">
+                                    <el-option label="暂停" value="0" />
+                                    <el-option label="进行中" value="1" />
+                                    <el-option label="已完成" value="2" />
                                 </el-select>
                             </el-form-item>
                         </el-col>
@@ -109,12 +127,10 @@
                             </el-form-item>
                         </el-col>
                         <el-col :span="12">
-                            <el-form-item label="项目状态">
-                                <el-select v-model="formData.projectStatus">
-                                    <el-option label="暂停" value="0" />
-                                    <el-option label="进行中" value="1" />
-                                    <el-option label="已完成" value="2" />
-                                </el-select>
+                            <el-form-item label="开工时间">
+                                <el-date-picker v-model="formData.projectStartTime" type="datetime"
+                                    format="YYYY-MM-DD HH:mm:ss"     value-format="YYYY-MM-DD HH:mm:ss"
+                                    placeholder="请选择开工时间" />
                             </el-form-item>
                         </el-col>
                     </el-row>
@@ -138,13 +154,7 @@
                     </el-row>
                     <!-- 开工时间 & 合同金额 -->
                     <el-row :gutter="20">
-                        <el-col :span="12">
-                            <el-form-item label="开工时间">
-                                <el-date-picker v-model="formData.projectStartTime" type="datetime"
-                                    format="YYYY-MM-DD HH:mm:ss" value-format="YYYY-MM-DD HH:mm:ss"
-                                    placeholder="请选择开工时间" />
-                            </el-form-item>
-                        </el-col>
+
                         <el-col :span="12">
                             <el-form-item label="合同金额">
                                 <el-input v-model.number="formData.projectAmount" clearable placeholder="如：200 万元">
@@ -165,7 +175,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref , onMounted } from 'vue';
 import getDatas from "@/network/index";
 import { ElMessage } from 'element-plus';
 import { useRouter, useRoute } from "vue-router";
@@ -190,6 +200,7 @@ const formData = ref({
     saixuantLx2: null,
 });
 const router = useRouter();
+const ProjectUserList = ref([])
 // 保存逻辑
 const saveProject = async () => {
     const isValid = await fromRef.value.validate()
@@ -216,6 +227,19 @@ const saveProject = async () => {
         formData.value = {};
     }
 };  
+// 获取用户列表
+const getUserList = async () => {
+    try {
+        const res = await getDatas('system/GetUserinfo', { pageNo: 1,pageSize:20 });
+        console.log(res);
+        ProjectUserList.value = res.data.result.records;
+    } catch (error) {
+        console.log(error);
+    }
+};
+onMounted(() => {
+    getUserList()
+})
 </script>
 
 <style lang="less" scoped>
