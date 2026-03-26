@@ -547,9 +547,10 @@
                 </a-form-item>
               </a-form>
             </a-modal>
+            <!-- 编辑收款数据弹窗 -->
             <a-modal
               v-model:visible="visible2"
-              title="新增收款数据"
+              title="编辑收款数据"
               ok-text="确认"
               cancel-text="取消"
               @ok="handleOk2"
@@ -594,6 +595,142 @@
                 </a-form-item>
               </a-form>
             </a-modal>
+            <!-- 同步集团数据弹窗 -->
+            <a-modal
+              v-model:visible="visible3"
+              title="同步集团数据"
+              ok-text="同步集团数据"
+              cancel-text="保留原数据"
+              @ok="handleOk3"
+              width="1200px"
+            >
+              <div style="display: flex; gap: 40px">
+                <div style="flex: 1">
+                  <div
+                    style="
+                      display: flex;
+                      align-items: center;
+                      margin-bottom: 15px;
+                    "
+                  >
+                    <div
+                      style="
+                        width: 4px;
+                        height: 18px;
+                        background-color: #1890ff;
+                        margin-right: 8px;
+                      "
+                    ></div>
+                    <p style="margin: 0; font-weight: bold">原数据</p>
+                  </div>
+                  <a-form
+                    :label-col="{ style: { width: '100px' } }"
+                    :wrapper-col="{ style: { flex: 1 } }"
+                  >
+                    <a-form-item label="认领单编号">
+                      <a-input v-model:value="billList.billNo" />
+                    </a-form-item>
+                    <a-form-item label="到款日期">
+                      <a-date-picker
+                        v-model:value="billList.claimTime"
+                        style="width: 100%"
+                        placeholder="请选择到款日期"
+                      />
+                    </a-form-item>
+                    <a-form-item label="认领金额(万元)">
+                      <a-input v-model:value="billList.amount" />
+                    </a-form-item>
+                    <a-form-item label="认领单位">
+                      <a-input v-model:value="billList.claimerDepartment" />
+                    </a-form-item>
+                    <a-form-item label="经办人">
+                      <a-input v-model:value="billList.claimer" />
+                    </a-form-item>
+                    <a-form-item label="认领状态">
+                      <a-select
+                        v-model:value="billList.approvalStatus"
+                        style="width: 100%"
+                      >
+                        <a-select-option value="0">待认领</a-select-option>
+                        <a-select-option value="1">已认领</a-select-option>
+                      </a-select>
+                    </a-form-item>
+                    <a-form-item label="付款单位">
+                      <a-input v-model:value="billList.buyerDepartment" />
+                    </a-form-item>
+                    <a-form-item label="摘要">
+                      <a-input v-model:value="billList.remark" />
+                    </a-form-item>
+                  </a-form>
+                </div>
+                <div style="flex: 1">
+                  <div
+                    style="
+                      display: flex;
+                      align-items: center;
+                      margin-bottom: 15px;
+                    "
+                  >
+                    <div
+                      style="
+                        width: 4px;
+                        height: 18px;
+                        background-color: #1890ff;
+                        margin-right: 8px;
+                      "
+                    ></div>
+                    <p style="margin: 0; font-weight: bold">集团新数据</p>
+                  </div>
+                  <a-form
+                    :label-col="{ style: { width: '100px' } }"
+                    :wrapper-col="{ style: { flex: 1 } }"
+                  >
+                    <a-form-item label="认领单编号">
+                      <a-input v-model:value="billListGroup.billNo" disabled />
+                    </a-form-item>
+                    <a-form-item label="到款日期">
+                      <a-date-picker
+                        v-model:value="billListGroup.claimTime"
+                        style="width: 100%"
+                        placeholder="请选择到款日期"
+                        disabled
+                      />
+                    </a-form-item>
+                    <a-form-item label="认领金额(万元)">
+                      <a-input v-model:value="billListGroup.amount" disabled />
+                    </a-form-item>
+                    <a-form-item label="认领单位">
+                      <a-input
+                        v-model:value="billListGroup.claimerDepartment"
+                        disabled
+                      />
+                    </a-form-item>
+                    <a-form-item label="经办人">
+                      <a-input v-model:value="billListGroup.claimer" disabled />
+                    </a-form-item>
+                    <a-form-item label="认领状态">
+                      <a-select
+                        v-model:value="billListGroup.approvalStatus"
+                        style="width: 100%"
+                        disabled
+                      >
+                        <a-select-option value="0">待认领</a-select-option>
+                        <a-select-option value="1">已认领</a-select-option>
+                      </a-select>
+                    </a-form-item>
+                    <a-form-item label="付款单位">
+                      <a-input
+                        v-model:value="billListGroup.buyerDepartment"
+                        disabled
+                      />
+                    </a-form-item>
+                    <a-form-item label="摘要">
+                      <a-input v-model:value="billListGroup.remark" disabled />
+                    </a-form-item>
+                  </a-form>
+                </div>
+              </div>
+            </a-modal>
           </div>
           <a-table :dataSource="dataSource5" :columns="columns5">
             <template #bodyCell="{ column, record }">
@@ -603,6 +740,12 @@
               </template>
               <template v-if="column.dataIndex === 'operation'">
                 <div style="display: flex; gap: 8px">
+                  <a-button
+                    type="primary"
+                    @click="syncBill(record)"
+                    v-show="record.source === 2"
+                    >同步</a-button
+                  >
                   <a-button
                     type="primary"
                     @click="editBill(record)"
@@ -620,6 +763,10 @@
                     >
                   </a-popconfirm>
                 </div>
+              </template>
+              <template v-if="column.dataIndex === 'syncStatus'">
+                {{ record.syncStatus === 1 ? "已同步" : "未同步" }}
+                <!-- {{ record.syncStatus }} -->
               </template>
             </template>
           </a-table>
@@ -648,7 +795,7 @@ import { useRoute } from "vue-router";
 import { DownloadOutlined, EyeOutlined } from "@ant-design/icons-vue";
 import getData from "@/network";
 import dayjs from "dayjs";
-import { ElMessage } from "element-plus";
+import { ElMessage, ElMessageBox } from "element-plus";
 
 const activeKey = ref("1");
 const dataSource1 = ref([]);
@@ -660,7 +807,49 @@ const contractName = ref(route.params.name);
 const totalAmount = 100;
 const visible = ref(false);
 const visible2 = ref(false);
+const visible3 = ref(false);
 
+// 集团账单列表
+const billListGroup = ref({
+  accumulatedInvoicingAmount: 0,
+  amount: 0,
+  approvalStatus: 0,
+  approvalWorkflowNode: 0,
+  bankAccount: "",
+  billNo: "",
+  billType: 0,
+  bizType: 0,
+  buyerDepartment: "",
+  buyerDepartmentId: "",
+  claimTime: "",
+  claimWithoutInvoicing: 0,
+  claimer: "",
+  claimerAccount: "",
+  claimerDepartment: "",
+  claimerDepartmentId: 0,
+  contractId: "",
+  createTime: "",
+  createUserId: "",
+  createUserName: "",
+  documentNumber: "",
+  id: "",
+  isDeleted: 0, //
+  isSend: 0, //
+  isZbj: 0,
+  modifyTime: "",
+  modifyUserId: "",
+  modifyUserName: "",
+  nextReviewer: "",
+  payId: "",
+  payTime: "",
+  payType: 0,
+  paymentReceiptNumber: "",
+  remark: "",
+  status: 0,
+  syncStatus: 0,
+  version: 0,
+  year: 0,
+});
 const showModal = () => {
   visible.value = true;
   billList.value = {
@@ -699,6 +888,7 @@ const showModal = () => {
     paymentReceiptNumber: "",
     remark: "",
     status: 0,
+    syncStatus: 0,
     version: 0,
     year: 0,
   };
@@ -740,6 +930,41 @@ const handleOk2 = () => {
   xzform(newBillList);
   //刷新数据
   contractinfo();
+};
+//打开同步数据弹窗
+const syncBill = (bill) => {
+  visible3.value = true;
+  billList.value = {
+    ...bill,
+    claimTime: bill.claimTime ? dayjs(bill.claimTime) : null,
+  };
+  billListGroup.value = {
+    ...bill.sameBillNos[0],
+    claimTime: bill.claimTime ? dayjs(bill.claimTime) : null,
+  };
+  console.log("同步账单数据1111", Object.assign({}, bill.sameBillNos));
+};
+//调用修改账单数据接口，修改数据
+const handleOk3 = () => {
+  ElMessageBox.confirm("确认将永久丢弃另一版本数据，此操作不可恢复！", "提示", {
+    confirmButtonText: "确认",
+    cancelButtonText: "取消",
+    type: "warning",
+  }).then(async () => {
+    visible3.value = false;
+    const newBillList = {
+      ...billListGroup.value,
+      id: billList.value.id,
+      syncStatus: 1, //同步状态，1为已同步
+      claimTime: billListGroup.value.claimTime
+        ? billListGroup.value.claimTime.format("YYYY-MM-DD HH:mm:ss")
+        : null,
+    };
+    console.log("同步数据成功", newBillList);
+    await xzform(newBillList);
+    //刷新数据
+    contractinfo();
+  });
 };
 const formData = ref({
   isSupplementary: 0,
@@ -837,7 +1062,10 @@ const billList = ref({
 });
 const getBillList = async () => {
   const res = await getData("zhangdan/QueryBillList");
-  const billarr = res.data.result.records;
+  const billarr = res.data.result.records.map((item) => ({
+    syncStatus: 0, // 默认未同步
+    ...item,
+  }));
   dataSource5.value = billarr;
   console.log("账单信息", billarr);
 };
@@ -1012,6 +1240,11 @@ const columns5 = [
     title: "摘要",
     dataIndex: "remark",
     key: "remark",
+  },
+  {
+    title: "同步状态",
+    dataIndex: "syncStatus",
+    key: "syncStatus",
   },
   {
     title: "操作",
