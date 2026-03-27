@@ -877,29 +877,56 @@
               </template>
               <template v-if="column.dataIndex === 'operation'">
                 <div style="display: flex; gap: 8px">
-                  <a-button type="primary" @click="syncBill(record)"
+                  <a-button
+                    type="primary"
+                    @click="syncBill(record)"
+                    v-show="
+                      record.source != 1 &&
+                      !(
+                        isBillSame(record) &&
+                        record.sameBillNos &&
+                        record.sameBillNos.length > 0
+                      ) &&
+                      record.isTb == 1
+                    "
                     >查看</a-button
                   >
-                  <!-- <a-button
+                  <a-button
                     type="primary"
                     @click="editBill(record)"
-                    v-show="record.source === 2"
+                    v-show="
+                      record.source != 1 &&
+                      !(
+                        isBillSame(record) &&
+                        record.sameBillNos &&
+                        record.sameBillNos.length > 0
+                      )
+                    "
                     >编辑</a-button
-                  > -->
-                  <!-- <a-popconfirm
+                  >
+                  <a-popconfirm
                     title="确认删除吗？"
                     ok-text="是"
                     cancel-text="否"
                     @confirm="deleteBill(record.id)"
                   >
-                    <a-button type="danger" v-show="record.source === 2"
+                    <a-button
+                      type="danger"
+                      v-show="
+                        record.source != 1 &&
+                        !(
+                          isBillSame(record) &&
+                          record.sameBillNos &&
+                          record.sameBillNos.length > 0
+                        )
+                      "
                       >删除</a-button
                     >
-                  </a-popconfirm> -->
+                  </a-popconfirm>
                 </div>
               </template>
               <template v-if="column.dataIndex === 'isTb'">
-                {{ record.isTb === 1 ? "已同步" : "未同步" }}
+                {{ getStatusText(record) }}
               </template>
             </template>
           </a-table>
@@ -941,6 +968,19 @@ const totalAmount = 100;
 const visible = ref(false);
 const visible2 = ref(false);
 const visible3 = ref(false);
+
+//判断bill同步状态
+const getStatusText = (record) => {
+  if (record.source === 1) return "";
+
+  if (record.sameBillNos.length > 0 && !isBillSame(record)) {
+    return "集团信息已同步，请查看确认";
+  }
+  if (isBillSame(record) && record.sameBillNos.length > 0) {
+    return "已同步";
+  }
+  if (record.isTb === 0) return "未同步";
+};
 
 // 集团账单列表
 const billListGroup = ref({
@@ -1027,7 +1067,10 @@ const showModal = () => {
   };
 };
 const xzform = async (newBillList) => {
-  const res = await getData("zhangdan/Save", newBillList);
+  const res = await getData("zhangdan/Save", {
+    ...newBillList,
+    contractId: contractId.value,
+  });
   if (res.data.code === 200) {
     ElMessage.success("成功");
     getBillList();
@@ -1071,9 +1114,11 @@ const syncBill = (bill) => {
     ...bill,
     claimTime: bill.claimTime ? dayjs(bill.claimTime) : null,
   };
+  const groupData =
+    bill.sameBillNos && bill.sameBillNos[0] ? bill.sameBillNos[0] : {};
   billListGroup.value = {
-    ...bill.sameBillNos[0],
-    claimTime: bill.claimTime ? dayjs(bill.claimTime) : null,
+    ...groupData,
+    claimTime: groupData.claimTime ? dayjs(groupData.claimTime) : null,
   };
   console.log("同步账单数据1111", Object.assign({}, bill.sameBillNos));
 };
@@ -1093,12 +1138,39 @@ const handleOk3 = () => {
         ? billListGroup.value.claimTime.format("YYYY-MM-DD HH:mm:ss")
         : null,
     };
-    console.log("同步状态码111", billListGroup.value.sameBillNos[0].status);
+    // console.log("同步状态码111", billListGroup.value.sameBillNos[0].status);
     console.log("同步数据成功", newBillList);
     await xzform(newBillList);
     //刷新数据
     contractinfo();
   });
+};
+// 检查账单是否已同步（本地数据与集团数据是否一致）
+const isBillSame = (record) => {
+  if (record.sameBillNos && record.sameBillNos.length > 0) {
+    const group = record.sameBillNos[0];
+    const fields = [
+      "billNo",
+      "amount",
+      "claimerDepartment",
+      "claimer",
+      "approvalStatus",
+      "buyerDepartment",
+      "remark",
+    ];
+    const isFieldsSame = fields.every(
+      (field) => String(record[field] || "") === String(group[field] || ""),
+    );
+    // 比较日期，只比较到天
+    const time1 = record.claimTime
+      ? dayjs(record.claimTime).format("YYYY-MM-DD")
+      : "";
+    const time2 = group.claimTime
+      ? dayjs(group.claimTime).format("YYYY-MM-DD")
+      : "";
+    return isFieldsSame && time1 === time2;
+  }
+  return true;
 };
 const formData = ref({
   isSupplementary: 0,
@@ -1195,7 +1267,9 @@ const billList = ref({
   year: 0,
 });
 const getBillList = async () => {
-  const res = await getData("zhangdan/QueryBillList");
+  const res = await getData("zhangdan/QueryBillList", {
+    contractId: contractId.value,
+  });
   const billarr = res.data.result.records.map((item) => ({
     isTb: 0, // 默认未同步
     ...item,

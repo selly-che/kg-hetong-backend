@@ -24,10 +24,11 @@ export default {
     };
   },
   //列表查询/jeecg-boot/bill/queryBillList
-  QueryBillList() {
+  QueryBillList(params: any) {
     return {
       method: "GET",
       url: "/bill/queryBillList",
+      params,
     };
   },
 };

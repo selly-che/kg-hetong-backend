@@ -2,10 +2,24 @@
   <div class="login">
     <div class="from">
       <div class="title">合同管理系统</div>
-      <el-input v-model="input" size="large" style="width: 400px" placeholder="请输入您的账号" prefix-icon="User" />
+      <el-input
+        v-model="input"
+        size="large"
+        style="width: 400px"
+        placeholder="请输入您的账号"
+        prefix-icon="User"
+      />
       <div class="password">
-        <el-input v-model="password" @keyup.enter="login" size="large" type="password" style="width: 400px"
-          placeholder="请输入您的密码" show-password prefix-icon="Lock" />
+        <el-input
+          v-model="password"
+          @keyup.enter="login"
+          size="large"
+          type="password"
+          style="width: 400px"
+          placeholder="请输入您的密码"
+          show-password
+          prefix-icon="Lock"
+        />
       </div>
       <div class="login-btn" @click="login">登录</div>
     </div>
@@ -339,18 +353,17 @@ const login = async () => {
   if (res.data.code == 200) {
     const menus = guestRoutes.nav;
     // console.log(menus, 'menusmenus');
-    localStorage.setItem('accesstoken', res.data.result.token)//本地存储
+    localStorage.setItem("accesstoken", res.data.result.token); //本地存储
     // const resp = await getDatas("common/getUserPermission"); // 获取角色菜单
     const wuyemenusJSON = JSON.stringify(menus);
-    localStorage.setItem('wuyemenusJSON', wuyemenusJSON)
-        sessionStorage.removeItem('tokenErrorAlertShowing');
+    localStorage.setItem("wuyemenusJSON", wuyemenusJSON);
+    sessionStorage.removeItem("tokenErrorAlertShowing");
     router.push("/home");
-    ElMessage({ message: '登录成功!', type: 'success' })
+    ElMessage({ message: "登录成功!", type: "success" });
   } else {
-    ElMessage({ message: res.data.msg, type: 'error' })
+    ElMessage({ message: res.data.msg, type: "error" });
   }
-
-}
+};
 
 //添加监听
 onBeforeMount(() => {
