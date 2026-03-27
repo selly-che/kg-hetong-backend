@@ -972,11 +972,14 @@ const visible3 = ref(false);
 //判断bill同步状态
 const getStatusText = (record) => {
   if (record.source === 1) return "";
-
-  if (record.sameBillNos.length > 0 && !isBillSame(record)) {
+  if (
+    record.sameBillNos &&
+    record.sameBillNos.length > 0 &&
+    !isBillSame(record)
+  ) {
     return "集团信息已同步，请查看确认";
   }
-  if (isBillSame(record) && record.sameBillNos.length > 0) {
+  if (record.sameBillNos && record.sameBillNos.length > 0 && isBillSame(record)) {
     return "已同步";
   }
   if (record.isTb === 0) return "未同步";
