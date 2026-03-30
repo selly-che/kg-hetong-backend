@@ -127,19 +127,19 @@ const guestRoutes = {
         title: "审批管理",
       },
     },
-    {
-      parentId: "9",
-      index: "9",
-      title: "开票及收款管理",
-      icon: "icon-xiangmu1",
-      type: "",
-      name: "InvoicingMgment",
-      path: "/InvoicingMgment",
-      component: "InvoicingMgment/index",
-      meta: {
-        title: "开票及收款管理",
-      },
-    },
+    // {
+    //   parentId: "9",
+    //   index: "9",
+    //   title: "开票及收款管理",
+    //   icon: "icon-xiangmu1",
+    //   type: "",
+    //   name: "InvoicingMgment",
+    //   path: "/InvoicingMgment",
+    //   component: "InvoicingMgment/index",
+    //   meta: {
+    //     title: "开票及收款管理",
+    //   },
+    // },
     {
       parentId: "7",
       index: "7",
