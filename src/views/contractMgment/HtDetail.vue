@@ -900,7 +900,8 @@
                         isBillSame(record) &&
                         record.sameBillNos &&
                         record.sameBillNos.length > 0
-                      )
+                      ) &&
+                      record.isTb == 0
                     "
                     >编辑</a-button
                   >
@@ -979,7 +980,11 @@ const getStatusText = (record) => {
   ) {
     return "集团信息已同步，请查看确认";
   }
-  if (record.sameBillNos && record.sameBillNos.length > 0 && isBillSame(record)) {
+  if (
+    record.sameBillNos &&
+    record.sameBillNos.length > 0 &&
+    isBillSame(record)
+  ) {
     return "已同步";
   }
   if (record.isTb === 0) return "未同步";
