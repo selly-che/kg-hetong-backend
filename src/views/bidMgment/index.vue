@@ -12,7 +12,6 @@ import { onMounted } from 'vue';
 onMounted(() => {
     console.log('组件挂载完成');
 });
-
 </script>
 
 <style lang="less" scoped> 
