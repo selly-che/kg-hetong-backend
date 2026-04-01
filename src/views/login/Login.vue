@@ -131,7 +131,7 @@ const guestRoutes = {
     {
       parentId: "6",
       index: "6",
-      title: "审批管理",
+      title: "审批管理",  
       icon: "icon-qiche",
       type: "",
       name: "approvalMgment",
