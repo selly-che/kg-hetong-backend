@@ -63,6 +63,13 @@ const routes: Array<RouteRecordRaw> = [
         component: () => import("../views/projectMgment/WorkArrangement.vue"),
         meta: { check: true, title: "工作安排" },
       },
+      // 自揽项目信息维护
+      // {
+      //    path: "projectMaintenance",
+      //   name: "projectMaintenance",
+      //   component: () => import("../views/projectMgment/projectMaintenance.vue"),
+      //   meta: { check: true, title: "自揽项目信息维护" },
+      // }
     ],
   },
   {

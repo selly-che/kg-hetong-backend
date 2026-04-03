@@ -48,5 +48,44 @@ export default {
       url: "/projectcontract/tpmProject/save",
       data:params,
     };
-  }
+  },
+  ProSelectList(params: any) {
+    return {
+      method: "GET",
+      url: "/projectcontract/tpmProject/proSelectList",
+      params,
+    };
+  },
+  delsProList(params: any) {
+    return {
+      method: "POST",
+      url: "/projectcontract/tpmProject/delsPro",
+      data:params,
+    };
+  },
+  // 新增工作安排
+  AddWorkArrangement(params: any) {
+    return {
+      method: "POST",
+      url: "/projectcontract/taskArrangement/saveGzap",
+      data:params,
+    };
+  },
+  // 新增项目组成员
+  AddProjectMember(params: any) {
+    return {
+      method: "POST",
+      url: "/projectcontract/taskArrangement/update-members",
+      data:params,
+    };
+  },
+  // 新增生产组织
+  addProductionOrg(params: any) {
+    return {
+      method: "POST",
+      url: "/projectcontract/tpmProjectOrg/production-org",
+      data:params,
+    };
+  },
+
 };

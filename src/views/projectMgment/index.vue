@@ -51,7 +51,7 @@
                 {{ fixedItem.text }}
               </a-menu-item>
 
-              <!-- 动态的二级菜单项（来自taskArrangements） -->
+              <!-- 动态的二级菜单项（来自stepList） -->
               <a-sub-menu v-for="taskItem in project.taskNodes" :key="taskItem.Id">
                 <template #title>
                   <span>{{ taskItem.text }}</span>
@@ -227,8 +227,8 @@ const getProjectList = async () => {
         },
       ];
 
-      // 处理taskArrangements为二级菜单项
-      const taskNodes = (project.taskArrangements || []).map(
+      // 处理stepList为二级菜单项
+      const taskNodes = (project.stepList || []).map(
         (task: any, index: number) => {
           const taskId = `${project.id}-task-${index}`;
 
@@ -262,7 +262,7 @@ const getProjectList = async () => {
 
           return {
             Id: taskId,
-            text: task.projectStepStr || `任务阶段${index + 1}`,
+            text: task.stepName || `任务阶段${index + 1}`,
             projectId: project.id,
             children: children,
           };

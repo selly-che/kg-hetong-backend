@@ -1,6 +1,17 @@
 <template>
   <div class="project-detail-page">
-    <div class="project-title">{{ '项目信息' }}</div>
+    <div class="project-header">
+      <div class="project-title">{{ '项目信息' }}</div>
+      <div class="action-buttons">
+        <el-button v-if="!isEdit" type="primary" @click="handleEdit">
+          编辑
+        </el-button>
+        <template v-else>
+          <el-button @click="handleCancel">取消</el-button>
+          <el-button type="primary" @click="handleSave">保存</el-button>
+        </template>
+      </div>
+    </div>
     <div class="content-wrapper">
       <a-row :gutter="[24, 24]">
         <!-- 基本信息 -->
@@ -9,57 +20,106 @@
             <a-descriptions bordered size="middle" :column="1" :labelStyle="{ width: '180px' }">
               <!-- 项目阶段信息 -->
               <a-descriptions-item label="项目阶段">
-                {{ result.projectStepName || '--' }}
+                <template v-if="isEdit">
+                  <el-select v-model="editData.projectStep" placeholder="请选择项目阶段" style="width: 100%"
+                    @change="handleProjectStepChange">
+                    <!-- ，600-预付期，601-投标，602-规划，603-预可研，604-可研，605-初步设计，606-施工图，607-配合施工，608-开通运营，609-招标图，610-专题专项，611-清概（结算），612-质保期 -->
+                    <el-option label="预付期" :value="600"></el-option>
+                    <el-option label="投标" :value="601"></el-option>
+                    <el-option label="规划" :value="602"></el-option>
+                    <el-option label="预可研" :value="603"></el-option>
+                    <el-option label="可研" :value="604"></el-option>
+                    <el-option label="初步设计" :value="605"></el-option>
+                    <el-option label="施工图" :value="606"></el-option>
+                    <el-option label="配合施工" :value="607"></el-option>
+                    <el-option label="开通运营" :value="608"></el-option>
+                    <el-option label="招标图" :value="609"></el-option>
+                    <el-option label="专题专项" :value="610"></el-option>
+                    <el-option label="清概（结算）" :value="611"></el-option>
+                    <el-option label="质保期" :value="612"></el-option>
+                  </el-select>
+                </template>
+                <template v-else>
+                  {{ result?.projectStepName || '--' }}
+                </template>
               </a-descriptions-item>
-
               <!-- 分管领导信息 -->
               <a-descriptions-item label="集团分管领导">
-                {{ result.groupLeader || '--' }}
+                <el-input v-if="isEdit" v-model="editData.groupLeader" placeholder="请输入集团分管领导"></el-input>
+                <span v-else>{{ result?.groupLeader || '--' }}</span>
               </a-descriptions-item>
-              <a-descriptions-item label="分管总(副总)工">
-                {{ result.deputyLeader || '--' }}
+              <a-descriptions-item label="分管总 (副总) 工">
+
+                <el-input v-if="isEdit" v-model="editData.deputyLeader" placeholder="请输入分管总 (副总) 工"></el-input>
+                <span v-else>{{ result?.deputyLeader || '--' }}</span>
               </a-descriptions-item>
-              <a-descriptions-item label="公司总(副总)工">
-                {{ result.companyLeaders || '--' }}
+              <a-descriptions-item label="公司总 (副总) 工">
+
+                <el-input v-if="isEdit" v-model="editData.companyLeaders" placeholder="请输入公司总 (副总) 工"></el-input>
+                <span v-else>{{ result?.companyLeaders || '--' }}</span>
               </a-descriptions-item>
               <a-descriptions-item label="经营计划部分管领导">
-                {{ result.businessPlanLeader || '--' }}
+
+                <el-input v-if="isEdit" v-model="editData.businessPlanLeader" placeholder="请输入经营计划部分管领导"></el-input>
+                <span>{{ result?.businessPlanLeader || '--' }} </span>
+
               </a-descriptions-item>
 
               <!-- 总体信息 -->
               <a-descriptions-item label="总体">
-                {{ result.overall || '--' }}
+
+                <el-input v-if="isEdit" v-model="editData.overall" placeholder="请输入总体"></el-input>
+                <span v-else>{{ result?.overall || '--' }}</span>
               </a-descriptions-item>
               <a-descriptions-item label="常务副总体">
-                {{ result.executiveDeputyOverall || '--' }}
+                <el-input v-if="isEdit" v-model="editData.executiveDeputyOverall" placeholder="请输入常务副总体"></el-input>
+                <span v-else>{{ result?.executiveDeputyOverall || '--' }}</span>
               </a-descriptions-item>
               <a-descriptions-item label="专业副总体">
-                <div v-if="result.professionalDeputyOveralls && result.professionalDeputyOveralls.length > 0">
-                  <span v-for="(item, index) in result.professionalDeputyOveralls" :key="index">
-                    {{ item }}
-                    <span v-if="index < result.professionalDeputyOveralls.length - 1">, </span>
-                  </span>
-                </div>
-                <span v-else>--</span>
+                <template v-if="isEdit">
+                  <el-select v-model="editData.professionalDeputyOveralls" multiple placeholder="请选择专业副总体"
+                    style="width: 100%">
+                    <el-option label="user003" value="user003"></el-option>
+                    <el-option label="user004" value="user004"></el-option>
+                  </el-select>
+                </template>
+                <template v-else>
+                  <div v-if="result.professionalDeputyOveralls && result.professionalDeputyOveralls.length > 0">
+                    <span v-for="(item, index) in result.professionalDeputyOveralls" :key="index">
+                      {{ item }}
+                      <span v-if="index < result.professionalDeputyOveralls.length - 1">, </span>
+                    </span>
+                  </div>
+                  <span v-else>--</span>
+                </template>
               </a-descriptions-item>
 
               <!-- 项目部信息 -->
               <a-descriptions-item label="项目部">
-                <div v-if="result.projectDepartments && result.projectDepartments.length > 0">
-                  <span v-for="(item, index) in result.projectDepartments" :key="index">
-                    {{ item }}
-                    <span v-if="index < result.projectDepartments.length - 1">, </span>
-                  </span>
-                </div>
-                <span v-else>--</span>
+                <template v-if="isEdit">
+                  <el-select v-model="editData.projectDepartments" multiple placeholder="请选择项目部" style="width: 100%">
+                    <el-option label="领导" value="领导"></el-option>
+                  </el-select>
+                </template>
+                <template v-else>
+                  <div v-if="result.projectDepartments && result.projectDepartments.length > 0">
+                    <span v-for="(item, index) in result.projectDepartments" :key="index">
+                      {{ item }}
+                      <span v-if="index < result.projectDepartments.length - 1">, </span>
+                    </span>
+                  </div>
+                  <span v-else>--</span>
+                </template>
               </a-descriptions-item>
               <a-descriptions-item label="项目经理">
-                {{ result.projectManagers || '--' }}
+                <el-input v-if="isEdit" v-model="editData.projectManagers" placeholder="请输入项目经理"></el-input>
+                <template v-else>{{ result.projectManagers || '--' }}</template>
               </a-descriptions-item>
 
               <!-- 主体责任单位 -->
               <a-descriptions-item label="主体责任单位">
-                {{ result.mainResponsibilityUnit || '--' }}
+                <el-input v-if="isEdit" v-model="editData.mainResponsibilityUnit" placeholder="请输入主体责任单位"></el-input>
+                <template v-else>{{ result.mainResponsibilityUnit || '--' }}</template>
               </a-descriptions-item>
 
             </a-descriptions>
@@ -67,425 +127,772 @@
             <div class="project_mainTitle">站前任务</div>
             <a-descriptions bordered size="middle" :column="1" :labelStyle="{ width: '180px' }">
               <a-descriptions-item label="单位名称">
-                <div v-if="result.stationBeaforTasks && result.stationBeaforTasks.length > 0">
-                  <span v-for="(task, index) in result.stationBeaforTasks" :key="index">
-                    {{ task.unitName }}
-                    <span v-if="index < result.stationBeaforTasks.length - 1">, </span>
-                  </span>
-                </div>
-                <span v-else>--</span>
+                <template v-if="isEdit">
+                  <div v-for="(task, index) in editData.stationBeaforTasks" :key="index" class="edit-task-row">
+                    <el-input v-model="task.unitName" placeholder="单位名称" style="margin-bottom: 8px"></el-input>
+                    <el-button type="danger" size="small" @click="removeTask('stationBeaforTasks', index)"
+                      v-if="index > 0">删除</el-button>
+                  </div>
+                  <el-button type="primary" @click="addTask('stationBeaforTasks')">添加</el-button>
+                </template>
+                <template v-else>
+                  <div v-if="result.stationBeaforTasks && result.stationBeaforTasks.length > 0">
+                    <span v-for="(task, index) in result.stationBeaforTasks" :key="index">
+                      {{ task.unitName }}
+                      <span v-if="index < result.stationBeaforTasks.length - 1">, </span>
+                    </span>
+                  </div>
+                  <span v-else>--</span>
+                </template>
               </a-descriptions-item>
               <a-descriptions-item label="段落划分开始">
-                <div v-if="result.stationBeaforTasks && result.stationBeaforTasks.length > 0">
-                  <span v-for="(task, index) in result.stationBeaforTasks" :key="index">
-                    {{ task.paragraphStart }}
-                    <span v-if="index < result.stationBeaforTasks.length - 1">, </span>
-                  </span>
-                </div>
-                <span v-else>--</span>
+                <template v-if="isEdit">
+                  <div v-for="(task, index) in editData.stationBeaforTasks" :key="index" style="margin-bottom: 8px">
+                    <el-input v-model="task.paragraphStart" placeholder="段落划分开始"></el-input>
+                  </div>
+                </template>
+                <template v-else>
+                  <div v-if="result.stationBeaforTasks && result.stationBeaforTasks.length > 0">
+                    <span v-for="(task, index) in result.stationBeaforTasks" :key="index">
+                      {{ task.paragraphStart }}
+                      <span v-if="index < result.stationBeaforTasks.length - 1">, </span>
+                    </span>
+                  </div>
+                  <span v-else>--</span>
+                </template>
               </a-descriptions-item>
               <a-descriptions-item label="段落划分结束">
-                <div v-if="result.stationBeaforTasks && result.stationBeaforTasks.length > 0">
-                  <span v-for="(task, index) in result.stationBeaforTasks" :key="index">
-                    {{ task.paragraphEnd }}
-                    <span v-if="index < result.stationBeaforTasks.length - 1">, </span>
-                  </span>
-                </div>
-                <span v-else>--</span>
+                <template v-if="isEdit">
+                  <div v-for="(task, index) in editData.stationBeaforTasks" :key="index" style="margin-bottom: 8px">
+                    <el-input v-model="task.paragraphEnd" placeholder="段落划分结束"></el-input>
+                  </div>
+                </template>
+                <template v-else>
+                  <div v-if="result.stationBeaforTasks && result.stationBeaforTasks.length > 0">
+                    <span v-for="(task, index) in result.stationBeaforTasks" :key="index">
+                      {{ task.paragraphEnd }}
+                      <span v-if="index < result.stationBeaforTasks.length - 1">, </span>
+                    </span>
+                  </div>
+                  <span v-else>--</span>
+                </template>
               </a-descriptions-item>
               <a-descriptions-item label="备注">
-                <div v-if="result.stationBeaforTasks && result.stationBeaforTasks.length > 0">
-                  <span v-for="(task, index) in result.stationBeaforTasks" :key="index">
-                    {{ task.remark }}
-                    <span v-if="index < result.stationBeaforTasks.length - 1">, </span>
-                  </span>
-                </div>
-                <span v-else>--</span>
+                <template v-if="isEdit">
+                  <div v-for="(task, index) in editData.stationBeaforTasks" :key="index" style="margin-bottom: 8px">
+                    <el-input v-model="task.remark" placeholder="备注"></el-input>
+                  </div>
+                </template>
+                <template v-else>
+                  <div v-if="result.stationBeaforTasks && result.stationBeaforTasks.length > 0">
+                    <span v-for="(task, index) in result.stationBeaforTasks" :key="index">
+                      {{ task.remark }}
+                      <span v-if="index < result.stationBeaforTasks.length - 1">, </span>
+                    </span>
+                  </div>
+                  <span v-else>--</span>
+                </template>
               </a-descriptions-item>
             </a-descriptions>
 
             <div class="project_mainTitle">经行及投融资任务</div>
             <a-descriptions bordered size="middle" :column="1" :labelStyle="{ width: '180px' }">
               <a-descriptions-item label="单位名称">
-                <div v-if="result.economicTasks && result.economicTasks.length > 0">
-                  <span v-for="(task, index) in result.economicTasks" :key="index">
-                    {{ task.unitName }}
-                    <span v-if="index < result.economicTasks.length - 1">, </span>
-                  </span>
-                </div>
-                <span v-else>--</span>
+                <template v-if="isEdit">
+                  <div v-for="(task, index) in editData.economicTasks" :key="index" class="edit-task-row">
+                    <el-input v-model="task.unitName" placeholder="单位名称" style="margin-bottom: 8px"></el-input>
+                    <el-button type="danger" size="small" @click="removeTask('economicTasks', index)"
+                      v-if="index > 0">删除</el-button>
+                  </div>
+                  <el-button type="primary" @click="addTask('economicTasks')">添加</el-button>
+                </template>
+                <template v-else>
+                  <div v-if="result.economicTasks && result.economicTasks.length > 0">
+                    <span v-for="(task, index) in result.economicTasks" :key="index">
+                      {{ task.unitName }}
+                      <span v-if="index < result.economicTasks.length - 1">, </span>
+                    </span>
+                  </div>
+                  <span v-else>--</span>
+                </template>
               </a-descriptions-item>
               <a-descriptions-item label="段落划分开始">
-                <div v-if="result.economicTasks && result.economicTasks.length > 0">
-                  <span v-for="(task, index) in result.economicTasks" :key="index">
-                    {{ task.paragraphStart }}
-                    <span v-if="index < result.economicTasks.length - 1">, </span>
-                  </span>
-                </div>
-                <span v-else>--</span>
+                <template v-if="isEdit">
+                  <div v-for="(task, index) in editData.economicTasks" :key="index" style="margin-bottom: 8px">
+                    <el-input v-model="task.paragraphStart" placeholder="段落划分开始"></el-input>
+                  </div>
+                </template>
+                <template v-else>
+                  <div v-if="result.economicTasks && result.economicTasks.length > 0">
+                    <span v-for="(task, index) in result.economicTasks" :key="index">
+                      {{ task.paragraphStart }}
+                      <span v-if="index < result.economicTasks.length - 1">, </span>
+                    </span>
+                  </div>
+                  <span v-else>--</span>
+                </template>
               </a-descriptions-item>
               <a-descriptions-item label="段落划分结束">
-                <div v-if="result.economicTasks && result.economicTasks.length > 0">
-                  <span v-for="(task, index) in result.economicTasks" :key="index">
-                    {{ task.paragraphEnd }}
-                    <span v-if="index < result.economicTasks.length - 1">, </span>
-                  </span>
-                </div>
-                <span v-else>--</span>
+                <template v-if="isEdit">
+                  <div v-for="(task, index) in editData.economicTasks" :key="index" style="margin-bottom: 8px">
+                    <el-input v-model="task.paragraphEnd" placeholder="段落划分结束"></el-input>
+                  </div>
+                </template>
+                <template v-else>
+                  <div v-if="result.economicTasks && result.economicTasks.length > 0">
+                    <span v-for="(task, index) in result.economicTasks" :key="index">
+                      {{ task.paragraphEnd }}
+                      <span v-if="index < result.economicTasks.length - 1">, </span>
+                    </span>
+                  </div>
+                  <span v-else>--</span>
+                </template>
               </a-descriptions-item>
               <a-descriptions-item label="备注">
-                <div v-if="result.economicTasks && result.economicTasks.length > 0">
-                  <span v-for="(task, index) in result.economicTasks" :key="index">
-                    {{ task.remark }}
-                    <span v-if="index < result.economicTasks.length - 1">, </span>
-                  </span>
-                </div>
-                <span v-else>--</span>
+                <template v-if="isEdit">
+                  <div v-for="(task, index) in editData.economicTasks" :key="index" style="margin-bottom: 8px">
+                    <el-input v-model="task.remark" placeholder="备注"></el-input>
+                  </div>
+                </template>
+                <template v-else>
+                  <div v-if="result.economicTasks && result.economicTasks.length > 0">
+                    <span v-for="(task, index) in result.economicTasks" :key="index">
+                      {{ task.remark }}
+                      <span v-if="index < result.economicTasks.length - 1">, </span>
+                    </span>
+                  </div>
+                  <span v-else>--</span>
+                </template>
               </a-descriptions-item>
             </a-descriptions>
 
             <div class="project_mainTitle">站后任务</div>
             <a-descriptions bordered size="middle" :column="1" :labelStyle="{ width: '180px' }">
               <a-descriptions-item label="单位名称">
-                <div v-if="result.stationAfterTasks && result.stationAfterTasks.length > 0">
-                  <span v-for="(task, index) in result.stationAfterTasks" :key="index">
-                    {{ task.unitName }}
-                    <span v-if="index < result.stationAfterTasks.length - 1">, </span>
-                  </span>
-                </div>
-                <span v-else>--</span>
+                <template v-if="isEdit">
+                  <div v-for="(task, index) in editData.stationAfterTasks" :key="index" class="edit-task-row">
+                    <el-input v-model="task.unitName" placeholder="单位名称" style="margin-bottom: 8px"></el-input>
+                    <el-button type="danger" size="small" @click="removeTask('stationAfterTasks', index)"
+                      v-if="index > 0">删除</el-button>
+                  </div>
+                  <el-button type="primary" @click="addTask('stationAfterTasks')">添加</el-button>
+                </template>
+                <template v-else>
+                  <div v-if="result.stationAfterTasks && result.stationAfterTasks.length > 0">
+                    <span v-for="(task, index) in result.stationAfterTasks" :key="index">
+                      {{ task.unitName }}
+                      <span v-if="index < result.stationAfterTasks.length - 1">, </span>
+                    </span>
+                  </div>
+                  <span v-else>--</span>
+                </template>
               </a-descriptions-item>
               <a-descriptions-item label="段落划分开始">
-                <div v-if="result.stationAfterTasks && result.stationAfterTasks.length > 0">
-                  <span v-for="(task, index) in result.stationAfterTasks" :key="index">
-                    {{ task.paragraphStart }}
-                    <span v-if="index < result.stationAfterTasks.length - 1">, </span>
-                  </span>
-                </div>
-                <span v-else>--</span>
+                <template v-if="isEdit">
+                  <div v-for="(task, index) in editData.stationAfterTasks" :key="index" style="margin-bottom: 8px">
+                    <el-input v-model="task.paragraphStart" placeholder="段落划分开始"></el-input>
+                  </div>
+                </template>
+                <template v-else>
+                  <div v-if="result.stationAfterTasks && result.stationAfterTasks.length > 0">
+                    <span v-for="(task, index) in result.stationAfterTasks" :key="index">
+                      {{ task.paragraphStart }}
+                      <span v-if="index < result.stationAfterTasks.length - 1">, </span>
+                    </span>
+                  </div>
+                  <span v-else>--</span>
+                </template>
               </a-descriptions-item>
               <a-descriptions-item label="段落划分结束">
-                <div v-if="result.stationAfterTasks && result.stationAfterTasks.length > 0">
-                  <span v-for="(task, index) in result.stationAfterTasks" :key="index">
-                    {{ task.paragraphEnd }}
-                    <span v-if="index < result.stationAfterTasks.length - 1">, </span>
-                  </span>
-                </div>
-                <span v-else>--</span>
+                <template v-if="isEdit">
+                  <div v-for="(task, index) in editData.stationAfterTasks" :key="index" style="margin-bottom: 8px">
+                    <el-input v-model="task.paragraphEnd" placeholder="段落划分结束"></el-input>
+                  </div>
+                </template>
+                <template v-else>
+                  <div v-if="result.stationAfterTasks && result.stationAfterTasks.length > 0">
+                    <span v-for="(task, index) in result.stationAfterTasks" :key="index">
+                      {{ task.paragraphEnd }}
+                      <span v-if="index < result.stationAfterTasks.length - 1">, </span>
+                    </span>
+                  </div>
+                  <span v-else>--</span>
+                </template>
               </a-descriptions-item>
               <a-descriptions-item label="备注">
-                <div v-if="result.stationAfterTasks && result.stationAfterTasks.length > 0">
-                  <span v-for="(task, index) in result.stationAfterTasks" :key="index">
-                    {{ task.remark }}
-                    <span v-if="index < result.stationAfterTasks.length - 1">, </span>
-                  </span>
-                </div>
-                <span v-else>--</span>
+                <template v-if="isEdit">
+                  <div v-for="(task, index) in editData.stationAfterTasks" :key="index" style="margin-bottom: 8px">
+                    <el-input v-model="task.remark" placeholder="备注"></el-input>
+                  </div>
+                </template>
+                <template v-else>
+                  <div v-if="result.stationAfterTasks && result.stationAfterTasks.length > 0">
+                    <span v-for="(task, index) in result.stationAfterTasks" :key="index">
+                      {{ task.remark }}
+                      <span v-if="index < result.stationAfterTasks.length - 1">, </span>
+                    </span>
+                  </div>
+                  <span v-else>--</span>
+                </template>
               </a-descriptions-item>
             </a-descriptions>
 
             <div class="project_mainTitle">工程经济任务</div>
             <a-descriptions bordered size="middle" :column="1" :labelStyle="{ width: '180px' }">
               <a-descriptions-item label="单位名称">
-                <div v-if="result.engineeringEconomicTasks && result.engineeringEconomicTasks.length > 0">
-                  <span v-for="(task, index) in result.engineeringEconomicTasks" :key="index">
-                    {{ task.unitName }}
-                    <span v-if="index < result.engineeringEconomicTasks.length - 1">, </span>
-                  </span>
-                </div>
-                <span v-else>--</span>
+                <template v-if="isEdit">
+                  <div v-for="(task, index) in editData.engineeringEconomicTasks" :key="index" class="edit-task-row">
+                    <el-input v-model="task.unitName" placeholder="单位名称" style="margin-bottom: 8px"></el-input>
+                    <el-button type="danger" size="small" @click="removeTask('engineeringEconomicTasks', index)"
+                      v-if="index > 0">删除</el-button>
+                  </div>
+                  <el-button type="primary" @click="addTask('engineeringEconomicTasks')">添加</el-button>
+                </template>
+                <template v-else>
+                  <div v-if="result.engineeringEconomicTasks && result.engineeringEconomicTasks.length > 0">
+                    <span v-for="(task, index) in result.engineeringEconomicTasks" :key="index">
+                      {{ task.unitName }}
+                      <span v-if="index < result.engineeringEconomicTasks.length - 1">, </span>
+                    </span>
+                  </div>
+                  <span v-else>--</span>
+                </template>
               </a-descriptions-item>
               <a-descriptions-item label="段落划分开始">
-                <div v-if="result.engineeringEconomicTasks && result.engineeringEconomicTasks.length > 0">
-                  <span v-for="(task, index) in result.engineeringEconomicTasks" :key="index">
-                    {{ task.paragraphStart }}
-                    <span v-if="index < result.engineeringEconomicTasks.length - 1">, </span>
-                  </span>
-                </div>
-                <span v-else>--</span>
+                <template v-if="isEdit">
+                  <div v-for="(task, index) in editData.engineeringEconomicTasks" :key="index"
+                    style="margin-bottom: 8px">
+                    <el-input v-model="task.paragraphStart" placeholder="段落划分开始"></el-input>
+                  </div>
+                </template>
+                <template v-else>
+                  <div v-if="result.engineeringEconomicTasks && result.engineeringEconomicTasks.length > 0">
+                    <span v-for="(task, index) in result.engineeringEconomicTasks" :key="index">
+                      {{ task.paragraphStart }}
+                      <span v-if="index < result.engineeringEconomicTasks.length - 1">, </span>
+                    </span>
+                  </div>
+                  <span v-else>--</span>
+                </template>
               </a-descriptions-item>
               <a-descriptions-item label="段落划分结束">
-                <div v-if="result.engineeringEconomicTasks && result.engineeringEconomicTasks.length > 0">
-                  <span v-for="(task, index) in result.engineeringEconomicTasks" :key="index">
-                    {{ task.paragraphEnd }}
-                    <span v-if="index < result.engineeringEconomicTasks.length - 1">, </span>
-                  </span>
-                </div>
-                <span v-else>--</span>
+                <template v-if="isEdit">
+                  <div v-for="(task, index) in editData.engineeringEconomicTasks" :key="index"
+                    style="margin-bottom: 8px">
+                    <el-input v-model="task.paragraphEnd" placeholder="段落划分结束"></el-input>
+                  </div>
+                </template>
+                <template v-else>
+                  <div v-if="result.engineeringEconomicTasks && result.engineeringEconomicTasks.length > 0">
+                    <span v-for="(task, index) in result.engineeringEconomicTasks" :key="index">
+                      {{ task.paragraphEnd }}
+                      <span v-if="index < result.engineeringEconomicTasks.length - 1">, </span>
+                    </span>
+                  </div>
+                  <span v-else>--</span>
+                </template>
               </a-descriptions-item>
               <a-descriptions-item label="备注">
-                <div v-if="result.engineeringEconomicTasks && result.engineeringEconomicTasks.length > 0">
-                  <span v-for="(task, index) in result.engineeringEconomicTasks" :key="index">
-                    {{ task.remark }}
-                    <span v-if="index < result.engineeringEconomicTasks.length - 1">, </span>
-                  </span>
-                </div>
-                <span v-else>--</span>
+                <template v-if="isEdit">
+                  <div v-for="(task, index) in editData.engineeringEconomicTasks" :key="index"
+                    style="margin-bottom: 8px">
+                    <el-input v-model="task.remark" placeholder="备注"></el-input>
+                  </div>
+                </template>
+                <template v-else>
+                  <div v-if="result.engineeringEconomicTasks && result.engineeringEconomicTasks.length > 0">
+                    <span v-for="(task, index) in result.engineeringEconomicTasks" :key="index">
+                      {{ task.remark }}
+                      <span v-if="index < result.engineeringEconomicTasks.length - 1">, </span>
+                    </span>
+                  </div>
+                  <span v-else>--</span>
+                </template>
               </a-descriptions-item>
             </a-descriptions>
 
             <div class="project_mainTitle">航飞任务</div>
             <a-descriptions bordered size="middle" :column="1" :labelStyle="{ width: '180px' }">
               <a-descriptions-item label="单位名称">
-                <div v-if="result.flightTasks && result.flightTasks.length > 0">
-                  <span v-for="(task, index) in result.flightTasks" :key="index">
-                    {{ task.unitName }}
-                    <span v-if="index < result.flightTasks.length - 1">, </span>
-                  </span>
-                </div>
-                <span v-else>--</span>
+                <template v-if="isEdit">
+                  <div v-for="(task, index) in editData.flightTasks" :key="index" class="edit-task-row">
+                    <el-input v-model="task.unitName" placeholder="单位名称" style="margin-bottom: 8px"></el-input>
+                    <el-button type="danger" size="small" @click="removeTask('flightTasks', index)"
+                      v-if="index > 0">删除</el-button>
+                  </div>
+                  <el-button type="primary" @click="addTask('flightTasks')">添加</el-button>
+                </template>
+                <template v-else>
+                  <div v-if="result.flightTasks && result.flightTasks.length > 0">
+                    <span v-for="(task, index) in result.flightTasks" :key="index">
+                      {{ task.unitName }}
+                      <span v-if="index < result.flightTasks.length - 1">, </span>
+                    </span>
+                  </div>
+                  <span v-else>--</span>
+                </template>
               </a-descriptions-item>
               <a-descriptions-item label="段落划分开始">
-                <div v-if="result.flightTasks && result.flightTasks.length > 0">
-                  <span v-for="(task, index) in result.flightTasks" :key="index">
-                    {{ task.paragraphStart }}
-                    <span v-if="index < result.flightTasks.length - 1">, </span>
-                  </span>
-                </div>
-                <span v-else>--</span>
+                <template v-if="isEdit">
+                  <div v-for="(task, index) in editData.flightTasks" :key="index" style="margin-bottom: 8px">
+                    <el-input v-model="task.paragraphStart" placeholder="段落划分开始"></el-input>
+                  </div>
+                </template>
+                <template v-else>
+                  <div v-if="result.flightTasks && result.flightTasks.length > 0">
+                    <span v-for="(task, index) in result.flightTasks" :key="index">
+                      {{ task.paragraphStart }}
+                      <span v-if="index < result.flightTasks.length - 1">, </span>
+                    </span>
+                  </div>
+                  <span v-else>--</span>
+                </template>
               </a-descriptions-item>
               <a-descriptions-item label="段落划分结束">
-                <div v-if="result.flightTasks && result.flightTasks.length > 0">
-                  <span v-for="(task, index) in result.flightTasks" :key="index">
-                    {{ task.paragraphEnd }}
-                    <span v-if="index < result.flightTasks.length - 1">, </span>
-                  </span>
-                </div>
-                <span v-else>--</span>
+                <template v-if="isEdit">
+                  <div v-for="(task, index) in editData.flightTasks" :key="index" style="margin-bottom: 8px">
+                    <el-input v-model="task.paragraphEnd" placeholder="段落划分结束"></el-input>
+                  </div>
+                </template>
+                <template v-else>
+                  <div v-if="result.flightTasks && result.flightTasks.length > 0">
+                    <span v-for="(task, index) in result.flightTasks" :key="index">
+                      {{ task.paragraphEnd }}
+                      <span v-if="index < result.flightTasks.length - 1">, </span>
+                    </span>
+                  </div>
+                  <span v-else>--</span>
+                </template>
               </a-descriptions-item>
               <a-descriptions-item label="备注">
-                <div v-if="result.flightTasks && result.flightTasks.length > 0">
-                  <span v-for="(task, index) in result.flightTasks" :key="index">
-                    {{ task.remark }}
-                    <span v-if="index < result.flightTasks.length - 1">, </span>
-                  </span>
-                </div>
-                <span v-else>--</span>
+                <template v-if="isEdit">
+                  <div v-for="(task, index) in editData.flightTasks" :key="index" style="margin-bottom: 8px">
+                    <el-input v-model="task.remark" placeholder="备注"></el-input>
+                  </div>
+                </template>
+                <template v-else>
+                  <div v-if="result.flightTasks && result.flightTasks.length > 0">
+                    <span v-for="(task, index) in result.flightTasks" :key="index">
+                      {{ task.remark }}
+                      <span v-if="index < result.flightTasks.length - 1">, </span>
+                    </span>
+                  </div>
+                  <span v-else>--</span>
+                </template>
               </a-descriptions-item>
             </a-descriptions>
 
             <div class="project_mainTitle">制图任务</div>
             <a-descriptions bordered size="middle" :column="1" :labelStyle="{ width: '180px' }">
               <a-descriptions-item label="单位名称">
-                <div v-if="result.drawingTasks && result.drawingTasks.length > 0">
-                  <span v-for="(task, index) in result.drawingTasks" :key="index">
-                    {{ task.unitName }}
-                    <span v-if="index < result.drawingTasks.length - 1">, </span>
-                  </span>
-                </div>
-                <span v-else>--</span>
+                <template v-if="isEdit">
+                  <div v-for="(task, index) in editData.drawingTasks" :key="index" class="edit-task-row">
+                    <el-input v-model="task.unitName" placeholder="单位名称" style="margin-bottom: 8px"></el-input>
+                    <el-button type="danger" size="small" @click="removeTask('drawingTasks', index)"
+                      v-if="index > 0">删除</el-button>
+                  </div>
+                  <el-button type="primary" @click="addTask('drawingTasks')">添加</el-button>
+                </template>
+                <template v-else>
+                  <div v-if="result.drawingTasks && result.drawingTasks.length > 0">
+                    <span v-for="(task, index) in result.drawingTasks" :key="index">
+                      {{ task.unitName }}
+                      <span v-if="index < result.drawingTasks.length - 1">, </span>
+                    </span>
+                  </div>
+                  <span v-else>--</span>
+                </template>
               </a-descriptions-item>
               <a-descriptions-item label="段落划分开始">
-                <div v-if="result.drawingTasks && result.drawingTasks.length > 0">
-                  <span v-for="(task, index) in result.drawingTasks" :key="index">
-                    {{ task.paragraphStart }}
-                    <span v-if="index < result.drawingTasks.length - 1">, </span>
-                  </span>
-                </div>
-                <span v-else>--</span>
+                <template v-if="isEdit">
+                  <div v-for="(task, index) in editData.drawingTasks" :key="index" style="margin-bottom: 8px">
+                    <el-input v-model="task.paragraphStart" placeholder="段落划分开始"></el-input>
+                  </div>
+                </template>
+                <template v-else>
+                  <div v-if="result.drawingTasks && result.drawingTasks.length > 0">
+                    <span v-for="(task, index) in result.drawingTasks" :key="index">
+                      {{ task.paragraphStart }}
+                      <span v-if="index < result.drawingTasks.length - 1">, </span>
+                    </span>
+                  </div>
+                  <span v-else>--</span>
+                </template>
               </a-descriptions-item>
               <a-descriptions-item label="段落划分结束">
-                <div v-if="result.drawingTasks && result.drawingTasks.length > 0">
-                  <span v-for="(task, index) in result.drawingTasks" :key="index">
-                    {{ task.paragraphEnd }}
-                    <span v-if="index < result.drawingTasks.length - 1">, </span>
-                  </span>
-                </div>
-                <span v-else>--</span>
+                <template v-if="isEdit">
+                  <div v-for="(task, index) in editData.drawingTasks" :key="index" style="margin-bottom: 8px">
+                    <el-input v-model="task.paragraphEnd" placeholder="段落划分结束"></el-input>
+                  </div>
+                </template>
+                <template v-else>
+                  <div v-if="result.drawingTasks && result.drawingTasks.length > 0">
+                    <span v-for="(task, index) in result.drawingTasks" :key="index">
+                      {{ task.paragraphEnd }}
+                      <span v-if="index < result.drawingTasks.length - 1">, </span>
+                    </span>
+                  </div>
+                  <span v-else>--</span>
+                </template>
               </a-descriptions-item>
               <a-descriptions-item label="备注">
-                <div v-if="result.drawingTasks && result.drawingTasks.length > 0">
-                  <span v-for="(task, index) in result.drawingTasks" :key="index">
-                    {{ task.remark }}
-                    <span v-if="index < result.drawingTasks.length - 1">, </span>
-                  </span>
-                </div>
-                <span v-else>--</span>
+                <template v-if="isEdit">
+                  <div v-for="(task, index) in editData.drawingTasks" :key="index" style="margin-bottom: 8px">
+                    <el-input v-model="task.remark" placeholder="备注"></el-input>
+                  </div>
+                </template>
+                <template v-else>
+                  <div v-if="result.drawingTasks && result.drawingTasks.length > 0">
+                    <span v-for="(task, index) in result.drawingTasks" :key="index">
+                      {{ task.remark }}
+                      <span v-if="index < result.drawingTasks.length - 1">, </span>
+                    </span>
+                  </div>
+                  <span v-else>--</span>
+                </template>
               </a-descriptions-item>
             </a-descriptions>
 
             <div class="project_mainTitle">测量任务</div>
             <a-descriptions bordered size="middle" :column="1" :labelStyle="{ width: '180px' }">
               <a-descriptions-item label="单位名称">
-                <div v-if="result.surveyTasks && result.surveyTasks.length > 0">
-                  <span v-for="(task, index) in result.surveyTasks" :key="index">
-                    {{ task.unitName }}
-                    <span v-if="index < result.surveyTasks.length - 1">, </span>
-                  </span>
-                </div>
-                <span v-else>--</span>
+                <template v-if="isEdit">
+                  <div v-for="(task, index) in editData.surveyTasks" :key="index" class="edit-task-row">
+                    <el-input v-model="task.unitName" placeholder="单位名称" style="margin-bottom: 8px"></el-input>
+                    <el-button type="danger" size="small" @click="removeTask('surveyTasks', index)"
+                      v-if="index > 0">删除</el-button>
+                  </div>
+                  <el-button type="primary" @click="addTask('surveyTasks')">添加</el-button>
+                </template>
+                <template v-else>
+                  <div v-if="result.surveyTasks && result.surveyTasks.length > 0">
+                    <span v-for="(task, index) in result.surveyTasks" :key="index">
+                      {{ task.unitName }}
+                      <span v-if="index < result.surveyTasks.length - 1">, </span>
+                    </span>
+                  </div>
+                  <span v-else>--</span>
+                </template>
               </a-descriptions-item>
               <a-descriptions-item label="段落划分开始">
-                <div v-if="result.surveyTasks && result.surveyTasks.length > 0">
-                  <span v-for="(task, index) in result.surveyTasks" :key="index">
-                    {{ task.paragraphStart }}
-                    <span v-if="index < result.surveyTasks.length - 1">, </span>
-                  </span>
-                </div>
-                <span v-else>--</span>
+                <template v-if="isEdit">
+                  <div v-for="(task, index) in editData.surveyTasks" :key="index" style="margin-bottom: 8px">
+                    <el-input v-model="task.paragraphStart" placeholder="段落划分开始"></el-input>
+                  </div>
+                </template>
+                <template v-else>
+                  <div v-if="result.surveyTasks && result.surveyTasks.length > 0">
+                    <span v-for="(task, index) in result.surveyTasks" :key="index">
+                      {{ task.paragraphStart }}
+                      <span v-if="index < result.surveyTasks.length - 1">, </span>
+                    </span>
+                  </div>
+                  <span v-else>--</span>
+                </template>
               </a-descriptions-item>
               <a-descriptions-item label="段落划分结束">
-                <div v-if="result.surveyTasks && result.surveyTasks.length > 0">
-                  <span v-for="(task, index) in result.surveyTasks" :key="index">
-                    {{ task.paragraphEnd }}
-                    <span v-if="index < result.surveyTasks.length - 1">, </span>
-                  </span>
-                </div>
-                <span v-else>--</span>
+                <template v-if="isEdit">
+                  <div v-for="(task, index) in editData.surveyTasks" :key="index" style="margin-bottom: 8px">
+                    <el-input v-model="task.paragraphEnd" placeholder="段落划分结束"></el-input>
+                  </div>
+                </template>
+                <template v-else>
+                  <div v-if="result.surveyTasks && result.surveyTasks.length > 0">
+                    <span v-for="(task, index) in result.surveyTasks" :key="index">
+                      {{ task.paragraphEnd }}
+                      <span v-if="index < result.surveyTasks.length - 1">, </span>
+                    </span>
+                  </div>
+                  <span v-else>--</span>
+                </template>
               </a-descriptions-item>
               <a-descriptions-item label="备注">
-                <div v-if="result.surveyTasks && result.surveyTasks.length > 0">
-                  <span v-for="(task, index) in result.surveyTasks" :key="index">
-                    {{ task.remark }}
-                    <span v-if="index < result.surveyTasks.length - 1">, </span>
-                  </span>
-                </div>
-                <span v-else>--</span>
+                <template v-if="isEdit">
+                  <div v-for="(task, index) in editData.surveyTasks" :key="index" style="margin-bottom: 8px">
+                    <el-input v-model="task.remark" placeholder="备注"></el-input>
+                  </div>
+                </template>
+                <template v-else>
+                  <div v-if="result.surveyTasks && result.surveyTasks.length > 0">
+                    <span v-for="(task, index) in result.surveyTasks" :key="index">
+                      {{ task.remark }}
+                      <span v-if="index < result.surveyTasks.length - 1">, </span>
+                    </span>
+                  </div>
+                  <span v-else>--</span>
+                </template>
               </a-descriptions-item>
             </a-descriptions>
 
             <div class="project_mainTitle">地勘任务</div>
             <a-descriptions bordered size="middle" :column="1" :labelStyle="{ width: '180px' }">
               <a-descriptions-item label="单位名称">
-                <div v-if="result.geologicalTasks && result.geologicalTasks.length > 0">
-                  <span v-for="(task, index) in result.geologicalTasks" :key="index">
-                    {{ task.unitName }}
-                    <span v-if="index < result.geologicalTasks.length - 1">, </span>
-                  </span>
-                </div>
-                <span v-else>--</span>
+                <template v-if="isEdit">
+                  <div v-for="(task, index) in editData.geologicalTasks" :key="index" class="edit-task-row">
+                    <el-input v-model="task.unitName" placeholder="单位名称" style="margin-bottom: 8px"></el-input>
+                    <el-button type="danger" size="small" @click="removeTask('geologicalTasks', index)"
+                      v-if="index > 0">删除</el-button>
+                  </div>
+                  <el-button type="primary" @click="addTask('geologicalTasks')">添加</el-button>
+                </template>
+                <template v-else>
+                  <div v-if="result.geologicalTasks && result.geologicalTasks.length > 0">
+                    <span v-for="(task, index) in result.geologicalTasks" :key="index">
+                      {{ task.unitName }}
+                      <span v-if="index < result.geologicalTasks.length - 1">, </span>
+                    </span>
+                  </div>
+                  <span v-else>--</span>
+                </template>
               </a-descriptions-item>
               <a-descriptions-item label="段落划分">
-                <div v-if="result.geologicalTasks && result.geologicalTasks.length > 0">
-                  <div v-for="(task, index) in result.geologicalTasks" :key="index">
-                    <div v-for="(paragraph, pIndex) in task.paragraphs" :key="pIndex">
-                      开始里程: {{ paragraph.start }} - 结束里程: {{ paragraph.end }}
-                      <span v-if="paragraph.remark"> ({{ paragraph.remark }})</span>
-                      <br>
+                <template v-if="isEdit">
+                  <div v-for="(task, index) in editData.geologicalTasks" :key="index">
+                    <div v-for="(paragraph, pIndex) in task.paragraphs" :key="pIndex" class="edit-paragraph-row">
+                      <el-row :gutter="10">
+                        <el-col :span="8">
+                          <el-input v-model="paragraph.start" placeholder="开始里程"></el-input>
+                        </el-col>
+                        <el-col :span="8">
+                          <el-input v-model="paragraph.end" placeholder="结束里程"></el-input>
+                        </el-col>
+                        <el-col :span="6">
+                          <el-input v-model="paragraph.remark" placeholder="备注"></el-input>
+                        </el-col>
+                        <el-col :span="2">
+                          <el-button type="danger" size="small" @click="removeParagraph(index, pIndex)"
+                            v-if="pIndex > 0">删除</el-button>
+                        </el-col>
+                      </el-row>
+                    </div>
+                    <el-button type="primary" size="small" @click="addParagraph(index)">添加段落</el-button>
+                  </div>
+                </template>
+                <template v-else>
+                  <div v-if="result.geologicalTasks && result.geologicalTasks.length > 0">
+                    <div v-for="(task, index) in result.geologicalTasks" :key="index">
+                      <div v-for="(paragraph, pIndex) in task.paragraphs" :key="pIndex">
+                        开始里程：{{ paragraph.start }} - 结束里程：{{ paragraph.end }}
+                        <span v-if="paragraph.remark"> ({{ paragraph.remark }})</span>
+                        <br>
+                      </div>
                     </div>
                   </div>
-                </div>
-                <span v-else>--</span>
+                  <span v-else>--</span>
+                </template>
               </a-descriptions-item>
             </a-descriptions>
 
             <div class="project_mainTitle">试验任务</div>
             <a-descriptions bordered size="middle" :column="1" :labelStyle="{ width: '180px' }">
               <a-descriptions-item label="单位名称">
-                <div v-if="result.testTasks && result.testTasks.length > 0">
-                  <span v-for="(task, index) in result.testTasks" :key="index">
-                    {{ task.unitName }}
-                    <span v-if="index < result.testTasks.length - 1">, </span>
-                  </span>
-                </div>
-                <span v-else>--</span>
+                <template v-if="isEdit">
+                  <div v-for="(task, index) in editData.testTasks" :key="index" class="edit-task-row">
+                    <el-input v-model="task.unitName" placeholder="单位名称" style="margin-bottom: 8px"></el-input>
+                    <el-button type="danger" size="small" @click="removeTask('testTasks', index)"
+                      v-if="index > 0">删除</el-button>
+                  </div>
+                  <el-button type="primary" @click="addTask('testTasks')">添加</el-button>
+                </template>
+                <template v-else>
+                  <div v-if="result.testTasks && result.testTasks.length > 0">
+                    <span v-for="(task, index) in result.testTasks" :key="index">
+                      {{ task.unitName }}
+                      <span v-if="index < result.testTasks.length - 1">, </span>
+                    </span>
+                  </div>
+                  <span v-else>--</span>
+                </template>
               </a-descriptions-item>
               <a-descriptions-item label="段落划分开始">
-                <div v-if="result.testTasks && result.testTasks.length > 0">
-                  <span v-for="(task, index) in result.testTasks" :key="index">
-                    {{ task.paragraphStart }}
-                    <span v-if="index < result.testTasks.length - 1">, </span>
-                  </span>
-                </div>
-                <span v-else>--</span>
+                <template v-if="isEdit">
+                  <div v-for="(task, index) in editData.testTasks" :key="index" style="margin-bottom: 8px">
+                    <el-input v-model="task.paragraphStart" placeholder="段落划分开始"></el-input>
+                  </div>
+                </template>
+                <template v-else>
+                  <div v-if="result.testTasks && result.testTasks.length > 0">
+                    <span v-for="(task, index) in result.testTasks" :key="index">
+                      {{ task.paragraphStart }}
+                      <span v-if="index < result.testTasks.length - 1">, </span>
+                    </span>
+                  </div>
+                  <span v-else>--</span>
+                </template>
               </a-descriptions-item>
               <a-descriptions-item label="段落划分结束">
-                <div v-if="result.testTasks && result.testTasks.length > 0">
-                  <span v-for="(task, index) in result.testTasks" :key="index">
-                    {{ task.paragraphEnd }}
-                    <span v-if="index < result.testTasks.length - 1">, </span>
-                  </span>
-                </div>
-                <span v-else>--</span>
+                <template v-if="isEdit">
+                  <div v-for="(task, index) in editData.testTasks" :key="index" style="margin-bottom: 8px">
+                    <el-input v-model="task.paragraphEnd" placeholder="段落划分结束"></el-input>
+                  </div>
+                </template>
+                <template v-else>
+                  <div v-if="result.testTasks && result.testTasks.length > 0">
+                    <span v-for="(task, index) in result.testTasks" :key="index">
+                      {{ task.paragraphEnd }}
+                      <span v-if="index < result.testTasks.length - 1">, </span>
+                    </span>
+                  </div>
+                  <span v-else>--</span>
+                </template>
               </a-descriptions-item>
               <a-descriptions-item label="备注">
-                <div v-if="result.testTasks && result.testTasks.length > 0">
-                  <span v-for="(task, index) in result.testTasks" :key="index">
-                    {{ task.remark }}
-                    <span v-if="index < result.testTasks.length - 1">, </span>
-                  </span>
-                </div>
-                <span v-else>--</span>
+                <template v-if="isEdit">
+                  <div v-for="(task, index) in editData.testTasks" :key="index" style="margin-bottom: 8px">
+                    <el-input v-model="task.remark" placeholder="备注"></el-input>
+                  </div>
+                </template>
+                <template v-else>
+                  <div v-if="result.testTasks && result.testTasks.length > 0">
+                    <span v-for="(task, index) in result.testTasks" :key="index">
+                      {{ task.remark }}
+                      <span v-if="index < result.testTasks.length - 1">, </span>
+                    </span>
+                  </div>
+                  <span v-else>--</span>
+                </template>
               </a-descriptions-item>
             </a-descriptions>
 
             <div class="project_mainTitle">综合开发任务</div>
             <a-descriptions bordered size="middle" :column="1" :labelStyle="{ width: '180px' }">
               <a-descriptions-item label="单位名称">
-                <div v-if="result.comprehensiveTasks && result.comprehensiveTasks.length > 0">
-                  <span v-for="(task, index) in result.comprehensiveTasks" :key="index">
-                    {{ task.unitName }}
-                    <span v-if="index < result.comprehensiveTasks.length - 1">, </span>
-                  </span>
-                </div>
-                <span v-else>--</span>
+                <template v-if="isEdit">
+                  <div v-for="(task, index) in editData.comprehensiveTasks" :key="index" class="edit-task-row">
+                    <el-input v-model="task.unitName" placeholder="单位名称" style="margin-bottom: 8px"></el-input>
+                    <el-button type="danger" size="small" @click="removeTask('comprehensiveTasks', index)"
+                      v-if="index > 0">删除</el-button>
+                  </div>
+                  <el-button type="primary" @click="addTask('comprehensiveTasks')">添加</el-button>
+                </template>
+                <template v-else>
+                  <div v-if="result.comprehensiveTasks && result.comprehensiveTasks.length > 0">
+                    <span v-for="(task, index) in result.comprehensiveTasks" :key="index">
+                      {{ task.unitName }}
+                      <span v-if="index < result.comprehensiveTasks.length - 1">, </span>
+                    </span>
+                  </div>
+                  <span v-else>--</span>
+                </template>
               </a-descriptions-item>
               <a-descriptions-item label="段落划分开始">
-                <div v-if="result.comprehensiveTasks && result.comprehensiveTasks.length > 0">
-                  <span v-for="(task, index) in result.comprehensiveTasks" :key="index">
-                    {{ task.paragraphStart }}
-                    <span v-if="index < result.comprehensiveTasks.length - 1">, </span>
-                  </span>
-                </div>
-                <span v-else>--</span>
+                <template v-if="isEdit">
+                  <div v-for="(task, index) in editData.comprehensiveTasks" :key="index" style="margin-bottom: 8px">
+                    <el-input v-model="task.paragraphStart" placeholder="段落划分开始"></el-input>
+                  </div>
+                </template>
+                <template v-else>
+                  <div v-if="result.comprehensiveTasks && result.comprehensiveTasks.length > 0">
+                    <span v-for="(task, index) in result.comprehensiveTasks" :key="index">
+                      {{ task.paragraphStart }}
+                      <span v-if="index < result.comprehensiveTasks.length - 1">, </span>
+                    </span>
+                  </div>
+                  <span v-else>--</span>
+                </template>
               </a-descriptions-item>
               <a-descriptions-item label="段落划分结束">
-                <div v-if="result.comprehensiveTasks && result.comprehensiveTasks.length > 0">
-                  <span v-for="(task, index) in result.comprehensiveTasks" :key="index">
-                    {{ task.paragraphEnd }}
-                    <span v-if="index < result.comprehensiveTasks.length - 1">, </span>
-                  </span>
-                </div>
-                <span v-else>--</span>
+                <template v-if="isEdit">
+                  <div v-for="(task, index) in editData.comprehensiveTasks" :key="index" style="margin-bottom: 8px">
+                    <el-input v-model="task.paragraphEnd" placeholder="段落划分结束"></el-input>
+                  </div>
+                </template>
+                <template v-else>
+                  <div v-if="result.comprehensiveTasks && result.comprehensiveTasks.length > 0">
+                    <span v-for="(task, index) in result.comprehensiveTasks" :key="index">
+                      {{ task.paragraphEnd }}
+                      <span v-if="index < result.comprehensiveTasks.length - 1">, </span>
+                    </span>
+                  </div>
+                  <span v-else>--</span>
+                </template>
               </a-descriptions-item>
               <a-descriptions-item label="备注">
-                <div v-if="result.comprehensiveTasks && result.comprehensiveTasks.length > 0">
-                  <span v-for="(task, index) in result.comprehensiveTasks" :key="index">
-                    {{ task.remark }}
-                    <span v-if="index < result.comprehensiveTasks.length - 1">, </span>
-                  </span>
-                </div>
-                <span v-else>--</span>
+                <template v-if="isEdit">
+                  <div v-for="(task, index) in editData.comprehensiveTasks" :key="index" style="margin-bottom: 8px">
+                    <el-input v-model="task.remark" placeholder="备注"></el-input>
+                  </div>
+                </template>
+                <template v-else>
+                  <div v-if="result.comprehensiveTasks && result.comprehensiveTasks.length > 0">
+                    <span v-for="(task, index) in result.comprehensiveTasks" :key="index">
+                      {{ task.remark }}
+                      <span v-if="index < result.comprehensiveTasks.length - 1">, </span>
+                    </span>
+                  </div>
+                  <span v-else>--</span>
+                </template>
               </a-descriptions-item>
             </a-descriptions>
 
             <div class="project_mainTitle">其他任务</div>
             <a-descriptions bordered size="middle" :column="1" :labelStyle="{ width: '180px' }">
               <a-descriptions-item label="单位名称">
-                <div v-if="result.otherTasks && result.otherTasks.length > 0">
-                  <span v-for="(task, index) in result.otherTasks" :key="index">
-                    {{ task.unitName }}
-                    <span v-if="index < result.otherTasks.length - 1">, </span>
-                  </span>
-                </div>
-                <span v-else>--</span>
+                <template v-if="isEdit">
+                  <div v-for="(task, index) in editData.otherTasks" :key="index" class="edit-task-row">
+                    <el-input v-model="task.unitName" placeholder="单位名称" style="margin-bottom: 8px"></el-input>
+                    <el-button type="danger" size="small" @click="removeTask('otherTasks', index)"
+                      v-if="index > 0">删除</el-button>
+                  </div>
+                  <el-button type="primary" @click="addTask('otherTasks')">添加</el-button>
+                </template>
+                <template v-else>
+                  <div v-if="result.otherTasks && result.otherTasks.length > 0">
+                    <span v-for="(task, index) in result.otherTasks" :key="index">
+                      {{ task.unitName }}
+                      <span v-if="index < result.otherTasks.length - 1">, </span>
+                    </span>
+                  </div>
+                  <span v-else>--</span>
+                </template>
               </a-descriptions-item>
               <a-descriptions-item label="段落划分开始">
-                <div v-if="result.otherTasks && result.otherTasks.length > 0">
-                  <span v-for="(task, index) in result.otherTasks" :key="index">
-                    {{ task.paragraphStart }}
-                    <span v-if="index < result.otherTasks.length - 1">, </span>
-                  </span>
-                </div>
-                <span v-else>--</span>
+                <template v-if="isEdit">
+                  <div v-for="(task, index) in editData.otherTasks" :key="index" style="margin-bottom: 8px">
+                    <el-input v-model="task.paragraphStart" placeholder="段落划分开始"></el-input>
+                  </div>
+                </template>
+                <template v-else>
+                  <div v-if="result.otherTasks && result.otherTasks.length > 0">
+                    <span v-for="(task, index) in result.otherTasks" :key="index">
+                      {{ task.paragraphStart }}
+                      <span v-if="index < result.otherTasks.length - 1">, </span>
+                    </span>
+                  </div>
+                  <span v-else>--</span>
+                </template>
               </a-descriptions-item>
               <a-descriptions-item label="段落划分结束">
-                <div v-if="result.otherTasks && result.otherTasks.length > 0">
-                  <span v-for="(task, index) in result.otherTasks" :key="index">
-                    {{ task.paragraphEnd }}
-                    <span v-if="index < result.otherTasks.length - 1">, </span>
-                  </span>
-                </div>
-                <span v-else>--</span>
+                <template v-if="isEdit">
+                  <div v-for="(task, index) in editData.otherTasks" :key="index" style="margin-bottom: 8px">
+                    <el-input v-model="task.paragraphEnd" placeholder="段落划分结束"></el-input>
+                  </div>
+                </template>
+                <template v-else>
+                  <div v-if="result.otherTasks && result.otherTasks.length > 0">
+                    <span v-for="(task, index) in result.otherTasks" :key="index">
+                      {{ task.paragraphEnd }}
+                      <span v-if="index < result.otherTasks.length - 1">, </span>
+                    </span>
+                  </div>
+                  <span v-else>--</span>
+                </template>
               </a-descriptions-item>
               <a-descriptions-item label="备注">
-                <div v-if="result.otherTasks && result.otherTasks.length > 0">
-                  <span v-for="(task, index) in result.otherTasks" :key="index">
-                    {{ task.remark }}
-                    <span v-if="index < result.otherTasks.length - 1">, </span>
-                  </span>
-                </div>
-                <span v-else>--</span>
+                <template v-if="isEdit">
+                  <div v-for="(task, index) in editData.otherTasks" :key="index" style="margin-bottom: 8px">
+                    <el-input v-model="task.remark" placeholder="备注"></el-input>
+                  </div>
+                </template>
+                <template v-else>
+                  <div v-if="result.otherTasks && result.otherTasks.length > 0">
+                    <span v-for="(task, index) in result.otherTasks" :key="index">
+                      {{ task.remark }}
+                      <span v-if="index < result.otherTasks.length - 1">, </span>
+                    </span>
+                  </div>
+                  <span v-else>--</span>
+                </template>
               </a-descriptions-item>
             </a-descriptions>
           </a-card>
@@ -496,9 +903,12 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, ref, computed, onMounted ,watch} from "vue";
+import { reactive, ref, computed, onMounted, watch } from "vue";
 import getDatas from "@/network/index";
 import { useRouter } from "vue-router";
+import { ElMessage } from 'element-plus';
+
+// ... existing code ...
 
 // 定义结果数据类型
 interface TaskItem {
@@ -519,7 +929,7 @@ interface GeologicalTask extends TaskItem {
 }
 
 interface ResultData {
-  projectStep: number;
+  projectStep: number | null;
   projectStepName: string;
   groupLeader: string | null;
   deputyLeader: string | null;
@@ -529,7 +939,7 @@ interface ResultData {
   executiveDeputyOverall: string;
   professionalDeputyOveralls: string[];
   projectDepartments: string[];
-  projectManagers: string | null;
+  projectManagers: any;
   mainResponsibilityUnit: string;
   stationBeaforTasks: TaskItem[];
   economicTasks: TaskItem[];
@@ -542,134 +952,166 @@ interface ResultData {
   testTasks: TaskItem[];
   comprehensiveTasks: TaskItem[];
   otherTasks: TaskItem[];
+
 }
 
 const result = ref<ResultData>({
-  projectStep: 600,
-  projectStepName: "预付期",
+  projectStep: null,
+  projectStepName: "",
   groupLeader: null,
   deputyLeader: null,
   companyLeaders: null,
   businessPlanLeader: null,
-  overall: "user001",
-  executiveDeputyOverall: "user002",
-  professionalDeputyOveralls: ["user003", "user004"],
+  overall: "",
+  executiveDeputyOverall: "",
+  professionalDeputyOveralls: [],
   projectDepartments: ["领导"],
   projectManagers: null,
-  mainResponsibilityUnit: "秘书科",
+  mainResponsibilityUnit: "",
   stationBeaforTasks: [
     {
-      unitId: "领导",
-      unitName: "领导",
+      unitId: "",
+      unitName: "",
       majors: null,
-      paragraphStart: "0.0",
-      paragraphEnd: "100.0",
-      remark: "站前工程"
+      paragraphStart: "",
+      paragraphEnd: "",
+      remark: ""
     }
   ],
   economicTasks: [
     {
-      unitId: "领导",
-      unitName: "领导",
+      unitId: "",
+      unitName: "",
       majors: null,
       paragraphStart: "",
       paragraphEnd: "",
-      remark: "经行及投融资"
+      remark: ""
     }
   ],
   stationAfterTasks: [
     {
-      unitId: "综合科（信访办）",
-      unitName: "综合科（信访办）",
+      unitId: "",
+      unitName: "",
       majors: null,
       paragraphStart: "",
       paragraphEnd: "",
-      remark: "站后工程"
+      remark: ""
     }
   ],
   engineeringEconomicTasks: [
     {
-      unitId: "领导",
-      unitName: "领导",
+      unitId: "",
+      unitName: "",
       majors: null,
       paragraphStart: "",
       paragraphEnd: "",
-      remark: "工程经济"
+      remark: ""
     }
   ],
   flightTasks: [
     {
-      unitId: "办公室主任",
-      unitName: "办公室主任",
+      unitId: "",
+      unitName: "",
       majors: null,
       paragraphStart: "",
       paragraphEnd: "",
-      remark: "航飞测量"
+      remark: ""
     }
   ],
   drawingTasks: [
     {
-      unitId: "100005",
-      unitName: "100005",
+      unitId: "",
+      unitName: "",
       majors: null,
       paragraphStart: "",
       paragraphEnd: "",
-      remark: "工程制图"
+      remark: ""
     }
   ],
   surveyTasks: [
     {
-      unitId: "办公室副主任",
-      unitName: "办公室副主任",
+      unitId: "",
+      unitName: "",
       majors: null,
-      paragraphStart: "0.0",
-      paragraphEnd: "200.0",
-      remark: "工程测量"
+      paragraphStart: "",
+      paragraphEnd: "",
+      remark: ""
     }
   ],
   geologicalTasks: [
     {
-      unitId: "领导",
-      unitName: "领导",
+      unitId: "",
+      unitName: "",
       paragraphs: [
         {
-          start: "0.0",
-          end: "150.0",
-          remark: "地质勘察"
+          start: "",
+          end: "",
+          remark: ""
         }
       ]
     }
   ],
   testTasks: [
     {
-      unitId: "dept011",
-      unitName: "dept011",
+      unitId: "",
+      unitName: "",
       majors: null,
       paragraphStart: "",
       paragraphEnd: "",
-      remark: "工程试验"
+      remark: ""
     }
   ],
   comprehensiveTasks: [
     {
-      unitId: "dept012",
-      unitName: "dept012",
+      unitId: "",
+      unitName: "",
       majors: null,
       paragraphStart: "",
       paragraphEnd: "",
-      remark: "综合开发"
+      remark: ""
     }
   ],
   otherTasks: [
     {
-      unitId: "dept013",
-      unitName: "dept013",
+      unitId: "",
+      unitName: "",
       majors: null,
       paragraphStart: "",
       paragraphEnd: "",
-      remark: "其他任务"
+      remark: ""
     }
   ]
+});
+const ResultData = ref()
+
+// 编辑模式控制
+const isEdit = ref(false);
+
+// 编辑数据
+const editData = ref<ResultData>({
+  projectStep: null,
+  projectStepName: "",
+  groupLeader: null,
+  deputyLeader: null,
+  companyLeaders: null,
+  businessPlanLeader: null,
+  overall: "",
+  executiveDeputyOverall: "",
+  professionalDeputyOveralls: [],
+  projectDepartments: [],
+  projectManagers: null,
+  mainResponsibilityUnit: "",
+  stationBeaforTasks: [],
+  economicTasks: [],
+  stationAfterTasks: [],
+  engineeringEconomicTasks: [],
+  flightTasks: [],
+  drawingTasks: [],
+  surveyTasks: [],
+  geologicalTasks: [],
+  testTasks: [],
+  comprehensiveTasks: [],
+  otherTasks: []
 });
 
 const router = useRouter();
@@ -687,11 +1129,263 @@ const getProjectDetails = async () => {
 
     // 更新结果数据
     result.value = res.data.result;
+    ResultData.value = res.data.result;
+    result.value.projectManagers = result.value.projectManagers ? result.value.projectManagers.join(',') : null;
   } catch (error) {
     console.error("获取项目详情失败:", error);
   }
 };
 
+// 处理编辑
+const handleEdit = () => {
+  // 深拷贝当前数据到编辑数据
+  editData.value = JSON.parse(JSON.stringify(result.value));
+
+  isEdit.value = true;
+
+};
+
+// 处理取消
+const handleCancel = () => {
+  isEdit.value = false;
+  result.value = ResultData.value
+}
+
+// 处理保存
+const handleSave = async () => {
+  try {
+    editData.value.projectManagers = editData.value.projectManagers ? editData.value.projectManagers.split(',') : null;
+    const res = await getDatas('project/addProductionOrg', {
+      projectId: router.currentRoute.value.query.projectId,
+      // projectStep: router.currentRoute.value.query.projectStep,
+      ...editData.value
+    });
+
+    if (res.data.code === 200) {
+      ElMessage.success('保存成功');
+      result.value = { ...editData.value };
+      isEdit.value = false;
+    } else {
+      ElMessage.error(res.data.message || '保存失败');
+    }
+  } catch (error) {
+    ElMessage.error('保存失败');
+    console.error("保存失败:", error);
+  }
+};
+
+// 添加任务
+const addTask = (taskType: keyof ResultData) => {
+  console.log(taskType, 'taskType');
+
+  const tasks = editData.value[taskType] as TaskItem[];
+  console.log(tasks, 'taskstaskstasks');
+  if (tasks) {
+    tasks.push({
+      unitId: '',
+      unitName: '',
+      majors: null,
+      paragraphStart: '',
+      paragraphEnd: '',
+      remark: ''
+    });
+  }else{
+    editData.value[taskType] = [{
+      unitId: '',
+      unitName: '',
+      majors: null,
+      paragraphStart: '',
+      paragraphEnd: '',
+      remark: ''
+    }] as any;
+  }
+};
+
+// 删除任务
+const removeTask = (taskType: keyof ResultData, index: number) => {
+  const tasks = editData.value[taskType] as TaskItem[];
+  if (tasks.length > 1) {
+    tasks.splice(index, 1);
+  } else {
+    ElMessage.warning('至少保留一条记录');
+  }
+};
+
+// 添加段落
+const addParagraph = (taskIndex: number) => {
+  const task = editData.value.geologicalTasks[taskIndex];
+  task.paragraphs.push({
+    start: '',
+    end: '',
+    remark: ''
+  });
+};
+
+// 删除段落
+const removeParagraph = (taskIndex: number, paragraphIndex: number) => {
+  const task = editData.value.geologicalTasks[taskIndex];
+  if (task.paragraphs.length > 1) {
+    task.paragraphs.splice(paragraphIndex, 1);
+  } else {
+    ElMessage.warning('至少保留一个段落');
+  }
+};
+
+const handleProjectStepChange = (value: number) => {
+  // 如果发生变化将其余所有数据重置为初始值
+  result.value = JSON.parse(JSON.stringify({
+    projectStep: value,
+    projectStepName: "", // 需要根据value获取对应的名称
+    groupLeader: null,
+    deputyLeader: null,
+    companyLeaders: null,
+    businessPlanLeader: null,
+    overall: "",
+    executiveDeputyOverall: "",
+    professionalDeputyOveralls: [],
+    projectDepartments: [],
+    projectManagers: null,
+    mainResponsibilityUnit: "",
+    stationBeaforTasks: [],
+    economicTasks: [],
+    stationAfterTasks: [],
+    engineeringEconomicTasks: [],
+    flightTasks: [],
+    drawingTasks: [],
+    surveyTasks: [],
+    geologicalTasks: [],
+    testTasks: [],
+    comprehensiveTasks: [],
+    otherTasks: []
+  }));
+  editData.value = {
+    projectStep: value,
+    projectStepName: '',
+    groupLeader: null,
+    deputyLeader: null,
+    companyLeaders: null,
+    businessPlanLeader: null,
+    overall: '',
+    executiveDeputyOverall: '',
+    professionalDeputyOveralls: [],
+    projectDepartments: [],
+    projectManagers: null,
+    mainResponsibilityUnit: '',
+    stationBeaforTasks: [
+      {
+        unitId: '',
+        unitName: '',
+        majors: null,
+        paragraphStart: '',
+        paragraphEnd: '',
+        remark: ''
+      }
+    ],
+    economicTasks: [
+      {
+        unitId: '',
+        unitName: '',
+        majors: null,
+        paragraphStart: '',
+        paragraphEnd: '',
+        remark: ''
+      }
+    ],
+    stationAfterTasks: [
+      {
+        unitId: '',
+        unitName: '',
+        majors: null,
+        paragraphStart: '',
+        paragraphEnd: '',
+        remark: ''
+      }
+    ],
+    engineeringEconomicTasks: [
+      {
+        unitId: '',
+        unitName: '',
+        majors: null,
+        paragraphStart: '',
+        paragraphEnd: '',
+        remark: ''
+      }
+    ],
+    flightTasks: [
+      {
+        unitId: '',
+        unitName: '',
+        majors: null,
+        paragraphStart: '',
+        paragraphEnd: '',
+        remark: ''
+      }
+    ],
+    drawingTasks: [
+      {
+        unitId: '',
+        unitName: '',
+        majors: null,
+        paragraphStart: '',
+        paragraphEnd: '',
+        remark: ''
+      }
+    ],
+    surveyTasks: [
+      {
+        unitId: '',
+        unitName: '',
+        majors: null,
+        paragraphStart: '',
+        paragraphEnd: '',
+        remark: ''
+      }
+    ],
+    geologicalTasks: [
+      {
+        unitId: '',
+        unitName: '',
+        paragraphs: [
+          {
+            start: '',
+            end: '',
+            remark: ''
+          }
+        ]
+      }
+    ],
+    testTasks: [
+      {
+        unitId: '',
+        unitName: '',
+        majors: null,
+        paragraphStart: '',
+        paragraphEnd: '',
+        remark: ''
+      }
+    ],
+    comprehensiveTasks: [
+      {
+        unitId: '',
+        unitName: '',
+        majors: null,
+        paragraphStart: '',
+        paragraphEnd: '',
+        remark: ''
+      }
+    ],
+    otherTasks: [
+      {
+        unitId: '',
+        unitName: '',
+        majors: null,
+        paragraphStart: '',
+        paragraphEnd: '',
+        remark: ''
+      }
+    ]
+  };
+}
 watch(
   () => router.currentRoute.value.query,
   (newQuery) => {
@@ -708,9 +1402,56 @@ onMounted(() => {
 </script>
 
 <style lang="less" scoped>
+.project-detail-page {
+  padding: 20px;
+}
+
+.project-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.project-title {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.content-wrapper {
+  background: #fff;
+  padding: 24px;
+}
+
+.info-card {
+  margin-bottom: 24px;
+}
+
 .project_mainTitle {
   font-size: 20px;
   font-weight: 700;
   margin: 10px 0;
+}
+
+.edit-task-row {
+  margin-bottom: 10px;
+}
+
+.edit-paragraph-row {
+  margin-bottom: 10px;
+}
+
+:deep(.ant-descriptions-item-label) {
+  font-weight: 500;
+}
+
+:deep(.el-input),
+:deep(.el-select) {
+  width: 100%;
 }
 </style>

@@ -4,39 +4,52 @@
         <div class="page-title">
             <h2>项目组成员</h2>
         </div>
-
-        <!-- 项目组成员表格 - 遍历所有部门 -->
-        <div v-for="(members, deptId) in groupedTeamData" :key="deptId" class="team-section">
-            <div class="section-header">
-                <span class="section-title">{{ members[0]?.deptName || deptId }}</span>
+        <el-card class="search-card" shadow="never">
+            <el-form :model="formData" label-width="100px" class="task-form">
+                <el-row>
+                    <el-col :span="8">
+                        <el-form-item label="单位名称">
+                            <el-input v-model="formData.deptName" placeholder="请输入单位名称"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="8">
+                        <el-form-item label="专业名称">
+                            <el-input v-model="formData.majorName" placeholder="请输入专业名称"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="8">
+                        <!-- 按钮 -->
+                        <el-button type="primary" @click="handleAdd">添加成员</el-button>
+                    </el-col>
+                </el-row>
+            </el-form>
+            <!-- 项目组成员表格 - 遍历所有部门 -->
+            <div v-for="(members, deptId) in groupedTeamData" :key="deptId" class="team-section">
+                <div class="section-header">
+                    <span class="section-title">{{ members[0]?.deptName || deptId }}</span>
+                </div>
+                <a-table :loading="teamDataloading" :dataSource="members" :columns="teamColumns" :pagination="false"
+                    size="middle" bordered class="team-table" :rowKey="'id'">
+                    <template #empty>
+                        <div class="empty-text">暂无数据</div>
+                    </template>
+                </a-table>
             </div>
-            <a-table 
-                :loading="teamDataloading" 
-                :dataSource="members" 
-                :columns="teamColumns" 
-                :pagination="false"
-                size="middle" 
-                bordered 
-                class="team-table"
-                :rowKey="'id'"
-            >
-                <template #empty>
-                    <div class="empty-text">暂无数据</div>
-                </template>
-            </a-table>
-        </div>
 
-        <!-- 如果没有数据，显示提示 -->
-        <div v-if="!teamDataloading && Object.keys(groupedTeamData).length === 0" class="no-data-tip">
-            暂无项目组成员数据
-        </div>
+            <!-- 如果没有数据，显示提示 -->
+            <div v-if="!teamDataloading && Object.keys(groupedTeamData).length === 0" class="no-data-tip">
+                暂无项目组成员数据
+            </div>
+        </el-card>
+
     </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch, computed } from 'vue';
+import { ref, onMounted, watch, computed, reactive } from 'vue';
 import getDatas from "@/network/index";
 import { useRoute } from 'vue-router';
+import { ElMessage } from 'element-plus';
 
 // 项目组成员数据
 const teamDataloading = ref(false);
@@ -44,6 +57,11 @@ const rawTeamData = ref<Record<string, any[]>>({});
 
 // 其他专业团队数据（如果需要可以单独处理）
 const otherTeamData = ref<any[]>([]);
+
+const formData = reactive({
+    deptName: '',
+    majorName: ''
+})
 
 // 表格列定义
 const teamColumns = [
@@ -119,6 +137,17 @@ const getProjectList = async () => {
     }
 };
 
+// 添加成员
+const handleAdd = async () => {
+    const resp = await getDatas('project/AddProjectMember', formData);
+    if (resp.data.code == 200) {
+        ElMessage.success('添加成功');
+        getProjectList();
+    } else {
+        ElMessage.error(resp.data.message);
+    }
+};
+
 // 监听路由参数变化
 watch(
     () => route.query.taskArrangementId,
@@ -142,7 +171,7 @@ onMounted(() => {
 <style scoped>
 .project-team-container {
     padding: 20px;
-    background: #fff;
+    background-color: #f5f7fa;
 }
 
 .page-title {
@@ -203,7 +232,8 @@ onMounted(() => {
     padding: 40px 0;
     font-size: 14px;
 }
+
 :deep(.ant-table-thead > tr > th) {
-  background-color: #f5f9ff !important;
+    background-color: #f5f9ff !important;
 }
 </style>

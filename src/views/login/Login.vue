@@ -2,24 +2,10 @@
   <div class="login">
     <div class="from">
       <div class="title">合同管理系统</div>
-      <el-input
-        v-model="input"
-        size="large"
-        style="width: 400px"
-        placeholder="请输入您的账号"
-        prefix-icon="User"
-      />
+      <el-input v-model="input" size="large" style="width: 400px" placeholder="请输入您的账号" prefix-icon="User" />
       <div class="password">
-        <el-input
-          v-model="password"
-          @keyup.enter="login"
-          size="large"
-          type="password"
-          style="width: 400px"
-          placeholder="请输入您的密码"
-          show-password
-          prefix-icon="Lock"
-        />
+        <el-input v-model="password" @keyup.enter="login" size="large" type="password" style="width: 400px"
+          placeholder="请输入您的密码" show-password prefix-icon="Lock" />
       </div>
       <div class="login-btn" @click="login">登录</div>
     </div>
@@ -57,14 +43,45 @@ const guestRoutes = {
       parentId: "10",
       index: "10",
       title: "项目管理",
-      icon: "icon-xiangmu",
-      type: "",
+      icon: "icon-xitong",
       name: "projectMgment",
       path: "/projectMgment",
+      type: "",
       component: "projectMgment/index",
       meta: {
         title: "项目管理",
       },
+
+    },
+    {
+      parentId: "101",
+      index: "101",
+      title: "生产组织管理",
+      icon: "icon-xiangmu",
+      name: "projectMgment",
+      path: "/projectMgment",
+      type: "",
+      component: "projectMgment/index",
+      meta: {
+        title: "生产组织管理",
+      },
+      children: [
+        {
+          parentId: "101-1",
+          index: "101-1",
+          title: "自揽项目信息维护",
+          icon: "icon-xiangmu",
+          type: "",
+          name: "projectList",
+          path: "/projectMgment/projectMaintenance",
+          component: "projectMgment/projectMaintenance",
+          menuType: 0,
+          meta: {
+            title: "自揽项目信息维护",
+          }
+        }
+
+      ]
     },
     {
       parentId: "3",
@@ -131,7 +148,7 @@ const guestRoutes = {
     {
       parentId: "6",
       index: "6",
-      title: "审批管理",  
+      title: "审批管理",
       icon: "icon-qiche",
       type: "",
       name: "approvalMgment",
