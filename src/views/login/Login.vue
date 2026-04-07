@@ -371,23 +371,23 @@ const login = async () => {
     const menus = guestRoutes.nav;
     // console.log(menus, 'menusmenus');
     localStorage.setItem("accesstoken", res.data.result.token); //本地存储
-    // const resp = await getDatas("common/getUserPermission"); // 获取角色菜单
-    // console.log(resp, 'respresp');
+    const resp = await getDatas("common/getUserPermission"); // 获取角色菜单
+    console.log(resp, 'respresp');
+    //  获取菜单数据
     // if (resp.data.code == 200) {
     //   const userMenus = resp.data.result.menu || [];
     //   const wuyemenusJSON = JSON.stringify(userMenus);
     //   localStorage.setItem("wuyemenusJSON", wuyemenusJSON); // 存储用户菜单
     //   router.push("/home");
-
     // }
-
+    // 本地的菜单数据
     const wuyemenusJSON = JSON.stringify(menus);
     localStorage.setItem("wuyemenusJSON", wuyemenusJSON);
     sessionStorage.removeItem("tokenErrorAlertShowing");
     router.push("/home");
     ElMessage({ message: "登录成功!", type: "success" });
   } else {
-    ElMessage({ message: res.data.msg, type: "error" });
+    ElMessage({ message: res.data.message, type: "error" });
   }
 };
 

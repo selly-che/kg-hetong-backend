@@ -128,8 +128,8 @@
                     <el-col :span="8">
                         <el-form-item label="板块" prop="projectPlate">
                             <el-select v-model="formData.projectPlate" placeholder="选择板块" style="width: 100%">
-                                <el-option v-for="item in engineeringBusinessTypeOptions" :key="item.value" :label="item.label"
-                                    :value="item.value" />
+                                <el-option v-for="item in engineeringBusinessTypeOptions" :key="item.value"
+                                    :label="item.label" :value="item.value" />
                             </el-select>
                         </el-form-item>
                     </el-col>
@@ -300,10 +300,10 @@ const formData = reactive({
 
 // 表单验证规则
 const formRules = {
-    projectFullName: [{ required: true, message: '请输入项目全称', trigger: 'blur' }],
-    projectShortName: [{ required: true, message: '请输入项目简称', trigger: 'blur' }],
-    projectPlate: [{ required: true, message: '请选择板块', trigger: 'change' }],
-    projectArea: [{ required: true, message: '请选择区域指挥部', trigger: 'change' }]
+    // projectFullName: [{ required: true, message: '请输入项目全称', trigger: 'blur' }],
+    // projectShortName: [{ required: true, message: '请输入项目简称', trigger: 'blur' }],
+    // projectPlate: [{ required: true, message: '请选择板块', trigger: 'change' }],
+    // projectArea: [{ required: true, message: '请选择区域指挥部', trigger: 'change' }]
 }
 
 
@@ -357,7 +357,7 @@ const handleAdd = () => {
 // 编辑
 const handleEdit = (row) => {
     console.log(row);
-
+    formData.steps = []
     isEdit.value = true
     dialogTitle.value = '编辑项目表'
     Object.assign(formData, row)
@@ -372,9 +372,10 @@ const handleSave = async () => {
     await formRef.value.validate(async (valid) => {
         if (valid) {
             console.log(formData, 'formData');
-            const prrams = JSON.parse(JSON.stringify(formData))
-            prrams.steps = formData.steps.join(',')
-            const res = await getDatas('project/AddProject', prrams);
+            const params = JSON.parse(JSON.stringify(formData))
+            params.steps = formData.steps.join(',')
+            params.stepList = []
+            const res = await getDatas('project/AddProject', params);
             console.log(res, 'resresres');
 
             if (res.data.code === 200) {

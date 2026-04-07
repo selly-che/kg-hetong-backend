@@ -241,7 +241,7 @@ import { useRouter, useRoute } from 'vue-router';
 import { SettingOutlined } from '@ant-design/icons-vue';
 import getDatas from "@/network/index";
 import { ElMessage } from 'element-plus';
-const dialogVisible = ref(true);
+const dialogVisible = ref(false);
 // 搜索相关
 const searchType = ref('0');
 const searchText = ref('');
