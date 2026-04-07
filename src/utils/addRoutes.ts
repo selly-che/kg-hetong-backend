@@ -13,7 +13,29 @@ interface MenuItem {
   component: string;
   meta?: Record<string, any>;
 }
+// 动态添加路由（更正映射，之后改菜单管理）
 export default function addDynamicRoutes(router: any, menus: any[]) {
+  const componentMapping: Record<string, string> = {
+    "system/UserList": "systemMgment/userMgment",
+    "system/RoleUserList": "systemMgment/roleMgment",
+    "system/PermissionList": "systemMgment/menuMgment",
+    "/isystem/user": "systemMgment/userMgment",
+    "/isystem/roleUserList": "systemMgment/roleMgment",
+    "/isystem/permission": "systemMgment/menuMgment",
+    "contractMgment": "contractMgment/internal",
+    "/contractMgment": "contractMgment/internal",
+    "projectMgment": "projectMgment/index",
+    "/projectMgment": "projectMgment/index",
+    "ledgerMgment": "ledgerMgment/index",
+    "/ledgerMgment": "ledgerMgment/index",
+    "approvalMgment": "approvalMgment/index",
+    "/approvalMgment": "approvalMgment/index",
+    "bidMgment": "bidMgment/index",
+    "/bidMgment": "bidMgment/index",
+    "systemMgment": "systemMgment/index",
+    "/systemMgment": "systemMgment/index",
+  };
+
   // 获取所有注册的路由，包括根路由
   const allRoutes = router.options.routes;
 
@@ -45,11 +67,25 @@ export default function addDynamicRoutes(router: any, menus: any[]) {
           return;
         }
 
+        let resolvedComponentPath = componentMapping[child.component] || child.component;
+        if (resolvedComponentPath.startsWith("/")) {
+          resolvedComponentPath = resolvedComponentPath.slice(1);
+        }
+        // 处理 component 只有目录名而没有指定 index.vue 的情况
+        if (
+          !resolvedComponentPath.includes("/") &&
+          !resolvedComponentPath.endsWith(".vue") &&
+          resolvedComponentPath.length > 0
+        ) {
+          // 如果是一些已知的只有 index.vue 的目录，可以映射到 /index
+          resolvedComponentPath = `${resolvedComponentPath}/index`;
+        }
+
         // 构建路由配置对象
         const routeConfig = {
           path: child.path,
           name: child.name, // 假设 child.component 是唯一的路由名称
-          component: () => import(`@/views/${child.component}.vue`), // 使用 ES6 动态导入语法
+          component: () => import(`@/views/${resolvedComponentPath}.vue`), // 使用 ES6 动态导入语法
           meta: {
             ...child.meta,
             ...(child.path === "/approvalMgment/editht" ? { noTab: true } : {}),
@@ -71,11 +107,27 @@ export default function addDynamicRoutes(router: any, menus: any[]) {
         console.log(`路由 ${menu.path} 已存在，跳过添加`);
         return;
       }
+      // 移除了路径开头的斜杠
+      let resolvedMenuComponentPath = componentMapping[menu.component ?? ''] || menu.component;
+      if (resolvedMenuComponentPath?.startsWith("/")) {
+        resolvedMenuComponentPath = resolvedMenuComponentPath.slice(1);
+      }
+      
+      // 处理 component 只有目录名而没有指定 index.vue 的情况
+      if (
+        resolvedMenuComponentPath &&
+        !resolvedMenuComponentPath.includes("/") &&
+        !resolvedMenuComponentPath.endsWith(".vue") &&
+        resolvedMenuComponentPath.length > 0
+      ) {
+        resolvedMenuComponentPath = `${resolvedMenuComponentPath}/index`;
+      }
+
       // 如果菜单项没有子菜单，则直接添加到 Layout 路由的子路由中
       const routeConfig = {
         path: menu.path,
         name: menu.name,
-        component: () => import(`@/views/${menu.component}.vue`),
+        component: () => import(`@/views/${resolvedMenuComponentPath}.vue`),
         meta: {
           ...menu.meta,
           // 为编辑合同路由添加 noTab 配置

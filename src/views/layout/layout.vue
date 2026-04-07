@@ -172,6 +172,7 @@ interface MenuItem {
   index: string;
   title: string;
   path: string;
+  // url: string;
   component: string;
   type?: string;
   icon?: string;
@@ -203,8 +204,10 @@ const transformMenuData = (data: any[]): MenuItem[] => {
       index: item.id,
       title: item.title,
       path: item.url,
-      component: item.component,
+      // url: item.url,
+      component: item.url,
       icon: getIcon(item.icon),
+      // icon: item.icon,
       name: item.name,
       meta: {
         title: item.title,
