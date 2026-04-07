@@ -143,7 +143,6 @@ export default {
       method: "GET",
       url: "/sys/permission/list",
       params,
-
     };
   },
 

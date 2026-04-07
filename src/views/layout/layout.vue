@@ -145,6 +145,8 @@ import { useStore } from "vuex";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { message } from "ant-design-vue";
 import { color } from "echarts";
+import getDatas from "@/network/index";
+
 const collWidth = computed(() => {
   return store.state.common.isCollapse ? "80px" : "216px";
 });
@@ -170,6 +172,7 @@ interface MenuItem {
   index: string;
   title: string;
   path: string;
+  component: string;
   type?: string;
   icon?: string;
   name?: string;
@@ -178,6 +181,41 @@ interface MenuItem {
   };
   children?: MenuItem[];
 }
+
+// 递归转换菜单数据
+const transformMenuData = (data: any[]): MenuItem[] => {
+  const getIcon = (iconName: string) => {
+    if (!iconName) return "icon-shouye";
+    // 映射一些常见的图标名到 iconfont 的类名
+    const iconMap: Record<string, string> = {
+      home: "icon-shouye",
+      setting: "icon-xitong",
+      book: "icon-hetong",
+      AreaChartOutlined: "icon-xiangmu",
+      BarsOutlined: "icon-mokuai",
+    };
+    const mappedIcon = iconMap[iconName] || iconName;
+    return mappedIcon.startsWith("icon-") ? mappedIcon : `icon-${mappedIcon}`;
+  };
+
+  return data.map((item) => {
+    const newItem: MenuItem = {
+      index: item.id,
+      title: item.title,
+      path: item.url,
+      component: item.component,
+      icon: getIcon(item.icon),
+      name: item.name,
+      meta: {
+        title: item.title,
+      },
+    };
+    if (item.children && item.children.length > 0) {
+      newItem.children = transformMenuData(item.children);
+    }
+    return newItem;
+  });
+};
 
 // 处理菜单点击
 const handleMenuClick = (row: any) => {
@@ -196,29 +234,46 @@ const handleMenuClick = (row: any) => {
       break;
   }
 };
-
-// 从 Vuex 中获取 menus
-const menusFromVuex = store.state.menus;
-if (menusFromVuex) {
-  menus.value = menusFromVuex;
-} else {
-  // 从本地存储获取菜单
-  const menusFromStorage = localStorage.getItem("wuyemenusJSON");
-  if (menusFromStorage) {
-    try {
-      menus.value = JSON.parse(menusFromStorage);
-      icons.value = menus.value.map((item: any) => {
-        return item.icon;
-      });
-    } catch (error) {
-      console.error("Failed to parse menus from storage", error);
-    }
-  }
-}
-
 const changeMenu = () => {
   store.dispatch("common/toggleSidebar");
 };
+// 从 Vuex 中获取 menus
+// const menusFromVuex = store.state.menus;
+// if (menusFromVuex) {
+//   menus.value = menusFromVuex;
+// } else {
+//   // 从本地存储获取菜单
+//   const menusFromStorage = localStorage.getItem("wuyemenusJSON");
+//   if (menusFromStorage) {
+//     try {
+//       menus.value = JSON.parse(menusFromStorage);
+//       icons.value = menus.value.map((item: any) => {
+//         return item.icon;
+//       });
+//     } catch (error) {
+//       console.error("Failed to parse menus from storage", error);
+//     }
+//   }
+// }
+
+onMounted(async () => {
+  try {
+    const res: any = await getDatas("system/GetMenuListTree");
+    console.log("菜单111", res);
+    if (res.data.result) {
+      menus.value = transformMenuData(res.data.result);
+      icons.value = menus.value.map((item: any) => item.icon);
+      // 可以选择将菜单数据存储到 Vuex 或 localStorage
+      // store.commit("SET_MENUS", menus.value);
+      localStorage.setItem("wuyemenusJSON", JSON.stringify(menus.value));
+    } else {
+      ElMessage.error("获取菜单列表失败");
+    }
+  } catch (error) {
+    console.error("获取菜单列表出错:", error);
+    ElMessage.error("获取菜单列表出错");
+  }
+});
 
 // console.log("menus", menus);
 const logout = () => {
@@ -316,7 +371,6 @@ const handleClick = (tab: any) => {
 const handleMenuSelect = (path: string) => {
   // 判断当前点击的菜单项是否为“项目管理”
   console.log(path, "handleMenuSelect");
-
   if (path == "/projectMgment") {
     // 使用 window.open 打开新页面
     const projectManagementUrl = "/projectMgment/ProjectHome"; // 替换为目标页面路径
