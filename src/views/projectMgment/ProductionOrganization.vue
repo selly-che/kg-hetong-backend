@@ -12,7 +12,7 @@
         </template>
       </div>
     </div>
-    <div class="content-wrapper">
+    <div class="content-wrapper" v-loading="detailsLoading">
       <a-row :gutter="[24, 24]">
         <!-- 基本信息 -->
         <a-col :span="24">
@@ -61,7 +61,7 @@
               <a-descriptions-item label="经营计划部分管领导">
 
                 <el-input v-if="isEdit" v-model="editData.businessPlanLeader" placeholder="请输入经营计划部分管领导"></el-input>
-                <span>{{ result?.businessPlanLeader || '--' }} </span>
+                <span v-else>{{ result?.businessPlanLeader || '--' }} </span>
 
               </a-descriptions-item>
 
@@ -1116,23 +1116,28 @@ const editData = ref<ResultData>({
 
 const router = useRouter();
 
+const detailsLoading = ref(true);
 // 获取项目详情
-const getProjectDetails = async () => {
+const getProjectDetails = async (projectStepStr: any) => {
+
   let projectId = router.currentRoute.value.query.projectId;
   let projectStep = router.currentRoute.value.query.projectStep;
-
+  detailsLoading.value = true;
   try {
     const res = await getDatas('project/GetProjectProductionOrg', {
       projectId: projectId,
-      projectStep: projectStep
+      projectStep: projectStepStr || projectStep
     });
 
     // 更新结果数据
     result.value = res.data.result;
     ResultData.value = res.data.result;
     result.value.projectManagers = result.value.projectManagers ? result.value.projectManagers.join(',') : null;
+    editData.value = isEdit.value ?  JSON.parse(JSON.stringify(res.data.result)) : {};
   } catch (error) {
     console.error("获取项目详情失败:", error);
+  } finally {
+    detailsLoading.value = false;
   }
 };
 
@@ -1153,6 +1158,7 @@ const handleCancel = () => {
 
 // 处理保存
 const handleSave = async () => {
+  detailsLoading.value = true;
   try {
     editData.value.projectManagers = editData.value.projectManagers ? editData.value.projectManagers.split(',') : null;
     const res = await getDatas('project/addProductionOrg', {
@@ -1171,6 +1177,8 @@ const handleSave = async () => {
   } catch (error) {
     ElMessage.error('保存失败');
     console.error("保存失败:", error);
+  } finally {
+    detailsLoading.value = false;
   }
 };
 
@@ -1189,7 +1197,7 @@ const addTask = (taskType: keyof ResultData) => {
       paragraphEnd: '',
       remark: ''
     });
-  }else{
+  } else {
     editData.value[taskType] = [{
       unitId: '',
       unitName: '',
@@ -1233,171 +1241,174 @@ const removeParagraph = (taskIndex: number, paragraphIndex: number) => {
 
 const handleProjectStepChange = (value: number) => {
   // 如果发生变化将其余所有数据重置为初始值
-  result.value = JSON.parse(JSON.stringify({
-    projectStep: value,
-    projectStepName: "", // 需要根据value获取对应的名称
-    groupLeader: null,
-    deputyLeader: null,
-    companyLeaders: null,
-    businessPlanLeader: null,
-    overall: "",
-    executiveDeputyOverall: "",
-    professionalDeputyOveralls: [],
-    projectDepartments: [],
-    projectManagers: null,
-    mainResponsibilityUnit: "",
-    stationBeaforTasks: [],
-    economicTasks: [],
-    stationAfterTasks: [],
-    engineeringEconomicTasks: [],
-    flightTasks: [],
-    drawingTasks: [],
-    surveyTasks: [],
-    geologicalTasks: [],
-    testTasks: [],
-    comprehensiveTasks: [],
-    otherTasks: []
-  }));
-  editData.value = {
-    projectStep: value,
-    projectStepName: '',
-    groupLeader: null,
-    deputyLeader: null,
-    companyLeaders: null,
-    businessPlanLeader: null,
-    overall: '',
-    executiveDeputyOverall: '',
-    professionalDeputyOveralls: [],
-    projectDepartments: [],
-    projectManagers: null,
-    mainResponsibilityUnit: '',
-    stationBeaforTasks: [
-      {
-        unitId: '',
-        unitName: '',
-        majors: null,
-        paragraphStart: '',
-        paragraphEnd: '',
-        remark: ''
-      }
-    ],
-    economicTasks: [
-      {
-        unitId: '',
-        unitName: '',
-        majors: null,
-        paragraphStart: '',
-        paragraphEnd: '',
-        remark: ''
-      }
-    ],
-    stationAfterTasks: [
-      {
-        unitId: '',
-        unitName: '',
-        majors: null,
-        paragraphStart: '',
-        paragraphEnd: '',
-        remark: ''
-      }
-    ],
-    engineeringEconomicTasks: [
-      {
-        unitId: '',
-        unitName: '',
-        majors: null,
-        paragraphStart: '',
-        paragraphEnd: '',
-        remark: ''
-      }
-    ],
-    flightTasks: [
-      {
-        unitId: '',
-        unitName: '',
-        majors: null,
-        paragraphStart: '',
-        paragraphEnd: '',
-        remark: ''
-      }
-    ],
-    drawingTasks: [
-      {
-        unitId: '',
-        unitName: '',
-        majors: null,
-        paragraphStart: '',
-        paragraphEnd: '',
-        remark: ''
-      }
-    ],
-    surveyTasks: [
-      {
-        unitId: '',
-        unitName: '',
-        majors: null,
-        paragraphStart: '',
-        paragraphEnd: '',
-        remark: ''
-      }
-    ],
-    geologicalTasks: [
-      {
-        unitId: '',
-        unitName: '',
-        paragraphs: [
-          {
-            start: '',
-            end: '',
-            remark: ''
-          }
-        ]
-      }
-    ],
-    testTasks: [
-      {
-        unitId: '',
-        unitName: '',
-        majors: null,
-        paragraphStart: '',
-        paragraphEnd: '',
-        remark: ''
-      }
-    ],
-    comprehensiveTasks: [
-      {
-        unitId: '',
-        unitName: '',
-        majors: null,
-        paragraphStart: '',
-        paragraphEnd: '',
-        remark: ''
-      }
-    ],
-    otherTasks: [
-      {
-        unitId: '',
-        unitName: '',
-        majors: null,
-        paragraphStart: '',
-        paragraphEnd: '',
-        remark: ''
-      }
-    ]
-  };
+  // result.value = JSON.parse(JSON.stringify({
+  //   projectStep: value,
+  //   projectStepName: "", // 需要根据value获取对应的名称
+  //   groupLeader: null,
+  //   deputyLeader: null,
+  //   companyLeaders: null,
+  //   businessPlanLeader: null,
+  //   overall: "",
+  //   executiveDeputyOverall: "",
+  //   professionalDeputyOveralls: [],
+  //   projectDepartments: [],
+  //   projectManagers: null,
+  //   mainResponsibilityUnit: "",
+  //   stationBeaforTasks: [],
+  //   economicTasks: [],
+  //   stationAfterTasks: [],
+  //   engineeringEconomicTasks: [],
+  //   flightTasks: [],
+  //   drawingTasks: [],
+  //   surveyTasks: [],
+  //   geologicalTasks: [],
+  //   testTasks: [],
+  //   comprehensiveTasks: [],
+  //   otherTasks: []
+  // }));
+  // editData.value = {
+  //   projectStep: value,
+  //   projectStepName: '',
+  //   groupLeader: null,
+  //   deputyLeader: null,
+  //   companyLeaders: null,
+  //   businessPlanLeader: null,
+  //   overall: '',
+  //   executiveDeputyOverall: '',
+  //   professionalDeputyOveralls: [],
+  //   projectDepartments: [],
+  //   projectManagers: null,
+  //   mainResponsibilityUnit: '',
+  //   stationBeaforTasks: [
+  //     {
+  //       unitId: '',
+  //       unitName: '',
+  //       majors: null,
+  //       paragraphStart: '',
+  //       paragraphEnd: '',
+  //       remark: ''
+  //     }
+  //   ],
+  //   economicTasks: [
+  //     {
+  //       unitId: '',
+  //       unitName: '',
+  //       majors: null,
+  //       paragraphStart: '',
+  //       paragraphEnd: '',
+  //       remark: ''
+  //     }
+  //   ],
+  //   stationAfterTasks: [
+  //     {
+  //       unitId: '',
+  //       unitName: '',
+  //       majors: null,
+  //       paragraphStart: '',
+  //       paragraphEnd: '',
+  //       remark: ''
+  //     }
+  //   ],
+  //   engineeringEconomicTasks: [
+  //     {
+  //       unitId: '',
+  //       unitName: '',
+  //       majors: null,
+  //       paragraphStart: '',
+  //       paragraphEnd: '',
+  //       remark: ''
+  //     }
+  //   ],
+  //   flightTasks: [
+  //     {
+  //       unitId: '',
+  //       unitName: '',
+  //       majors: null,
+  //       paragraphStart: '',
+  //       paragraphEnd: '',
+  //       remark: ''
+  //     }
+  //   ],
+  //   drawingTasks: [
+  //     {
+  //       unitId: '',
+  //       unitName: '',
+  //       majors: null,
+  //       paragraphStart: '',
+  //       paragraphEnd: '',
+  //       remark: ''
+  //     }
+  //   ],
+  //   surveyTasks: [
+  //     {
+  //       unitId: '',
+  //       unitName: '',
+  //       majors: null,
+  //       paragraphStart: '',
+  //       paragraphEnd: '',
+  //       remark: ''
+  //     }
+  //   ],
+  //   geologicalTasks: [
+  //     {
+  //       unitId: '',
+  //       unitName: '',
+  //       paragraphs: [
+  //         {
+  //           start: '',
+  //           end: '',
+  //           remark: ''
+  //         }
+  //       ]
+  //     }
+  //   ],
+  //   testTasks: [
+  //     {
+  //       unitId: '',
+  //       unitName: '',
+  //       majors: null,
+  //       paragraphStart: '',
+  //       paragraphEnd: '',
+  //       remark: ''
+  //     }
+  //   ],
+  //   comprehensiveTasks: [
+  //     {
+  //       unitId: '',
+  //       unitName: '',
+  //       majors: null,
+  //       paragraphStart: '',
+  //       paragraphEnd: '',
+  //       remark: ''
+  //     }
+  //   ],
+  //   otherTasks: [
+  //     {
+  //       unitId: '',
+  //       unitName: '',
+  //       majors: null,
+  //       paragraphStart: '',
+  //       paragraphEnd: '',
+  //       remark: ''
+  //     }
+  //   ]
+  // };
+  result.value = JSON.parse(JSON.stringify({}))
+  ResultData.value = JSON.parse(JSON.stringify({}))
+  getProjectDetails(value);
+
 }
 watch(
   () => router.currentRoute.value.query,
   (newQuery) => {
     if (newQuery.projectId && newQuery.projectStep) {
-      getProjectDetails();
+      getProjectDetails(newQuery.projectStep);
     }
   },
   { immediate: true }
 );
 
 onMounted(() => {
-  // getProjectDetails();
 });
 </script>
 
