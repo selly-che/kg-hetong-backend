@@ -7,7 +7,7 @@
           <a-input-search allow-clear v-model:value="searchText" placeholder="请输入项目名称" enter-button
             style="margin-bottom: 16px; margin-top: 16px" @search="handleSearch" />
           <!-- 添加按钮 新建新增项目 -->
-          <a-button type="primary" @click="handleAddProject"> 新增 </a-button>
+          <!-- <a-button type="primary" @click="handleAddProject"> 新增 </a-button> -->
         </div>
 
         <!-- 责任类型筛选标签 -->
