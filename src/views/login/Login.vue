@@ -31,7 +31,7 @@ import { ref, reactive, onMounted, onBeforeMount } from "vue";
 import { useRouter } from "vue-router";
 import getDatas from "@/network/index";
 import { ElMessage } from "element-plus";
-import { setUserPermissions } from '@/directives/permission'
+import { setUserPermissions } from "@/directives/permission";
 
 const input = ref("admin");
 const password = ref("123456");
@@ -369,10 +369,10 @@ const login = async () => {
     localStorage.setItem("wuyemenusJSON", wuyemenusJSON);
     localStorage.setItem("accesstoken", "guest-token"); // 设置游客token
     // 游客默认拥有所有权限
-    localStorage.setItem(
-      "userPermissions",
-      JSON.stringify(["user:add", "user:edit", "user:delete"]),
-    );
+    const guestAuths = ["user:add", "user:edit", "user:delete"];
+    localStorage.setItem("userPermissions", JSON.stringify(guestAuths));
+    localStorage.setItem("auths", JSON.stringify(guestAuths));
+    setUserPermissions(guestAuths);
     router.push("/home");
     ElMessage({ message: "游客登录成功!", type: "success" });
     return;
@@ -408,7 +408,7 @@ const login = async () => {
       router.push("/home");
       // 保存菜单和权限信息
       if (auths && Array.isArray(auths)) {
-        setUserPermissions(auths)
+        setUserPermissions(auths);
       }
     }
     // 本地的菜单数据

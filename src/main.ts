@@ -13,7 +13,6 @@ import "./static/style.css";
 import 'ant-design-vue/dist/antd.css'
 import dayjs from 'dayjs';
 import 'dayjs/locale/zh-cn';
-import { permission } from './utils/permission';
 
 dayjs.locale('zh-cn');
 const app = createApp(App)
@@ -22,7 +21,6 @@ import permissionDirective from './directives/permission'
 
 app.use(ElementPlus, { locale: zhCn })
 app.use(Antd as any)
-app.directive('permission', permission)
 app.use(store).use(router).mount('#app')
 app.use(permissionDirective)
 
