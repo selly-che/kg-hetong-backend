@@ -3,12 +3,12 @@
     <div class="project-header">
       <div class="project-title">{{ '项目信息' }}</div>
       <div class="action-buttons">
-        <el-button v-if="!isEdit" type="primary" @click="handleEdit">
+        <el-button v-if="!isEdit" type="primary" @click="handleEdit" v-permission="'organization:edit'">
           编辑
         </el-button>
         <template v-else>
           <el-button @click="handleCancel">取消</el-button>
-          <el-button type="primary" @click="handleSave">保存</el-button>
+          <el-button type="primary" @click="handleSave" v-permission="'organization:edit'">保存</el-button>
         </template>
       </div>
     </div>

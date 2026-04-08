@@ -5,7 +5,7 @@
             <h2>项目组成员</h2>
         </div>
         <div>
-            <el-button type="primary" @click="handleAddMember">新增成员</el-button>
+            <el-button type="primary" @click="handleAddMember" v-permission="'member:add'">新增成员</el-button>
         </div>
         
         <!-- 新增成员对话框 - 内容保持不变 -->

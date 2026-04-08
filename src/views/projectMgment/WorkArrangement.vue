@@ -30,7 +30,7 @@
             <!-- 操作按钮 -->
             <a-button type="primary" @click="handleSearch">查询</a-button>
             <a-button @click="handleReset">重置</a-button>
-            <a-button type="dashed" @click="handleAdd">新增</a-button>
+            <a-button type="dashed" @click="handleAdd" v-permission="'Work:add'">新增</a-button>
 
             <!-- 列设置 -->
             <a-dropdown overlayClassName="column-filter-dropdown" trigger="click">
@@ -542,7 +542,7 @@ const saveForm = async () => {
     const resp = await getDatas("project/AddWorkArrangement", {
         ...formData,
         projectId: route.query.projectId,
-        // projectStep: route.query.projectStep
+        projectStep: route.query.projectStep
     });
     if (resp && resp.data.code === 200) {
         ElMessage.success('保存成功');

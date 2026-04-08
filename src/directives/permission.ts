@@ -113,7 +113,6 @@ export function setUserPermissions(permissionList: PermissionItem[]) {
     try {
         // 保存完整的按钮权限数据
         localStorage.setItem('auths', JSON.stringify(permissionList))
-
         // 提取并保存 action 列表
         const actions = extractActions(permissionList)
         localStorage.setItem('userActions', JSON.stringify(actions))

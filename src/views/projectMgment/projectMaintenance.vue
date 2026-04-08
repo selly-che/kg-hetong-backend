@@ -67,8 +67,14 @@
                 </el-table-column>
                 <el-table-column prop="projectShortName" label="项目简称" />
                 <el-table-column prop="projectArea" label="区域指挥部" width="120" align="center" />
-                <el-table-column prop="projectSection" label="板块" width="90" align="center" />
-                <el-table-column prop="projectSection" label="类型一" width="80" align="center" />
+                <el-table-column prop="projectPlate" label="板块" width="90" align="center">
+                    <template #default="{ row }">
+                        {{ getProjectPlateText(row.projectPlate) }}
+                    </template>
+                </el-table-column>
+                <el-table-column prop="projectType" label="类型一" width="80" align="center">
+
+                </el-table-column>
                 <!-- <el-table-column prop="subjectUnit" label="主体责任单位" width="150" align="center" /> -->
                 <!-- <el-table-column prop="undertakingUnit" label="承担单位" width="150" align="center" /> -->
                 <el-table-column prop="managerCharge" label="主管计调" width="120" align="center" />
@@ -134,12 +140,12 @@
                         </el-form-item>
                     </el-col>
                     <el-col :span="8">
-                        <el-form-item label="类型一" prop="projectSection">
+                        <el-form-item label="类型一" prop="projectType">
                             <el-select v-model="formData.projectType" placeholder="选择类型一" style="width: 100%">
-                                <el-option label="铁路" :value="0" />
-                                <el-option label="城轨" :value="1" />
-                                <el-option label="公路" :value="2" />
-                                <el-option label="市政" :value="3" />
+                                <el-option label="铁路" value="铁路" />
+                                <el-option label="城轨" value="城轨" />
+                                <el-option label="公路" value="公路" />
+                                <el-option label="市政" value="市政" />
                             </el-select>
                         </el-form-item>
                     </el-col>
@@ -248,8 +254,24 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { Plus, Delete } from '@element-plus/icons-vue'
 import getDatas from "@/network/index"; // 引入接口
 
-
-const engineeringBusinessTypeOptions = ref()
+const engineeringBusinessTypeOptions = ref([
+    {
+        label: "勘察设计",
+        value: 0
+    },
+    {
+        label: "工程咨询",
+        value: 1
+    },
+    {
+        label: "工程监理",
+        value:2
+    },
+    {
+        label: "前期经营项目",
+        value: 3
+    }
+])
 const regionTypeOptions = ref()
 const trafficTypeOptions = ref()
 
@@ -279,6 +301,16 @@ const dialogVisible = ref(false)
 const dialogTitle = ref('新增项目表')
 const isEdit = ref(false)
 const formRef = ref(null)
+// 获取类型一文本
+const getProjectSectionText = (value) => {
+    const sectionMap = {
+        '0': '铁路',
+        '1': '城轨',
+        '2': '公路',
+        '3': '市政'
+    }
+    return sectionMap[value] || '-'
+}
 
 // 表单数据
 const formData = reactive({
@@ -483,12 +515,21 @@ const getProjectSelectList = async () => {
         // engineeringBusinessTypeOptions.value = res.data.result.engineeringBusinessType
         engineeringBusinessTypeOptions.value = (res.data.result.engineeringBusinessType).map((item, index) => ({
             label: item,
-            value: String(index)
+            value: index
         }))
+        console.log(engineeringBusinessTypeOptions.value ,'888888888888');
         regionTypeOptions.value = res.data.result.regionType
         trafficTypeOptions.value = res.data.result.trafficType
     }
 };
+
+
+
+const getProjectPlateText = (value) => {
+    if (!value && value !== 0) return '-'
+    const option = engineeringBusinessTypeOptions.value?.find(item => item.value == value)
+    return option ? option.label : '-'
+}
 
 onMounted(() => {
     getProjectList()

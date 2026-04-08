@@ -6,10 +6,10 @@
         <div class="project-detail-page">
           <!-- 编辑、保存 -->
           <div class="edit-wrapper">
-            <a-button v-if="!isEditMode" type="primary" @click="handleEdit">编辑</a-button>
+            <a-button v-if="!isEditMode" type="primary" @click="handleEdit" v-permission="'project:edit'">编辑</a-button>
             <template v-else>
               <a-button @click="handleCancel">取消</a-button>
-              <a-button type="primary" :loading="saving" @click="handleSave">保存</a-button>
+              <a-button type="primary" :loading="saving" @click="handleSave" v-permission="'project:edit'">保存</a-button>
             </template>
           </div>
           <div class="content-wrapper">
