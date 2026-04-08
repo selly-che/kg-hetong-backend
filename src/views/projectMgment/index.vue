@@ -246,7 +246,7 @@ const getProjectList = async () => {
             {
               Id: `${taskId}-all-work-${Date.now()}`,
               text: "查看全部工作安排",
-              href: `/projectMgment/WorkArrangementList?projectId=${project.id}&projectStep=${task.stepId}`,
+              href: `/projectMgment/WorkArrangementList?projectId=${project.id}&stepId=${task.stepId}`,
               projectId: project.id,
               projectStep: task.stepId,
               taskId: project.id,
@@ -254,7 +254,7 @@ const getProjectList = async () => {
             {
               Id: `${taskId}-work-${Date.now()}`,
               text: "工作安排",
-              href: `/projectMgment/WorkArrangement?projectId=${project.id}&projectStep=${task.projectStep}`,
+              href: `/projectMgment/WorkArrangement?projectId=${project.id}&projectStep=${task.stepCode}`,
               projectId: project.id,
               projectStep: task.projectStep,
               taskId: project.id,

@@ -85,9 +85,7 @@
       </template>
       <template #taTaskName="{ record }">
         <!--  :style="{ color: hasTaskContents(record) ? '#1890ff' : 'inherit', cursor: hasTaskContents(record) ? 'pointer' : 'default' }" -->
-        <span class="notice-name-link" @click="showTaskContentModal(record)"
-          style="color: #1890ff; cursor: pointer;" 
-        >
+        <span class="notice-name-link" @click="showTaskContentModal(record)" style="color: #1890ff; cursor: pointer;">
           {{ record.taTaskName }}
         </span>
       </template>
@@ -101,7 +99,7 @@
           <div class="empty-text">暂无任务内容</div>
         </template>
 
-        <template #Taskcontent="{ record , index}">
+        <template #Taskcontent="{ record, index }">
           <span>
             {{ `任务${index + 1}` }}
           </span>
@@ -109,14 +107,14 @@
       </a-table>
     </a-modal>
     <!-- 帮我生成一个弹窗，展示pdf文件 -->
-     <a-modal v-model:visible="pdfModalVisible" :title="pdfTitle" width="1200px" :footer="null">
+    <a-modal v-model:visible="pdfModalVisible" :title="pdfTitle" width="1200px" :footer="null">
       <embed :src="pdfUrl" type="application/pdf" width="100%" height="700px" />
     </a-modal>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted,watch } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { SettingOutlined } from '@ant-design/icons-vue';
 import getDatas from "@/network/index";
@@ -323,7 +321,7 @@ const handleSearch = async () => {
       pageNo: currentPage.value,
       pageSize: pageSize.value,
       projectId: projectId,
-      projectStep: '', // 全部
+      stepId: '', // 全部
       // 可以根据需要添加更多筛选条件
     });
 
@@ -373,14 +371,14 @@ const handleEdit = (record: any) => {
   // 这里可以跳转到编辑页面或打开编辑模态框
 };
 // 判断url中的projectId和projectStep是否变化，如果变化则重新查询数据
-watch(() => [route.query.projectId, route.query.projectStep], () => {
+watch(() => [route.query.projectId, route.query.stepId], () => {
   console.log('路由参数变化，重新查询数据');
   handleSearch();
 });
 
 onMounted(() => {
   console.log('WorkArrangementList mounted');
-  
+
   handleSearch();
 });
 </script>
@@ -431,6 +429,7 @@ onMounted(() => {
   text-decoration: underline;
   opacity: 0.8;
 }
+
 :deep(.ant-table-thead > tr > th) {
   background-color: #f5f9ff !important;
 }

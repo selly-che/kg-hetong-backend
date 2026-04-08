@@ -16,10 +16,12 @@ import 'dayjs/locale/zh-cn';
 dayjs.locale('zh-cn');
 const app = createApp(App)
 
+import permissionDirective from './directives/permission'
+
 app.use(ElementPlus, { locale: zhCn })
 app.use(Antd as any)
 app.use(store).use(router).mount('#app')
-
+app.use(permissionDirective)
 
 
 

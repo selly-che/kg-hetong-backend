@@ -121,7 +121,7 @@
         <!-- 操作区域 -->
         <div class="action-area">
           <a-space>
-            <a-button type="primary" @click="handleAddUser">
+            <a-button type="primary" @click="handleAddUser"  v-permission="'user:add'" >
               <template #icon>
                 <PlusOutlined />
               </template>
