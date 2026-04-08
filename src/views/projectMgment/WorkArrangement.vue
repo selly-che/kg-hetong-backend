@@ -369,7 +369,7 @@ const handleSearch = async () => {
             pageSize: pageSize.value,
             taTaskName: searchText.value,
             projectId: projectId,
-            // projectStep: projectStep, // 全部
+            projectStep: projectStep, // 全部
             // taPlanType: statusFilters.value.join(','),
         })
         if (res && res.data.code === 200) {

@@ -31,6 +31,7 @@ import { ref, reactive, onMounted, onBeforeMount } from "vue";
 import { useRouter } from "vue-router";
 import getDatas from "@/network/index";
 import { ElMessage } from "element-plus";
+import { setUserPermissions } from '@/directives/permission'
 
 const input = ref("admin");
 const password = ref("123456");
@@ -398,18 +399,24 @@ const login = async () => {
       );
     }
     //  获取菜单数据
-    // if (resp.data.code == 200) {
-    //   const userMenus = resp.data.result.menu || [];
-    //   const wuyemenusJSON = JSON.stringify(userMenus);
-    //   localStorage.setItem("wuyemenusJSON", wuyemenusJSON); // 存储用户菜单
-    //   router.push("/home");
-    // }
+    if (resp.data.code == 200) {
+      const auths = resp.data.result.auth || [];
+      const userMenus = resp.data.result.menu || [];
+      const wuyemenusJSON = JSON.stringify(userMenus);
+      localStorage.setItem("wuyemenusJSON", wuyemenusJSON); // 存储用户菜单
+      localStorage.setItem("auths", JSON.stringify(auths)); // 存储按钮权限
+      router.push("/home");
+      // 保存菜单和权限信息
+      if (auths && Array.isArray(auths)) {
+        setUserPermissions(auths)
+      }
+    }
     // 本地的菜单数据
-    const wuyemenusJSON = JSON.stringify(menus);
-    localStorage.setItem("wuyemenusJSON", wuyemenusJSON);
-    sessionStorage.removeItem("tokenErrorAlertShowing");
-    router.push("/home");
-    ElMessage({ message: "登录成功!", type: "success" });
+    // const wuyemenusJSON = JSON.stringify(menus);
+    // localStorage.setItem("wuyemenusJSON", wuyemenusJSON);
+    // sessionStorage.removeItem("tokenErrorAlertShowing");
+    // router.push("/home");
+    // ElMessage({ message: "登录成功!", type: "success" });
   } else {
     ElMessage({ message: res.data.message, type: "error" });
   }
