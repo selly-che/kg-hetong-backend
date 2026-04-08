@@ -187,13 +187,22 @@ interface MenuItem {
 const transformMenuData = (data: any[]): MenuItem[] => {
   const getIcon = (iconName: string) => {
     if (!iconName) return "icon-shouye";
-    // 映射一些常见的图标名到 iconfont 的类名
+    //icon映射
     const iconMap: Record<string, string> = {
       home: "icon-shouye",
       setting: "icon-xitong",
       book: "icon-hetong",
       AreaChartOutlined: "icon-xiangmu",
       BarsOutlined: "icon-mokuai",
+      FileTextOutlined: "icon-hetong",
+      AppstoreOutlined: "icon-mokuai",
+      ShoppingOutlined: "icon-shebei",
+      WarningOutlined: "icon-jinggaopai",
+      CopyOutlined: "icon-fuzhi",
+      CarOutlined: "icon-qiche",
+      ProjectOutlined: "icon-xiangmu1",
+      SendOutlined: "icon-24gl-paperPlane",
+      SettingOutlined: "icon-xitong",
     };
     const mappedIcon = iconMap[iconName] || iconName;
     return mappedIcon.startsWith("icon-") ? mappedIcon : `icon-${mappedIcon}`;

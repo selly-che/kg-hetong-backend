@@ -13,6 +13,7 @@ import "./static/style.css";
 import 'ant-design-vue/dist/antd.css'
 import dayjs from 'dayjs';
 import 'dayjs/locale/zh-cn';
+
 dayjs.locale('zh-cn');
 const app = createApp(App)
 

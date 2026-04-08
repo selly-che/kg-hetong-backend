@@ -2,10 +2,24 @@
   <div class="login">
     <div class="from">
       <div class="title">合同管理系统</div>
-      <el-input v-model="input" size="large" style="width: 400px" placeholder="请输入您的账号" prefix-icon="User" />
+      <el-input
+        v-model="input"
+        size="large"
+        style="width: 400px"
+        placeholder="请输入您的账号"
+        prefix-icon="User"
+      />
       <div class="password">
-        <el-input v-model="password" @keyup.enter="login" size="large" type="password" style="width: 400px"
-          placeholder="请输入您的密码" show-password prefix-icon="Lock" />
+        <el-input
+          v-model="password"
+          @keyup.enter="login"
+          size="large"
+          type="password"
+          style="width: 400px"
+          placeholder="请输入您的密码"
+          show-password
+          prefix-icon="Lock"
+        />
       </div>
       <div class="login-btn" @click="login">登录</div>
     </div>
@@ -17,7 +31,7 @@ import { ref, reactive, onMounted, onBeforeMount } from "vue";
 import { useRouter } from "vue-router";
 import getDatas from "@/network/index";
 import { ElMessage } from "element-plus";
-import { setUserPermissions } from '@/directives/permission'
+import { setUserPermissions } from "@/directives/permission";
 
 const input = ref("admin");
 const password = ref("123456");
@@ -52,7 +66,6 @@ const guestRoutes = {
       meta: {
         title: "项目管理",
       },
-
     },
     {
       parentId: "101",
@@ -79,10 +92,9 @@ const guestRoutes = {
           menuType: 0,
           meta: {
             title: "自揽项目信息维护",
-          }
-        }
-
-      ]
+          },
+        },
+      ],
     },
     {
       parentId: "3",
@@ -356,6 +368,11 @@ const login = async () => {
     const wuyemenusJSON = JSON.stringify(menus);
     localStorage.setItem("wuyemenusJSON", wuyemenusJSON);
     localStorage.setItem("accesstoken", "guest-token"); // 设置游客token
+    // 游客默认拥有所有权限
+    const guestAuths = ["user:add", "user:edit", "user:delete"];
+    localStorage.setItem("userPermissions", JSON.stringify(guestAuths));
+    localStorage.setItem("auths", JSON.stringify(guestAuths));
+    setUserPermissions(guestAuths);
     router.push("/home");
     ElMessage({ message: "游客登录成功!", type: "success" });
     return;
@@ -373,7 +390,14 @@ const login = async () => {
     // console.log(menus, 'menusmenus');
     localStorage.setItem("accesstoken", res.data.result.token); //本地存储
     const resp = await getDatas("common/getUserPermission"); // 获取角色菜单
-    console.log(resp, 'respresp');
+    console.log(resp, "respresp");
+    // 存储权限标识列表
+    if (resp.data.code == 200 && resp.data.result.auth) {
+      localStorage.setItem(
+        "userPermissions",
+        JSON.stringify(resp.data.result.auth),
+      );
+    }
     //  获取菜单数据
     if (resp.data.code == 200) {
       const auths = resp.data.result.auth || [];
@@ -384,7 +408,7 @@ const login = async () => {
       router.push("/home");
       // 保存菜单和权限信息
       if (auths && Array.isArray(auths)) {
-        setUserPermissions(auths)
+        setUserPermissions(auths);
       }
     }
     // 本地的菜单数据

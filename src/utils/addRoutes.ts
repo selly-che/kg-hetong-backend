@@ -13,7 +13,7 @@ interface MenuItem {
   component: string;
   meta?: Record<string, any>;
 }
-// 动态添加路由（更正映射，之后改菜单管理）
+// 动态添加路由（更正映射）
 export default function addDynamicRoutes(router: any, menus: any[]) {
   const componentMapping: Record<string, string> = {
     "system/UserList": "systemMgment/userMgment",

@@ -6,7 +6,10 @@
         <a-row :gutter="24">
           <a-col :md="6" :sm="12">
             <a-form-item label="用户账号">
-              <a-input placeholder="请输入用户账号" v-model:value="queryParam.username"></a-input>
+              <a-input
+                placeholder="请输入用户账号"
+                v-model:value="queryParam.username"
+              ></a-input>
             </a-form-item>
           </a-col>
 
@@ -22,14 +25,24 @@
 
           <a-col :md="6" :sm="8">
             <a-form-item label="真实姓名">
-              <a-input placeholder="请输入用户真实姓名" v-model:value="queryParam.realname"></a-input>
+              <a-input
+                placeholder="请输入用户真实姓名"
+                v-model:value="queryParam.realname"
+              ></a-input>
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="8" v-if="toggleSearchStatus">
             <a-form-item label="部门">
-              <a-select v-model:value="queryParam.departIds" placeholder="请选择部门">
+              <a-select
+                v-model:value="queryParam.departIds"
+                placeholder="请选择部门"
+              >
                 <a-select-option value="">请选择</a-select-option>
-                <a-select-option v-for="item in deptList" :key="item.departIds" :value="item.departIds">
+                <a-select-option
+                  v-for="item in deptList"
+                  :key="item.departIds"
+                  :value="item.departIds"
+                >
                   {{ item.departIds_dictText }}
                 </a-select-option>
               </a-select>
@@ -38,7 +51,10 @@
 
           <a-col :md="6" :sm="8" v-if="toggleSearchStatus">
             <a-form-item label="手机号码">
-              <a-input placeholder="请输入手机号码查询" v-model:value="queryParam.phone"></a-input>
+              <a-input
+                placeholder="请输入手机号码查询"
+                v-model:value="queryParam.phone"
+              ></a-input>
             </a-form-item>
           </a-col>
 
@@ -55,8 +71,16 @@
           <a-col :md="6" :sm="8">
             <span class="table-page-search-submitButtons">
               <a-button type="primary" @click="searchQuery">查询</a-button>
-              <a-button type="primary" @click="searchReset" style="margin-left: 8px">重置</a-button>
-              <a @click="handleToggleSearch" style="margin-left: 8px; color: #1890ff; cursor: pointer">
+              <a-button
+                type="primary"
+                @click="searchReset"
+                style="margin-left: 8px"
+                >重置</a-button
+              >
+              <a
+                @click="handleToggleSearch"
+                style="margin-left: 8px; color: #1890ff; cursor: pointer"
+              >
                 {{ toggleSearchStatus ? "收起" : "展开" }}
               </a>
             </span>
@@ -67,7 +91,7 @@
 
     <!-- 操作按钮区域 -->
     <div class="table-operator">
-      <a-button @click="handleAdd" type="primary">
+      <a-button @click="handleAdd" type="primary" v-permission="['user:add']">
         <template #icon>
           <PlusOutlined />
         </template>
@@ -79,8 +103,14 @@
         </template>
         导出
       </a-button>
-      <a-upload name="file" :showUploadList="false" :multiple="false" :headers="tokenHeader" :action="importExcelUrl"
-        @change="handleImportExcel">
+      <a-upload
+        name="file"
+        :showUploadList="false"
+        :multiple="false"
+        :headers="tokenHeader"
+        :action="importExcelUrl"
+        @change="handleImportExcel"
+      >
         <a-button type="primary">
           <template #icon>
             <UploadOutlined />
@@ -100,25 +130,41 @@
     <!-- table 区域-begin -->
     <div>
       <div class="ant-alert ant-alert-info" style="margin-bottom: 16px">
-        <i class="anticon anticon-info-circle ant-alert-icon"></i>已选择&nbsp;<a style="font-weight: 600">{{
-          selectedRowKeys.length }}</a>项&nbsp;&nbsp;
+        <i class="anticon anticon-info-circle ant-alert-icon"></i>已选择&nbsp;<a
+          style="font-weight: 600"
+          >{{ selectedRowKeys.length }}</a
+        >项&nbsp;&nbsp;
         <a style="margin-left: 24px" @click="onClearSelected">清空</a>
       </div>
 
-      <a-table ref="table" bordered size="middle" rowKey="id" :columns="columns" :dataSource="dataSource"
-        :pagination="ipagination" :loading="loading" :rowSelection="{
+      <a-table
+        ref="table"
+        bordered
+        size="middle"
+        rowKey="id"
+        :columns="columns"
+        :dataSource="dataSource"
+        :pagination="ipagination"
+        :loading="loading"
+        :rowSelection="{
           selectedRowKeys: selectedRowKeys,
           onChange: onSelectChange,
-        }" @change="handleTableChange">
+        }"
+        @change="handleTableChange"
+      >
         <template #avatarslot="{ record }">
           <div class="anty-img-wrap">
-            <a-avatar shape="square" :src="getAvatarView(record.avatar)" icon="user" />
+            <a-avatar
+              shape="square"
+              :src="getAvatarView(record.avatar)"
+              icon="user"
+            />
           </div>
         </template>
 
         <template #action="{ record }">
-          <a @click="handleEdit(record)">编辑</a>
-          <a-divider type="vertical" />
+          <a @click="handleEdit(record)" v-permission="['user:edit']">编辑</a>
+          <a-divider type="vertical" v-permission="['user:edit']" />
           <a-dropdown>
             <template #overlay>
               <a-menu>
@@ -127,19 +173,28 @@
                 </a-menu-item>
 
                 <a-menu-item>
-                  <a-popconfirm title="确定删除吗？" @confirm="() => handleDelete(record.id)">
+                  <a-popconfirm
+                    title="确定删除吗？"
+                    @confirm="() => handleDelete(record.id)"
+                  >
                     <a>删除</a>
                   </a-popconfirm>
                 </a-menu-item>
 
                 <a-menu-item v-if="record.status == 1">
-                  <a-popconfirm title="确定冻结吗？" @confirm="() => handleFrozen(record.id, 2, record.username)">
+                  <a-popconfirm
+                    title="确定冻结吗？"
+                    @confirm="() => handleFrozen(record.id, 2, record.username)"
+                  >
                     <a>冻结</a>
                   </a-popconfirm>
                 </a-menu-item>
 
                 <a-menu-item v-if="record.status == 2">
-                  <a-popconfirm title="确定解冻吗？" @confirm="() => handleFrozen(record.id, 1, record.username)">
+                  <a-popconfirm
+                    title="确定解冻吗？"
+                    @confirm="() => handleFrozen(record.id, 1, record.username)"
+                  >
                     <a>解冻</a>
                   </a-popconfirm>
                 </a-menu-item>
@@ -156,7 +211,12 @@
     <!-- table 区域-end -->
   </a-card>
   <!-- 编辑抽屉 -->
-  <form-drawer-right ref="modalFormDawer" @ok="modalFormOk" :title="title" :type="'user'">
+  <form-drawer-right
+    ref="modalFormDawer"
+    @ok="modalFormOk"
+    :title="title"
+    :type="'user'"
+  >
   </form-drawer-right>
 </template>
 
@@ -298,7 +358,7 @@ const searchQuery = async () => {
     pageSize: ipagination.value.pageSize,
     ...queryParam,
   });
-  
+
   const deptNew = new Map();
   res.data.result.records.forEach((item) => {
     if (item.departIds && item.departIds.length > 0) {
@@ -475,7 +535,7 @@ const passwordModalOk = () => {
     .ant-form-item-label {
       padding-right: 8px;
 
-      >label {
+      > label {
         font-weight: normal;
         margin-bottom: 0;
       }
@@ -525,7 +585,7 @@ const passwordModalOk = () => {
   flex-wrap: wrap;
   margin-bottom: 16px;
 
-  >* {
+  > * {
     display: flex;
     align-items: center;
     margin-right: 8px;

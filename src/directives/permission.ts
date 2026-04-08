@@ -72,15 +72,22 @@ const permissionDirective = {
 /**
  * 从权限数组中提取所有 action 标识
  */
-function extractActions(permissionList: PermissionItem[]): string[] {
+function extractActions(permissionList: any[]): string[] {
     if (!permissionList || !Array.isArray(permissionList)) {
         return []
     }
 
-    // 过滤出状态为启用（status === "1"）的权限，提取 action 字段
+    // 处理混合类型的数组：既支持 string 数组，也支持 PermissionItem[] 数组
     return permissionList
-        .filter(item => item.action)
-        .map(item => item.action)
+        .map(item => {
+            if (typeof item === 'string') {
+                return item
+            } else if (item && typeof item === 'object' && item.action) {
+                return item.action
+            }
+            return null
+        })
+        .filter(action => !!action) as string[]
 }
 
 /**
@@ -89,12 +96,14 @@ function extractActions(permissionList: PermissionItem[]): string[] {
  */
 function getUserPermissions(): string[] {
     try {
-        // 从 localStorage 获取按钮权限数组
-        const permissionsStr = localStorage.getItem('auths')
+        // 从 localStorage key 获取权限数据
+        const auths = localStorage.getItem('auths')
+        const userPermissions = localStorage.getItem('userPermissions')
+        
+        const permissionsStr = auths || userPermissions
 
         if (permissionsStr) {
-            const permissionList: PermissionItem[] = JSON.parse(permissionsStr)
-            console.log(permissionList, '权限列表');
+            const permissionList = JSON.parse(permissionsStr)
             return extractActions(permissionList)
         }
     } catch (error) {
