@@ -231,24 +231,25 @@ const getProjectList = async () => {
       const taskNodes = (project.stepList || []).map(
         (task: any, index: number) => {
           const taskId = `${project.id}-task-${index}`;
-
+          console.log(task,'tasktasktask');
+          
           // 为每个task添加固定的三级菜单
           const children = [
             {
               Id: `${taskId}-team-${Date.now()}`,
               text: "组建项目组成员",
-              href: `/projectMgment/ProjectTeam?taskArrangementId=${task.id}&projectStep=${task.projectStep}`,
+              href: `/projectMgment/ProjectTeam?projectId=${project.id}&projectInfoID=${task.stepId}`,
               projectId: project.id,
               projectStep: task.projectStep,
-              taskId: task.id,
+              taskId: project.id,
             },
             {
               Id: `${taskId}-all-work-${Date.now()}`,
               text: "查看全部工作安排",
-              href: `/projectMgment/WorkArrangementList?projectId=${project.id}&projectStep=${task.projectStep}`,
+              href: `/projectMgment/WorkArrangementList?projectId=${project.id}&projectStep=${task.stepId}`,
               projectId: project.id,
-              projectStep: task.projectStep,
-              taskId: task.id,
+              projectStep: task.stepId,
+              taskId: project.id,
             },
             {
               Id: `${taskId}-work-${Date.now()}`,
@@ -256,7 +257,7 @@ const getProjectList = async () => {
               href: `/projectMgment/WorkArrangement?projectId=${project.id}&projectStep=${task.projectStep}`,
               projectId: project.id,
               projectStep: task.projectStep,
-              taskId: task.id,
+              taskId: project.id,
             },
           ];
 

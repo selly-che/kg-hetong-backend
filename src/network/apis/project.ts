@@ -88,4 +88,13 @@ export default {
     };
   },
 
+ // 上传项目 
+  uploadProject(params: any) {
+    return {
+      method: "POST",
+      url: "/sys/file/upload",
+      data:params,
+    }
+  }
+
 };

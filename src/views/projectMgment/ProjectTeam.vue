@@ -4,71 +4,146 @@
         <div class="page-title">
             <h2>项目组成员</h2>
         </div>
-        <el-card class="search-card" shadow="never">
-            <el-form :model="formData" label-width="100px" class="task-form">
-                <el-row>
-                    <el-col :span="8">
-                        <el-form-item label="单位名称">
-                            <el-input v-model="formData.deptName" placeholder="请输入单位名称"></el-input>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="8">
-                        <el-form-item label="专业名称">
-                            <el-input v-model="formData.majorName" placeholder="请输入专业名称"></el-input>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="8">
-                        <!-- 按钮 -->
-                        <el-button type="primary" @click="handleAdd">添加成员</el-button>
-                    </el-col>
-                </el-row>
-            </el-form>
-            <!-- 项目组成员表格 - 遍历所有部门 -->
-            <div v-for="(members, deptId) in groupedTeamData" :key="deptId" class="team-section">
-                <div class="section-header">
-                    <span class="section-title">{{ members[0]?.deptName || deptId }}</span>
+        <div>
+            <el-button type="primary" @click="handleAddMember">新增成员</el-button>
+        </div>
+        
+        <!-- 新增成员对话框 - 内容保持不变 -->
+        <el-dialog title="新增项目组成员" v-model="dialogVisible" width="80%">
+            <el-card class="search-card" shadow="never">
+                <el-form :model="formData" label-width="130px" class="task-form">
+                    <el-row>
+                        <el-col :span="12">
+                            <el-form-item label="单位名称">
+                                <el-input v-model="formData.deptName" placeholder="请输入单位名称"></el-input>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="12">
+                            <el-form-item label="专业名称">
+                                <el-input v-model="formData.majorName" placeholder="请输入专业名称"></el-input>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+                    <el-row>
+                        <el-col :span="12">
+                            <el-form-item label="专业负责人域账号">
+                                <el-input v-model="formData.majorPrincipleCode" placeholder="请输入专业负责人域账号"></el-input>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="12">
+                            <el-form-item label="第一牵头人">
+                                <el-input v-model="formData.majorPrincipleName" placeholder="第一牵头人"></el-input>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+                    <el-row>
+                        <el-col :span="12">
+                            <el-form-item label="第二牵头人">
+                                <el-input v-model="formData.otherMajorPrincipleName" placeholder="第二牵头人"></el-input>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="12">
+                            <el-form-item label="专业简称">
+                                <el-input v-model="formData.productCode" placeholder="专业简称"></el-input>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+                    <el-row>
+                        <el-col :span="12">
+                            <el-button type="primary" @click="handleAddToTable">添加到列表</el-button>
+                        </el-col>
+                    </el-row>
+                </el-form>
+
+                <!-- 临时数据表格 -->
+                <div class="temp-table-wrapper" v-if="tempMemberList.length > 0">
+                    <el-table :data="tempMemberList" border style="width: 100%; margin-top: 20px;">
+                        <el-table-column prop="deptName" label="单位名称"  align="center" />
+                        <el-table-column prop="majorName" label="专业名称" align="center" />
+                        <el-table-column prop="majorPrincipleCode" label="专业负责人域账号"  align="center" />
+                        <el-table-column prop="majorPrincipleName" label="第一牵头人"  align="center" />
+                        <el-table-column prop="otherMajorPrincipleName" label="第二牵头人" align="center" />
+                        <el-table-column prop="productCode" label="专业简称"  align="center" />
+                        <el-table-column label="操作" width="100" align="center" fixed="right">
+                            <template #default="{ $index }">
+                                <el-button type="danger" size="small" @click="handleDeleteTemp($index)">删除</el-button>
+                            </template>
+                        </el-table-column>
+                    </el-table>
                 </div>
-                <a-table :loading="teamDataloading" :dataSource="members" :columns="teamColumns" :pagination="false"
-                    size="middle" bordered class="team-table" :rowKey="'id'">
-                    <template #empty>
-                        <div class="empty-text">暂无数据</div>
-                    </template>
-                </a-table>
-            </div>
+            </el-card>
+            
+            <!-- 对话框底部按钮 -->
+            <template #footer>
+                <div class="dialog-footer">
+                    <el-button @click="handleCancel">取消</el-button>
+                    <el-button type="primary" @click="handleSaveAll" :loading="saving">保存</el-button>
+                </div>
+            </template>
+        </el-dialog>
+        
+        <!-- 项目组成员表格 - 直接展示数组数据 -->
+        <a-table :loading="teamDataloading" :dataSource="teamData" :columns="teamColumns" 
+            :pagination="false" size="middle" bordered class="team-table" :rowKey="'id'">
+            <template #empty>
+                <div class="empty-text">暂无数据</div>
+            </template>
+        </a-table>
 
-            <!-- 如果没有数据，显示提示 -->
-            <div v-if="!teamDataloading && Object.keys(groupedTeamData).length === 0" class="no-data-tip">
-                暂无项目组成员数据
-            </div>
-        </el-card>
-
+        <!-- 如果没有数据，显示提示 -->
+        <div v-if="!teamDataloading && teamData.length === 0" class="no-data-tip">
+            暂无项目组成员数据
+        </div>
     </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch, computed, reactive } from 'vue';
+import { ref, onMounted, watch, computed } from 'vue';
 import getDatas from "@/network/index";
 import { useRoute } from 'vue-router';
 import { ElMessage } from 'element-plus';
 
-// 项目组成员数据
+const dialogVisible = ref(false);
+const saving = ref(false);
+
+// 临时成员列表（用于在对话框中展示）
+const tempMemberList = ref<any[]>([]);
+
+// 项目组成员数据 - 改为数组
 const teamDataloading = ref(false);
-const rawTeamData = ref<Record<string, any[]>>({});
+const teamData = ref<any[]>([]);
 
-// 其他专业团队数据（如果需要可以单独处理）
-const otherTeamData = ref<any[]>([]);
-
-const formData = reactive({
+const projectInfoID = ref('');
+const formData = ref({
     deptName: '',
-    majorName: ''
+    majorName: '',
+    majorPrincipleCode: '',
+    majorPrincipleName: '',
+    otherMajorPrincipleName: '',
+    productCode: '',
+    projectInfoID: '',
 })
 
 // 表格列定义
 const teamColumns = [
     {
-        title: '专业',
+        title: '单位名称',
+        dataIndex: 'deptName',
+        key: 'deptName',
+        width: 150,
+        align: 'center'
+    },
+    {
+        title: '专业名称',
         dataIndex: 'majorName',
         key: 'majorName',
+        width: 120,
+        align: 'center'
+    },
+    {
+        title: '专业负责人域账号',
+        dataIndex: 'majorPrincipleCode',
+        key: 'majorPrincipleCode',
         width: 150,
         align: 'center'
     },
@@ -76,21 +151,21 @@ const teamColumns = [
         title: '第一牵头人',
         dataIndex: 'majorPrincipleName',
         key: 'majorPrincipleName',
-        width: 180,
+        width: 120,
         align: 'center'
     },
     {
-        title: '其他牵头人',
+        title: '第二牵头人',
         dataIndex: 'otherMajorPrincipleName',
         key: 'otherMajorPrincipleName',
-        width: 180,
+        width: 150,
         align: 'center'
     },
     {
-        title: '生产所（室）',
-        dataIndex: 'suoshi',
-        key: 'suoshi',
-        width: 180,
+        title: '专业简称',
+        dataIndex: 'productCode',
+        key: 'productCode',
+        width: 100,
         align: 'center'
     }
 ];
@@ -98,63 +173,136 @@ const teamColumns = [
 // 获取路由实例
 const route = useRoute();
 
-// 按部门分组的数据（用于渲染多个表格）
-const groupedTeamData = computed(() => {
-    return rawTeamData.value;
-});
-
 // 获取项目组成员数据
 const getProjectList = async () => {
-    // 防止重复请求
     if (teamDataloading.value) return;
     teamDataloading.value = true;
-    const taskArrangementId = route.query.taskArrangementId;
-    // 如果没有 taskArrangementId，不发起请求
-    if (!taskArrangementId) {
-        console.warn('未找到 taskArrangementId');
+    projectInfoID.value = route.query.projectInfoID as string || '';
+    
+    if (!projectInfoID.value) {
+        console.warn('未找到 projectInfoID');
         teamDataloading.value = false;
         return;
     }
+    
     try {
         const res = await getDatas('project/GetProjectMembers', {
-            taskArrangementId: taskArrangementId,
+            projectInfoID: projectInfoID.value,
         });
+        
         console.log("项目组成员数据:", res);
-        // 处理返回的数据
+        
         if (res && res.data.code == 200) {
-            // 假设返回的数据是一个对象，键是部门 ID，值是成员数组
-            rawTeamData.value = res.data.result || {};
-            console.log("处理后的数据:", rawTeamData.value);
+            // 直接使用返回的数组数据
+            teamData.value = Array.isArray(res.data.result) ? res.data.result : [];
+            console.log("处理后的数据:", teamData.value);
         } else {
             console.error("获取项目组成员数据失败:", res.data.message);
-            rawTeamData.value = {};
+            teamData.value = [];
         }
     } catch (error) {
         console.error("获取项目组成员数据异常:", error);
-        rawTeamData.value = {};
+        teamData.value = [];
     } finally {
         teamDataloading.value = false;
     }
 };
 
-// 添加成员
-const handleAdd = async () => {
-    const resp = await getDatas('project/AddProjectMember', formData);
-    if (resp.data.code == 200) {
-        ElMessage.success('添加成功');
-        getProjectList();
-    } else {
-        ElMessage.error(resp.data.message);
+// 添加到临时列表
+const handleAddToTable = () => {
+    if (!formData.value.deptName || !formData.value.majorName) {
+        ElMessage.warning('请填写单位名称和专业名称');
+        return;
     }
+
+    tempMemberList.value.push({
+        ...formData.value,
+        projectInfoID: projectInfoID.value
+    });
+
+    formData.value = {
+        deptName: '',
+        majorName: '',
+        majorPrincipleCode: '',
+        majorPrincipleName: '',
+        otherMajorPrincipleName: '',
+        productCode: '',
+        projectInfoID: projectInfoID.value,
+    };
+
+    ElMessage.success('已添加到列表');
+};
+
+// 删除临时列表中的某一项
+const handleDeleteTemp = (index: number) => {
+    tempMemberList.value.splice(index, 1);
+    ElMessage.success('已删除');
+};
+
+// 取消
+const handleCancel = () => {
+    dialogVisible.value = false;
+    tempMemberList.value = [];
+    formData.value = {
+        deptName: '',
+        majorName: '',
+        majorPrincipleCode: '',
+        majorPrincipleName: '',
+        otherMajorPrincipleName: '',
+        productCode: '',
+        projectInfoID: '',
+    };
+};
+
+// 保存所有数据
+const handleSaveAll = async () => {
+    if (tempMemberList.value.length === 0) {
+        ElMessage.warning('请至少添加一个成员');
+        return;
+    }
+
+    try {
+        saving.value = true;
+        
+        const res = await getDatas('project/AddProjectMember', tempMemberList.value);
+        
+        if (res.data.code === 200) {
+            ElMessage.success('保存成功');
+            dialogVisible.value = false;
+            tempMemberList.value = [];
+            await getProjectList();
+        } else {
+            ElMessage.error(res.data.message || '保存失败');
+        }
+    } catch (error) {
+        console.error("保存失败:", error);
+        ElMessage.error('保存失败，请稍后重试');
+    } finally {
+        saving.value = false;
+    }
+};
+
+// 添加成员按钮点击事件
+const handleAddMember = () => {
+    dialogVisible.value = true;
+    tempMemberList.value = [];
+    formData.value = {
+        deptName: '',
+        majorName: '',
+        majorPrincipleCode: '',
+        majorPrincipleName: '',
+        otherMajorPrincipleName: '',
+        productCode: '',
+        projectInfoID: projectInfoID.value,
+    };
 };
 
 // 监听路由参数变化
 watch(
-    () => route.query.taskArrangementId,
+    () => route.query.projectInfoID,
     (newVal, oldVal) => {
-        // 只有当值真正变化时才请求
         if (newVal && newVal !== oldVal) {
-            console.log('taskArrangementId 变化:', newVal);
+            console.log('projectInfoID 变化:', newVal);
             getProjectList();
         }
     },
@@ -185,28 +333,10 @@ onMounted(() => {
     font-weight: bold;
 }
 
-.team-section {
-    margin-bottom: 30px;
-}
-
-.section-header {
-    display: flex;
-    align-items: center;
-    margin-bottom: 16px;
-    padding: 8px 16px;
-    background-color: #f5f5f5;
-    border-left: 4px solid #1890ff;
-}
-
-.section-title {
-    font-size: 16px;
-    font-weight: 600;
-    color: #000;
-}
-
 .team-table {
     border: 1px solid #d9d9d9;
     border-radius: 4px;
+    margin-top: 20px;
 }
 
 .team-table .ant-table-thead>tr>th {
@@ -231,6 +361,18 @@ onMounted(() => {
     color: #999;
     padding: 40px 0;
     font-size: 14px;
+}
+
+.temp-table-wrapper {
+    margin-top: 20px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.dialog-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
 }
 
 :deep(.ant-table-thead > tr > th) {
