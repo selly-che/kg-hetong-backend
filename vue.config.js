@@ -22,9 +22,9 @@ module.exports = defineConfig({
       overlay: {
         errors: false,
         warnings: false,
-        runtimeErrors: false
-      }
-    }
+        runtimeErrors: false,
+      },
+    },
   },
   chainWebpack: (config) => {
     config.plugin("define").tap((definitions) => {

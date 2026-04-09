@@ -36,7 +36,7 @@ service.interceptors.response.use(
         }
         return res
     }, (error) => {
-        let resPonse = error.response.data;
+        const resPonse = error.response.data;
         console.log(resPonse,'resPonseresPonse');
         if (resPonse.status == 500 && resPonse.message.includes("Token失效")) {
             

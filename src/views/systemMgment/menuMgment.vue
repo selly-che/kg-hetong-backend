@@ -35,7 +35,7 @@
                 <DownOutlined />
               </a-button>
               <template #overlay>
-                <a-menu @click="(key: any) => handleMenuClick(key, record)">
+                <a-menu @click="({ key }) => handleMenuClick(key, record)">
                   <a-menu-item class="custom-menu-item" key="view"
                     >查看详情</a-menu-item
                   >
@@ -57,6 +57,7 @@
       v-model:visible="open"
       :edit-data="currentEditData"
       :menu-tree-data="menuList"
+      :read-only="isViewMode"
       @submit="handleSubmit"
       @close="handleDrawerClose"
     />
@@ -79,10 +80,11 @@ const selectedRowKeys = ref<any[]>([]);
 
 const menuList = ref<Usermenu[]>([]);
 
-// 处理编辑
 const open = ref<boolean>(false);
+const isViewMode = ref<boolean>(false);
 const handleEdit = (record: Usermenu) => {
   console.log("编辑:", record);
+  isViewMode.value = false;
   open.value = true;
   currentEditData.value = { ...record };
 };
@@ -91,16 +93,44 @@ const onSelectChange = (selectedKeys: any[]) => {
   selectedRowKeys.value = selectedKeys;
 };
 // 处理菜单点击
-const handleMenuClick = (row: any, record: any) => {
-  switch (row.key) {
+const handleMenuClick = (key: string, record: any) => {
+  switch (key) {
     case "view":
       console.log("查看详情:", record);
+      currentEditData.value = { ...record };
+      isViewMode.value = true;
+      open.value = true;
       break;
     case "add":
       console.log("添加下级:", record);
       break;
     case "delete":
-      console.log("删除:", record);
+      ElMessageBox.confirm("是否删除该菜单?", "提示", {
+        confirmButtonText: "确认",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(async () => {
+          let resp = await getDatas("system/deleteMenuListTree", record.id);
+          if (resp.data.code == 200) {
+            ElMessage({
+              type: "success",
+              message: "删除成功!",
+            });
+            getUserTreeFn();
+          } else {
+            ElMessage({
+              type: "error",
+              message: resp.data.message || "删除失败!",
+            });
+          }
+        })
+        .catch(() => {
+          ElMessage({
+            type: "info",
+            message: "已取消删除",
+          });
+        });
       break;
   }
 };
@@ -159,7 +189,12 @@ const batchDelete = () => {
         });
       }
     })
-    .catch(() => {});
+    .catch(() => {
+      ElMessage({
+        type: "info",
+        message: "已取消删除",
+      });
+    });
 };
 // 定义表格列
 const columns = [
@@ -237,6 +272,7 @@ const addMenu = async (data: any) => {
 const updateMenu = async (data: any) => {
   let resp = await getDatas("system/updateMenuListTree", data);
   console.log(resp, "respresp");
+  console.log(data, "datadata");
   if (resp.data.code == 200) {
     message.success("编辑成功");
     getUserTreeFn();
@@ -246,9 +282,9 @@ const updateMenu = async (data: any) => {
   }
 };
 
-// 关闭抽屉
 const handleDrawerClose = () => {
   currentEditData.value = null;
+  isViewMode.value = false;
 };
 
 onMounted(() => {

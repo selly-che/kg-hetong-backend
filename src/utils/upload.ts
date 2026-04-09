@@ -6,7 +6,7 @@ import getDatas from '@/network/index';
 
 export async function uploadFiles(
     fileName: string,
-    uploadUrl: string = 'common/ContractExport'
+    uploadUrl = 'common/ContractExport'
 ): Promise<any> {
     try {
         // 调用上传接口

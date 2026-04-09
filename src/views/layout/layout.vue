@@ -20,7 +20,10 @@
           <template v-for="item in menus" :key="item.index">
             <el-sub-menu v-if="item.children" :index="item.index">
               <template #title>
-                <i :class="'iconfont ' + item.icon"></i>
+                <component
+                  :is="resolveIconComponent(item.icon)"
+                  class="menu-icon"
+                />
                 <span class="pl-10">{{ item.meta.title }} </span>
               </template>
               <el-menu-item
@@ -30,14 +33,20 @@
               >
                 <template #title>
                   <div>
-                    <i :class="'iconfont ' + child.icon"></i>
+                    <component
+                      :is="resolveIconComponent(child.icon)"
+                      class="menu-icon"
+                    />
                     <span class="pl-10"> {{ child.meta.title }}</span>
                   </div>
                 </template>
               </el-menu-item>
             </el-sub-menu>
             <el-menu-item v-else :index="item.path">
-              <i :class="'iconfont ' + item.icon"></i>
+              <component
+                :is="resolveIconComponent(item.icon)"
+                class="menu-icon"
+              />
               <template #title="">
                 <span :class="item.children ? '' : 'pl-10'">{{
                   item.meta.title
@@ -72,7 +81,7 @@
                   <UserOutlined />
                 </template>
               </a-avatar>
-              <span style="padding: 0 4px">{{userName}}</span>
+              <span style="padding: 0 4px">{{ userName }}</span>
               <down-outlined />
             </div>
             <template #overlay>
@@ -137,6 +146,7 @@ import {
   UserOutlined,
   DownOutlined,
 } from "@ant-design/icons-vue";
+import * as AntIcons from "@ant-design/icons-vue";
 
 import { SwitchButton } from "@element-plus/icons-vue";
 import { ref, watch, onMounted, computed } from "vue";
@@ -184,43 +194,51 @@ interface MenuItem {
   children?: MenuItem[];
 }
 
-// 递归转换菜单数据
-const transformMenuData = (data: any[]): MenuItem[] => {
-  const getIcon = (iconName: string) => {
-    if (!iconName) return "icon-shouye";
-    //icon映射
-    const iconMap: Record<string, string> = {
-      home: "icon-shouye",
-      setting: "icon-xitong",
-      book: "icon-hetong",
-      AreaChartOutlined: "icon-xiangmu",
-      BarsOutlined: "icon-mokuai",
-      FileTextOutlined: "icon-hetong",
-      AppstoreOutlined: "icon-mokuai",
-      ShoppingOutlined: "icon-shebei",
-      WarningOutlined: "icon-jinggaopai",
-      CopyOutlined: "icon-fuzhi",
-      CarOutlined: "icon-qiche",
-      ProjectOutlined: "icon-xiangmu1",
-      SendOutlined: "icon-24gl-paperPlane",
-      SettingOutlined: "icon-xitong",
-    };
-    const mappedIcon = iconMap[iconName] || iconName;
-    return mappedIcon.startsWith("icon-") ? mappedIcon : `icon-${mappedIcon}`;
+const normalizeIconName = (icon?: string) => {
+  if (!icon) return "HomeOutlined";
+  const normalized = String(icon).trim();
+  const shortMap: Record<string, string> = {
+    home: "HomeOutlined",
+    setting: "SettingOutlined",
+    book: "FileTextOutlined",
   };
+  return shortMap[normalized] || normalized;
+};
 
+const resolveIconComponent = (icon?: string) => {
+  const iconName = normalizeIconName(icon);
+  return (AntIcons as any)[iconName] || (AntIcons as any).HomeOutlined;
+};
+
+const loadMenusFromStorage = () => {
+  const raw = localStorage.getItem("wuyemenusJSON");
+  if (!raw) return;
+  try {
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed)) {
+      menus.value = parsed;
+      icons.value = menus.value.map((item: any) => item.icon);
+    }
+  } catch (error) {
+    console.error("Failed to parse menus from storage", error);
+  }
+};
+
+loadMenusFromStorage();
+
+const transformMenuData = (data: any[]): MenuItem[] => {
   return data.map((item) => {
+    const title = item.meta?.title || item.title;
+    const icon = item.meta?.icon || item.icon;
     const newItem: MenuItem = {
       index: item.id,
-      title: item.title,
-      path: item.url,
-      // url: item.url,
-      component: item.url,
-      icon: getIcon(item.icon),
-      // icon: item.icon,
+      title,
+      path: item.path || item.url,
+      component: item.component || item.url,
+      icon: normalizeIconName(icon),
       name: item.name,
       meta: {
-        title: item.title,
+        title,
       },
     };
     if (item.children && item.children.length > 0) {
@@ -250,37 +268,67 @@ const handleMenuClick = (row: any) => {
 const changeMenu = () => {
   store.dispatch("common/toggleSidebar");
 };
-// 从 Vuex 中获取 menus
-// const menusFromVuex = store.state.menus;
-// if (menusFromVuex) {
-//   menus.value = menusFromVuex;
-// } else {
-//   // 从本地存储获取菜单
-//   const menusFromStorage = localStorage.getItem("wuyemenusJSON");
-//   if (menusFromStorage) {
-//     try {
-//       menus.value = JSON.parse(menusFromStorage);
-//       icons.value = menus.value.map((item: any) => {
-//         return item.icon;
-//       });
-//     } catch (error) {
-//       console.error("Failed to parse menus from storage", error);
-//     }
-//   }
-// }
+
+const findMenuTitleByPath = (path: string) => {
+  for (const menu of menus.value) {
+    if (menu.path === path) return menu.meta?.title || menu.title;
+    if (menu.children) {
+      const child = menu.children.find((child) => child.path === path);
+      if (child) return child.meta?.title || child.title;
+    }
+  }
+  return "";
+};
+
+const resolveTabTitle = (routeLike: any) => {
+  const { path, meta, params } = routeLike || {};
+  if (!path) return "未命名";
+
+  if (path.includes("/htDetail/") && params && params.name) {
+    return `内部合同详情-${params.name}`;
+  }
+  if (path.includes("/outsourcingDetail/") && params && params.name) {
+    return `外协合同详情-${params.name}`;
+  }
+
+  const metaTitle = typeof meta?.title === "string" ? meta.title.trim() : "";
+  if (metaTitle) return metaTitle;
+
+  const menuTitle = findMenuTitleByPath(path);
+  if (menuTitle) return menuTitle;
+
+  return "未命名";
+};
+
+const syncTabTitles = () => {
+  for (const tab of tabs.value) {
+    if (tab.path === "/home") continue;
+    const resolved = Router.resolve(tab.path);
+    const nextTitle = resolveTabTitle(resolved);
+    if (
+      tab.title !== nextTitle &&
+      (tab.title === "未命名" || nextTitle !== "未命名")
+    ) {
+      tab.title = nextTitle;
+    }
+  }
+};
 const userName = computed(() => {
   return localStorage.getItem("userName");
 });
 onMounted(async () => {
   try {
-    const res: any = await getDatas("system/GetMenuListTree");
-    console.log("菜单111", res);
-    if (res.data.result) {
-      menus.value = transformMenuData(res.data.result);
+    const res: any = await getDatas("common/getUserPermission");
+    // const res: any = await getDatas("system/GetMenuListTree");
+    const menuData = res.data?.result?.menu;
+    console.log("菜单111", menuData);
+    if (Array.isArray(menuData)) {
+      menus.value = transformMenuData(menuData);
       icons.value = menus.value.map((item: any) => item.icon);
       // 可以选择将菜单数据存储到 Vuex 或 localStorage
       // store.commit("SET_MENUS", menus.value);
       localStorage.setItem("wuyemenusJSON", JSON.stringify(menus.value));
+      syncTabTitles();
     } else {
       ElMessage.error("获取菜单列表失败");
     }
@@ -321,30 +369,8 @@ const addTab = (route: any) => {
 
   const isExist = tabs.value.some((tab) => tab.path === path);
   if (!isExist) {
-    // 从菜单中查找对应的标题
-    let tabTitle = "未命名";
-    for (const menu of menus.value) {
-      if (menu.path === path) {
-        tabTitle = menu.title;
-        break;
-      }
-      if (menu.children) {
-        const child = menu.children.find((child) => child.path === path);
-        if (child) {
-          tabTitle = child.title;
-          break;
-        }
-      }
-    }
-    if (path.includes("/htDetail/") && params && params.name) {
-      tabTitle = `内部合同详情-${params.name}`;
-    }
-    if (path.includes("/outsourcingDetail/") && params && params.name) {
-      tabTitle = `外协合同详情-${params.name}`;
-    }
-
     tabs.value.push({
-      title: tabTitle,
+      title: resolveTabTitle({ path, meta, params }),
       path: path,
     });
   }
@@ -416,6 +442,14 @@ watch(
   },
   { immediate: true },
 );
+
+watch(
+  menus,
+  () => {
+    syncTabTitles();
+  },
+  { deep: true },
+);
 </script>
 
 <style lang="less" scoped>
@@ -449,6 +483,19 @@ watch(
       color: #409eff !important;
     }
   }
+}
+
+.menu-icon {
+  font-size: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  vertical-align: middle;
+}
+
+:deep(.menu-icon svg) {
+  display: block;
 }
 
 .layout {

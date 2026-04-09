@@ -13,11 +13,16 @@
       :label-col="{ span: 6 }"
       :wrapper-col="{ span: 16 }"
       layout="horizontal"
-      style="border: 1px solid #e9e9e9;padding-top: 10px;"
+      style="border: 1px solid #e9e9e9; padding-top: 10px"
+      :class="{ 'read-only-form': props.readOnly }"
+      :disabled="props.readOnly"
     >
       <!-- 菜单类型 -->
       <a-form-item label="菜单类型" name="menuType">
-        <a-radio-group v-model:value="formState.menuType" @change="handleMenuTypeChange">
+        <a-radio-group
+          v-model:value="formState.menuType"
+          @change="handleMenuTypeChange"
+        >
           <a-radio :value="MenuType.DIRECTORY">菜单</a-radio>
           <a-radio :value="MenuType.MENU">子菜单</a-radio>
           <a-radio :value="MenuType.BUTTON">按钮/权限</a-radio>
@@ -25,11 +30,7 @@
       </a-form-item>
 
       <!-- 菜单名称 -->
-      <a-form-item 
-        :label="menuTypeLabel + '名称'" 
-        name="name"
-        :required="true"
-      >
+      <a-form-item :label="menuTypeLabel + '名称'" name="name" :required="true">
         <a-input
           v-model:value="formState.name"
           :placeholder="`请输入${menuTypeLabel}名称`"
@@ -37,9 +38,9 @@
       </a-form-item>
 
       <!-- 上级菜单（非一级菜单显示） -->
-      <a-form-item 
-        v-if="formState.menuType !== MenuType.DIRECTORY" 
-        label="上级菜单" 
+      <a-form-item
+        v-if="formState.menuType !== MenuType.DIRECTORY"
+        label="上级菜单"
         name="parentId"
         :required="true"
       >
@@ -51,7 +52,7 @@
             children: 'children',
             label: 'title',
             value: 'id',
-            key: 'key'
+            key: 'key',
           }"
           show-search
           tree-default-expand-all
@@ -60,21 +61,14 @@
       </a-form-item>
 
       <!-- 菜单路径 -->
-      <a-form-item 
-        label="菜单路径" 
-        name="url"
-        :required="true"
-      >
-        <a-input
-          v-model:value="formState.url"
-          placeholder="请输入菜单路径"
-        />
+      <a-form-item label="菜单路径" name="url" :required="true">
+        <a-input v-model:value="formState.url" placeholder="请输入菜单路径" />
       </a-form-item>
 
       <!-- 授权标识（仅按钮/权限显示） -->
-      <a-form-item 
-        v-if="formState.menuType === MenuType.BUTTON" 
-        label="授权标识" 
+      <a-form-item
+        v-if="formState.menuType === MenuType.BUTTON"
+        label="授权标识"
         name="perms"
         :required="true"
       >
@@ -85,19 +79,21 @@
       </a-form-item>
 
       <!-- 授权策略（仅按钮/权限显示） -->
-      <a-form-item 
-        v-if="formState.menuType === MenuType.BUTTON" 
-        label="授权策略" 
+      <a-form-item
+        v-if="formState.menuType === MenuType.BUTTON"
+        label="授权策略"
         name="permsType"
       >
         <div>
-          <div style="margin-bottom: 8px;">
+          <div style="margin-bottom: 8px">
             <a-radio-group v-model:value="formState.permsType">
-              <a-radio :value="PermsType.VISIT">可以/可访问(授权后可以/可访问)</a-radio>
+              <a-radio :value="PermsType.VISIT"
+                >可以/可访问(授权后可以/可访问)</a-radio
+              >
             </a-radio-group>
           </div>
           <div>
-            <a-checkbox 
+            <a-checkbox
               :checked="formState.permsType === PermsType.EDIT"
               @change="handlePermsTypeChange"
             >
@@ -121,9 +117,9 @@
       </a-form-item> -->
 
       <!-- 默认跳转地址（仅菜单显示） -->
-      <a-form-item 
-        v-if="formState.menuType === MenuType.MENU" 
-        label="默认跳转地址" 
+      <a-form-item
+        v-if="formState.menuType === MenuType.MENU"
+        label="默认跳转地址"
         name="redirect"
       >
         <a-input
@@ -133,9 +129,9 @@
       </a-form-item>
 
       <!-- 菜单图标（非按钮显示） -->
-      <a-form-item 
-        v-if="formState.menuType !== MenuType.BUTTON" 
-        label="菜单图标" 
+      <a-form-item
+        v-if="formState.menuType !== MenuType.BUTTON"
+        label="菜单图标"
         name="icon"
       >
         <div class="icon-selector">
@@ -143,7 +139,7 @@
             v-model:value="formState.icon"
             placeholder="点击选择图标"
             readonly
-            @click="showIconSelector = true"
+            @click="!props.readOnly && (showIconSelector = true)"
           />
           <div v-if="formState.icon" class="icon-preview">
             <!-- <component :is="formState.icon" v-if="typeof formState.icon === 'object'" />
@@ -153,19 +149,24 @@
       </a-form-item>
 
       <!-- 排序 -->
-      <a-form-item label="排序" name="sortNo" v-if="formState.menuType !== MenuType.BUTTON" >
+      <a-form-item
+        label="排序"
+        name="sortNo"
+        v-if="formState.menuType !== MenuType.BUTTON"
+      >
         <a-input-number
           v-model:value="formState.sortNo"
           :min="0"
           style="width: 100%"
           placeholder="请输入排序"
+          
         />
       </a-form-item>
 
       <!-- 是否路由菜单（仅菜单显示） -->
-      <a-form-item 
-        v-if="formState.menuType !== MenuType.BUTTON" 
-        label="是否路由菜单" 
+      <a-form-item
+        v-if="formState.menuType !== MenuType.BUTTON"
+        label="是否路由菜单"
         name="route"
       >
         <a-switch
@@ -176,9 +177,9 @@
       </a-form-item>
 
       <!-- 隐藏路由（仅菜单显示） -->
-      <a-form-item 
-        v-if="formState.menuType !== MenuType.BUTTON && formState.route" 
-        label="隐藏路由" 
+      <a-form-item
+        v-if="formState.menuType !== MenuType.BUTTON && formState.route"
+        label="隐藏路由"
         name="hidden"
       >
         <a-switch
@@ -189,9 +190,9 @@
       </a-form-item>
 
       <!-- 是否缓存路由（仅菜单显示） -->
-      <a-form-item 
-        v-if="formState.menuType !== MenuType.BUTTON && formState.route" 
-        label="是否缓存路由" 
+      <a-form-item
+        v-if="formState.menuType !== MenuType.BUTTON && formState.route"
+        label="是否缓存路由"
         name="keepAlive"
       >
         <a-switch
@@ -202,9 +203,9 @@
       </a-form-item>
 
       <!-- 聚合路由（仅菜单显示） -->
-      <a-form-item 
-        v-if="formState.menuType !== MenuType.BUTTON && formState.route" 
-        label="聚合路由" 
+      <a-form-item
+        v-if="formState.menuType !== MenuType.BUTTON && formState.route"
+        label="聚合路由"
         name="alwaysShow"
       >
         <a-switch
@@ -215,12 +216,12 @@
       </a-form-item>
 
       <!-- 打开方式（仅菜单显示） -->
-      <a-form-item 
-        v-if="formState.menuType !== MenuType.BUTTON && formState.route" 
-        label="打开方式" 
+      <a-form-item
+        v-if="formState.menuType !== MenuType.BUTTON && formState.route"
+        label="打开方式"
         name="internalOrExternal"
       >
-       <a-switch
+        <a-switch
           v-model:checked="formState.internalOrExternal"
           checked-children="内部"
           un-checked-children="外部"
@@ -228,7 +229,11 @@
       </a-form-item>
 
       <!-- 状态 -->
-      <a-form-item label="状态" name="status"  v-if="formState.menuType == MenuType.BUTTON">
+      <a-form-item
+        label="状态"
+        name="status"
+        v-if="formState.menuType == MenuType.BUTTON"
+      >
         <a-radio-group v-model:value="formState.status">
           <a-radio :value="Status.DISABLED">无效</a-radio>
           <a-radio :value="Status.ENABLED">有效</a-radio>
@@ -242,35 +247,38 @@
         :width="900"
         :footer="null"
       >
-        <IconSelector @select="handleIconSelect"  />
+        <IconSelector @select="handleIconSelect" />
       </a-modal>
     </a-form>
 
     <!-- 抽屉底部按钮 -->
     <div class="drawer-footer">
       <a-button style="margin-right: 8px" @click="handleClose">关闭</a-button>
-      <a-button type="primary" @click="handleSubmit">确定</a-button>
+      <a-button v-if="!props.readOnly" type="primary" @click="handleSubmit">
+        确定
+      </a-button>
     </div>
   </a-drawer>
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive, computed, watch, } from 'vue';
-import { FormInstance, message } from 'ant-design-vue';
-import type { Rule } from 'ant-design-vue/es/form';
-import { MenuItem, MenuType, PermsType, Status } from './interface/menu';
-import IconSelector from './IconSelector.vue';
+import { ref, reactive, computed, watch } from "vue";
+import { FormInstance, message } from "ant-design-vue";
+import type { Rule } from "ant-design-vue/es/form";
+import { MenuItem, MenuType, PermsType, Status } from "./interface/menu";
+import IconSelector from "./IconSelector.vue";
 
 const props = defineProps<{
   visible: boolean;
   editData?: MenuItem | null;
   menuTreeData: any[];
+  readOnly?: boolean;
 }>();
 
 const emit = defineEmits<{
-  (e: 'update:visible', value: boolean): void;
-  (e: 'submit', data: any): void;
-  (e: 'close'): void;
+  (e: "update:visible", value: boolean): void;
+  (e: "submit", data: any): void;
+  (e: "close"): void;
 }>();
 
 const formRef = ref<FormInstance>();
@@ -279,14 +287,14 @@ const showIconSelector = ref(false);
 // 表单初始状态
 const defaultFormState = {
   menuType: MenuType.DIRECTORY,
-  name: '',
-  parentId: '',
-  url: '',
-  perms: '',
+  name: "",
+  parentId: "",
+  url: "",
+  perms: "",
   permsType: PermsType.VISIT,
-  component: '',
-  redirect: '',
-  icon: '',
+  component: "",
+  redirect: "",
+  icon: "",
   sortNo: 0,
   route: true,
   hidden: false,
@@ -302,62 +310,69 @@ const formState = reactive({ ...defaultFormState });
 const menuTypeLabel = computed(() => {
   switch (formState.menuType) {
     case MenuType.DIRECTORY:
-      return '菜单';
+      return "菜单";
     case MenuType.MENU:
-      return '子菜单';
+      return "子菜单";
     case MenuType.BUTTON:
-      return '按钮/权限';
+      return "按钮/权限";
     default:
-      return '菜单';
+      return "菜单";
   }
 });
 
 // 抽屉标题
 const drawerTitle = computed(() => {
-  return props.editData ? '编辑菜单' : '新增菜单';
+  if (props.readOnly) {
+    return "查看菜单";
+  }
+  return props.editData ? "编辑菜单" : "新增菜单";
 });
 
 // 抽屉宽度（根据菜单类型调整）
 const drawerWidth = computed(() => {
-//   switch (formState.menuType) {
-//     case MenuType.DIRECTORY:
-//       return '500px';
-//     case MenuType.MENU:
-//       return '600px';
-//     case MenuType.BUTTON:
-//       return '500px';
-//     default:
-//       return '500px';
-//   }
-  return '700px';
+  //   switch (formState.menuType) {
+  //     case MenuType.DIRECTORY:
+  //       return '500px';
+  //     case MenuType.MENU:
+  //       return '600px';
+  //     case MenuType.BUTTON:
+  //       return '500px';
+  //     default:
+  //       return '500px';
+  //   }
+  return "700px";
 });
 
 // 表单验证规则
 const rules = computed<Record<string, Rule[]>>(() => {
   const baseRules: Record<string, Rule[]> = {
     name: [
-      { required: true, message: `请输入${menuTypeLabel.value}名称`, trigger: 'blur' },
+      {
+        required: true,
+        message: `请输入${menuTypeLabel.value}名称`,
+        trigger: "blur",
+      },
     ],
   };
 
   // 添加菜单路径验证
   if (formState.menuType !== MenuType.BUTTON) {
     baseRules.url = [
-      { required: true, message: '请输入菜单路径', trigger: 'blur' },
+      { required: true, message: "请输入菜单路径", trigger: "blur" },
     ];
   }
 
   // 添加授权标识验证
   if (formState.menuType === MenuType.BUTTON) {
     baseRules.perms = [
-      { required: true, message: '请输入授权标识', trigger: 'blur' },
+      { required: true, message: "请输入授权标识", trigger: "blur" },
     ];
   }
 
   // 添加上级菜单验证
   if (formState.menuType !== MenuType.DIRECTORY) {
     baseRules.parentId = [
-      { required: true, message: '请选择上级菜单', trigger: 'change' },
+      { required: true, message: "请选择上级菜单", trigger: "change" },
     ];
   }
 
@@ -375,14 +390,14 @@ const rules = computed<Record<string, Rule[]>>(() => {
 const handleMenuTypeChange = (value: number) => {
   // 重置相关字段
   if (value === MenuType.DIRECTORY) {
-    formState.parentId = '';
+    formState.parentId = "";
   }
-  
+
   if (value === MenuType.BUTTON) {
-    formState.url = '';
-    formState.component = '';
-    formState.redirect = '';
-    formState.icon = '';
+    formState.url = "";
+    formState.component = "";
+    formState.redirect = "";
+    formState.icon = "";
     formState.route = false;
     formState.hidden = false;
     formState.keepAlive = false;
@@ -397,9 +412,9 @@ const handlePermsTypeChange = (e: any) => {
 };
 
 // 图标选择处理
-const handleIconSelect = (fromicon: { icon: string}) => {
-  console.log(fromicon,'fromicon');
-  
+const handleIconSelect = (fromicon: { icon: string }) => {
+  console.log(fromicon, "fromicon");
+
   formState.icon = fromicon.icon;
   showIconSelector.value = false;
 };
@@ -407,15 +422,18 @@ const handleIconSelect = (fromicon: { icon: string}) => {
 // 关闭抽屉
 const handleClose = () => {
   formRef.value?.resetFields();
-  emit('update:visible', false);
-  emit('close');
+  emit("update:visible", false);
+  emit("close");
 };
 
 // 提交表单
 const handleSubmit = async () => {
+  if (props.readOnly) {
+    return;
+  }
   try {
     await formRef.value?.validate();
-  
+
     const formData = {
       ...formState,
       id: props.editData?.id,
@@ -423,51 +441,57 @@ const handleSubmit = async () => {
       isLeaf: formState.menuType === MenuType.BUTTON,
       leaf: formState.menuType === MenuType.BUTTON,
       delFlag: 0,
-      status: String(formState.status),
+      status: String(formState.status) ? 1 : 0,
       sortNo: String(formState.sortNo),
       menuType: String(formState.menuType),
     };
     // 发送数据
-    emit('submit', formData);
+    emit("submit", formData);
     handleClose();
-  
   } catch (error) {
-    console.error('表单验证失败:', error);
+    console.error("表单验证失败:", error);
   }
 };
 
 // 监听编辑数据
-watch(() => props.editData, (newVal) => {
-  if (newVal) {
-    Object.assign(formState, {
-      menuType: newVal.menuType,
-      name: newVal.name,
-      parentId: newVal.parentId,
-      url: newVal.url,
-      perms: newVal.perms || '',
-      permsType: newVal.permsType || PermsType.VISIT,
-      component: newVal.component || '',
-      redirect: newVal.redirect || '',
-      icon: newVal.icon || '',
-      sortNo: newVal.sortNo || 0,
-      route: newVal.route !== undefined ? newVal.route : true,
-      hidden: newVal.hidden || false,
-      keepAlive: newVal.keepAlive || false,
-      alwaysShow: newVal.alwaysShow || false,
-      status: newVal.status !== undefined ? newVal.status : Status.ENABLED,
-      internalOrExternal: newVal.internalOrExternal || false,
-    });
-  } else {
-    Object.assign(formState, defaultFormState);
-  }
-}, { immediate: true });
+watch(
+  () => props.editData,
+  (newVal) => {
+    if (newVal) {
+      Object.assign(formState, {
+        menuType: newVal.menuType,
+        name: newVal.name,
+        parentId: newVal.parentId,
+        url: newVal.url,
+        perms: newVal.perms || "",
+        permsType: newVal.permsType || PermsType.VISIT,
+        component: newVal.component || "",
+        redirect: newVal.redirect || "",
+        icon: newVal.icon || "",
+        sortNo: newVal.sortNo || 0,
+        route: newVal.route !== undefined ? newVal.route : true,
+        hidden: newVal.hidden || false,
+        keepAlive: newVal.keepAlive || false,
+        alwaysShow: newVal.alwaysShow || false,
+        status: newVal.status !== undefined ? newVal.status : Status.ENABLED,
+        internalOrExternal: newVal.internalOrExternal || false,
+      });
+    } else {
+      Object.assign(formState, defaultFormState);
+    }
+  },
+  { immediate: true },
+);
 
 // 监听可见性变化
-watch(() => props.visible, (newVal) => {
-  if (!newVal) {
-    formRef.value?.resetFields();
-  }
-});
+watch(
+  () => props.visible,
+  (newVal) => {
+    if (!newVal) {
+      formRef.value?.resetFields();
+    }
+  },
+);
 </script>
 
 <style scoped>
@@ -504,5 +528,15 @@ watch(() => props.visible, (newVal) => {
 
 :deep(.ant-radio-group) {
   width: 100%;
+}
+
+.read-only-form :deep(.ant-input),
+.read-only-form :deep(.ant-input-number),
+.read-only-form :deep(.ant-select-selector),
+.read-only-form :deep(.ant-radio-wrapper),
+.read-only-form :deep(.ant-checkbox-wrapper),
+.read-only-form :deep(.ant-switch),
+.read-only-form :deep(.ant-tree-select .ant-select-selector) {
+  cursor: not-allowed;
 }
 </style>
