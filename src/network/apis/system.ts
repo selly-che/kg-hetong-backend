@@ -33,6 +33,29 @@ export default {
       params,
     };
   },
+  // 删除用户管理
+  DeleteUser(params: any) {
+    return {
+      method: "DELETE",
+      url: "/sys/user/delete",
+      params,
+    };
+  },
+  frozenBatchUser(params: any) {
+    return {
+      method: "put",
+      url: "/sys/user/frozenBatch",
+      data:params,
+    };
+  },
+  // 设置角色密码
+  ResetPassword(params: any) {
+    return {
+      method: "PUT",
+      url: "/sys/user/changePassword",
+      data:params,
+    };
+  },
 
 // 根据角色信息查询用户
   GetRoleListInfo(params: any) {
@@ -77,14 +100,14 @@ export default {
        return {
       method: "PUT",
       url: "/sys/user/edit",
-      params,
+      data:params,
     };
   },
   AddUserinfo(params: any) {
        return {
       method: "post",
       url: "/sys/user/add",
-      params,
+      data:params,
     };
   },
 

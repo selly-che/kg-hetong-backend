@@ -72,7 +72,7 @@
                   <UserOutlined />
                 </template>
               </a-avatar>
-              <span style="padding: 0 4px">admin</span>
+              <span style="padding: 0 4px">{{userName}}</span>
               <down-outlined />
             </div>
             <template #overlay>
@@ -155,6 +155,7 @@ const isCollapse = computed(() => {
 });
 const Router = useRouter();
 const store = useStore();
+
 // 添加当前激活菜单
 const activeMenu = ref("");
 const route = useRoute();
@@ -267,7 +268,9 @@ const changeMenu = () => {
 //     }
 //   }
 // }
-
+const userName = computed(() => {
+  return localStorage.getItem("userName");
+});
 onMounted(async () => {
   try {
     const res: any = await getDatas("system/GetMenuListTree");

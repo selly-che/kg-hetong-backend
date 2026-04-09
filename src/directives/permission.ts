@@ -26,7 +26,6 @@ const permissionDirective = {
 
         // 获取用户拥有的权限列表（action 数组）
         const userPermissions = getUserPermissions()
-        console.log(userPermissions, '用户权限列表');
 
         // 判断是否有权限
         let hasPermission = false
@@ -38,7 +37,6 @@ const permissionDirective = {
             // 数组形式 - 满足任一权限即可
             hasPermission = value.some((perm: string) => userPermissions.includes(perm))
         }
-        console.log(hasPermission, '是否有权限');
 
         // 如果没有权限，移除元素
         if (!hasPermission) {
@@ -118,7 +116,7 @@ function getUserPermissions(): string[] {
  * 在登录成功后调用此函数保存权限信息
  * @param permissionList 按钮权限数组
  */
-export function setUserPermissions(permissionList: PermissionItem[]) {
+export function setUserPermissions(permissionList: PermissionItem[] | any[]) {
     try {
         // 保存完整的按钮权限数据
         localStorage.setItem('auths', JSON.stringify(permissionList))

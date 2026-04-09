@@ -1,6 +1,7 @@
 <template>
-  <div class="br8 role flex">
-    <div class="role_l bgf pd20 br8">
+  <div class="br8 role "  :class="{ role_grid: IsAddUser }">
+    <!-- 根据Isadmin为true时，添加类名 role_grid -->
+    <div class="role_l bgf pd20 br8" >
       <!-- 搜索区域 -->
       <div
         class="search"
@@ -85,7 +86,7 @@
           >
             <template #action="{ record }">
               <div>
-                <a href=""> 用户</a>
+                <a  @click="handleViewUsers(record)"> 用户</a>
                 <a-divider type="vertical" />
 
                 <a-dropdown placement="bottomRight">
@@ -120,7 +121,7 @@
         </div>
       </div>
     </div>
-    <div class="role_r bgf pd20 br8">
+    <div class="role_r bgf pd20 br8" v-if="IsAddUser">
       <!-- 角色对应的用户信息 -->
       <div class="user-management mt-10">
         <!-- 搜索区域 -->
@@ -147,6 +148,7 @@
                   </template>
                   重置
                 </a-button>
+                <a-button @click="handleCloseUserManagement">关闭</a-button>
               </a-space>
             </a-form-item>
           </a-form>
@@ -366,6 +368,7 @@ const pagination = reactive({
   showTotal: (total, range) => `第 ${range[0]}-${range[1]} 条 / 共 ${total} 条`, // 显示总数
   pageSizeOptions: ["10", "20", "50", "100"], // 可选分页大小
 });
+const IsAddUser = ref(false);
 let loading = ref(false);
 let data = ref([]);
 const selectedRowKeys = ref([]);
@@ -452,6 +455,20 @@ const handleAdd = () => {
   if (formRef.value) {
     formRef.value.clearValidate();
   }
+};
+const handleViewUsers = (record) => {
+  console.log("查看用户功能待实现", record);
+  IsAddUser.value = true;
+  searchForm.roleId = record.id;
+  selectedroles.value = record.id;
+  handleUserSearch();
+};
+const handleCloseUserManagement = () => {
+  IsAddUser.value = false;
+  searchForm.roleId = "";
+  selectedroles.value = "";
+  searchForm.username = "";
+  handleUserSearch();
 };
 const handleCancel = () => {
   // 可以添加确认提示
@@ -846,11 +863,12 @@ button {
   gap: 20px;
 }
 
-.role_l {
-  width: 48%;
-}
-
 .role_r {
   flex: 1;
+}
+.role_grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
 }
 </style>

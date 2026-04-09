@@ -13,12 +13,13 @@
             <a-input v-model:value="form.realname" placeholder="请输入用户姓名" :disabled="isDetail" />
           </a-form-item>
         </a-col>
-        <a-col :span="12" v-if="!form.id">
+        <!-- type为user时，密码和确认密码不填 -->
+        <a-col :span="12" v-if="!form.id && props.type === 'role'">
           <a-form-item label="登录密码" name="password" required>
             <a-input v-model:value="form.password" placeholder="请输入登录密码" :disabled="isDetail" />
           </a-form-item>
         </a-col>
-        <a-col :span="12" v-if="!form.id">
+        <a-col :span="12" v-if="!form.id && props.type === 'role'">
           <a-form-item label="确认密码" name="confirmPassword" required>
             <a-input v-model:value="form.confirmPassword" placeholder="请输入确认密码" :disabled="isDetail" />
           </a-form-item>
@@ -31,17 +32,23 @@
             <a-input v-model:value="form.workNo" placeholder="请输入工号" :disabled="isDetail" />
           </a-form-item>
         </a-col>
-        <a-col :span="12">
+        <!-- <a-col :span="12">
           <a-form-item label="租户分配：" name="relTenantIds">
             <a-input v-model:value="form.relTenantIds" placeholder="请输入工号" :disabled="isDetail" />
           </a-form-item>
-        </a-col>
+        </a-col> -->
       </a-row>
 
       <a-row :gutter="16">
         <a-col :span="12">
           <a-form-item label="角色分配：" name="selectedroles">
-            <a-input v-model:value="form.selectedroles" placeholder="请选择角色" :disabled="isDetail" />
+            <!-- 使用下来选择器，可以搜索,可以多选 -->
+            <a-select v-model:value="form.selectedroles" mode="multiple" placeholder="请选择角色" :disabled="isDetail"
+              show-search>
+              <a-select-option v-for="role in roleList" :key="role.id" :value="role.id">
+                {{ role.roleName }}
+              </a-select-option>
+            </a-select>
           </a-form-item>
         </a-col>
         <a-col :span="12">
@@ -57,7 +64,6 @@
             <a-input-group compact>
               <div class="flex_c">
                 <a-input v-model:value="form.post" placeholder="请选择职务" style="width: 300px" :disabled="isDetail" />
-                <!-- <a-button type="primary" @click="selectPost" :disabled="isDetail">选择</a-button> -->
               </div>
             </a-input-group>
           </a-form-item>
@@ -66,8 +72,8 @@
         <a-col :span="12">
           <a-form-item label="身份：" name="userIdentity">
             <a-radio-group v-model:value="form.userIdentity" :disabled="isDetail">
-              <a-radio value="1">普通用户</a-radio>
-              <a-radio value="2">上级</a-radio>
+              <a-radio :value="1">普通用户</a-radio>
+              <a-radio :value="2">上级</a-radio>
             </a-radio-group>
           </a-form-item>
         </a-col>
@@ -112,8 +118,8 @@
         <a-col :span="12">
           <a-form-item label="工作流引擎：" name="activitiSync">
             <a-radio-group v-model:value="form.activitiSync" :disabled="isDetail">
-              <a-radio value="1">同步</a-radio>
-              <a-radio value="0">不同步</a-radio>
+              <a-radio :value="1">同步</a-radio>
+              <a-radio :value="0">不同步</a-radio>
             </a-radio-group>
           </a-form-item>
         </a-col>
@@ -130,10 +136,14 @@
 </template>
 
 <script setup>
-import { reactive, ref } from "vue";
+import { reactive, ref, onMounted } from "vue";
 import { defineExpose } from "vue"
 import { ElMessage } from "element-plus";
 import getDatas from "@/network/index";
+import dayjs from 'dayjs';
+import {  defineEmits } from "vue";
+
+const emit = defineEmits(['refreshList']);
 
 const props = defineProps({
   title: {
@@ -145,19 +155,19 @@ const props = defineProps({
     default: 'role' // 'role' 或 'user'
   },
   selectedroles: {
-    type: String,
-    default: null
+    type: Array,
+    default: []
   }
 });
 
 const isDetail = ref(false);
 const form = reactive({
-  selectedroles: "",
+  selectedroles: [],
   selecteddeparts: "",
   birthday: null,
   relTenantIds: "",
-  activitiSync: "1",
-  userIdentity: "1",
+  activitiSync: 1,
+  userIdentity: 1,
   status_dictText: "",
   workNo: "",
   post: "",
@@ -189,12 +199,6 @@ const rules = {
     {
       required: true,
       message: "请输入用户姓名",
-    },
-  ],
-  workNo: [
-    {
-      required: true,
-      message: "请输入工号",
     },
   ],
   phone: [
@@ -230,6 +234,22 @@ const rules = {
   ],
 };
 
+// 角色的数据列表
+const roleList = ref([]);
+// 获取角色列表
+const GetRoleList = async () => {
+  try {
+    const resp = await getDatas("system/GetUserRole");
+    console.log(resp, 'respresp');
+
+    if (resp && resp.data.code === 0) {
+      roleList.value = resp.data.result.records;
+    }
+  } catch (error) {
+    console.error("获取角色列表失败:", error);
+  }
+};
+
 const visible = ref(false);
 
 // 展开抽屉
@@ -239,12 +259,13 @@ const showDrawer = (record, detail) => {
 
   if (record) {
     Object.assign(form, {
-      selectedroles: record.selectedroles || null,
+      // 字符串转数组
+      selectedroles: record.selectedroles ? record.selectedroles.split(",") : [],
       selecteddeparts: record.selecteddeparts || null,
-      birthday: record.birthday || null,
+      birthday: record.birthday ? dayjs(record.birthday) : null,
       relTenantIds: record.relTenantIds || null,
-      activitiSync: record.activitiSync || '1',
-      userIdentity: record.userIdentity || '1',
+      activitiSync: record.activitiSync !== undefined ? record.activitiSync : 1,
+      userIdentity: record.userIdentity !== undefined ? record.userIdentity : 1,
       status_dictText: record.status_dictText || '正常',
       workNo: record.workNo || null,
       post: record.post || null,
@@ -253,7 +274,7 @@ const showDrawer = (record, detail) => {
       id: record.id || null,
       email: record.email || null,
       clientId: record.clientId || null,
-      sex: record.sex || 1,
+      sex: Number(record.sex) || 1,
       telephone: record.telephone || null,
       departIds: record.departIds || null,
       avatar: record.avatar || null,
@@ -262,18 +283,18 @@ const showDrawer = (record, detail) => {
       phone: record.phone || null,
       totalPoints: record.totalPoints || null,
       orgCodeTxt: record.orgCodeTxt || null,
-      username: record.username ||null,
-      index: record.index ||null,
+      username: record.username || null,
+      index: record.index || null,
       status: record.status || 1,
     });
   } else {
     Object.assign(form, {
-      selectedroles: null,
+      selectedroles: [],
       selecteddeparts: null,
       birthday: null,
       relTenantIds: null,
-      activitiSync: "1",
-      userIdentity: "1",
+      activitiSync: 1,
+      userIdentity: 1,
       status_dictText: null,
       workNo: null,
       post: null,
@@ -311,16 +332,19 @@ const selectPost = () => {
 const formRef = ref(null);
 const submitForm = async () => {
   try {
-    await formRef.value?.validate();
-    console.log(props.title, form,'formform');
-    form.selectedroles =props.selectedroles
+    // await formRef.value?.validate();
+    let formData = Object.assign({}, form);
+    formData.selectedroles = form.selectedroles.join(","); // 将数组转换为逗号分隔的字符串
+    console.log(formData, 'formData');
+
     // 根据title判断是添加还是编辑
     if (props.title == "添加用户") {
       try {
-        const resp = await getDatas("system/AddUserinfo", form);
+        const resp = await getDatas("system/AddUserinfo", formData);
         if (resp && resp.data.code === 200) {
           ElMessage.success('用户添加成功');
           onClose();
+          emit('refreshList');
         } else {
           ElMessage.error(resp.data.message || '用户添加失败');
         }
@@ -329,21 +353,30 @@ const submitForm = async () => {
       }
     } else if (props.title === "编辑用户") {
       try {
-        const resp = await getDatas("system/EditUserinfo", form);
-        if (resp && resp.data.code === 200) {
+        const resp = await getDatas("system/EditUserinfo", formData);
+          console.log(resp, '编辑用户resp');
+        if (resp && resp.data.code == 200) {
           ElMessage.success('用户编辑成功');
           onClose();
+          // 这里可以触发父组件的刷新方法，例如通过 emit 事件
+          
+          emit('refreshList');
         } else {
           ElMessage.error(resp.data.message || '用户编辑失败');
         }
       } catch (error) {
-        ElMessage.error('用户编辑失败');
+        //   console.log(798798119999);
+        // ElMessage.error('用户编辑失败');
       }
     }
   } catch (error) {
     console.error('表单验证错误:', error);
   }
 };
+
+onMounted(() => {
+  GetRoleList();
+});
 
 defineExpose({
   showDrawer,

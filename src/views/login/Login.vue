@@ -2,6 +2,8 @@
   <div class="login">
     <div class="from">
       <div class="title">合同管理系统</div>
+      <div>主管账号-陈叔清：csq  </div>
+      <div style="margin-bottom: 20px;">协管账号-卢静静：ljj</div>
       <el-input
         v-model="input"
         size="large"
@@ -362,21 +364,22 @@ const adminRoutes = {
 
 const login = async () => {
   console.log("登录", input.value, password.value);
+
   // 游客登录（admin/admin）
-  if (input.value === "admin" && password.value === "admin") {
-    const menus = guestRoutes.nav;
-    const wuyemenusJSON = JSON.stringify(menus);
-    localStorage.setItem("wuyemenusJSON", wuyemenusJSON);
-    localStorage.setItem("accesstoken", "guest-token"); // 设置游客token
-    // 游客默认拥有所有权限
-    const guestAuths = ["user:add", "user:edit", "user:delete"];
-    localStorage.setItem("userPermissions", JSON.stringify(guestAuths));
-    localStorage.setItem("auths", JSON.stringify(guestAuths));
-    setUserPermissions(guestAuths);
-    router.push("/home");
-    ElMessage({ message: "游客登录成功!", type: "success" });
-    return;
-  }
+  // if (input.value === "admin" && password.value === "admin") {
+  //   const menus = guestRoutes.nav;
+  //   const wuyemenusJSON = JSON.stringify(menus);
+  //   localStorage.setItem("wuyemenusJSON", wuyemenusJSON);
+  //   localStorage.setItem("accesstoken", "guest-token"); // 设置游客token
+  //   // 游客默认拥有所有权限
+  //   const guestAuths = ["user:add", "user:edit", "user:delete"];
+  //   localStorage.setItem("userPermissions", JSON.stringify(guestAuths));
+  //   localStorage.setItem("auths", JSON.stringify(guestAuths));
+  //   setUserPermissions(guestAuths);
+  //   router.push("/home");
+  //   ElMessage({ message: "游客登录成功!", type: "success" });
+  //   return;
+  // }
   //正常登录流程
   const res = await getDatas("common/PostLogin", {
     username: input.value,
@@ -384,9 +387,12 @@ const login = async () => {
     // captcha: "",
     // checkKey: "",
   });
-  console.log("登录123", JSON.parse(JSON.stringify(res)));
+
+  // 存储用户的姓名
+  localStorage.setItem("userName", input.value);
+  // 存储用户的职位
   if (res.data.code == 200) {
-    const menus = guestRoutes.nav;
+    // const menus = guestRoutes.nav;
     // console.log(menus, 'menusmenus');
     localStorage.setItem("accesstoken", res.data.result.token); //本地存储
     const resp = await getDatas("common/getUserPermission"); // 获取角色菜单
