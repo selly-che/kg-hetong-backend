@@ -6,10 +6,7 @@
         <a-row :gutter="24">
           <a-col :md="6" :sm="12">
             <a-form-item label="用户账号">
-              <a-input
-                placeholder="请输入用户账号"
-                v-model:value="queryParam.username"
-              ></a-input>
+              <a-input placeholder="请输入用户账号" v-model:value="queryParam.username"></a-input>
             </a-form-item>
           </a-col>
 
@@ -25,24 +22,14 @@
 
           <a-col :md="6" :sm="8">
             <a-form-item label="真实姓名">
-              <a-input
-                placeholder="请输入用户真实姓名"
-                v-model:value="queryParam.realname"
-              ></a-input>
+              <a-input placeholder="请输入用户真实姓名" v-model:value="queryParam.realname"></a-input>
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="8" v-if="toggleSearchStatus">
             <a-form-item label="部门">
-              <a-select
-                v-model:value="queryParam.departIds"
-                placeholder="请选择部门"
-              >
+              <a-select v-model:value="queryParam.departIds" placeholder="请选择部门">
                 <a-select-option value="">请选择</a-select-option>
-                <a-select-option
-                  v-for="item in deptList"
-                  :key="item.departIds"
-                  :value="item.departIds"
-                >
+                <a-select-option v-for="item in deptList" :key="item.departIds" :value="item.departIds">
                   {{ item.departIds_dictText }}
                 </a-select-option>
               </a-select>
@@ -51,10 +38,7 @@
 
           <a-col :md="6" :sm="8" v-if="toggleSearchStatus">
             <a-form-item label="手机号码">
-              <a-input
-                placeholder="请输入手机号码查询"
-                v-model:value="queryParam.phone"
-              ></a-input>
+              <a-input placeholder="请输入手机号码查询" v-model:value="queryParam.phone"></a-input>
             </a-form-item>
           </a-col>
 
@@ -71,16 +55,8 @@
           <a-col :md="6" :sm="8">
             <span class="table-page-search-submitButtons">
               <a-button type="primary" @click="searchQuery">查询</a-button>
-              <a-button
-                type="primary"
-                @click="searchReset"
-                style="margin-left: 8px"
-                >重置</a-button
-              >
-              <a
-                @click="handleToggleSearch"
-                style="margin-left: 8px; color: #1890ff; cursor: pointer"
-              >
+              <a-button type="primary" @click="searchReset" style="margin-left: 8px">重置</a-button>
+              <a @click="handleToggleSearch" style="margin-left: 8px; color: #1890ff; cursor: pointer">
                 {{ toggleSearchStatus ? "收起" : "展开" }}
               </a>
             </span>
@@ -91,26 +67,20 @@
 
     <!-- 操作按钮区域 -->
     <div class="table-operator">
-      <a-button @click="handleAdd" type="primary" v-permission="['user:add']">
+      <!-- <a-button @click="handleAdd" type="primary" v-permission="['user:add']">
         <template #icon>
           <PlusOutlined />
         </template>
-        添加用户
-      </a-button>
+添加用户
+</a-button> -->
       <a-button type="primary" @click="handleExportXls('用户信息')">
         <template #icon>
           <DownloadOutlined />
         </template>
         导出
       </a-button>
-      <a-upload
-        name="file"
-        :showUploadList="false"
-        :multiple="false"
-        :headers="tokenHeader"
-        :action="importExcelUrl"
-        @change="handleImportExcel"
-      >
+      <a-upload name="file" :showUploadList="false" :multiple="false" :headers="tokenHeader" :action="importExcelUrl"
+        @change="handleImportExcel">
         <a-button type="primary">
           <template #icon>
             <UploadOutlined />
@@ -125,40 +95,30 @@
         </template>
         回收站
       </a-button>
+      <a-button type="primary">
+        <template #icon>
+          <FilterOutlined />
+        </template>
+        高级查询
+      </a-button>
     </div>
 
     <!-- table 区域-begin -->
     <div>
       <div class="ant-alert ant-alert-info" style="margin-bottom: 16px">
-        <i class="anticon anticon-info-circle ant-alert-icon"></i>已选择&nbsp;<a
-          style="font-weight: 600"
-          >{{ selectedRowKeys.length }}</a
-        >项&nbsp;&nbsp;
+        <i class="anticon anticon-info-circle ant-alert-icon"></i>已选择&nbsp;<a style="font-weight: 600">{{
+          selectedRowKeys.length }}</a>项&nbsp;&nbsp;
         <a style="margin-left: 24px" @click="onClearSelected">清空</a>
       </div>
 
-      <a-table
-        ref="table"
-        bordered
-        size="middle"
-        rowKey="id"
-        :columns="columns"
-        :dataSource="dataSource"
-        :pagination="ipagination"
-        :loading="loading"
-        :rowSelection="{
+      <a-table ref="table" bordered size="middle" rowKey="id" :columns="columns" :dataSource="dataSource"
+        :pagination="ipagination" :loading="loading" :rowSelection="{
           selectedRowKeys: selectedRowKeys,
           onChange: onSelectChange,
-        }"
-        @change="handleTableChange"
-      >
+        }" @change="handleTableChange">
         <template #avatarslot="{ record }">
           <div class="anty-img-wrap">
-            <a-avatar
-              shape="square"
-              :src="getAvatarView(record.avatar)"
-              icon="user"
-            />
+            <a-avatar shape="square" :src="getAvatarView(record.avatar)" icon="user" />
           </div>
         </template>
 
@@ -173,30 +133,25 @@
                 </a-menu-item>
 
                 <a-menu-item>
-                  <a-popconfirm
-                    title="确定删除吗？"
-                    @confirm="() => handleDelete(record.id)"
-                  >
+                  <a-popconfirm title="确定删除吗？" @confirm="() => handleDelete(record.id)">
                     <a>删除</a>
                   </a-popconfirm>
                 </a-menu-item>
 
                 <a-menu-item v-if="record.status == 1">
-                  <a-popconfirm
-                    title="确定冻结吗？"
-                    @confirm="() => handleFrozen(record.id, 2, record.username)"
-                  >
+                  <a-popconfirm title="确定冻结吗？" @confirm="() => handleFrozen(record.id, 2, record.username)">
                     <a>冻结</a>
                   </a-popconfirm>
                 </a-menu-item>
 
                 <a-menu-item v-if="record.status == 2">
-                  <a-popconfirm
-                    title="确定解冻吗？"
-                    @confirm="() => handleFrozen(record.id, 1, record.username)"
-                  >
+                  <a-popconfirm title="确定解冻吗？" @confirm="() => handleFrozen(record.id, 1, record.username)">
                     <a>解冻</a>
                   </a-popconfirm>
+                </a-menu-item>
+                <!-- 添加一个密码选项 -->
+                <a-menu-item>
+                  <a @click="handleResetPassword(record)">密码</a>
                 </a-menu-item>
               </a-menu>
             </template>
@@ -211,13 +166,38 @@
     <!-- table 区域-end -->
   </a-card>
   <!-- 编辑抽屉 -->
-  <form-drawer-right
-    ref="modalFormDawer"
-    @ok="modalFormOk"
-    :title="title"
-    :type="'user'"
-  >
+  <form-drawer-right ref="modalFormDawer" @refreshList="searchQuery" @ok="modalFormOk" :title="title" :type="'user'">
   </form-drawer-right>
+
+  <!-- 密码重置弹窗 -->
+  <a-modal v-model:visible="passwordModalVisible" title="重新设定密码" @ok="handlePasswordOk" @cancel="handlePasswordCancel"
+    :confirm-loading="passwordLoading">
+    <a-form :model="passwordForm" layout="vertical">
+      <a-form-item label="用户账号：" :wrapper-col="{ span: 24 }">
+        <a-input disabled v-model:value="passwordForm.username" />
+      </a-form-item>
+
+      <a-form-item label="登录密码：" :wrapper-col="{ span: 24 }" :rules="[{ required: true, message: '请输入登录密码' }]">
+        <a-input-password v-model:value="passwordForm.password" placeholder="请输入登录密码" />
+      </a-form-item>
+
+      <a-form-item label="确认密码：" :wrapper-col="{ span: 24 }" :rules="[
+        { required: true, message: '请确认登录密码' },
+        {
+          validator: (rule, value) => {
+            if (value !== passwordForm.password) {
+              return Promise.reject('两次输入的密码不一致');
+            }
+            return Promise.resolve();
+          },
+        },
+      ]">
+        <a-input-password v-model:value="passwordForm.confirmPassword" placeholder="请重新输入登录密码" />
+      </a-form-item>
+    </a-form>
+  </a-modal>
+
+
 </template>
 
 <script setup>
@@ -479,9 +459,9 @@ const getAvatarView = (avatar) => {
 
 // 编辑用户
 const handleEdit = async (record) => {
-  const res = await getDatas("system/GetUserinfoById", {
-    id: record.id,
-  });
+  // const res = await getDatas("system/GetUserinfoById", {
+  //   id: record.id,
+  // });
   title.value = "编辑用户";
   modalFormDawer.value.showDrawer(record);
 };
@@ -499,15 +479,66 @@ const handleChangePassword = (username) => {
 };
 
 // 删除用户
-const handleDelete = (id) => {
-  message.info("删除功能开发中");
+const handleDelete = async (id) => {
+  const resp = await getDatas("system/DeleteUser", {
+    id: id,
+  });
+  if (resp && resp.data.code == 200) {
+    message.success("删除成功");
+    searchQuery();
+  } else {
+    message.error(resp.data.message || "删除失败");
+  }
 };
 
 // 冻结/解冻用户
-const handleFrozen = (id, status, username) => {
-  message.info("冻结/解冻功能开发中");
+const handleFrozen = async (id, status) => {
+  const resp = await getDatas("system/frozenBatchUser", {
+    ids: id,
+    status: status,
+  });
+  if (resp && resp.data.code == 200) {
+    message.success("操作成功");
+    searchQuery();
+  } else {
+    message.error(resp.data.message || "操作失败");
+  }
 };
 
+const passwordForm = reactive({
+  username: "",
+  password: "",
+  confirmPassword: "",
+});
+const passwordModalVisible = ref(false);
+const passwordLoading = ref(false);
+// 设置密码
+const handleResetPassword = (record) => {
+  title2.value = "设置密码";
+  passwordModalVisible.value = true;
+  passwordForm.username = record.username;
+  passwordForm.password = "";
+  passwordForm.confirmPassword = "";
+
+};
+const handlePasswordOk = async () => {
+  passwordLoading.value = true;
+  const resp = await getDatas("system/ResetPassword", {
+    username: passwordForm.username,
+    password: passwordForm.password,
+    confirmpassword: passwordForm.confirmPassword,
+  });
+  if (resp && resp.data.code == 200) {
+    passwordLoading.value = false;
+    passwordModalVisible.value = false;
+    message.success("密码设置成功");
+  } else {
+    message.error(resp.data.message || "密码设置失败");
+  }
+};
+const handlePasswordCancel = () => {
+  passwordModalVisible.value = false;
+};
 // 代理人设置
 const handleAgentSettings = (username) => {
   title2.value = "代理人设置";
@@ -535,7 +566,7 @@ const passwordModalOk = () => {
     .ant-form-item-label {
       padding-right: 8px;
 
-      > label {
+      >label {
         font-weight: normal;
         margin-bottom: 0;
       }
@@ -585,7 +616,7 @@ const passwordModalOk = () => {
   flex-wrap: wrap;
   margin-bottom: 16px;
 
-  > * {
+  >* {
     display: flex;
     align-items: center;
     margin-right: 8px;

@@ -9,9 +9,8 @@
                 </el-form-item>
                 <el-form-item label="主管计调">
                     <el-select v-model="searchForm.managerCharge" placeholder="请选择" clearable style="width: 120px">
-                        <el-option label="王若成" value="王若成" />
-                        <el-option label="梁斌" value="梁斌" />
-                        <el-option label="王京" value="王京" />
+                        <el-option label="陈叔清" value="csq" />
+                        <el-option label="协管" value="ljj" />
                     </el-select>
                 </el-form-item>
                 <el-form-item label="板块">
@@ -26,7 +25,7 @@
                     </el-select>
                 </el-form-item>
                 <el-form-item label="区域指挥部">
-                    <el-select v-model="searchForm.projectArea" placeholder="请选择" style="width: 120px">
+                    <el-select v-model="searchForm.projectArea" clearable placeholder="请选择" style="width: 120px">
                         <el-option v-for="item in regionTypeOptions" :key="item" :label="item" :value="item" />
                     </el-select>
                 </el-form-item>
@@ -77,8 +76,18 @@
                 </el-table-column>
                 <!-- <el-table-column prop="subjectUnit" label="主体责任单位" width="150" align="center" /> -->
                 <!-- <el-table-column prop="undertakingUnit" label="承担单位" width="150" align="center" /> -->
-                <el-table-column prop="managerCharge" label="主管计调" width="120" align="center" />
-                <el-table-column prop="managerAssist" label="协管计调" width="120" align="center" />
+                <el-table-column prop="managerCharge" label="主管计调" width="120" align="center">
+                    <template #default="{ row }">
+                        {{ row.managerCharge === 'csq' ? '陈叔清' : ""  }}
+                        {{ row.managerCharge === 'ljj' ? '卢静静' : ""  }}
+                    </template>
+                </el-table-column>
+                <el-table-column prop="managerAssist" label="协管计调" width="120" align="center">
+                    <template #default="{ row }">
+                        {{ row.managerAssist === 'csq' ? '陈叔清' : ""  }}
+                        {{ row.managerAssist === 'ljj' ? '卢静静' : ""  }}
+                    </template>
+                </el-table-column>
                 <!-- <el-table-column prop="supervisor" label="关注领导" width="120" align="center" /> -->
                 <el-table-column label="操作" width="100" fixed="right">
                     <template #default="{ row }">
@@ -200,19 +209,16 @@
                 <el-row :gutter="20">
 
                     <el-col :span="12">
-                        <el-form-item label="主管计调" prop="managerCharge">
-                            <el-select v-model="formData.managerCharge" placeholder="请选择" style="width: 100%">
-                                <el-option label="王若晨" value="王若晨" />
-                                <el-option label="张三" value="张三" />
-                                <el-option label="李四" value="李四" />
+                        <el-form-item label="主管计调" prop="managerCharge" >
+                            <el-select v-model="formData.managerCharge" clearable placeholder="请选择" style="width: 100%">
+                                <el-option label="陈叔清" value="csq" />
                             </el-select>
                         </el-form-item>
                     </el-col>
                     <el-col :span="12">
-                        <el-form-item label="协管计调" prop="managerAssist">
-                            <el-select v-model="formData.managerAssist" placeholder="请选择" style="width: 100%">
-                                <el-option label="赵六" value="赵六" />
-                                <el-option label="王五" value="王五" />
+                        <el-form-item label="协管计调" prop="managerAssist" >
+                            <el-select v-model="formData.managerAssist" clearable placeholder="请选择" style="width: 100%">
+                                <el-option label="卢静静" value="ljj" />
                             </el-select>
                         </el-form-item>
                     </el-col>
@@ -220,8 +226,8 @@
 
                 <el-row :gutter="24">
                     <el-col :span="12">
-                        <el-form-item label="是否军融" prop="projectIsJr">
-                            <el-select v-model="formData.projectIsJr" placeholder="请选择" style="width: 100%">
+                        <el-form-item label="是否军融" prop="projectIsJr" >
+                            <el-select v-model="formData.projectIsJr" clearable  placeholder="请选择" style="width: 100%">
                                 <el-option label="是" :value="1" />
                                 <el-option label="否" :value="0" />
                             </el-select>
@@ -229,7 +235,7 @@
                     </el-col>
                     <el-col :span="12">
                         <el-form-item label="项目来源" prop="projectSource">
-                            <el-select v-model="formData.projectSource" placeholder="国内勘察设计" style="width: 100%">
+                            <el-select v-model="formData.projectSource" clearable placeholder="国内勘察设计" style="width: 100%">
                                 <el-option label="国内勘察设计" value="国内勘察设计" />
                                 <el-option label="海外项目" value="海外项目" />
                             </el-select>
@@ -265,7 +271,7 @@ const engineeringBusinessTypeOptions = ref([
     },
     {
         label: "工程监理",
-        value:2
+        value: 2
     },
     {
         label: "前期经营项目",
@@ -282,7 +288,7 @@ const searchForm = reactive({
     projectSection: '',
     projectTypeTwo: '',
     projectArea: '',
-    projectIsJr: 0
+    projectIsJr: null
 })
 
 // 分页
@@ -322,7 +328,7 @@ const formData = reactive({
     type1: '',
     projectTypeTwo: '',
     ownerUnit: '',
-    projectIsJr: 0,
+    projectIsJr: null,
     steps: [],
     projectArea: '',
     managerCharge: '',
@@ -358,7 +364,7 @@ const resetSearch = () => {
     searchForm.projectSection = ''
     searchForm.projectType = ''
     searchForm.projectArea = ''
-    searchForm.projectIsJr = 0
+    searchForm.projectIsJr = null
     handleSearch()
 }
 
@@ -371,17 +377,18 @@ const handleAdd = () => {
         id: null,
         projectFullName: '',
         projectShortName: '',
-        abbreviation: '',
-        projectSection: '',
-        type1: '',
+        projectFullPinyin: '',
+        projectShortPinyin: '',
+        projectPlate: '',
+        projectType: '',
         projectTypeTwo: '',
-        ownerUnit: '',
-        projectIsJr: 0,
         steps: [],
+
         projectArea: '',
         managerCharge: '',
         managerAssist: '',
-        projectSource: '国内勘察设计'
+        projectSource: '',
+        projectIsJr: ''
     })
     dialogVisible.value = true
 }
@@ -517,7 +524,7 @@ const getProjectSelectList = async () => {
             label: item,
             value: index
         }))
-        console.log(engineeringBusinessTypeOptions.value ,'888888888888');
+        console.log(engineeringBusinessTypeOptions.value, '888888888888');
         regionTypeOptions.value = res.data.result.regionType
         trafficTypeOptions.value = res.data.result.trafficType
     }
