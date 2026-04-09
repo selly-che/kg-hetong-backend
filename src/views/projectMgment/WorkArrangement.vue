@@ -30,7 +30,7 @@
             <!-- 操作按钮 -->
             <a-button type="primary" @click="handleSearch">查询</a-button>
             <a-button @click="handleReset">重置</a-button>
-            <a-button type="dashed" @click="handleAdd" v-permission="'Work:add'">新增</a-button>
+            <a-button type="dashed" @click="handleAdd" v-if="Editable">新增</a-button>
 
             <!-- 列设置 -->
             <a-dropdown overlayClassName="column-filter-dropdown" trigger="click">
@@ -164,7 +164,8 @@
                                 </div>
 
                                 <!-- 任务表格 -->
-                                <el-table :data="group.twaTaskContentStatuses" border style="width: 100%" :show-header="true">
+                                <el-table :data="group.twaTaskContentStatuses" border style="width: 100%"
+                                    :show-header="true">
                                     <el-table-column label="任务内容">
                                         <template #default="{ row }">
                                             <el-input v-model="row.tcName" placeholder="请输入任务内容"></el-input>
@@ -548,7 +549,7 @@ const saveForm = async () => {
         ElMessage.success('保存成功');
         dialogVisible.value = false;
         handleSearch(); // 刷新表格数据
-        
+
     } else {
         ElMessage.warning(resp.data.message || '保存失败');
     }
@@ -578,11 +579,25 @@ watch(() => [route.query.projectId, route.query.projectStep], () => {
     handleSearch();
 });
 
+
+
 onMounted(() => {
     handleSearch();
     console.log('WorkArrangement mounted');
 
 })
+const Editable = ref(false);
+watch(
+    // 判断页面路径发生变化就重新获取数据
+    () => route.query.Editable,
+    (newEditable) => {
+        if (newEditable) {
+            Editable.value = newEditable === "true";
+            console.log(Editable.value, "EditableEditable111");
+        }
+    },
+    { deep: true, immediate: true }
+);
 </script>
 
 <style scoped>
