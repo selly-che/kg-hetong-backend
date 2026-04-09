@@ -226,19 +226,19 @@ const loadMenusFromStorage = () => {
 
 loadMenusFromStorage();
 
-// 递归转换菜单数据
 const transformMenuData = (data: any[]): MenuItem[] => {
   return data.map((item) => {
+    const title = item.meta?.title || item.title;
+    const icon = item.meta?.icon || item.icon;
     const newItem: MenuItem = {
       index: item.id,
-      title: item.title,
-      path: item.url,
-      // url: item.url,
-      component: item.url,
-      icon: normalizeIconName(item.icon),
+      title,
+      path: item.path || item.url,
+      component: item.component || item.url,
+      icon: normalizeIconName(icon),
       name: item.name,
       meta: {
-        title: item.title,
+        title,
       },
     };
     if (item.children && item.children.length > 0) {
@@ -318,10 +318,12 @@ const userName = computed(() => {
 });
 onMounted(async () => {
   try {
-    const res: any = await getDatas("system/GetMenuListTree");
-    console.log("菜单111", res);
-    if (res.data.result) {
-      menus.value = transformMenuData(res.data.result);
+    const res: any = await getDatas("common/getUserPermission");
+    // const res: any = await getDatas("system/GetMenuListTree");
+    const menuData = res.data?.result?.menu;
+    console.log("菜单111", menuData);
+    if (Array.isArray(menuData)) {
+      menus.value = transformMenuData(menuData);
       icons.value = menus.value.map((item: any) => item.icon);
       // 可以选择将菜单数据存储到 Vuex 或 localStorage
       // store.commit("SET_MENUS", menus.value);

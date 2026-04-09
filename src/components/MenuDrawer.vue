@@ -14,6 +14,7 @@
       :wrapper-col="{ span: 16 }"
       layout="horizontal"
       style="border: 1px solid #e9e9e9; padding-top: 10px"
+      :class="{ 'read-only-form': props.readOnly }"
       :disabled="props.readOnly"
     >
       <!-- 菜单类型 -->
@@ -158,6 +159,7 @@
           :min="0"
           style="width: 100%"
           placeholder="请输入排序"
+          
         />
       </a-form-item>
 
@@ -526,5 +528,15 @@ watch(
 
 :deep(.ant-radio-group) {
   width: 100%;
+}
+
+.read-only-form :deep(.ant-input),
+.read-only-form :deep(.ant-input-number),
+.read-only-form :deep(.ant-select-selector),
+.read-only-form :deep(.ant-radio-wrapper),
+.read-only-form :deep(.ant-checkbox-wrapper),
+.read-only-form :deep(.ant-switch),
+.read-only-form :deep(.ant-tree-select .ant-select-selector) {
+  cursor: not-allowed;
 }
 </style>
