@@ -11,7 +11,7 @@ module.exports = defineConfig({
     https: false,
     proxy: {
       "/jeecg-boot": {
-        target: "http://192.168.100.77:10888",
+        target: "http://192.168.100.75:10888",
         changeOrigin: true,
         pathRewrite: {
           "^/api": "",
@@ -22,9 +22,9 @@ module.exports = defineConfig({
       overlay: {
         errors: false,
         warnings: false,
-        runtimeErrors: false
-      }
-    }
+        runtimeErrors: false,
+      },
+    },
   },
   chainWebpack: (config) => {
     config.plugin("define").tap((definitions) => {

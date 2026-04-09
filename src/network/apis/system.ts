@@ -166,10 +166,14 @@ export default {
   },
   // 删除系统菜单管理树
   deleteMenuListTree(params: any) {
+    const query =
+      typeof params === "string" || typeof params === "number"
+        ? { ids: params }
+        : params;
     return {
       method: "DELETE",
       url: "/sys/permission/deleteBatch",
-      params,
+      params: query,
     };
   },
 }
