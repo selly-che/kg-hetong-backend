@@ -349,6 +349,12 @@ const drawerTitle = computed(() => {
   if (props.readOnly) {
     return "查看菜单";
   }
+  //新增菜单时清空所有字段
+  if (props.editData) {
+    Object.assign(formState, props.editData);
+  } else {
+    Object.assign(formState, defaultFormState);
+  }
   return props.editData ? "编辑菜单" : "新增菜单";
 });
 
