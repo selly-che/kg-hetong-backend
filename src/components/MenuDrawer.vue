@@ -22,6 +22,7 @@
         <a-radio-group
           v-model:value="formState.menuType"
           @change="handleMenuTypeChange"
+          :disabled="props.readOnly"
         >
           <a-radio :value="MenuType.DIRECTORY">菜单</a-radio>
           <a-radio :value="MenuType.MENU">子菜单</a-radio>
@@ -34,6 +35,7 @@
         <a-input
           v-model:value="formState.name"
           :placeholder="`请输入${menuTypeLabel}名称`"
+          :disabled="props.readOnly"
         />
       </a-form-item>
 
@@ -62,7 +64,11 @@
 
       <!-- 菜单路径 -->
       <a-form-item label="菜单路径" name="url" :required="true">
-        <a-input v-model:value="formState.url" placeholder="请输入菜单路径" />
+        <a-input
+          v-model:value="formState.url"
+          placeholder="请输入菜单路径"
+          :disabled="props.readOnly"
+        />
       </a-form-item>
 
       <!-- 授权标识（仅按钮/权限显示） -->
@@ -140,6 +146,7 @@
             placeholder="点击选择图标"
             readonly
             @click="!props.readOnly && (showIconSelector = true)"
+            :disabled="props.readOnly"
           />
           <div v-if="formState.icon" class="icon-preview">
             <!-- <component :is="formState.icon" v-if="typeof formState.icon === 'object'" />
@@ -159,7 +166,7 @@
           :min="0"
           style="width: 100%"
           placeholder="请输入排序"
-          
+          :disabled="props.readOnly"
         />
       </a-form-item>
 
@@ -173,6 +180,7 @@
           v-model:checked="formState.route"
           checked-children="是"
           un-checked-children="否"
+          :disabled="props.readOnly"
         />
       </a-form-item>
 
@@ -186,6 +194,7 @@
           v-model:checked="formState.hidden"
           checked-children="是"
           un-checked-children="否"
+          :disabled="props.readOnly"
         />
       </a-form-item>
 
@@ -199,6 +208,7 @@
           v-model:checked="formState.keepAlive"
           checked-children="是"
           un-checked-children="否"
+          :disabled="props.readOnly"
         />
       </a-form-item>
 
@@ -212,6 +222,7 @@
           v-model:checked="formState.alwaysShow"
           checked-children="是"
           un-checked-children="否"
+          :disabled="props.readOnly"
         />
       </a-form-item>
 
@@ -225,6 +236,7 @@
           v-model:checked="formState.internalOrExternal"
           checked-children="内部"
           un-checked-children="外部"
+          :disabled="props.readOnly"
         />
       </a-form-item>
 
@@ -233,6 +245,7 @@
         label="状态"
         name="status"
         v-if="formState.menuType == MenuType.BUTTON"
+        :disabled="props.readOnly"
       >
         <a-radio-group v-model:value="formState.status">
           <a-radio :value="Status.DISABLED">无效</a-radio>
@@ -530,7 +543,7 @@ watch(
   width: 100%;
 }
 
-.read-only-form :deep(.ant-input),
+/* .read-only-form :deep(.ant-input),
 .read-only-form :deep(.ant-input-number),
 .read-only-form :deep(.ant-select-selector),
 .read-only-form :deep(.ant-radio-wrapper),
@@ -538,5 +551,9 @@ watch(
 .read-only-form :deep(.ant-switch),
 .read-only-form :deep(.ant-tree-select .ant-select-selector) {
   cursor: not-allowed;
+} */
+
+[disabled] {
+  color: #000000;
 }
 </style>

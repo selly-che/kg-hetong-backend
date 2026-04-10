@@ -67,7 +67,17 @@ export default function addDynamicRoutes(router: any, menus: any[]) {
           return;
         }
 
-        let resolvedComponentPath = componentMapping[child.component] || child.component;
+        let resolvedComponentPath =
+          componentMapping[child.component as string] || child.component;
+
+        if (!resolvedComponentPath) {
+          console.warn(
+            "动态路由添加失败：子菜单缺少 component 配置，已跳过",
+            child,
+          );
+          return;
+        }
+
         if (resolvedComponentPath.startsWith("/")) {
           resolvedComponentPath = resolvedComponentPath.slice(1);
         }
@@ -108,7 +118,16 @@ export default function addDynamicRoutes(router: any, menus: any[]) {
         return;
       }
       // 移除了路径开头的斜杠
-      let resolvedMenuComponentPath = componentMapping[menu.component ?? ''] || menu.component;
+      let resolvedMenuComponentPath =
+        componentMapping[menu.component as string] || menu.component;
+
+      if (!resolvedMenuComponentPath) {
+        console.warn(
+          "动态路由添加失败：菜单缺少 component 配置，已跳过",
+          menu,
+        );
+        return;
+      }
       if (resolvedMenuComponentPath?.startsWith("/")) {
         resolvedMenuComponentPath = resolvedMenuComponentPath.slice(1);
       }
