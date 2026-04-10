@@ -143,6 +143,8 @@ router.beforeEach((to, from, next) => {
 
     return;
   }
+  console.log(layoutRoute, "layoutRoutelayoutRoute");
+  
   // 已登录且需要初始化路由
   // 注意：检查是否有子路由，但至少应该有一个首页路由
   if (token && layoutRoute && layoutRoute.children.length <= 5) {

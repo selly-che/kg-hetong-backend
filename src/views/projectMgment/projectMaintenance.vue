@@ -71,21 +71,21 @@
                         {{ getProjectPlateText(row.projectPlate) }}
                     </template>
                 </el-table-column>
-                <el-table-column prop="projectType" label="类型一" width="80" align="center">
+                <el-table-column prop="projectSection" label="类型一" width="80" align="center">
 
                 </el-table-column>
                 <!-- <el-table-column prop="subjectUnit" label="主体责任单位" width="150" align="center" /> -->
                 <!-- <el-table-column prop="undertakingUnit" label="承担单位" width="150" align="center" /> -->
                 <el-table-column prop="managerCharge" label="主管计调" width="120" align="center">
                     <template #default="{ row }">
-                        {{ row.managerCharge === 'csq' ? '陈叔清' : ""  }}
-                        {{ row.managerCharge === 'ljj' ? '卢静静' : ""  }}
+                        {{ row.managerCharge === 'csq' ? '陈叔清' : "" }}
+                        {{ row.managerCharge === 'ljj' ? '卢静静' : "" }}
                     </template>
                 </el-table-column>
                 <el-table-column prop="managerAssist" label="协管计调" width="120" align="center">
                     <template #default="{ row }">
-                        {{ row.managerAssist === 'csq' ? '陈叔清' : ""  }}
-                        {{ row.managerAssist === 'ljj' ? '卢静静' : ""  }}
+                        {{ row.managerAssist === 'csq' ? '陈叔清' : "" }}
+                        {{ row.managerAssist === 'ljj' ? '卢静静' : "" }}
                     </template>
                 </el-table-column>
                 <!-- <el-table-column prop="supervisor" label="关注领导" width="120" align="center" /> -->
@@ -149,8 +149,8 @@
                         </el-form-item>
                     </el-col>
                     <el-col :span="8">
-                        <el-form-item label="类型一" prop="projectType">
-                            <el-select v-model="formData.projectType" placeholder="选择类型一" style="width: 100%">
+                        <el-form-item label="类型一" prop="projectSection">
+                            <el-select v-model="formData.projectSection" placeholder="选择类型一" style="width: 100%">
                                 <el-option label="铁路" value="铁路" />
                                 <el-option label="城轨" value="城轨" />
                                 <el-option label="公路" value="公路" />
@@ -209,14 +209,14 @@
                 <el-row :gutter="20">
 
                     <el-col :span="12">
-                        <el-form-item label="主管计调" prop="managerCharge" >
+                        <el-form-item label="主管计调" prop="managerCharge">
                             <el-select v-model="formData.managerCharge" clearable placeholder="请选择" style="width: 100%">
                                 <el-option label="陈叔清" value="csq" />
                             </el-select>
                         </el-form-item>
                     </el-col>
                     <el-col :span="12">
-                        <el-form-item label="协管计调" prop="managerAssist" >
+                        <el-form-item label="协管计调" prop="managerAssist">
                             <el-select v-model="formData.managerAssist" clearable placeholder="请选择" style="width: 100%">
                                 <el-option label="卢静静" value="ljj" />
                             </el-select>
@@ -226,8 +226,8 @@
 
                 <el-row :gutter="24">
                     <el-col :span="12">
-                        <el-form-item label="是否军融" prop="projectIsJr" >
-                            <el-select v-model="formData.projectIsJr" clearable  placeholder="请选择" style="width: 100%">
+                        <el-form-item label="是否军融" prop="projectIsJr">
+                            <el-select v-model="formData.projectIsJr" clearable placeholder="请选择" style="width: 100%">
                                 <el-option label="是" :value="1" />
                                 <el-option label="否" :value="0" />
                             </el-select>
@@ -235,7 +235,8 @@
                     </el-col>
                     <el-col :span="12">
                         <el-form-item label="项目来源" prop="projectSource">
-                            <el-select v-model="formData.projectSource" clearable placeholder="国内勘察设计" style="width: 100%">
+                            <el-select v-model="formData.projectSource" clearable placeholder="国内勘察设计"
+                                style="width: 100%">
                                 <el-option label="国内勘察设计" value="国内勘察设计" />
                                 <el-option label="海外项目" value="海外项目" />
                             </el-select>
@@ -362,7 +363,6 @@ const handleSearch = () => {
 const resetSearch = () => {
     searchForm.projectName = ''
     searchForm.projectSection = ''
-    searchForm.projectType = ''
     searchForm.projectArea = ''
     searchForm.projectIsJr = null
     handleSearch()
@@ -380,7 +380,7 @@ const handleAdd = () => {
         projectFullPinyin: '',
         projectShortPinyin: '',
         projectPlate: '',
-        projectType: '',
+        projectSection: '',
         projectTypeTwo: '',
         steps: [],
 
@@ -508,6 +508,7 @@ const getProjectList = async () => {
     const res = await getDatas("project/GetProjectList", {
         pageNum: pagination.currentPage,
         pageSize: pagination.pageSize,
+        urlType: 1,
         ...searchForm
     });
     console.log("项目列表信息:", res.data.result.records);
