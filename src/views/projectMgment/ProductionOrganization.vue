@@ -2,13 +2,13 @@
   <div class="project-detail-page">
     <div class="project-header">
       <div class="project-title">{{ '项目信息' }}</div>
-      <div class="action-buttons">
-        <el-button v-if="!isEdit" type="primary" @click="handleEdit" v-permission="'organization:edit'">
+      <div class="action-buttons" v-if="Editable">
+        <el-button v-if="!isEdit" type="primary" @click="handleEdit">
           编辑
         </el-button>
         <template v-else>
           <el-button @click="handleCancel">取消</el-button>
-          <el-button type="primary" @click="handleSave" v-permission="'organization:edit'">保存</el-button>
+          <el-button type="primary" @click="handleSave">保存</el-button>
         </template>
       </div>
     </div>
@@ -24,19 +24,8 @@
                   <el-select v-model="editData.projectStep" placeholder="请选择项目阶段" style="width: 100%"
                     @change="handleProjectStepChange">
                     <!-- ，600-预付期，601-投标，602-规划，603-预可研，604-可研，605-初步设计，606-施工图，607-配合施工，608-开通运营，609-招标图，610-专题专项，611-清概（结算），612-质保期 -->
-                    <el-option label="预付期" :value="600"></el-option>
-                    <el-option label="投标" :value="601"></el-option>
-                    <el-option label="规划" :value="602"></el-option>
-                    <el-option label="预可研" :value="603"></el-option>
-                    <el-option label="可研" :value="604"></el-option>
-                    <el-option label="初步设计" :value="605"></el-option>
-                    <el-option label="施工图" :value="606"></el-option>
-                    <el-option label="配合施工" :value="607"></el-option>
-                    <el-option label="开通运营" :value="608"></el-option>
-                    <el-option label="招标图" :value="609"></el-option>
-                    <el-option label="专题专项" :value="610"></el-option>
-                    <el-option label="清概（结算）" :value="611"></el-option>
-                    <el-option label="质保期" :value="612"></el-option>
+                    <el-option v-for="step in currentProjectSteps" :key="step.stepCode" :label="step.stepName"
+                      :value="step.stepCode"></el-option>
                   </el-select>
                 </template>
                 <template v-else>
@@ -907,7 +896,7 @@ import { reactive, ref, computed, onMounted, watch } from "vue";
 import getDatas from "@/network/index";
 import { useRouter } from "vue-router";
 import { ElMessage } from 'element-plus';
-
+import { useRoute } from "vue-router";
 // ... existing code ...
 
 // 定义结果数据类型
@@ -929,7 +918,7 @@ interface GeologicalTask extends TaskItem {
 }
 
 interface ResultData {
-  projectStep: number | null;
+  projectStep: number | null | string;
   projectStepName: string;
   groupLeader: string | null;
   deputyLeader: string | null;
@@ -1132,8 +1121,9 @@ const getProjectDetails = async (projectStepStr: any) => {
     // 更新结果数据
     result.value = res.data.result;
     ResultData.value = res.data.result;
+    result.value.projectStep = res.data.result.projectStep.toString();
     result.value.projectManagers = result.value.projectManagers ? result.value.projectManagers.join(',') : null;
-    editData.value = isEdit.value ?  JSON.parse(JSON.stringify(res.data.result)) : {};
+    editData.value = isEdit.value ? JSON.parse(JSON.stringify(res.data.result)) : {};
   } catch (error) {
     console.error("获取项目详情失败:", error);
   } finally {
@@ -1143,6 +1133,10 @@ const getProjectDetails = async (projectStepStr: any) => {
 
 // 处理编辑
 const handleEdit = () => {
+  let ProjectSteps = sessionStorage.getItem("currentProjectSteps");
+  if (ProjectSteps) {
+    currentProjectSteps.value = JSON.parse(ProjectSteps as string);
+  }
   // 深拷贝当前数据到编辑数据
   editData.value = JSON.parse(JSON.stringify(result.value));
 
@@ -1161,6 +1155,8 @@ const handleSave = async () => {
   detailsLoading.value = true;
   try {
     editData.value.projectManagers = editData.value.projectManagers ? editData.value.projectManagers.split(',') : null;
+    editData.value.projectStep = editData.value.projectStep !== null ? parseInt(String(editData.value.projectStep)) : null;
+
     const res = await getDatas('project/addProductionOrg', {
       projectId: router.currentRoute.value.query.projectId,
       // projectStep: router.currentRoute.value.query.projectStep,
@@ -1170,6 +1166,7 @@ const handleSave = async () => {
     if (res.data.code === 200) {
       ElMessage.success('保存成功');
       result.value = { ...editData.value };
+      result.value.projectStep = editData.value.projectStep ? editData.value.projectStep.toString() : null;
       isEdit.value = false;
     } else {
       ElMessage.error(res.data.message || '保存失败');
@@ -1398,17 +1395,87 @@ const handleProjectStepChange = (value: number) => {
   getProjectDetails(value);
 
 }
+const Editable = ref(false);
+const route = useRoute();
+// <!-- ，600-预付期，601-投标，602-规划，603-预可研，604-可研，605-初步设计，606-施工图，607-配合施工，608-开通运营，609-招标图，610-专题专项，611-清概（结算），612-质保期 -->
+
+const currentProjectSteps = ref([
+  {
+    stepName: "预付期",
+    stepCode: 600
+  },
+  {
+    stepName: "投标",
+    stepCode: 601
+  },
+  {
+    stepName: "规划",
+    stepCode: 602
+  },
+  {
+    stepName: "预可研",
+    stepCode: 603
+  },
+  {
+    stepName: "可研",
+    stepCode: 604
+  },
+  {
+    stepName: "初步设计",
+    stepCode: 605
+  },
+  {
+    stepName: "施工图",
+    stepCode: 606
+  },
+  {
+    stepName: "配合施工",
+    stepCode: 607
+  },
+  {
+    stepName: "开通运营",
+    stepCode: 608
+  },
+  {
+    stepName: "招标图",
+    stepCode: 609
+  },
+  {
+    stepName: "专题专项",
+    stepCode: 610
+  },
+  {
+    stepName: "清概（结算）",
+    stepCode: 611
+  },
+  {
+    stepName: "质保期",
+    stepCode: 612
+  }
+])
 watch(
   () => router.currentRoute.value.query,
   (newQuery) => {
+
     if (newQuery.projectId && newQuery.projectStep) {
+      Editable.value = route.query.Editable === "true";
       getProjectDetails(newQuery.projectStep);
     }
   },
   { immediate: true }
 );
-
+watch(
+  // 判断页面路径发生变化就重新获取数据
+  () => route.query.Editable,
+  (newEditable) => {
+    if (newEditable) {
+      Editable.value = newEditable === "true";
+    }
+  },
+  { deep: true, immediate: true }
+);
 onMounted(() => {
+
 });
 </script>
 

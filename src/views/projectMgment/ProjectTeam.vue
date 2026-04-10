@@ -5,9 +5,9 @@
             <h2>项目组成员</h2>
         </div>
         <div>
-            <el-button type="primary" @click="handleAddMember" v-permission="'member:add'">新增成员</el-button>
+            <el-button type="primary" @click="handleAddMember" v-if="Editable">新增成员</el-button>
         </div>
-        
+
         <!-- 新增成员对话框 - 内容保持不变 -->
         <el-dialog title="新增项目组成员" v-model="dialogVisible" width="80%">
             <el-card class="search-card" shadow="never">
@@ -58,12 +58,12 @@
                 <!-- 临时数据表格 -->
                 <div class="temp-table-wrapper" v-if="tempMemberList.length > 0">
                     <el-table :data="tempMemberList" border style="width: 100%; margin-top: 20px;">
-                        <el-table-column prop="deptName" label="单位名称"  align="center" />
+                        <el-table-column prop="deptName" label="单位名称" align="center" />
                         <el-table-column prop="majorName" label="专业名称" align="center" />
-                        <el-table-column prop="majorPrincipleCode" label="专业负责人域账号"  align="center" />
-                        <el-table-column prop="majorPrincipleName" label="第一牵头人"  align="center" />
+                        <el-table-column prop="majorPrincipleCode" label="专业负责人域账号" align="center" />
+                        <el-table-column prop="majorPrincipleName" label="第一牵头人" align="center" />
                         <el-table-column prop="otherMajorPrincipleName" label="第二牵头人" align="center" />
-                        <el-table-column prop="productCode" label="专业简称"  align="center" />
+                        <el-table-column prop="productCode" label="专业简称" align="center" />
                         <el-table-column label="操作" width="100" align="center" fixed="right">
                             <template #default="{ $index }">
                                 <el-button type="danger" size="small" @click="handleDeleteTemp($index)">删除</el-button>
@@ -72,7 +72,7 @@
                     </el-table>
                 </div>
             </el-card>
-            
+
             <!-- 对话框底部按钮 -->
             <template #footer>
                 <div class="dialog-footer">
@@ -81,10 +81,10 @@
                 </div>
             </template>
         </el-dialog>
-        
+
         <!-- 项目组成员表格 - 直接展示数组数据 -->
-        <a-table :loading="teamDataloading" :dataSource="teamData" :columns="teamColumns" 
-            :pagination="false" size="middle" bordered class="team-table" :rowKey="'id'">
+        <a-table :loading="teamDataloading" :dataSource="teamData" :columns="teamColumns" :pagination="false"
+            size="middle" bordered class="team-table" :rowKey="'id'">
             <template #empty>
                 <div class="empty-text">暂无数据</div>
             </template>
@@ -178,20 +178,20 @@ const getProjectList = async () => {
     if (teamDataloading.value) return;
     teamDataloading.value = true;
     projectInfoID.value = route.query.projectInfoID as string || '';
-    
+
     if (!projectInfoID.value) {
         console.warn('未找到 projectInfoID');
         teamDataloading.value = false;
         return;
     }
-    
+
     try {
         const res = await getDatas('project/GetProjectMembers', {
             projectInfoID: projectInfoID.value,
         });
-        
+
         console.log("项目组成员数据:", res);
-        
+
         if (res && res.data.code == 200) {
             // 直接使用返回的数组数据
             teamData.value = Array.isArray(res.data.result) ? res.data.result : [];
@@ -263,9 +263,9 @@ const handleSaveAll = async () => {
 
     try {
         saving.value = true;
-        
+
         const res = await getDatas('project/AddProjectMember', tempMemberList.value);
-        
+
         if (res.data.code === 200) {
             ElMessage.success('保存成功');
             dialogVisible.value = false;
@@ -296,17 +296,27 @@ const handleAddMember = () => {
         projectInfoID: projectInfoID.value,
     };
 };
-
+const Editable = ref(false);
 // 监听路由参数变化
 watch(
     () => route.query.projectInfoID,
     (newVal, oldVal) => {
         if (newVal && newVal !== oldVal) {
             console.log('projectInfoID 变化:', newVal);
+            Editable.value = route.query.Editable === "true";
             getProjectList();
         }
     },
     { immediate: false }
+);
+
+watch(
+    () => route.query.Editable,
+    (newEditable) => {
+        console.log(newEditable, 'newEditablenewEditable');
+        Editable.value = newEditable === "true";
+    },
+    { deep: true, immediate: true }
 );
 
 // 组件挂载后执行一次

@@ -5,11 +5,11 @@
       <a-tab-pane key="1" tab="基本信息">
         <div class="project-detail-page">
           <!-- 编辑、保存 -->
-          <div class="edit-wrapper">
-            <a-button v-if="!isEditMode" type="primary" @click="handleEdit" v-permission="'project:edit'">编辑</a-button>
+          <div class="edit-wrapper" v-if="Editable">
+            <a-button v-if="!isEditMode" type="primary" @click="handleEdit">编辑</a-button>
             <template v-else>
               <a-button @click="handleCancel">取消</a-button>
-              <a-button type="primary" :loading="saving" @click="handleSave" v-permission="'project:edit'">保存</a-button>
+              <a-button type="primary" :loading="saving" @click="handleSave">保存</a-button>
             </template>
           </div>
           <div class="content-wrapper">
@@ -204,7 +204,7 @@
       <a-tab-pane key="2" tab="主要技术标准" force-render>
         <div class="project-detail-page">
           <!-- 编辑、保存 -->
-          <div class="edit-wrapper">
+          <div class="edit-wrapper" v-if="Editable">
             <a-button v-if="!isTechEditMode" type="primary" @click="handleTechEdit">编辑</a-button>
             <template v-else>
               <a-button @click="handleTechCancel">取消</a-button>
@@ -340,7 +340,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ref, onMounted, watch } from "vue";
+import { ref, onMounted, watch,onActivated } from "vue";
 import getDates from "@/network/index";
 import { useRoute } from "vue-router";
 import { message } from "ant-design-vue";
@@ -466,6 +466,9 @@ const techEditForm = ref({
   tsOperationalOrganization: "",
 });
 
+const Editable = ref(false);
+
+
 onMounted(() => {
   getprojectsdetails();
 });
@@ -475,8 +478,21 @@ watch(
   (newProjectid) => {
     if (newProjectid) {
       getprojectsdetails();
+      Editable.value = route.query.Editable === "true";
     }
   },
+);
+watch(
+  // 判断页面路径发生变化就重新获取数据
+  () => route.query.Editable,
+  (newEditable) => {
+    if (newEditable) {
+      Editable.value = newEditable === "true";
+      console.log(Editable.value, "EditableEditable");
+    }
+  },
+  { deep: true, immediate: true }
+
 );
 
 const getprojectsdetails = async () => {

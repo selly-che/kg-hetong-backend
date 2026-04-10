@@ -209,20 +209,29 @@ const getProjectList = async () => {
 
     const records = res.data.result.records;
     console.log("项目列表信息:", records);
+
+
     // 处理项目数据结构
     projects.value = records.map((project: any) => {
       // 生成固定二级菜单项
+      const userName = localStorage.getItem("userName");
+
+      let Editable = userName == project.managerCharge || userName == project.managerAssist;
+      if(activeResponsibility.value == 'company_main' || activeResponsibility.value == 'company_assist'){
+        Editable = false
+      }
+      sessionStorage.setItem('currentProjectSteps', JSON.stringify(project.stepList));
       const fixedNodes = [
         {
           Id: `${project.id}-overview`,
           text: "项目概况",
-          href: `/projectMgment/ProjectOverview?projectId=${project.id}`,
+          href: `/projectMgment/ProjectOverview?projectId=${project.id}&Editable=${Editable}`,
           projectId: project.id,
         },
         {
           Id: `${project.id}-production`,
           text: "生产组织",
-          href: `/projectMgment/ProductionOrganization?projectId=${project.id}&projectStep=${project.projectStep}`,
+          href: `/projectMgment/ProductionOrganization?projectId=${project.id}&projectStep=${project.projectStep}&Editable=${Editable}`,
           projectId: project.id,
         },
       ];
@@ -231,14 +240,13 @@ const getProjectList = async () => {
       const taskNodes = (project.stepList || []).map(
         (task: any, index: number) => {
           const taskId = `${project.id}-task-${index}`;
-          console.log(task,'tasktasktask');
-          
+
           // 为每个task添加固定的三级菜单
           const children = [
             {
               Id: `${taskId}-team-${Date.now()}`,
               text: "组建项目组成员",
-              href: `/projectMgment/ProjectTeam?projectId=${project.id}&projectInfoID=${task.stepId}`,
+              href: `/projectMgment/ProjectTeam?projectId=${project.id}&projectInfoID=${task.stepId}&Editable=${Editable}`,
               projectId: project.id,
               projectStep: task.projectStep,
               taskId: project.id,
@@ -246,7 +254,7 @@ const getProjectList = async () => {
             {
               Id: `${taskId}-all-work-${Date.now()}`,
               text: "查看全部工作安排",
-              href: `/projectMgment/WorkArrangementList?projectId=${project.id}&stepId=${task.stepId}`,
+              href: `/projectMgment/WorkArrangementList?projectId=${project.id}&stepId=${task.stepId}&Editable=${Editable}`,
               projectId: project.id,
               projectStep: task.stepId,
               taskId: project.id,
@@ -254,7 +262,7 @@ const getProjectList = async () => {
             {
               Id: `${taskId}-work-${Date.now()}`,
               text: "工作安排",
-              href: `/projectMgment/WorkArrangement?projectId=${project.id}&projectStep=${task.stepCode}`,
+              href: `/projectMgment/WorkArrangement?projectId=${project.id}&projectStep=${task.stepCode}&Editable=${Editable}`,
               projectId: project.id,
               projectStep: task.projectStep,
               taskId: project.id,
