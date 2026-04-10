@@ -54,7 +54,13 @@
               <!-- 动态的二级菜单项（来自stepList） -->
               <a-sub-menu v-for="taskItem in project.taskNodes" :key="taskItem.Id">
                 <template #title>
-                  <span>{{ taskItem.text }}</span>
+                  <!-- <el-badge is-dot class="item_badge" v-if="taskItem.stepCode == project.stepCode"> -->
+                    <div v-if="taskItem.stepCode == project.stepCode">
+                      <span  style="color: #f8ac59;margin-right: 4px;">{{ taskItem.text }}  </span>
+                      <link-outlined />
+                    </div>
+                  <!-- </el-badge> -->
+                  <span v-else>{{ taskItem.text }}</span>
                 </template>
 
                 <!-- 固定的三级菜单项 -->
@@ -112,6 +118,7 @@ import { ref, computed, onMounted, watch } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import getDatas from "@/network/index";
 import { ElMessage } from "element-plus";
+import { LinkOutlined } from "@ant-design/icons-vue"; 
 
 const router = useRouter();
 const route = useRoute();
@@ -217,7 +224,7 @@ const getProjectList = async () => {
       const userName = localStorage.getItem("userName");
 
       let Editable = userName == project.managerCharge || userName == project.managerAssist;
-      if(activeResponsibility.value == 'company_main' || activeResponsibility.value == 'company_assist'){
+      if (activeResponsibility.value == 'company_main' || activeResponsibility.value == 'company_assist') {
         Editable = false
       }
       sessionStorage.setItem('currentProjectSteps', JSON.stringify(project.stepList));
@@ -274,9 +281,11 @@ const getProjectList = async () => {
             text: task.stepName || `任务阶段${index + 1}`,
             projectId: project.id,
             children: children,
+            stepCode: task.stepCode,
           };
         },
       );
+      console.log(taskNodes, "taskNodestaskNodes");
 
       return {
         Id: project.id,
@@ -289,8 +298,11 @@ const getProjectList = async () => {
         IsFavorites: false,
         fixedNodes: fixedNodes,
         taskNodes: taskNodes,
+        stepCode: project.projectStep,
       };
     });
+    console.log(projects.value, 'projectsprojects');
+
     selectedMenuKeys.value = [];
     openMenuKeys.value = [];
   } catch (error) {
@@ -309,6 +321,7 @@ const getProjectType = (projectTypeDetail: string) => {
 
 // 根据过滤条件和选项卡筛选项目
 const filteredProjects = computed(() => {
+
   return projects.value;
   return projects.value.filter((project) => {
     // 类型匹配
@@ -661,4 +674,6 @@ watch(
   overflow-y: auto;
   max-height: calc(100vh - 150px);
 }
+
+.item_badge {}
 </style>

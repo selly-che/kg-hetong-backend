@@ -4,10 +4,15 @@
       <!-- 方向性图标 -->
       <a-tab-pane tab="方向性图标" key="direction">
         <div class="icon-grid">
-          <div v-for="icon in directionIcons" :key="icon" class="icon-item" :class="{ 'active': selectedIcon === icon }"
-            @click="chooseIcon(icon, 'direction')" :title="icon">
+          <div 
+            v-for="icon in directionIcons" 
+            :key="icon" 
+            class="icon-item" 
+            :class="{ 'active': selectedIcon === icon }"
+            @click="chooseIcon(icon, 'direction')" 
+            :title="icon"
+          >
             <component :is="getIconComponent(icon)" />
-            
           </div>
         </div>
       </a-tab-pane>
@@ -15,10 +20,15 @@
       <!-- 指示性图标 -->
       <a-tab-pane tab="指示性图标" key="indication">
         <div class="icon-grid">
-          <div v-for="icon in indicationIcons" :key="icon" class="icon-item"
-            :class="{ 'active': selectedIcon === icon }" @click="chooseIcon(icon, 'indication')" :title="icon">
+          <div 
+            v-for="icon in indicationIcons" 
+            :key="icon" 
+            class="icon-item"
+            :class="{ 'active': selectedIcon === icon }" 
+            @click="chooseIcon(icon, 'indication')" 
+            :title="icon"
+          >
             <component :is="getIconComponent(icon)" />
-            
           </div>
         </div>
       </a-tab-pane>
@@ -26,10 +36,15 @@
       <!-- 编辑类图标 -->
       <a-tab-pane tab="编辑类图标" key="editor">
         <div class="icon-grid">
-          <div v-for="icon in editorIcons" :key="icon" class="icon-item" :class="{ 'active': selectedIcon === icon }"
-            @click="chooseIcon(icon, 'editor')" :title="icon">
+          <div 
+            v-for="icon in editorIcons" 
+            :key="icon" 
+            class="icon-item" 
+            :class="{ 'active': selectedIcon === icon }"
+            @click="chooseIcon(icon, 'editor')" 
+            :title="icon"
+          >
             <component :is="getIconComponent(icon)" />
-            
           </div>
         </div>
       </a-tab-pane>
@@ -37,10 +52,15 @@
       <!-- 数据类图标 -->
       <a-tab-pane tab="数据类图标" key="data">
         <div class="icon-grid">
-          <div v-for="icon in dataIcons" :key="icon" class="icon-item" :class="{ 'active': selectedIcon === icon }"
-            @click="chooseIcon(icon, 'data')" :title="icon">
+          <div 
+            v-for="icon in dataIcons" 
+            :key="icon" 
+            class="icon-item" 
+            :class="{ 'active': selectedIcon === icon }"
+            @click="chooseIcon(icon, 'data')" 
+            :title="icon"
+          >
             <component :is="getIconComponent(icon)" />
-            
           </div>
         </div>
       </a-tab-pane>
@@ -48,10 +68,15 @@
       <!-- 网站通用图标 -->
       <a-tab-pane tab="网站通用图标" key="website">
         <div class="icon-grid">
-          <div v-for="icon in websiteIcons" :key="icon" class="icon-item" :class="{ 'active': selectedIcon === icon }"
-            @click="chooseIcon(icon, 'website')" :title="icon">
+          <div 
+            v-for="icon in websiteIcons" 
+            :key="icon" 
+            class="icon-item" 
+            :class="{ 'active': selectedIcon === icon }"
+            @click="chooseIcon(icon, 'website')" 
+            :title="icon"
+          >
             <component :is="getIconComponent(icon)" />
-            
           </div>
         </div>
       </a-tab-pane>
@@ -59,10 +84,15 @@
       <!-- 品牌和标识 -->
       <a-tab-pane tab="品牌和标识" key="brand">
         <div class="icon-grid">
-          <div v-for="icon in brandIcons" :key="icon" class="icon-item" :class="{ 'active': selectedIcon === icon }"
-            @click="chooseIcon(icon, 'brand')" :title="icon">
+          <div 
+            v-for="icon in brandIcons" 
+            :key="icon" 
+            class="icon-item" 
+            :class="{ 'active': selectedIcon === icon }"
+            @click="chooseIcon(icon, 'brand')" 
+            :title="icon"
+          >
             <component :is="getIconComponent(icon)" />
-            
           </div>
         </div>
       </a-tab-pane>
@@ -94,14 +124,20 @@
   </div>
 </template>
 
-<script setup>
-import { ref, reactive } from 'vue'
+<script setup lang="ts">
+import { ref } from 'vue'
 import * as Icons from '@ant-design/icons-vue'
-import {CheckOutlined, CloseOutlined} from '@ant-design/icons-vue'
+import { CheckOutlined, CloseOutlined } from '@ant-design/icons-vue'
 
 const activeKey = ref('direction')
 const selectedIcon = ref('')
 const selectedCategory = ref('')
+
+// 定义自定义事件
+const emit = defineEmits<{
+  (e: 'cancel'): void
+  (e: 'select', data: { icon: string; category: string }): void
+}>()
 
 // 方向性图标
 const directionIcons = [
@@ -113,7 +149,6 @@ const directionIcons = [
   'ArrowsAltOutlined',
   'DownOutlined',
   'UpOutlined',
-  'DownOutlined',
   'LeftOutlined',
   'RightOutlined',
   'CaretUpOutlined',
@@ -211,7 +246,6 @@ const editorIcons = [
   'ExportOutlined',
   'ImportOutlined',
   'PaperClipOutlined',
-  'PaperClipOutlined',
   'SnippetsOutlined',
   'HighlightOutlined',
 ]
@@ -244,15 +278,12 @@ const dataIcons = [
   'TagsOutlined',
   'TagFilled',
   'TagsFilled',
-  'ProfileOutlined',
   'UserOutlined',
   'TeamOutlined',
-  'BookOutlined',
   'BookFilled',
   'FileMarkdownOutlined',
   'FileMarkdownFilled',
   'FilePdfOutlined',
-
 ]
 
 // 网站通用图标
@@ -296,7 +327,6 @@ const websiteIcons = [
   'SwapLeftOutlined',
   'SwapRightOutlined',
   'ReloadOutlined',
-  'ReloadOutlined',
   'ArrowLeftOutlined',
   'RollbackOutlined',
 ]
@@ -321,32 +351,31 @@ const brandIcons = [
   'TwitterOutlined',
   'InstagramOutlined',
   'YoutubeOutlined',
-  // 'PinterestOutlined',
-  // 'SoundcloudOutlined',
-  // 'SpotifyOutlined',
   'DropboxOutlined',
-  // 'EvernoteOutlined',
-  'LinkedinOutlined',
   'MediumOutlined',
   'BehanceOutlined',
   'DribbbleOutlined',
   'RedditOutlined',
-  
 ]
 
 // 获取图标组件
-const getIconComponent = (iconName) => {
-  return Icons[iconName]
+const getIconComponent = (iconName: string) => {
+  const component = (Icons as any)[iconName]
+  if (!component) {
+    console.warn(`Icon "${iconName}" not found in @ant-design/icons-vue`)
+    return null
+  }
+  return component
 }
 
 // 选择图标
-const chooseIcon = (icon, category) => {
+const chooseIcon = (icon: string, category: string) => {
   selectedIcon.value = icon
   selectedCategory.value = category
 }
 
 // 标签页切换
-const handleTabChange = (key) => {
+const handleTabChange = (key: string) => {
   activeKey.value = key
   selectedIcon.value = '' // 清空选择
 }
@@ -354,30 +383,18 @@ const handleTabChange = (key) => {
 // 取消操作
 const handleCancel = () => {
   selectedIcon.value = ''
-  console.log('取消选择图标')
-  // 可以触发自定义事件或回调
   emit('cancel')
 }
 
 // 确认操作
 const handleConfirm = () => {
   if (selectedIcon.value) {
-    console.log('确认选择图标:', {
-      icon: selectedIcon.value,
-      category: selectedCategory.value
-    })
-    // 可以触发自定义事件或回调
     emit('select', {
       icon: selectedIcon.value,
       category: selectedCategory.value
     })
-  } else {
-    console.log('请先选择一个图标')
   }
 }
-
-// 定义自定义事件
-const emit = defineEmits(['cancel', 'confirm'])
 </script>
 
 <style scoped>
@@ -440,23 +457,6 @@ const emit = defineEmits(['cancel', 'confirm'])
 }
 
 .icon-item.active :deep(.anticon) {
-  color: #1890ff;
-}
-
-.icon-name {
-  font-size: 12px;
-  color: #666;
-  text-align: center;
-  word-break: break-all;
-  max-width: 90px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-}
-
-.icon-item.active .icon-name {
   color: #1890ff;
 }
 

@@ -123,8 +123,6 @@ export function setUserPermissions(permissionList: PermissionItem[] | any[]) {
         // 提取并保存 action 列表
         const actions = extractActions(permissionList)
         localStorage.setItem('userActions', JSON.stringify(actions))
-
-        console.log('用户按钮权限已更新:', actions)
     } catch (error) {
         console.error('保存用户权限失败:', error)
     }
