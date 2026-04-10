@@ -134,6 +134,14 @@
         />
       </a-form-item>
 
+      <!-- 修改component -->
+      <a-form-item label="前端组件" name="component" :required="true">
+        <a-input
+          v-model:value="formState.component"
+          placeholder="请输入前端组件"
+        />
+      </a-form-item>
+
       <!-- 菜单图标（非按钮显示） -->
       <a-form-item
         v-if="formState.menuType !== MenuType.BUTTON"

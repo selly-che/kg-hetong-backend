@@ -34,6 +34,7 @@ export default function addDynamicRoutes(router: any, menus: any[]) {
     "/bidMgment": "bidMgment/index",
     "systemMgment": "systemMgment/index",
     "/systemMgment": "systemMgment/index",
+    "layouts/RouteView": "layout/layout",
   };
 
   // 获取所有注册的路由，包括根路由
@@ -68,7 +69,10 @@ export default function addDynamicRoutes(router: any, menus: any[]) {
         }
 
         let resolvedComponentPath =
-          componentMapping[child.component as string] || child.component;
+          componentMapping[child.component as string] ||
+          componentMapping[child.path as string] ||
+          child.component ||
+          child.path;
 
         if (!resolvedComponentPath) {
           console.warn(
@@ -119,7 +123,10 @@ export default function addDynamicRoutes(router: any, menus: any[]) {
       }
       // 移除了路径开头的斜杠
       let resolvedMenuComponentPath =
-        componentMapping[menu.component as string] || menu.component;
+        componentMapping[menu.component as string] ||
+        componentMapping[menu.path as string] ||
+        menu.component ||
+        menu.path;
 
       if (!resolvedMenuComponentPath) {
         console.warn(
