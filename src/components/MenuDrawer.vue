@@ -59,6 +59,7 @@
           show-search
           tree-default-expand-all
           allow-clear
+          :disabled="props.readOnly"
         />
       </a-form-item>
 
@@ -131,14 +132,16 @@
         <a-input
           v-model:value="formState.redirect"
           placeholder="请输入路由参数 redirect"
+          :disabled="props.readOnly"
         />
       </a-form-item>
 
       <!-- 修改component -->
-      <a-form-item label="前端组件" name="component" :required="true">
+      <a-form-item label="前端组件" name="component">
         <a-input
           v-model:value="formState.component"
           placeholder="请输入前端组件"
+          :disabled="props.readOnly"
         />
       </a-form-item>
 
