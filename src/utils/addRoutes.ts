@@ -19,6 +19,7 @@ export default function addDynamicRoutes(router: any, menus: any[]) {
     "/bidMgment": "bidMgment/index",
     "systemMgment": "systemMgment/index",
     "/systemMgment": "systemMgment/index",
+    "layouts/RouteView": "layout/layout",
   };
 
   const placeholderComponents = [
@@ -54,25 +55,21 @@ export default function addDynamicRoutes(router: any, menus: any[]) {
           return;
         }
 
-        let resolvedComponentPath = componentMapping[child.component as string] || child.component;
-        
-        if (placeholderComponents.includes(resolvedComponentPath)) {
-          console.log(`菜单项 ${child.name} 是占位符组件，跳过路由添加`);
+        let resolvedComponentPath =
+          componentMapping[child.component as string] ||
+          componentMapping[child.path as string] ||
+          child.component ||
+          child.path;
+
+        if (!resolvedComponentPath) {
+          console.warn(
+            "动态路由添加失败：子菜单缺少 component 配置，已跳过",
+            child,
+          );
           return;
         }
-        
-        if (!resolvedComponentPath || resolvedComponentPath === 'undefined') {
-          console.warn(`菜单项 ${child.name} 的 component 为空，尝试从 path 推断:`, child.path);
-          const pathParts = child.path?.split('/').filter(Boolean);
-          if (pathParts && pathParts.length > 0) {
-            resolvedComponentPath = pathParts.join('/');
-          } else {
-            console.error(`无法为菜单项 ${child.name} 解析组件路径`);
-            return;
-          }
-        }
-        
-        if (resolvedComponentPath?.startsWith("/")) {
+
+        if (resolvedComponentPath.startsWith("/")) {
           resolvedComponentPath = resolvedComponentPath.slice(1);
         }
         
@@ -106,25 +103,20 @@ export default function addDynamicRoutes(router: any, menus: any[]) {
         console.log(`路由 ${menu.path} 已存在，跳过添加`);
         return;
       }
-      
-      let resolvedMenuComponentPath = componentMapping[menu.component ?? ''] || menu.component;
-      
-      if (placeholderComponents.includes(resolvedMenuComponentPath)) {
-        console.log(`菜单项 ${menu.name} 是占位符组件，跳过路由添加`);
+      // 移除了路径开头的斜杠
+      let resolvedMenuComponentPath =
+        componentMapping[menu.component as string] ||
+        componentMapping[menu.path as string] ||
+        menu.component ||
+        menu.path;
+
+      if (!resolvedMenuComponentPath) {
+        console.warn(
+          "动态路由添加失败：菜单缺少 component 配置，已跳过",
+          menu,
+        );
         return;
       }
-      
-      if (!resolvedMenuComponentPath || resolvedMenuComponentPath === 'undefined') {
-        console.warn(`菜单项 ${menu.name} 的 component 为空，尝试从 path 推断:`, menu.path);
-        const pathParts = menu.path?.split('/').filter(Boolean);
-        if (pathParts && pathParts.length > 0) {
-          resolvedMenuComponentPath = pathParts.join('/');
-        } else {
-          console.error(`无法为菜单项 ${menu.name} 解析组件路径`);
-          return;
-        }
-      }
-      
       if (resolvedMenuComponentPath?.startsWith("/")) {
         resolvedMenuComponentPath = resolvedMenuComponentPath.slice(1);
       }

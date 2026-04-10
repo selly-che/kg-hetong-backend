@@ -204,6 +204,11 @@ const columns = [
     key: "name",
   },
   {
+    title: "组件名称",
+    dataIndex: "component",
+    key: "component",
+  },
+  {
     title: "图标",
     dataIndex: "icon",
     key: "icon",
@@ -232,6 +237,7 @@ const transformData = (item: any) => {
 };
 // 获取数据
 const getUserTreeFn = async () => {
+  // let resp = await getDatas("common/getUserPermission");
   let resp = await getDatas("system/GetMenuListTree");
   console.log(resp, "respresp");
   if (resp.data.code == 0) {
