@@ -10,7 +10,7 @@
                 <el-form-item label="主管计调">
                     <el-select v-model="searchForm.managerCharge" placeholder="请选择" clearable style="width: 120px">
                         <el-option label="陈叔清" value="csq" />
-                        <el-option label="协管" value="ljj" />
+                        <el-option label="卢静静" value="ljj" />
                     </el-select>
                 </el-form-item>
                 <el-form-item label="板块">
@@ -361,9 +361,12 @@ const handleSearch = () => {
 
 // 重置搜索
 const resetSearch = () => {
-    searchForm.projectName = ''
+    searchForm.projectFullName = ''
+    searchForm.managerCharge = ''
     searchForm.projectSection = ''
+    searchForm.projectTypeTwo = ''
     searchForm.projectArea = ''
+    searchForm.projectPlate = ''
     searchForm.projectIsJr = null
     handleSearch()
 }

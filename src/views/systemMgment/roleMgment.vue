@@ -24,24 +24,25 @@
           </template>
           查询</a-button
         >
-        <a-button type="primary" @click="handleReset">
+        <a-button type="primary" @click="handleReset"  style="margin-right: 10px">
           <template #icon>
             <RedoOutlined />
           </template>
           重置</a-button
         >
-      </div>
-      <!-- 按钮区 -->
-      <div style="display: flex">
-        <div class="button" style="margin-right: 10px">
-          <a-button type="primary" @click="handleAdd">
+           <a-button type="primary" @click="handleAdd">
             <template #icon>
               <PlusOutlined />
             </template>
             新增</a-button
           >
-        </div>
-        <div class="button" style="margin-right: 10px">
+      </div>
+      <!-- 按钮区 -->
+      <div style="display: flex">
+        <!-- <div class="button" style="margin-right: 10px">
+       
+        </div> -->
+        <!-- <div class="button" style="margin-right: 10px">
           <a-button type="primary" @click="handleAdd">
             <template #icon>
               <LoginOutlined />
@@ -56,7 +57,7 @@
             </template>
             导出
           </a-button>
-        </div>
+        </div> -->
       </div>
       <!-- 已选择项 -->
       <div

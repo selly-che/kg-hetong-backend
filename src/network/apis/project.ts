@@ -27,7 +27,7 @@ export default {
   },
   // 项目组成员
   GetProjectMembers(params: any) {
-       return {
+    return {
       method: "GET",
       url: "/projectcontract/taskArrangement/xmzcy",
       params,
@@ -35,7 +35,7 @@ export default {
   },
   // 查询项目生产组织详情
   GetProjectProductionOrg(params: any) {
-       return {
+    return {
       method: "GET",
       url: "/projectcontract/tpmProject/production-org",
       params,
@@ -46,7 +46,7 @@ export default {
     return {
       method: "POST",
       url: "/projectcontract/tpmProject/save",
-      data:params,
+      data: params,
     };
   },
   ProSelectList(params: any) {
@@ -60,7 +60,7 @@ export default {
     return {
       method: "POST",
       url: "/projectcontract/tpmProject/delsPro",
-      data:params,
+      data: params,
     };
   },
   // 新增工作安排
@@ -68,7 +68,15 @@ export default {
     return {
       method: "POST",
       url: "/projectcontract/taskArrangement/saveGzap",
-      data:params,
+      data: params,
+    };
+  },
+  // 删除工作安排
+  DeleteWorkArrangement(params: any) {
+    return {
+      method: "POST",
+      url: "/projectcontract/taskArrangement/delGzap",
+      data: params,
     };
   },
   // 新增项目组成员
@@ -76,7 +84,7 @@ export default {
     return {
       method: "POST",
       url: "/projectcontract/taskArrangement/update-members",
-      data:params,
+      data: params,
     };
   },
   // 新增生产组织
@@ -84,16 +92,16 @@ export default {
     return {
       method: "POST",
       url: "/projectcontract/tpmProjectOrg/production-org",
-      data:params,
+      data: params,
     };
   },
 
- // 上传项目 
+  // 上传项目 
   uploadProject(params: any) {
     return {
       method: "POST",
       url: "/sys/file/upload",
-      data:params,
+      data: params,
     }
   }
 

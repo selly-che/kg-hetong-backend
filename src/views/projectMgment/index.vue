@@ -55,10 +55,10 @@
               <a-sub-menu v-for="taskItem in project.taskNodes" :key="taskItem.Id">
                 <template #title>
                   <!-- <el-badge is-dot class="item_badge" v-if="taskItem.stepCode == project.stepCode"> -->
-                    <div v-if="taskItem.stepCode == project.stepCode">
-                      <span  style="color: #f8ac59;margin-right: 4px;">{{ taskItem.text }}  </span>
-                      <link-outlined />
-                    </div>
+                  <div v-if="taskItem.stepCode == project.stepCode">
+                    <span style="color: #f8ac59;margin-right: 4px;">{{ taskItem.text }} </span>
+                    <link-outlined />
+                  </div>
                   <!-- </el-badge> -->
                   <span v-else>{{ taskItem.text }}</span>
                 </template>
@@ -99,7 +99,16 @@
                 <span @click="handleTabClick(tab)">{{ tab.title }}</span>
               </template>
             </a-tab-pane>
+            <a-tab-pane >
+              <template #tab>
+                <a-button type="link" size="small" @click="closeAllTabs" class="close-all-btn"
+                  :disabled="openedTabs.length === 0" >
+                  全部关闭
+                </a-button>
+              </template>
+            </a-tab-pane>
           </a-tabs>
+
           <div class="tab-content">
             <keep-alive :include="cachedViews">
               <router-view v-slot="{ Component }">
@@ -118,7 +127,7 @@ import { ref, computed, onMounted, watch } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import getDatas from "@/network/index";
 import { ElMessage } from "element-plus";
-import { LinkOutlined } from "@ant-design/icons-vue"; 
+import { LinkOutlined } from "@ant-design/icons-vue";
 
 const router = useRouter();
 const route = useRoute();
@@ -468,11 +477,6 @@ const findAndHighlightMenuItem = (path: string) => {
 // 处理标签页编辑（关闭）
 const onTabEdit = (targetKey: any, action: "add" | "remove") => {
   if (action === "remove") {
-    // 只有一个标签页时，不允许关闭
-    if (openedTabs.value.length <= 1) {
-      ElMessage.warning("最后一个标签页不能关闭");
-      return;
-    }
     const index = openedTabs.value.findIndex((tab) => tab.id === targetKey);
     if (index > -1) {
       openedTabs.value.splice(index, 1);
@@ -483,6 +487,20 @@ const onTabEdit = (targetKey: any, action: "add" | "remove") => {
       }
     }
   }
+  console.log('测试一哈');
+  if (openedTabs.value.length == 0) {
+    router.push("/projectMgment/ProjectHome");
+  }
+};
+
+const closeAllTabs = () => {
+  if (openedTabs.value.length === 0) {
+    ElMessage.warning("没有可关闭的标签页");
+    return;
+  }
+  openedTabs.value = [];
+  activeTabKey.value = "";
+  router.push("/projectMgment/ProjectHome");
 };
 
 onMounted(() => {

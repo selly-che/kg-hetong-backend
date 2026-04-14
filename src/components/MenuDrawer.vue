@@ -85,7 +85,7 @@
       </a-form-item>
 
       <!-- 授权策略（仅按钮/权限显示） -->
-      <a-form-item
+      <!-- <a-form-item
         v-if="formState.menuType === MenuType.BUTTON"
         label="授权策略"
         name="permsType"
@@ -107,7 +107,7 @@
             </a-checkbox>
           </div>
         </div>
-      </a-form-item>
+      </a-form-item> -->
 
       <!-- 前端组件（仅菜单显示） -->
       <!-- <a-form-item 
@@ -179,7 +179,7 @@
       </a-form-item>
 
       <!-- 是否路由菜单（仅菜单显示） -->
-      <a-form-item
+      <!-- <a-form-item
         v-if="formState.menuType !== MenuType.BUTTON"
         label="是否路由菜单"
         name="route"
@@ -190,10 +190,10 @@
           un-checked-children="否"
           :disabled="props.readOnly"
         />
-      </a-form-item>
+      </a-form-item> -->
 
       <!-- 隐藏路由（仅菜单显示） -->
-      <a-form-item
+      <!-- <a-form-item
         v-if="formState.menuType !== MenuType.BUTTON && formState.route"
         label="隐藏路由"
         name="hidden"
@@ -204,10 +204,10 @@
           un-checked-children="否"
           :disabled="props.readOnly"
         />
-      </a-form-item>
+      </a-form-item> -->
 
       <!-- 是否缓存路由（仅菜单显示） -->
-      <a-form-item
+      <!-- <a-form-item
         v-if="formState.menuType !== MenuType.BUTTON && formState.route"
         label="是否缓存路由"
         name="keepAlive"
@@ -218,10 +218,10 @@
           un-checked-children="否"
           :disabled="props.readOnly"
         />
-      </a-form-item>
+      </a-form-item> -->
 
       <!-- 聚合路由（仅菜单显示） -->
-      <a-form-item
+      <!-- <a-form-item
         v-if="formState.menuType !== MenuType.BUTTON && formState.route"
         label="聚合路由"
         name="alwaysShow"
@@ -234,7 +234,6 @@
         />
       </a-form-item>
 
-      <!-- 打开方式（仅菜单显示） -->
       <a-form-item
         v-if="formState.menuType !== MenuType.BUTTON && formState.route"
         label="打开方式"
@@ -246,7 +245,7 @@
           un-checked-children="外部"
           :disabled="props.readOnly"
         />
-      </a-form-item>
+      </a-form-item> -->
 
       <!-- 状态 -->
       <a-form-item

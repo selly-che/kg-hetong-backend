@@ -332,8 +332,8 @@
       </a-tab-pane>
       <a-tab-pane key="3" tab="客商信息">
         <a-descriptions bordered size="middle" :column="2" :labelStyle="{ width: '150px' }">
-          <a-descriptions-item label="客商名称">{{ "四川千崇建设有限公司" }}</a-descriptions-item>
-          <a-descriptions-item label="客商编号">{{ "91511903MA65FR0G9R" }}</a-descriptions-item>
+          <a-descriptions-item label="客商名称">{{ "-" }}</a-descriptions-item>
+          <a-descriptions-item label="客商编号">{{ "-" }}</a-descriptions-item>
         </a-descriptions>
       </a-tab-pane>
     </a-tabs>

@@ -6,14 +6,13 @@
         <a-row :gutter="24">
           <a-col :md="6" :sm="12">
             <a-form-item label="用户账号">
-              <a-input placeholder="请输入用户账号" v-model:value="queryParam.username"></a-input>
+              <a-input placeholder="请输入用户账号"  size="small" allowClear v-model:value="queryParam.username"></a-input>
             </a-form-item>
           </a-col>
 
           <a-col :md="6" :sm="8">
             <a-form-item label="性别">
-              <a-select v-model:value="queryParam.sex" placeholder="请选择性别">
-                <a-select-option value="">请选择</a-select-option>
+              <a-select v-model:value="queryParam.sex"  allowClear placeholder="请选择性别">
                 <a-select-option value="1">男</a-select-option>
                 <a-select-option value="2">女</a-select-option>
               </a-select>
@@ -22,10 +21,10 @@
 
           <a-col :md="6" :sm="8">
             <a-form-item label="真实姓名">
-              <a-input placeholder="请输入用户真实姓名" v-model:value="queryParam.realname"></a-input>
+              <a-input placeholder="请输入用户真实姓名"  size="small" allowClear v-model:value="queryParam.realname"></a-input>
             </a-form-item>
           </a-col>
-          <a-col :md="6" :sm="8" v-if="toggleSearchStatus">
+          <!-- <a-col :md="6" :sm="8" v-if="toggleSearchStatus">
             <a-form-item label="部门">
               <a-select v-model:value="queryParam.departIds" placeholder="请选择部门">
                 <a-select-option value="">请选择</a-select-option>
@@ -34,18 +33,17 @@
                 </a-select-option>
               </a-select>
             </a-form-item>
-          </a-col>
+          </a-col> -->
 
           <a-col :md="6" :sm="8" v-if="toggleSearchStatus">
             <a-form-item label="手机号码">
-              <a-input placeholder="请输入手机号码查询" v-model:value="queryParam.phone"></a-input>
+              <a-input placeholder="请输入手机号码查询"  size="small" allowClear v-model:value="queryParam.phone"></a-input>
             </a-form-item>
           </a-col>
 
           <a-col :md="6" :sm="8" v-if="toggleSearchStatus">
             <a-form-item label="用户状态">
-              <a-select v-model:value="queryParam.status" placeholder="请选择">
-                <a-select-option value="">请选择</a-select-option>
+              <a-select v-model:value="queryParam.status" allowClear placeholder="请选择用户状态">
                 <a-select-option value="1">正常</a-select-option>
                 <a-select-option value="2">冻结</a-select-option>
               </a-select>
@@ -89,7 +87,7 @@
         </a-button>
       </a-upload>
 
-      <a-button type="primary" @click="recycleBinVisible = true">
+      <!-- <a-button type="primary" @click="recycleBinVisible = true">
         <template #icon>
           <DatabaseOutlined />
         </template>
@@ -100,7 +98,7 @@
           <FilterOutlined />
         </template>
         高级查询
-      </a-button>
+      </a-button> -->
     </div>
 
     <!-- table 区域-begin -->
@@ -220,11 +218,11 @@ const title2 = ref("");
 // 普通查询参数
 const queryParam = reactive({
   username: "",
-  sex: "",
+  sex: null,
   realname: "",
   orgCodeTxt: "",
   phone: "",
-  status: "",
+  status: null,
   email: "",
   post: "",
 });
@@ -264,13 +262,13 @@ const columns = [
     width: 100,
     dataIndex: "realname",
   },
-  {
-    title: "头像",
-    align: "center",
-    width: 120,
-    dataIndex: "avatar",
-    slots: { customRender: "avatarslot" },
-  },
+  // {
+  //   title: "头像",
+  //   align: "center",
+  //   width: 120,
+  //   dataIndex: "avatar",
+  //   slots: { customRender: "avatarslot" },
+  // },
   {
     title: "性别",
     align: "center",
@@ -296,18 +294,18 @@ const columns = [
     width: 180,
     dataIndex: "email",
   },
-  {
-    title: "部门",
-    align: "center",
-    width: 180,
-    dataIndex: "departIds_dictText",
-  },
-  {
-    title: "职务",
-    align: "center",
-    width: 100,
-    dataIndex: "post",
-  },
+  // {
+  //   title: "部门",
+  //   align: "center",
+  //   width: 180,
+  //   dataIndex: "departIds_dictText",
+  // },
+  // {
+  //   title: "职务",
+  //   align: "center",
+  //   width: 100,
+  //   dataIndex: "post",
+  // },
   {
     title: "状态",
     align: "center",
