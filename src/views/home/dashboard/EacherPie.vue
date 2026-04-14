@@ -1,161 +1,63 @@
 <template>
   <div class="pie-container">
-    <div class="pie-title">应收款项目统计</div>
-    <div class="pie-tabs">
-      <div class="tab active" @click="handleTabClick(0)">全部合同</div>
-      <div class="tab" @click="handleTabClick(1)">内部合同</div>
-      <div class="tab" @click="handleTabClick(2)">外协合同</div>
+    <div class="header">
+      <div class="title-section">
+        <span class="pie-title">待办工作</span>
+        <span class="todo-tag">待办: {{ todoList.length }}</span>
+      </div>
+      <a class="more-link">查看更多</a>
     </div>
-    <div class="pie-chart" ref="pieChart"></div>
+    <div class="todo-list">
+      <div v-for="(item, index) in todoList" :key="index" class="todo-item">
+        <div class="item-content">
+          <div class="item-text">{{ item.content }}</div>
+          <div class="item-time">
+            <clock-circle-outlined class="time-icon" />
+            {{ item.time }}
+          </div>
+        </div>
+        <div class="item-actions">
+          <a-button size="small" class="action-btn" @click="handleView(item)"
+            >查看</a-button
+          >
+          <a-button size="small" class="action-btn" @click="handleClose(item)"
+            >关闭</a-button
+          >
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
-<script>
-import * as echarts from "echarts";
-import getDatas from "@/network/index";
+<script setup>
+import { ClockCircleOutlined } from "@ant-design/icons-vue";
 
-export default {
-  name: "EacherPie",
-  data() {
-    return {
-      chart: null,
-      activeTab: 0,
-      option: {
-        //悬停提示
-        tooltip: {
-          // show:false,
-          trigger: "item",
-          formatter: "{b}: {c} ({d}%)",
-        },
-        //图例
-        legend: {
-          orient: "vertical",
-          right: "5%",
-          top: "center",
-          formatter: "",
-          textStyle: {
-            fontSize: 12,
-          },
-          itemGap: 15,
-          icon: "circle",
-        },
-        series: [
-          {
-            name: "应收款项目",
-            type: "pie",
-            radius: ["40%", "70%"],
-            center: ["30%", "55%"],
-            avoidLabelOverlap: false,
-            // padAngle: 5,
-            // selectedMode: "single",
-            selectedOffset: 10,
-            itemStyle: {
-              borderRadius: 10,
-              borderColor: "#fff",
-              borderWidth: 2,
-            },
-            label: {
-              show: true,
-              position: "center",
-              color: "#333",
-              fontSize: 15,
-              fontWeight: "bold",
-              formatter: "111",
-            },
-            //选中状态
-            emphasis: {
-              // label: {
-              //   show: false,
-              //   formatter: "",
-              //   fontSize: 16,
-              //   fontWeight: "bold",
-              // },
-            },
-            labelLine: {
-              show: false,
-            },
-            data: [],
-            total: 12624,
-          },
-        ],
-      },
-    };
+const todoList = [
+  {
+    id: 1,
+    content: "【王建国】下达了《234234234》的事务性工作，请填写完成情况",
+    time: "2026-03-04",
   },
-  mounted() {
-    this.chart = echarts.init(this.$refs.pieChart);
-    this.chart.setOption(this.option);
-    window.addEventListener("resize", this.handleResize);
-    this.getPieData();
+  {
+    id: 2,
+    content:
+      "你已被指派为【土一-自揽-20251216-城轨】项目的主管计调，请及时完善生产组织信息。",
+    time: "2026-02-26",
   },
-  beforeUnmount() {
-    window.removeEventListener("resize", this.handleResize);
-    if (this.chart) {
-      this.chart.dispose();
-    }
+  {
+    id: 3,
+    content:
+      "【生产管理系统过程考核登记情况】：2026-01-29 非项目类【不服从责任主体单位工作安排，-1分/次】，考核：-1.00，如有疑问，请在3天内，在生产系统考核模块进行申述，过期将不再进行申述！",
+    time: "2026-01-29",
   },
-  methods: {
-    handleResize() {
-      if (this.chart) {
-        this.chart.resize();
-      }
-    },
-    handleTabClick(index) {
-      this.activeTab = index;
-      const tabs = document.querySelectorAll(".pie-tabs .tab");
-      tabs.forEach((tab, i) => {
-        if (i === index) {
-          tab.classList.add("active");
-        } else {
-          tab.classList.remove("active");
-        }
-      });
-      this.getPieData();
-    },
-    //饼图数据处理
-    async getPieData() {
-      const res = await getDatas("home/GetContractCollectionStats");
-      // console.log("饼图数据", res);
-      if (res.data.code === 200) {
-        const data = res.data.result;
-        const colorMap = {
-          市政: "#4A90E2",
-          隧道: "#50E3C2",
-          公路: "#7ED321",
-          铁路: "#F5A623",
-          建筑: "#D0021B",
-          其它: "#DDA0DD",
-          城轨: "#BD10E0",
-        };
-        const statsKey =
-          this.activeTab === 0
-            ? "allContractStats"
-            : this.activeTab === 1
-            ? "domesticContractStats"
-            : "externalContractStats";
-        const stats = data[statsKey];
-        const total = stats["总计"] || 0;
-        const pieData = Object.entries(stats)
-          .filter(([key]) => key !== "总计")
-          .map(([name, value]) => ({
-            value,
-            name,
-            itemStyle: { color: colorMap[name] || "#999" },
-            percentage: total > 0 ? ((value / total) * 100).toFixed(1) : "0.0",
-          }));
-        this.option.series[0].data = pieData;
-        this.option.series[0].total = total;
-        const totalText = `总金额\n¥${total.toLocaleString()}`;
-        this.option.series[0].label.formatter = totalText;
-        this.option.legend.formatter = (name) => {
-          const item = pieData.find((item) => item.name === name);
-          return item
-            ? `${name} | ${item.percentage}%  ¥${item.value.toLocaleString()}`
-            : name;
-        };
-        this.chart.setOption(this.option);
-      }
-    },
-  },
+];
+
+const handleView = (item) => {
+  console.log("查看", item.id);
+};
+
+const handleClose = (item) => {
+  console.log("关闭", item.id);
 };
 </script>
 
@@ -165,45 +67,106 @@ export default {
   background-color: #fff;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
   border-radius: 8px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
 
-  .pie-title {
-    font-size: 14px;
-    font-weight: bold;
-    color: #333;
-    padding-top: 8px;
-    padding-left: 10px;
-    // padding-bottom: 9px;
-  }
-
-  .pie-tabs {
+  .header {
     display: flex;
-    margin-bottom: 10px;
-    margin-top: 9px;
-    margin-left: 10px;
-    .tab {
-      padding: 8px 16px;
-      margin-right: 10px;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 14px;
-      color: #666;
-      background-color: #f5f5f5;
-      transition: all 0.3s;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
 
-      &:hover {
-        background-color: #e0e0e0;
+    .title-section {
+      display: flex;
+      align-items: center;
+
+      .pie-title {
+        font-size: 20px;
+        font-weight: bold;
+        color: #333;
+        margin-right: 12px;
       }
 
-      &.active {
-        background-color: rgb(64, 158, 255);
+      .todo-tag {
+        display: inline-block;
+        padding: 2px 12px;
+        background-color: #409eff;
         color: #fff;
+        border-radius: 15px;
+        font-size: 12px;
+      }
+    }
+
+    .more-link {
+      font-size: 12px;
+      color: #409eff;
+      cursor: pointer;
+      text-decoration: none;
+
+      &:hover {
+        opacity: 0.8;
       }
     }
   }
 
-  .pie-chart {
-    height: 300px;
-    width: 100%;
+  .todo-list {
+    flex: 1;
+    overflow-y: auto;
+
+    .todo-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 0;
+      border-bottom: 1px solid #f0f0f0;
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      .item-content {
+        flex: 1;
+        margin-right: 20px;
+
+        .item-text {
+          font-size: 14px;
+          color: #555;
+          line-height: 1.5;
+          margin-bottom: 6px;
+          text-align: left;
+        }
+
+        .item-time {
+          font-size: 13px;
+          color: #999;
+          display: flex;
+          align-items: center;
+
+          .time-icon {
+            margin-right: 4px;
+          }
+        }
+      }
+
+      .item-actions {
+        display: flex;
+        gap: 10px;
+
+        .action-btn {
+          border: 1px solid #409eff;
+          color: #409eff;
+          border-radius: 4px;
+          background: #fff;
+          padding: 0 15px;
+          height: 32px;
+
+          &:hover {
+            background-color: #ecf5ff;
+          }
+        }
+      }
+    }
   }
 }
 </style>

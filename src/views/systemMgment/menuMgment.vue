@@ -102,7 +102,8 @@ const handleMenuClick = (key: string, record: any) => {
       open.value = true;
       break;
     case "add":
-      console.log("添加下级:", record);
+      open.value = true;
+      currentEditData.value = { parentId: record.id, menuType: MenuType.MENU };
       break;
     case "delete":
       ElMessageBox.confirm("是否删除该菜单?", "提示", {
