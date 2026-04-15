@@ -10,10 +10,10 @@
     <div class="todo-list">
       <div v-for="(item, index) in todoList" :key="index" class="todo-item">
         <div class="item-content">
-          <div class="item-text">{{ item.content }}</div>
+          <div class="item-text">{{ item.doName }}</div>
           <div class="item-time">
             <clock-circle-outlined class="time-icon" />
-            {{ item.time }}
+            {{ item.createTime }}
           </div>
         </div>
         <div class="item-actions">
@@ -31,33 +31,41 @@
 
 <script setup>
 import { ClockCircleOutlined } from "@ant-design/icons-vue";
+import getDatas from "@/network/index";
+import { ref, onMounted } from "vue";
 
-const todoList = [
+onMounted(() => {
+  List();
+});
+const todoList = ref([
   {
-    id: 1,
-    content: "【王建国】下达了《234234234》的事务性工作，请填写完成情况",
-    time: "2026-03-04",
+    completeStatus: "1",
+    completeTime: "2025-01-03 17:10:00",
+    createBy: "zhangsan",
+    createTime: "2025-01-03 14:00:00",
+    doId: "admin",
+    doName: "王建国】下达了《234234234》的事务性工作，请填写完成情况",
+    id: "TASK003",
+    taskId: "d88c275e981f9c3c763ef6884877041d",
+    taskName: "工作名称11",
   },
-  {
-    id: 2,
-    content:
-      "你已被指派为【土一-自揽-20251216-城轨】项目的主管计调，请及时完善生产组织信息。",
-    time: "2026-02-26",
-  },
-  {
-    id: 3,
-    content:
-      "【生产管理系统过程考核登记情况】：2026-01-29 非项目类【不服从责任主体单位工作安排，-1分/次】，考核：-1.00，如有疑问，请在3天内，在生产系统考核模块进行申述，过期将不再进行申述！",
-    time: "2026-01-29",
-  },
-];
+]);
+
+//获取代办列表
+const List = async () => {
+  const res = await getDatas("message/getTaskArrangementTodoList");
+  if (res.data.code === 200) {
+    todoList.value = res.data.result;
+  }
+  // console.log("待办列表", res);
+};
 
 const handleView = (item) => {
-  console.log("查看", item.id);
+  console.log("查看", item.taskId);
 };
 
 const handleClose = (item) => {
-  console.log("关闭", item.id);
+  console.log("关闭", item.taskId);
 };
 </script>
 

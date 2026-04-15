@@ -5,7 +5,7 @@
         props.project.projectType
       }}</a-tag>
       <a-tag class="project-status-tag" color="cyan">
-        {{ props.project.projectStepStr }}
+        {{ props.project.projectTypeDetail }}
       </a-tag>
     </div>
     <h3 class="project-name">{{ props.project.projectFullName }}</h3>
