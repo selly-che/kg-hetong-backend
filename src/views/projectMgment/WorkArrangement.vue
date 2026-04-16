@@ -86,31 +86,40 @@
             <!-- 操作 -->
             <template #operation="{ record }">
                 <a-space>
-                    <el-tooltip class="item" effect="dark" content="添加关注" placement="top-start">
-                        <!-- 根据collect 来判断是否添加operation_star -->
+                    <!-- <el-tooltip class="item" effect="dark" content="添加关注" placement="top-start">
+                        根据collect 来判断是否添加operation_star
                         <div class="operation_box " :class="{ 'operation_star': collect }" @click="collect = !collect">
                             <StarOutlined />
+                        </div>
+                    </el-tooltip> -->
+
+                    <!-- <el-tooltip class="item" effect="dark" content="单位确认情况：规划院" placement="top-start">
+                        <div class="operation_box">
+                            <SafetyCertificateOutlined />
+                        </div>
+                    </el-tooltip> -->
+                    <el-tooltip class="item" effect="dark" content="完成情况" placement="top-start"
+                        v-if="userName == record.taCreator">
+                        <div class="operation_box" @click="handleEditFn(record)">
+                            <!-- <MenuOutlined /> -->
+                            <PicLeftOutlined />
                         </div>
                     </el-tooltip>
                     <el-tooltip class="item" effect="dark" content="删除" placement="top-start"
                         v-if="userName == record.taCreator">
                         <div class="operation_box">
-                            <DeleteOutlined @click="handleDelete(record.id)" style="color: red;" />
-                        </div>
-                    </el-tooltip>
-                    <el-tooltip class="item" effect="dark" content="单位确认情况：规划院" placement="top-start">
-                        <div class="operation_box">
-                            <SafetyCertificateOutlined />
-                        </div>
-                    </el-tooltip>
-                    <el-tooltip class="item" effect="dark" content="完成情况" placement="top-start"
-                        v-if="userName == record.taCreator">
-                        <div class="operation_box" @click="handleEditFn(record)">
-                            <MenuOutlined />
+                            <i class="el-icon-delete"></i>
+                            <DeleteOutlined @click="handleDelete(record.id)" style="color: #ed5565;" />
                         </div>
                     </el-tooltip>
                     <!-- <a-button type="link" @click="handleDelete(record)">删除</a-button> -->
                 </a-space>
+            </template>
+            <!-- 通知名称 -->
+            <template #taTaskName="{ record }">
+                <span style="color: #1890ff; cursor: pointer;" @click="showTaskContentModal(record)">
+                    {{ record.taTaskName }}
+                </span>
             </template>
         </a-table>
         <!-- 新增工作安排 -->
@@ -137,14 +146,14 @@
                         </el-form-item>
                     </el-col>
 
-                    <el-col :span="6">
+                    <!-- <el-col :span="6">
                         <el-form-item label="抄送单位">
                             <el-select v-model="formData.taCCUnit" placeholder="请选择">
                                 <el-option label="单位一" value="单位一"></el-option>
                                 <el-option label="单位二" value="单位二"></el-option>
                             </el-select>
                         </el-form-item>
-                    </el-col>
+                    </el-col> -->
                     <el-col :span="6">
                         <el-button type="primary" @click="handleGenerateFn">生成</el-button>
                         <el-button type="info" @click="handleResetFn">重置</el-button>
@@ -157,7 +166,7 @@
                 </el-form-item>
 
                 <!-- 第三行：执行单位提示 -->
-                <el-form-item label="执行单位">
+                <el-form-item label="执行负责人">
                     <el-input v-model="formData.executingUnit"
                         placeholder="提示：如未找到相应的执行单位，请和生产院计调确认是否进行了项目组成员的安排"></el-input>
                 </el-form-item>
@@ -184,7 +193,7 @@
                                     style="width: 100%; padding: 8px;"></el-input>
                                 <div class="group-actions">
                                     <el-button size="small" type="danger" @click="removeGroup(index)">删除</el-button>
-                                    <el-button size="small" @click="toggleGroup(index)">折叠</el-button>
+                                    <el-button size="small" type="primary" @click="toggleGroup(index)">{{ group.expanded ? '收起' : '展开' }}</el-button>
                                 </div>
                             </div>
 
@@ -273,7 +282,7 @@
             </el-form>
         </el-dialog>
         <!-- 详情弹窗 -->
-        <a-modal v-model:visible="detailModalVisible" :title="detailModalTitle" width="80%" :footer="null">
+        <a-modal v-model:visible="detailModalVisible1" :title="detailModalTitle" width="80%" :footer="null">
             <div class="detail-container">
                 <!-- 头部信息 -->
                 <div class="detail-header">
@@ -424,16 +433,29 @@
                 <el-button @click="dialogLinkVisible = false">关闭</el-button>
             </template>
         </el-dialog>
+        <!-- 展示pdf 弹窗 -->
+        <a-modal v-model:visible="pdfModalDetails" :title="pdfDetailsTitle" width="90%" :footer="null">
+            <pdfDetail v-if="pdfModalDetails" :fromData="pdftableDetail"></pdfDetail>
+        </a-modal>
+        <!-- 展示详情 弹窗 -->
+        <a-modal v-model:visible="detailModalVisible" :title="detailModalTitle" width="80%" :footer="null">
+            <taskDetails v-if="detailModalVisible" @adjust="handleAdjust" :detailData="detailModalData"></taskDetails>
+        </a-modal>
     </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted, watch, reactive } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
-import { SettingOutlined, DeleteOutlined, SafetyCertificateOutlined, MenuOutlined, StarOutlined, SoundOutlined, HistoryOutlined } from '@ant-design/icons-vue';
+import { SettingOutlined, DeleteOutlined, SafetyCertificateOutlined, PicLeftOutlined, MenuOutlined, StarOutlined, SoundOutlined, HistoryOutlined } from '@ant-design/icons-vue';
 import getDatas from "@/network/index";
 import { ElMessage, ElMessageBox } from 'element-plus';
 import dayjs from 'dayjs';
+
+import taskDetails from "./components/taskDetails.vue";
+
+// 引入组件pdfDetail 并展示
+import pdfDetail from "./components/pdfDetail.vue";
 const dialogVisible = ref(false);
 
 // 搜索相关
@@ -496,6 +518,7 @@ const visibleColumns = computed(() => {
             key: 'taTaskName',
             width: 150,
             ellipsis: true,
+            slots: { customRender: 'taTaskName' },
         },
         {
             title: '下发人',
@@ -548,6 +571,16 @@ const visibleColumns = computed(() => {
 
     return columns.filter((col) => columnVisible.value[col.key as keyof typeof columnVisible.value]);
 });
+// 查看通知名称
+const pdfModalDetails = ref(false);
+const pdftableDetail = ref({});
+const pdfDetailsTitle = ref('显示文件')
+const showTaskContentModal = (record: any) => {
+    console.log(record, 'record');
+
+    pdfModalDetails.value = true
+    pdftableDetail.value = record
+};
 
 // 查询处理
 const router = useRouter();
@@ -841,6 +874,7 @@ const handleDelete = async (id: number) => {
 // 图片引入
 const Imgurl = require("@/static/image/e93263af-ce49-4278-b619-6d6b4ef6f015.png");
 const fit = ref('contain'); // 图片适应方式
+const detailModalVisible1 = ref(false);
 const detailModalVisible = ref(false);
 const detailModalTitle = ref('查看工作安排');
 const detailModalData = ref<any>({});
@@ -850,8 +884,7 @@ const collect = ref(false);
 
 
 const handleEditFn = (row: any) => {
-    console.log('点击编辑');
-
+    console.log(row, '点击编辑');
     detailModalVisible.value = true;
     detailModalTitle.value = '查看工作安排';
     detailModalData.value = row;
@@ -1286,7 +1319,6 @@ const handleAdjust = () => {
     //  Object.assign(formData, detailModalData.value);
     formData.value = JSON.parse(JSON.stringify(detailModalData.value));
     console.log(detailModalData.value, 'detailModalDatadetailModalData');
-
 }
 
 // 点击关联条款
@@ -1489,7 +1521,7 @@ watch(
 }
 
 .group-header {
-    background-color: #409eff;
+    background-color: #ddd;
     color: white;
     padding: 10px;
     border-radius: 4px;
