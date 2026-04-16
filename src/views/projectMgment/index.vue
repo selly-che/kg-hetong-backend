@@ -99,10 +99,10 @@
                 <span @click="handleTabClick(tab)">{{ tab.title }}</span>
               </template>
             </a-tab-pane>
-            <a-tab-pane >
+            <a-tab-pane>
               <template #tab>
                 <a-button type="link" size="small" @click="closeAllTabs" class="close-all-btn"
-                  :disabled="openedTabs.length === 0" >
+                  :disabled="openedTabs.length === 0">
                   全部关闭
                 </a-button>
               </template>
@@ -128,7 +128,9 @@ import { useRouter, useRoute } from "vue-router";
 import getDatas from "@/network/index";
 import { ElMessage } from "element-plus";
 import { LinkOutlined } from "@ant-design/icons-vue";
+import { useStore } from 'vuex';
 
+const store = useStore();
 const router = useRouter();
 const route = useRoute();
 const searchText = ref<string>("");
@@ -139,6 +141,13 @@ const activeTab = ref("main");
 const selectedMenuKeys = ref<string[]>([]);
 const openMenuKeys = ref<string[]>([]);
 const activeTabKey = ref("");
+
+
+const userNameInfo = computed(() => store.getters['common/userName']);
+console.log(userNameInfo.value, 'userNameInfouserNameInfo');
+const userName = store.getters['common/userName'];
+console.log(userName, 'userNameuserName');
+
 // 缓存的视图组件名称
 const cachedViews = ref<string[]>([
   "ProjectOverview",
@@ -203,6 +212,9 @@ const TabClickFn = (key: string) => {
   activeTabKey.value = '';
   getProjectList();
 };
+
+
+
 // 获取项目列表
 const getProjectList = async () => {
   projects.value = []; // 清空当前项目列表

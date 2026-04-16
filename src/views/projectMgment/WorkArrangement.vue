@@ -92,7 +92,8 @@
                             <StarOutlined />
                         </div>
                     </el-tooltip>
-                    <el-tooltip class="item" effect="dark" content="删除" placement="top-start">
+                    <el-tooltip class="item" effect="dark" content="删除" placement="top-start"
+                        v-if="userName == record.taCreator">
                         <div class="operation_box">
                             <DeleteOutlined @click="handleDelete(record.id)" style="color: red;" />
                         </div>
@@ -102,7 +103,8 @@
                             <SafetyCertificateOutlined />
                         </div>
                     </el-tooltip>
-                    <el-tooltip class="item" effect="dark" content="完成情况" placement="top-start">
+                    <el-tooltip class="item" effect="dark" content="完成情况" placement="top-start"
+                        v-if="userName == record.taCreator">
                         <div class="operation_box" @click="handleEditFn(record)">
                             <MenuOutlined />
                         </div>
@@ -1404,6 +1406,8 @@ const openContractDialog = (data: any) => {
     dialogTermsVisible.value = true;
 };
 
+const userName = ref<string | null>(null);
+
 // 判断url中的projectId和projectStep是否变化，如果变化则重新查询数据
 watch(() => [route.query.projectId, route.query.projectStep], () => {
     console.log('路由参数变化，重新查询数据');
@@ -1413,9 +1417,9 @@ watch(() => [route.query.projectId, route.query.projectStep], () => {
 
 
 onMounted(() => {
-    handleSearch();
+    handleSearch(); userName
     console.log('WorkArrangement mounted');
-
+    userName.value = localStorage.getItem("userName");
 })
 const Editable = ref(false);
 watch(

@@ -135,8 +135,8 @@
                 <a-form :model="detailForm" layout="inline">
                   <a-form-item label="状态">
                     <el-radio-group v-model="detailForm.status">
-                      <el-radio label="1">未完成</el-radio>
-                      <el-radio label="2">已完成</el-radio>
+                      <el-radio :value="1">未完成</el-radio>
+                      <el-radio :value="2">已完成</el-radio>
                     </el-radio-group>
                   </a-form-item>
                   <a-form-item label="单位">
@@ -194,9 +194,9 @@
     </a-modal>
 
     <!-- 展示pdf 弹窗 -->
-     <a-modal v-model:visible="pdfModalDetails" :title="pdfDetailsTitle" width="1200px" :footer="null">
-      
-      <pdfDetail v-if="pdfModalDetails"  :fromData="pdftableDetail"></pdfDetail>
+    <a-modal v-model:visible="pdfModalDetails" :title="pdfDetailsTitle" width="90%" :footer="null">
+
+      <pdfDetail v-if="pdfModalDetails" :fromData="pdftableDetail"></pdfDetail>
     </a-modal>
   </div>
 </template>
@@ -211,7 +211,7 @@ import { ElMessage } from 'element-plus';
 import pdfDetail from "./components/pdfDetail.vue";
 
 const pdfModalDetails = ref(false)
-const pdfDetailsTitle = ref('pdf详情')
+const pdfDetailsTitle = ref('显示文件')
 const pdftableDetail = ref({})
 
 // 图片引入
@@ -311,7 +311,6 @@ const visibleColumns = computed(() => {
       title: '下发人',
       dataIndex: 'taCreator',
       key: 'taCreator',
-      width: 120,
     },
     {
       title: '任务名称',
@@ -324,34 +323,29 @@ const visibleColumns = computed(() => {
       title: '文件名称',
       dataIndex: 'fileName',
       key: 'fileName',
-      width: 200,
       ellipsis: true,
     },
     {
       title: '图纸名称',
       dataIndex: 'drawingName',
       key: 'drawingName',
-      width: 100,
       slots: { customRender: 'drawingName' },
     },
     {
       title: '计划类型',
       dataIndex: 'planType',
       key: 'planType',
-      width: 120,
       slots: { customRender: 'planType' },
     },
     {
       title: '编号',
       dataIndex: 'taSerialNumber',
       key: 'taSerialNumber',
-      width: 150,
     },
     {
       title: '截止时间',
       dataIndex: 'taEndDate',
       key: 'taEndDate',
-      width: 160,
     },
     {
       title: '完成量',
@@ -392,11 +386,11 @@ const hasTaskContents = (record: any) => {
 
 // 显示任务内容弹窗
 const showTaskContentModal = (record: any) => {
-  console.log(record,'record');
-  
+  console.log(record, 'record');
+
   pdfModalDetails.value = true
   pdftableDetail.value = record
-  return 
+  return
   if (!hasTaskContents(record)) {
     ElMessage.info('该记录没有任务内容');
     return;
@@ -1014,6 +1008,7 @@ onMounted(() => {
   border-radius: 4px;
   cursor: pointer;
   width: 40%;
+
   &:hover {
     /* 加延迟 */
     transition: all 0.5s;

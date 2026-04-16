@@ -34,8 +34,9 @@ import { useRouter } from "vue-router";
 import getDatas from "@/network/index";
 import { ElMessage } from "element-plus";
 import { setUserPermissions } from '@/directives/permission'
+import { useStore } from 'vuex';
 
-const input = ref("admin");
+const input = ref("csq");
 const password = ref("123456");
 const router = useRouter();
 // const data:any = reactive({});
@@ -361,7 +362,7 @@ const adminRoutes = {
     },
   ],
 };
-
+const store = useStore();
 const login = async () => {
   console.log("登录", input.value, password.value);
 
@@ -390,6 +391,11 @@ const login = async () => {
 
   // 存储用户的姓名
   localStorage.setItem("userName", input.value);
+  // 存储用户名
+  store.dispatch('common/setUserName', input.value);
+  const userName = store.getters['common/userName'];
+  console.log(userName,'userNameuserNameuserName');
+  
   // 存储用户的职位
   if (res.data.code == 200) {
     // const menus = guestRoutes.nav;
