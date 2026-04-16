@@ -5,20 +5,20 @@
         props.project.projectType
       }}</a-tag>
       <a-tag class="project-status-tag" color="cyan">
-        {{ props.project.projectStepStr }}
+        {{ props.project.projectTypeDetail }}
       </a-tag>
     </div>
     <h3 class="project-name">{{ props.project.projectFullName }}</h3>
     <div class="project-stats">
       <div class="stat-item">
         <div class="stat-label">集团合同数量</div>
-        <div class="stat-value">{{ props.project.internalContractCount }}</div>
+        <div class="stat-value">{{ props.project.inContractCount }}</div>
       </div>
       <div class="stat-divider"></div>
       <div class="stat-item">
         <div class="stat-label">外协合同数量</div>
         <div class="stat-value">
-          {{ props.project.externalContractCount }}
+          {{ props.project.outContractCount }}
         </div>
       </div>
     </div>
