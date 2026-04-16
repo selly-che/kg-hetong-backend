@@ -1,300 +1,369 @@
 <template>
-    <div ref="htmlContent" class="contact-sheet">
-        <!-- 标题部分 -->
-        <h1 class="sheet-title">{{ fromData.taTaskName }}</h1>
+    <div class="pdf-wrapper">
+        <div ref="pdfSourceRef" id="pdf-source" class="notice-container-hidden">
+            <h1 class="title">{{ fromData.taTaskName || '总体通知单' }}</h1>
 
-        <!-- 编号部分 -->
-        <div class="serial-number">土一-自揽-20251216-城轨-业-土建一院-【2025】002号</div>
+            <div class="notice-number">
+                编号：{{ fromData.taSerialNumber || '-' }}
+            </div>
 
-        <!-- 项目信息部分 -->
-        <a-descriptions :column="1" bordered colon :labelStyle="{ width: '150px' }">
-            <a-descriptions-item label="项目名称及阶段">
-                土一-自揽-20251216-城轨 初步设计
-            </a-descriptions-item>
-            <a-descriptions-item label="主送单位">
-                规划院
-            </a-descriptions-item>
-            <a-descriptions-item label="抄送单位">
-                经营计划部、西南指挥部
-            </a-descriptions-item>
-            <a-descriptions-item label="发送单位">
-                土建一院
-            </a-descriptions-item>
-        </a-descriptions>
-        <a-descriptions :column="2" bordered colon :labelStyle="{ width: '150px' }">
-            <a-descriptions-item label="编制">
-                {{ fromData.taCreator }}
-            </a-descriptions-item>
-            <a-descriptions-item label="日期">
-                {{ formatDate(compileDate) }}
-            </a-descriptions-item>
-        </a-descriptions>
+            <table class="info-table">
+                <tbody>
+                    <tr>
+                        <th class="label-cell">项目名称及阶段</th>
+                        <td class="content-cell" colspan="3">
+                            {{ fromData.taTaskName || '-' }} {{ fromData.projectStepStr || '' }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th class="label-cell">主送单位及部门</th>
+                        <td class="content-cell" colspan="3">
+                            {{ fromData.taCCUnit || '-' }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th class="label-cell">抄送单位及部门</th>
+                        <td class="content-cell" colspan="3">
+                            {{ fromData.taCCUnit || '-' }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th class="label-cell">编制</th>
+                        <td class="content-cell">{{ fromData.taCreator || '-' }}</td>
+                        <th class="label-cell">日期</th>
+                        <td class="content-cell">{{ formatDate(fromData.taEndDate) }}</td>
+                    </tr>
+                </tbody>
+            </table>
 
-        <div class="contact-content">
-            <h4>联系事项：</h4>
-            <h2>1216-1216-自揽-城轨-主责1</h2>
-            <p>{{ formatDate.taPreface }}</p>
-            <p>工期计划及要求详见附件。</p>
+            <div class="content-section">
+                <p class="content-title"><strong>{{ fromData.taTaskName || '联系事项' }}</strong></p>
+                <p style="text-indent: 2em;">{{ fromData.taPreface || '根据集团公司生产计划安排，现下达相关任务，请各单位遵照执行。' }}</p>
+                <p style="text-indent: 2em;">工期计划及要求详见附件。</p>
+
+                <div class="signature">
+                    <p>签署：{{ fromData.taCreator || '管理员' }} {{ formatDate(fromData.taEndDate) }}</p>
+                </div>
+            </div>
+
+            <div class="schedule-section">
+                <h3>工期计划</h3>
+                <table class="schedule-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 80px;">序号</th>
+                            <th>任务内容</th>
+                            <th style="width: 150px;">完成单位</th>
+                            <th style="width: 150px;">完成时间</th>
+                            <th style="width: 200px;">备注</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <template v-for="(group, index) in fromData.taskGroups" :key="group.id">
+                            <tr class="parent-row">
+                                <td>{{ Number(index) + 1 }}</td>
+                                <td class="task-name">{{ group.tgName }}</td>
+                                <td>--</td>
+                                <td>{{ formatDate(group.tgUpdateTime) }}</td>
+                                <td>{{ group.tgDescription }}</td>
+                            </tr>
+
+                            <tr v-for="(status, sIndex) in group.twaTaskContentStatuses" :key="status.id"
+                                class="child-row">
+                                <td>{{ Number(index) + 1 }}.{{ Number(sIndex) + 1 }}</td>
+                                <td class="task-name child-name">{{ status.tcName }}</td>
+                                <td>{{ status.deptMajor || '--' }}</td>
+                                <td>{{ formatDate(status.euCompleteDate) }}</td>
+                                <td>{{ status.tcRemark }}</td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </div>
         </div>
-        <!-- 联系事项 -->
 
-        <!-- 工期计划表格 -->
-        <div class="schedule-table">
-            <h4>工期计划：</h4>
-            <el-table :data="fromData.taskGroups" style="width: 100%" border
-                :header-cell-style="{ 'text-align': 'center' }">
-                <el-table-column type="index" label="序号" width="80" align="center" />
-                <el-table-column prop="tgName" label="任务内容" header-align="center" />
-                <el-table-column prop="unit" label="完成单位" width="150" align="center" />
-                <el-table-column prop="tgUpdateTime" label="完成时间" width="150" align="center" />
-                <el-table-column prop="tgDescription" label="备注" width="200" header-align="center" />
-            </el-table>
+        <!-- PDF 预览区域 -->
+        <div class="pdf-preview-box">
+            <div v-if="isLoading" class="loading-tip">正在生成 PDF，请稍候...</div>
+            <embed v-else-if="pdfUrl" :src="pdfUrl" type="application/pdf" width="100%" height="800px" />
+            <div v-else class="empty-tip">
+                {{ errorMsg || '暂无数据' }}
+            </div>
         </div>
-
-        <!-- 下载按钮 -->
-        <!-- <div class="download-btn">
-            <el-button type="primary" size="large" @click="downloadHTML">
-                <el-icon>
-                    <Download />
-                </el-icon> 下载HTML
-            </el-button>
-        </div> -->
     </div>
 </template>
 
-<script setup>
-import { ref, reactive } from 'vue'
-import { Download } from '@element-plus/icons-vue'
-import { format } from 'date-fns'
+<script lang="ts">
+import { defineComponent, ref, watch, onBeforeUnmount, nextTick } from 'vue';
+import { format } from 'date-fns';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 
-// 接收父组件的数据
-const props = defineProps({
-    fromData: {
-        type: Object,
-        required: true
-    }
-})
+export default defineComponent({
+    name: 'PdfDetail',
+    props: {
+        fromData: {
+            type: Object,
+            required: true,
+            default: () => ({})
+        }
+    },
+    setup(props) {
+        const pdfUrl = ref<string | null>(null);
+        const isLoading = ref<boolean>(false);
+        const errorMsg = ref<string>('');
+        const pdfSourceRef = ref<HTMLElement | null>(null);
 
-const aaaa = {
-    "taCreatTime": null,
-    "taCCUnit": "",
-    "projectStepStr": null,
-    "taskGroups": [
-        {
-            "waTaskArrangementId": "e1f98163114c68ffd030bf8a7e9718ff",
-            "isDelete": 0,
-            "tgUpdateTime": null,
-            "tgType": null,
-            "twaTaskContentStatuses": [
-                {
-                    "euCompleteDate": "2026-04-10 11:05:35",
-                    "waTaskGroupId": "fd6fe0760c97c54bfff4852996459506",
-                    "materialId": null,
-                    "tcRemark": "备注",
-                    "tcName": "任务1",
-                    "tcLimitDate": null,
-                    "inputFile": null,
-                    "majorPrincipleName": null,
-                    "deptMajorId": null,
-                    "euIsComplete": null,
-                    "id": "49d40252e417a7f2c88a9c0282d70d11",
-                    "majorName": null,
-                    "deptMajor": "unit1",
-                    "tcId": null,
-                    "day": null
-                },
-                {
-                    "euCompleteDate": "2026-04-10 11:05:43",
-                    "waTaskGroupId": "fd6fe0760c97c54bfff4852996459506",
-                    "materialId": null,
-                    "tcRemark": "备注",
-                    "tcName": "任务2",
-                    "tcLimitDate": null,
-                    "inputFile": null,
-                    "majorPrincipleName": null,
-                    "deptMajorId": null,
-                    "euIsComplete": null,
-                    "id": "1d8015803056d872150a6e7bacde74e5",
-                    "majorName": null,
-                    "deptMajor": "unit2",
-                    "tcId": null,
-                    "day": null
+        // 日期格式化
+        const formatDate = (dateStr: string | null) => {
+            if (!dateStr) return '--';
+            try {
+                return format(new Date(dateStr), 'yyyy/MM/dd');
+            } catch (e) {
+                return dateStr;
+            }
+        };
+
+        // 核心生成逻辑
+        const generatePDF = async () => {
+            // 1. 基本校验
+            if (!props.fromData || !props.fromData.taTaskName) {
+                // 如果连任务名都没有，说明数据还没准备好，静默返回即可，不报错
+                return;
+            }
+
+            isLoading.value = true;
+            errorMsg.value = '';
+
+            // 清理旧的 URL
+            if (pdfUrl.value) {
+                URL.revokeObjectURL(pdfUrl.value);
+                pdfUrl.value = null;
+            }
+
+            try {
+                // 2. 等待 Vue 更新 DOM
+                await nextTick();
+
+                // 使用 ref 获取元素，比 getElementById 更可靠
+                const element = pdfSourceRef.value;
+                if (!element) {
+                    throw new Error('渲染容器未就绪');
                 }
-            ],
-            "id": "fd6fe0760c97c54bfff4852996459506",
-            "tgName": "节点分期",
-            "tgDescription": "节点分期节点分期节点分期节点分期",
-            "changeMarkId": null,
-            "tgOrder": null
-        }
-    ],
-    "taSerialNumber": "号1775790348673",
-    "taEndDate": "2026-04-30 11:05:49",
-    "taDemand": "要求1",
-    "taStatus": 0,
-    "taTaskSource": null,
-    "taReleaseTime": null,
-    "taRequestOAId": null,
-    "projectDept": null,
-    "taOriginalCreator": null,
-    "isAssess": null,
-    "completionCount": "0/2",
-    "taUpdateTime": "2026-04-10 11:05:49",
-    "taskRole": null,
-    "isOnlyDeduct": null,
-    "id": "e1f98163114c68ffd030bf8a7e9718ff",
-    "gzaprwfj": null,
-    "taPreface": "根据集团公司生产计划安排，现下达《》，请各单位遵照执行。",
-    "taHasPictureWork": null,
-    "taChangeIds": null,
-    "taPlanType": "0",
-    "taIssuanceTime": null,
-    "taCreator": "csq",
-    "isDelete": 0,
-    "taTaskName": "工作名称1",
-    "isChangeDesign": null,
-    "taCompleteDate": null,
-    "isCounted": null,
-    "taHasFileWork": null,
-    "dicType": null,
-    "taTaskType": null,
-    "pmAlterInfoListId": null,
-    "taIssuancer": null,
-    "planExecutionProgress": 0,
-    "workType": 0,
-    "projectId": "ef983326bd7a9a7e58ec07708bd57e6d",
-    "taReason": "无",
-    "projectStep": 602
-}
 
-console.log(props.fromData, 'fromDatafromData');
+                // 额外等待 100ms 确保字体和样式完全应用
+                await new Promise(resolve => setTimeout(resolve, 100));
 
+                // 3. 执行截图
+                const canvas = await html2canvas(element, {
+                    scale: 2, // 提高清晰度
+                    useCORS: true, // 允许跨域图片
+                    allowTaint: true,
+                    logging: false,
+                    backgroundColor: '#ffffff',
+                    windowWidth: element.scrollWidth,
+                    windowHeight: element.scrollHeight
+                });
 
-// 基础数据
-const compileDate = ref(new Date(1766141922000))
+                // 4. 创建 PDF
+                const imgWidth = 595.28; // A4 宽度 pt
+                const pageHeight = 841.89; // A4 高度 pt
+                const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
-// DOM引用
-const htmlContent = ref(null)
+                const pdf = new jsPDF('p', 'pt', 'a4');
 
-// 日期格式化
-const formatDate = (date) => {
-    return format(date, 'yyyy年MM月dd日')
-}
+                let heightLeft = imgHeight;
+                let position = 0;
 
-// 下载HTML功能
-const downloadHTML = () => {
-    const content = htmlContent.value.innerHTML
-    const source = `
-    <!DOCTYPE html>
-    <html>
-    <head>
-      <meta charset="UTF-8">
-      <title>工作联系单</title>
-      <link rel="stylesheet" href="https://unpkg.com/element-plus/dist/index.css">
-      <style>
-        body {
-          font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", Arial, sans-serif;
-        }
-        .contact-sheet {
-          max-width: 800px;
-          margin: 20px auto;
-          padding: 20px;
-          box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
-        }
-        .sheet-title {
-          text-align: center;
-          font-size: 24px;
-          color: #333;
-          margin-bottom: 10px;
-        }
-        .serial-number {
-          text-align: left;
-          font-size: 16px;
-          color: #666;
-          margin-bottom: 20px;
-        }
-        .contact-content p, .schedule-table p {
-          text-align: left;
-          line-height: 1.8;
-        }
-        .download-btn {
-          text-align: center;
-          margin-top: 30px;
-        }
-      </style>
-    </head>
-    <body>
-      <div class="contact-sheet">
-        ${content}
-      </div>
-    </body>
-    </html>
-  `
+                // 第一页
+                pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, position, imgWidth, imgHeight);
+                heightLeft -= pageHeight;
 
-    const blob = new Blob([source], { type: 'text/html' })
-    const url = URL.createObjectURL(blob)
+                // 后续页
+                while (heightLeft >= 0) {
+                    position = heightLeft - imgHeight;
+                    pdf.addPage();
+                    pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, position, imgWidth, imgHeight);
+                    heightLeft -= pageHeight;
+                }
 
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `土一-自揽-20251216-城轨-业-土建一院-【2025】002号.html`
-    document.body.appendChild(a)
-    a.click()
+                // 5. 输出 Blob
+                const blob = pdf.output('blob');
+                pdfUrl.value = URL.createObjectURL(blob);
 
-    // 清理
-    setTimeout(() => {
-        document.body.removeChild(a)
-        URL.revokeObjectURL(url)
-    }, 100)
-}
+            } catch (error: any) {
+                console.error('PDF 生成详细错误:', error);
+                errorMsg.value = '生成失败: ' + (error.message || '未知错误');
+            } finally {
+                isLoading.value = false;
+            }
+        };
+
+        // 监听数据变化
+        watch(() => props.fromData, (newVal) => {
+            // 只有当 newVal 有实际内容时才生成
+            if (newVal && newVal.taTaskName) {
+                generatePDF();
+            }
+        }, { deep: true, immediate: true });
+
+        // 组件销毁时清理
+        onBeforeUnmount(() => {
+            if (pdfUrl.value) {
+                URL.revokeObjectURL(pdfUrl.value);
+            }
+        });
+
+        return {
+            formatDate,
+            pdfUrl,
+            isLoading,
+            errorMsg,
+            pdfSourceRef
+        };
+    }
+});
 </script>
 
 <style scoped>
-.contact-sheet {
-    max-width: 800px;
-    margin: 20px auto;
+.pdf-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    background-color: #f0f2f5;
+    min-height: 100%;
 }
 
-.sheet-title {
+/* 关键：隐藏但保留布局空间，或者移出屏幕 */
+.notice-container-hidden {
+    position: absolute;
+    left: -9999px;
+    top: 0;
+    width: 800px;
+    /* 必须固定宽度，否则截图可能变形 */
+    padding: 40px;
+    background-color: #fff;
+    font-family: "SimSun", "Songti SC", serif;
+    z-index: -1;
+}
+
+.title {
     text-align: center;
     font-size: 24px;
-    color: #333;
+    font-weight: bold;
     margin-bottom: 10px;
+    color: #333;
 }
 
-.serial-number {
+.notice-number {
     text-align: right;
-    font-size: 16px;
-    color: #666;
     margin-bottom: 20px;
+    font-size: 14px;
+    color: #333;
 }
 
+.info-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 0;
+    font-size: 14px;
+}
 
+.info-table th,
+.info-table td {
+    border: 1px solid #000;
+    padding: 8px 12px;
+    text-align: left;
+    vertical-align: middle;
+}
+
+.info-table th {
+    background-color: #f9f9f9;
+    font-weight: bold;
+    width: 150px;
+    text-align: center;
+}
+
+.content-section {
+    border: 1px solid #000;
+    border-top: none;
+    padding: 20px;
+    margin-bottom: 30px;
+    line-height: 1.8;
+    font-size: 14px;
+}
+
+.content-title {
+    text-align: center;
+    font-size: 16px;
+    margin-bottom: 15px;
+    font-weight: bold;
+}
+
+.signature {
+    text-align: right;
+    margin-top: 30px;
+    font-size: 14px;
+}
+
+.schedule-section h3 {
+    font-size: 16px;
+    margin-bottom: 10px;
+    border-left: 4px solid #333;
+    padding-left: 10px;
+    color: #333;
+}
 
 .schedule-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.schedule-table th,
+.schedule-table td {
+    border: 1px solid #000;
+    padding: 8px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.schedule-table th {
+    background-color: #f0f0f0;
+    font-weight: bold;
+}
+
+.task-name {
+    text-align: left !important;
+}
+
+.child-row {
+    background-color: #fafafa;
+}
+
+.child-name {
+    padding-left: 30px !important;
+    text-align: left !important;
+    color: #666;
+}
+
+.pdf-preview-box {
+    width: 100%;
+    min-height: 800px;
+    border: 1px solid #dcdcdc;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    background: #fff;
     margin-top: 20px;
 }
 
-.contact-content {
-    border: 1px solid #f0f0f0;
-    padding: 4px 8px;
-}
-
-.contact-content h2 {
-    text-align: center;
-}
-
-.contact-content p {
-    /* 第一行需要两个空格 */
-    text-indent: 2em;
-}
-
-.schedule-table p {
-    text-align: left;
-    line-height: 1.8;
-}
-
-.download-btn {
-    text-align: center;
-    margin-top: 30px;
+.loading-tip,
+.empty-tip {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 200px;
+    color: #666;
+    font-size: 14px;
 }
 </style>

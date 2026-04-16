@@ -203,7 +203,22 @@
           align="center"
           v-if="Editable"
         />
-        <el-table-column prop="majorName" label="专业" align="center" />
+      <!-- 单位名称、专业名称、专业负责人域账号、第一牵头人、第二牵头人、专业简称 -->
+       <el-table-column
+          prop="deptName"
+          label="单位名称"
+          align="center"
+        />
+        <el-table-column
+          prop="majorName"
+          label="专业名称"
+          align="center"
+        />
+        <el-table-column
+          prop="majorPrincipleCode"
+          label="专业负责人域账号"
+          align="center"
+        />
         <el-table-column
           prop="majorPrincipleName"
           label="第一牵头人"
@@ -211,10 +226,14 @@
         />
         <el-table-column
           prop="otherMajorPrincipleName"
-          label="其他牵头人"
+          label="第二牵头人"
           align="center"
         />
-        <el-table-column prop="suoshi" label="生产所（室）" align="center" />
+        <el-table-column
+          prop="productCode"
+          label="专业简称"
+          align="center"
+        />
       </el-table>
     </div>
     <!-- 如果没有数据，显示提示 -->
@@ -454,7 +473,9 @@ const handleSaveAll = async () => {
 
     const res = await getDatas(
       "project/AddProjectMember",
-      tempMemberList.value,
+     {deptMajorList: tempMemberList.value,
+      projectInfoId: projectInfoID.value
+     },
     );
 
     if (res.data.code === 200) {
