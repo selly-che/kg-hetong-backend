@@ -10,7 +10,8 @@
     <div class="todo-list">
       <div v-for="(item, index) in todoList" :key="index" class="todo-item">
         <div class="item-content">
-          <div class="item-text">{{ item.doName }}</div>
+          <!-- taskName -->
+          <div class="item-text">{{ item.taskName }}</div>
           <div class="item-time">
             <clock-circle-outlined class="time-icon" />
             {{ item.createTime }}
@@ -54,6 +55,7 @@ const todoList = ref([
 //获取代办列表
 const List = async () => {
   const res = await getDatas("message/getTaskArrangementTodoList");
+  console.log("待办列表", res);
   if (res.data.code === 200) {
     todoList.value = res.data.result;
   }
@@ -61,11 +63,17 @@ const List = async () => {
 };
 
 const handleView = (item) => {
-  console.log("查看", item.taskId);
+  console.log("查看", item.id);
 };
 
-const handleClose = (item) => {
-  console.log("关闭", item.taskId);
+const handleClose = async (item) => {
+  console.log("关闭", item.id);
+  const res = await getDatas("message/closeTaskTodo", {
+    taskTodoId: item.id,
+  });
+  if (res.data.code === 200) {
+    List();
+  }
 };
 </script>
 

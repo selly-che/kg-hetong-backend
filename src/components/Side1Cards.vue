@@ -12,13 +12,13 @@
     <div class="project-stats">
       <div class="stat-item">
         <div class="stat-label">集团合同数量</div>
-        <div class="stat-value">{{ props.project.internalContractCount }}</div>
+        <div class="stat-value">{{ props.project.inContractCount }}</div>
       </div>
       <div class="stat-divider"></div>
       <div class="stat-item">
         <div class="stat-label">外协合同数量</div>
         <div class="stat-value">
-          {{ props.project.externalContractCount }}
+          {{ props.project.outContractCount }}
         </div>
       </div>
     </div>

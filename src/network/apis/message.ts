@@ -7,4 +7,12 @@ export default {
             method: 'get',
         })
     },
+    //关闭代办/jeecg-boot/projectcontract/taskArrangemenTodo/closeTaskTodo
+    closeTaskTodo(params: any) {
+        return ({
+            url: '/projectcontract/taskArrangemenTodo/closeTaskTodo',
+            method: 'post',
+            params,
+        })
+    }
 }
