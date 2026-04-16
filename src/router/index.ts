@@ -110,6 +110,13 @@ const routes: Array<RouteRecordRaw> = [
           import("../views/contractMgment/outsourcingDetail.vue"),
         meta: { check: true, title: "外协合同详情", noTab: false },
       },
+      //代办事项
+      {
+        path: "/todoList",
+        name: "todoList",
+        component: () => import("../views/Todolist/index.vue"),
+        meta: { check: true, title: "代办事项" },
+      }
     ],
   },
   {
