@@ -11,22 +11,22 @@
       <div v-for="(item, index) in todoList" :key="index" class="todo-item">
         <div class="item-content">
           <!-- taskName -->
-          <div class="item-text">{{ item.taskName }}</div>
+          <div class="item-text">{{ item?.taskName }}</div>
           <div class="item-time">
             <clock-circle-outlined class="time-icon" />
-            {{ item.createTime }}
+            {{ item?.createTime }}
           </div>
         </div>
         <div class="item-actions">
-          <a-button size="small" class="action-btn" @click="handleView(item)"
-            >查看</a-button
-          >
-          <a-button size="small" class="action-btn" @click="handleClose(item)"
-            >关闭</a-button
-          >
+          <a-button size="small" class="action-btn" @click="handleView(item)">查看</a-button>
+          <a-button size="small" class="action-btn" @click="handleClose(item)">关闭</a-button>
         </div>
       </div>
     </div>
+    <!-- 详情 -->
+    <a-modal v-model:visible="visible" title="任务详情" width="80%">
+      <taskdetails :detailData="detailData" :type="'home'" />
+    </a-modal>
   </div>
 </template>
 
@@ -34,6 +34,7 @@
 import { ClockCircleOutlined } from "@ant-design/icons-vue";
 import getDatas from "@/network/index";
 import { ref, onMounted } from "vue";
+import taskdetails from "@/views/projectMgment/components/taskDetails.vue";
 
 onMounted(() => {
   List();
@@ -62,8 +63,12 @@ const List = async () => {
   // console.log("待办列表", res);
 };
 
+const visible = ref(false);
+const detailData = ref({});
 const handleView = (item) => {
-  console.log("查看", item.id);
+  visible.value = true;
+  console.log("查看", item);
+  detailData.value = item;
 };
 
 const handleClose = async (item) => {
