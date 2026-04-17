@@ -5,7 +5,7 @@
         <span class="pie-title">待办工作</span>
         <span class="todo-tag">待办: {{ todoList.length }}</span>
       </div>
-      <a class="more-link">查看更多</a>
+      <a class="more-link" @click="handleViewAll(item)">查看更多</a>
     </div>
     <div class="todo-list">
       <div v-for="(item, index) in todoList" :key="index" class="todo-item">
@@ -32,13 +32,16 @@
 
 <script setup>
 import { ClockCircleOutlined } from "@ant-design/icons-vue";
+import { Modal } from "ant-design-vue";
 import getDatas from "@/network/index";
 import { ref, onMounted } from "vue";
 import taskdetails from "@/views/projectMgment/components/taskDetails.vue";
+import { useRouter } from "vue-router";
 
 onMounted(() => {
   List();
 });
+const router = useRouter();
 const todoList = ref([
   {
     completeStatus: "1",
@@ -58,9 +61,14 @@ const List = async () => {
   const res = await getDatas("message/getTaskArrangementTodoList");
   console.log("待办列表", res);
   if (res.data.code === 200) {
-    todoList.value = res.data.result;
+    todoList.value = res.data.result.records;
   }
   // console.log("待办列表", res);
+};
+const handleViewAll = () => {
+  router.push({
+    path: "/todoList",
+  });
 };
 
 const visible = ref(false);
@@ -71,14 +79,22 @@ const handleView = (item) => {
   detailData.value = item;
 };
 
-const handleClose = async (item) => {
-  console.log("关闭", item.id);
-  const res = await getDatas("message/closeTaskTodo", {
-    taskTodoId: item.id,
+const handleClose = (item) => {
+  Modal.confirm({
+    title: "提示",
+    content: "是否把当前代办设为已处理",
+    okText: "确认",
+    cancelText: "取消",
+    async onOk() {
+      console.log("关闭", item.id);
+      const res = await getDatas("message/closeTaskTodo", {
+        taskTodoId: item.id,
+      });
+      if (res.data.code === 200) {
+        List();
+      }
+    },
   });
-  if (res.data.code === 200) {
-    List();
-  }
 };
 </script>
 
