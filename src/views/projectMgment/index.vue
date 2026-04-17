@@ -109,7 +109,7 @@
             </a-tab-pane>
           </a-tabs>
 
-          <div class="tab-content">
+          <div class="tab-content" id="tabContent">
             <keep-alive :include="cachedViews">
               <router-view v-slot="{ Component }">
                 <component :is="Component" />

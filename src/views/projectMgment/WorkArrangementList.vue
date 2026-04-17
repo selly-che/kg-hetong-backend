@@ -1,132 +1,135 @@
 <template>
-  <div class="work-arrangement-container">
-    <!-- 搜索区域 -->
-    <div class="search-bar">
-      <a-select v-model:value="searchType" style="width: 100px; margin-right: 8px">
-        <a-select-option value="noticeName">通知名称</a-select-option>
-        <a-select-option value="taskName">任务名称</a-select-option>
-      </a-select>
+  <div>
+    <div class="work-arrangement-container" v-if="tableDataVisible == 0">
+      <!-- 搜索区域 -->
+      <div class="search-bar">
+        <a-select v-model:value="searchType" style="width: 100px; margin-right: 8px">
+          <a-select-option value="noticeName">通知名称</a-select-option>
+          <a-select-option value="taskName">任务名称</a-select-option>
+        </a-select>
 
-      <a-input v-model:value="searchText" placeholder="请输入名称" style="width: 300px; margin-right: 16px" />
+        <a-input v-model:value="searchText" placeholder="请输入名称" style="width: 300px; margin-right: 16px" />
 
-      <!-- 状态筛选 -->
-      <a-checkbox-group v-model:value="statusFilters" style="margin-right: 16px">
-        <a-checkbox value="1">未完成</a-checkbox>
-        <a-checkbox value="2">已完成</a-checkbox>
-      </a-checkbox-group>
+        <!-- 状态筛选 -->
+        <a-checkbox-group v-model:value="statusFilters" style="margin-right: 16px">
+          <a-checkbox value="1">未完成</a-checkbox>
+          <a-checkbox value="2">已完成</a-checkbox>
+        </a-checkbox-group>
 
-      <!-- 计划类型筛选 -->
-      <a-checkbox-group v-model:value="planFilters" style="margin-right: 16px">
-        <a-checkbox value="0">过程计划</a-checkbox>
-        <a-checkbox value="1">阶段计划</a-checkbox>
-      </a-checkbox-group>
+        <!-- 计划类型筛选 -->
+        <a-checkbox-group v-model:value="planFilters" style="margin-right: 16px">
+          <a-checkbox value="0">过程计划</a-checkbox>
+          <a-checkbox value="1">阶段计划</a-checkbox>
+        </a-checkbox-group>
 
-      <!-- 查询和重置按钮 -->
-      <a-button type="primary" @click="handleSearch">查询</a-button>
-      <a-button @click="handleReset">重置</a-button>
+        <!-- 查询和重置按钮 -->
+        <a-button type="primary" @click="handleSearch">查询</a-button>
+        <a-button @click="handleReset">重置</a-button>
 
-      <!-- 列筛选菜单 -->
-      <a-dropdown overlayClassName="column-filter-dropdown" trigger="click">
-        <a-button>
-          <SettingOutlined />
-          <span>列设置</span>
-        </a-button>
-        <template #overlay>
-          <a-menu>
-            <a-menu-item key="operation">
-              <a-checkbox v-model:checked="columnVisible.operation">操作</a-checkbox>
-            </a-menu-item>
-            <a-menu-item key="taTaskName">
-              <a-checkbox v-model:checked="columnVisible.taTaskName">通知名称</a-checkbox>
-            </a-menu-item>
-            <a-menu-item key="taCreator">
-              <a-checkbox v-model:checked="columnVisible.taCreator">下发人</a-checkbox>
-            </a-menu-item>
-            <a-menu-item key="tcName">
-              <a-checkbox v-model:checked="columnVisible.tcName">任务名称</a-checkbox>
-            </a-menu-item>
-            <a-menu-item key="fileName">
-              <a-checkbox v-model:checked="columnVisible.fileName">文件名称</a-checkbox>
-            </a-menu-item>
-            <a-menu-item key="drawingName">
-              <a-checkbox v-model:checked="columnVisible.drawingName">图纸名称</a-checkbox>
-            </a-menu-item>
-            <a-menu-item key="planType">
-              <a-checkbox v-model:checked="columnVisible.planType">计划类型</a-checkbox>
-            </a-menu-item>
-            <a-menu-item key="taSerialNumber">
-              <a-checkbox v-model:checked="columnVisible.taSerialNumber">编号</a-checkbox>
-            </a-menu-item>
-            <a-menu-item key="taEndDate">
-              <a-checkbox v-model:checked="columnVisible.taEndDate">截止时间</a-checkbox>
-            </a-menu-item>
-            <a-menu-item key="completionCount">
-              <a-checkbox v-model:checked="columnVisible.completionCount">完成量</a-checkbox>
-            </a-menu-item>
-          </a-menu>
-        </template>
-      </a-dropdown>
-    </div>
+        <!-- 列筛选菜单 -->
+        <a-dropdown overlayClassName="column-filter-dropdown" trigger="click">
+          <a-button>
+            <SettingOutlined />
+            <span>列设置</span>
+          </a-button>
+          <template #overlay>
+            <a-menu>
+              <a-menu-item key="operation">
+                <a-checkbox v-model:checked="columnVisible.operation">操作</a-checkbox>
+              </a-menu-item>
+              <a-menu-item key="taTaskName">
+                <a-checkbox v-model:checked="columnVisible.taTaskName">通知名称</a-checkbox>
+              </a-menu-item>
+              <a-menu-item key="taCreator">
+                <a-checkbox v-model:checked="columnVisible.taCreator">下发人</a-checkbox>
+              </a-menu-item>
+              <a-menu-item key="tcName">
+                <a-checkbox v-model:checked="columnVisible.tcName">任务名称</a-checkbox>
+              </a-menu-item>
+              <a-menu-item key="fileName">
+                <a-checkbox v-model:checked="columnVisible.fileName">文件名称</a-checkbox>
+              </a-menu-item>
+              <a-menu-item key="drawingName">
+                <a-checkbox v-model:checked="columnVisible.drawingName">图纸名称</a-checkbox>
+              </a-menu-item>
+              <a-menu-item key="planType">
+                <a-checkbox v-model:checked="columnVisible.planType">计划类型</a-checkbox>
+              </a-menu-item>
+              <a-menu-item key="taSerialNumber">
+                <a-checkbox v-model:checked="columnVisible.taSerialNumber">编号</a-checkbox>
+              </a-menu-item>
+              <a-menu-item key="taEndDate">
+                <a-checkbox v-model:checked="columnVisible.taEndDate">截止时间</a-checkbox>
+              </a-menu-item>
+              <a-menu-item key="completionCount">
+                <a-checkbox v-model:checked="columnVisible.completionCount">完成量</a-checkbox>
+              </a-menu-item>
+            </a-menu>
+          </template>
+        </a-dropdown>
+      </div>
 
-    <!-- 表格区域 -->
-    <a-table :dataSource="tableData" :columns="visibleColumns" :loading="tableLoading" :pagination="paginationConfig"
-      size="small" bordered class="work-arrangement-table" @change="handleTableChange">
-      <template #empty>
-        <div class="empty-text">没有找到匹配的记录</div>
-      </template>
-
-      <!-- 自定义列渲染 -->
-      <template #planType="{ record }">
-        <span>{{ getPlanTypeName(record.taPlanType) }}</span>
-      </template>
-
-      <template #drawingName="{ record }">
-        <span>{{ record.taHasPictureWork ? '有' : '无' }}</span>
-      </template>
-      <template #taTaskName="{ record }">
-        <span class="notice-name-link" @click="showTaskContentModal(record)" style="color: #1890ff; cursor: pointer;">
-          {{ record.taTaskName }}
-        </span>
-      </template>
-      <!-- 操作 -->
-      <template #operation="{ record }">
-        <a-space>
-          <PicLeftOutlined style="color: #1890ff;" @click="handleEdit(record)" />
-        </a-space>
-      </template>
-    </a-table>
-
-    <!-- 任务内容弹窗 -->
-    <a-modal v-model:visible="taskContentModalVisible" :title="currentTaskContentTitle" width="800px" :footer="null">
-      <a-table :dataSource="currentTaskContentData" :columns="taskContentColumns" :pagination="false" size="middle"
-        bordered>
+      <!-- 表格区域 -->
+      <a-table :dataSource="tableData" :columns="visibleColumns" :loading="tableLoading" :pagination="paginationConfig"
+        size="small" bordered class="work-arrangement-table" @change="handleTableChange">
         <template #empty>
-          <div class="empty-text">暂无任务内容</div>
+          <div class="empty-text">没有找到匹配的记录</div>
         </template>
 
-        <template #Taskcontent="{ record, index }">
-          <span>
-            {{ `任务${index + 1}` }}
+        <!-- 自定义列渲染 -->
+        <template #planType="{ record }">
+          <span>{{ getPlanTypeName(record.taPlanType) }}</span>
+        </template>
+
+        <template #drawingName="{ record }">
+          <span>{{ record.taHasPictureWork ? '有' : '无' }}</span>
+        </template>
+        <template #taTaskName="{ record }">
+          <span class="notice-name-link" @click="showTaskContentModal(record)" style="color: #1890ff; cursor: pointer;">
+            {{ record.taTaskName }}
           </span>
         </template>
+        <!-- 操作 -->
+        <template #operation="{ record }">
+          <a-space>
+            <PicLeftOutlined style="color: #1890ff;" @click="handleEdit(record)" />
+          </a-space>
+        </template>
       </a-table>
-    </a-modal>
 
-    <!-- PDF 文件弹窗 -->
-    <a-modal v-model:visible="pdfModalVisible" :title="pdfTitle" width="1200px" :footer="null">
-      <embed :src="pdfUrl" type="application/pdf" width="100%" height="700px" />
-    </a-modal>
+      <!-- 任务内容弹窗 -->
+      <a-modal v-model:visible="taskContentModalVisible" :title="currentTaskContentTitle" width="800px" :footer="null">
+        <a-table :dataSource="currentTaskContentData" :columns="taskContentColumns" :pagination="false" size="middle"
+          bordered>
+          <template #empty>
+            <div class="empty-text">暂无任务内容</div>
+          </template>
+
+          <template #Taskcontent="{ record, index }">
+            <span>
+              {{ `任务${index + 1}` }}
+            </span>
+          </template>
+        </a-table>
+      </a-modal>
+
+      <!-- PDF 文件弹窗 -->
+      <a-modal v-model:visible="pdfModalVisible" :title="pdfTitle" width="1200px" :footer="null">
+        <embed :src="pdfUrl" type="application/pdf" width="100%" height="700px" />
+      </a-modal>
 
 
-    <!-- 展示pdf 弹窗 -->
-    <a-modal v-model:visible="pdfModalDetails" :title="pdfDetailsTitle" width="90%" :footer="null">
-      <pdfDetail v-if="pdfModalDetails" :fromData="pdftableDetail"></pdfDetail>
-    </a-modal>
 
+    </div>
     <!-- 展示工作详情 弹窗 -->
-    <a-modal v-model:visible="detailModalVisible" width="80%" :title="detailModalTitle">
-      <taskDetails v-if="detailModalVisible" :detailData="detailModalData" :type="'workList'"></taskDetails>
-    </a-modal>
+    <div v-if="tableDataVisible == 1">
+      <taskDetails v-if="tableDataVisible == 1" @CloseTask="changeShowTab(0)" :detailData="detailModalData"
+        :type="'workList'"></taskDetails>
+    </div>
+    <!-- 展示pdf 弹窗 -->
+    <div v-if="tableDataVisible == 2">
+      <pdfDetail v-if="tableDataVisible == 2" @closePdf="changeShowTab(0)" :fromData="pdftableDetail"></pdfDetail>
+    </div>
   </div>
 </template>
 
@@ -141,7 +144,9 @@ import pdfDetail from "./components/pdfDetail.vue";
 
 import taskDetails from './components/taskDetails.vue';
 
-const pdfModalDetails = ref(false)
+
+const tableDataVisible = ref(0)
+
 const pdfDetailsTitle = ref('显示文件')
 const pdftableDetail = ref({})
 
@@ -152,6 +157,9 @@ const pdfModalVisible = ref(false);
 const pdfTitle = ref('');
 const pdfUrl = ref('https://storage.xuetangx.com/public_assets/xuetangx/PDF/PlayerAPI_v1.0.6.pdf');
 
+const changeShowTab = (type: number) => {
+  tableDataVisible.value = type;
+};
 
 // 路由相关
 const route = useRoute();
@@ -316,8 +324,7 @@ const hasTaskContents = (record: any) => {
 // 显示任务内容弹窗
 const showTaskContentModal = (record: any) => {
   console.log(record, 'record');
-
-  pdfModalDetails.value = true
+  tableDataVisible.value = 2
   pdftableDetail.value = record
   return
   if (!hasTaskContents(record)) {
@@ -394,7 +401,6 @@ const handleViewDetail = (record: any) => {
 };
 
 // 点击编辑
-const detailModalVisible = ref(false);
 const detailModalData = ref<any>({});
 const detailForm = reactive({
   status: '',
@@ -411,304 +417,18 @@ const taskDetailList = ref<any[]>([]);
 // 点击编辑
 const handleEdit = async (record: any) => {
   console.log('编辑记录:', record);
-  detailModalVisible.value = true;
+  tableDataVisible.value = 1;
   detailModalData.value = record;
-
-  // 加载任务详情数据
-  await loadTaskDetails(record.Id);
 };
 
-// 加载任务详情数据
-const loadTaskDetails = async (taskId: string) => {
-  try {
-    // const res = await getDatas("project/GetTaskDetails", {
-    //   taskId: taskId
-    // });
-
-    // if (res && res.data.code === 200) {
-    //   taskDetailList.value = res.data.result || [];
-    // } else {
-    //   ElMessage.warning(res.data.message || '加载任务详情失败');
-    //   taskDetailList.value = [];
-    // }
-    taskDetailList.value = [
-      {
-        "Id": "5eb045c1-1109-80c9-c811-ef0678e782f9",
-        "TD_Order": "1",
-        "TD_Name": "1",
-        "TD_WorkPointsName": null,
-        "TD_DeptMajor": null,
-        "TD_LimitTime": "2025年12月14日",
-        "TD_CompletionTime": null,
-        "Remark": "",
-        "Is_Delete": 0,
-        "TD_WorkPointsId": null,
-        "TD_MajorId": null,
-        "TD_MajorCharge": null,
-        "TD_Deptid": null,
-        "TC_Id": null,
-        "Parent_Id": "843c36a6-c03f-ae76-f581-20a652f91f6e",
-        "CompleteStatistics": null,
-        "Is_Group": false,
-        "Level": 1,
-        "Is_Red": false,
-        "isCG": true,
-        "Colour": "#52D017",
-        "Material_id": null,
-        "input_file": null,
-        "speciality": null,
-        "MaterialIncomplete": null,
-        "MaterialTotal": null,
-        "MaterialColour": null,
-        "TD_ProjectName": null,
-        "TD_NoticeName": null,
-        "Status": null,
-        "Reason": null
-      },
-      {
-        "Id": "050d9f34-dfc8-44e5-b7a2-e7e1da075f3a",
-        "TD_Order": "2",
-        "TD_Name": "11",
-        "TD_WorkPointsName": "工点车站",
-        "TD_DeptMajor": "规划院(运输组织)",
-        "TD_LimitTime": "2025-12-13",
-        "TD_CompletionTime": "2025-12-15",
-        "Remark": null,
-        "Is_Delete": 0,
-        "TD_WorkPointsId": "2101",
-        "TD_MajorId": null,
-        "TD_MajorCharge": "曾扬",
-        "TD_Deptid": null,
-        "TC_Id": "5eb045c1-1109-80c9-c811-ef0678e782f9",
-        "Parent_Id": "5eb045c1-1109-80c9-c811-ef0678e782f9",
-        "CompleteStatistics": null,
-        "Is_Group": false,
-        "Level": 2,
-        "Is_Red": false,
-        "isCG": true,
-        "Colour": "#52D017",
-        "Material_id": null,
-        "input_file": null,
-        "speciality": null,
-        "MaterialIncomplete": null,
-        "MaterialTotal": null,
-        "MaterialColour": "",
-        "TD_ProjectName": null,
-        "TD_NoticeName": null,
-        "Status": null,
-        "Reason": null
-      },
-      {
-        "Id": "82d9d8be-e045-49c6-82b0-dcbe831af2cc",
-        "TD_Order": "3",
-        "TD_Name": "22",
-        "TD_WorkPointsName": "工点车站",
-        "TD_DeptMajor": "规划院(运输组织)",
-        "TD_LimitTime": "2025-12-14",
-        "TD_CompletionTime": "2025-12-15",
-        "Remark": null,
-        "Is_Delete": 0,
-        "TD_WorkPointsId": "2101",
-        "TD_MajorId": null,
-        "TD_MajorCharge": "曾扬",
-        "TD_Deptid": null,
-        "TC_Id": "5eb045c1-1109-80c9-c811-ef0678e782f9",
-        "Parent_Id": "5eb045c1-1109-80c9-c811-ef0678e782f9",
-        "CompleteStatistics": null,
-        "Is_Group": false,
-        "Level": 2,
-        "Is_Red": false,
-        "isCG": true,
-        "Colour": "#52D017",
-        "Material_id": null,
-        "input_file": null,
-        "speciality": null,
-        "MaterialIncomplete": null,
-        "MaterialTotal": null,
-        "MaterialColour": "",
-        "TD_ProjectName": null,
-        "TD_NoticeName": null,
-        "Status": null,
-        "Reason": null
-      },
-      {
-        "Id": "20220a6d-db6c-1721-b482-4d7dc9390918",
-        "TD_Order": "2",
-        "TD_Name": "2",
-        "TD_WorkPointsName": null,
-        "TD_DeptMajor": null,
-        "TD_LimitTime": "2025年12月15日",
-        "TD_CompletionTime": null,
-        "Remark": "",
-        "Is_Delete": 0,
-        "TD_WorkPointsId": null,
-        "TD_MajorId": null,
-        "TD_MajorCharge": null,
-        "TD_Deptid": null,
-        "TC_Id": null,
-        "Parent_Id": "843c36a6-c03f-ae76-f581-20a652f91f6e",
-        "CompleteStatistics": null,
-        "Is_Group": false,
-        "Level": 1,
-        "Is_Red": false,
-        "isCG": true,
-        "Colour": "#52D017",
-        "Material_id": null,
-        "input_file": null,
-        "speciality": null,
-        "MaterialIncomplete": null,
-        "MaterialTotal": null,
-        "MaterialColour": null,
-        "TD_ProjectName": null,
-        "TD_NoticeName": null,
-        "Status": null,
-        "Reason": null
-      },
-      {
-        "Id": "bc9bebe7-8b37-421f-997a-3c32a7233c7b",
-        "TD_Order": "3",
-        "TD_Name": "33",
-        "TD_WorkPointsName": "工点车站",
-        "TD_DeptMajor": "规划院(运输组织)",
-        "TD_LimitTime": "2025-12-14",
-        "TD_CompletionTime": "2025-12-15",
-        "Remark": null,
-        "Is_Delete": 0,
-        "TD_WorkPointsId": "2101",
-        "TD_MajorId": null,
-        "TD_MajorCharge": "曾扬",
-        "TD_Deptid": null,
-        "TC_Id": "20220a6d-db6c-1721-b482-4d7dc9390918",
-        "Parent_Id": "20220a6d-db6c-1721-b482-4d7dc9390918",
-        "CompleteStatistics": null,
-        "Is_Group": false,
-        "Level": 2,
-        "Is_Red": false,
-        "isCG": true,
-        "Colour": "#52D017",
-        "Material_id": null,
-        "input_file": null,
-        "speciality": null,
-        "MaterialIncomplete": null,
-        "MaterialTotal": null,
-        "MaterialColour": "",
-        "TD_ProjectName": null,
-        "TD_NoticeName": null,
-        "Status": null,
-        "Reason": null
-      },
-      {
-        "Id": "7bb8bf1f-7d58-42d0-b968-5083b4f10f88",
-        "TD_Order": "4",
-        "TD_Name": "44",
-        "TD_WorkPointsName": "工点车站",
-        "TD_DeptMajor": "规划院(运输组织)",
-        "TD_LimitTime": "2025-12-15",
-        "TD_CompletionTime": "2025-12-15",
-        "Remark": null,
-        "Is_Delete": 0,
-        "TD_WorkPointsId": "2101",
-        "TD_MajorId": null,
-        "TD_MajorCharge": "曾扬",
-        "TD_Deptid": null,
-        "TC_Id": "20220a6d-db6c-1721-b482-4d7dc9390918",
-        "Parent_Id": "20220a6d-db6c-1721-b482-4d7dc9390918",
-        "CompleteStatistics": null,
-        "Is_Group": false,
-        "Level": 2,
-        "Is_Red": false,
-        "isCG": true,
-        "Colour": "#52D017",
-        "Material_id": null,
-        "input_file": null,
-        "speciality": null,
-        "MaterialIncomplete": null,
-        "MaterialTotal": null,
-        "MaterialColour": "",
-        "TD_ProjectName": null,
-        "TD_NoticeName": null,
-        "Status": null,
-        "Reason": null
-      },
-      {
-        "Id": "2689801f-ea9d-b7d7-d6df-ee2fb783a93d",
-        "TD_Order": "3",
-        "TD_Name": "3",
-        "TD_WorkPointsName": null,
-        "TD_DeptMajor": null,
-        "TD_LimitTime": "2025年12月16日",
-        "TD_CompletionTime": null,
-        "Remark": "",
-        "Is_Delete": 0,
-        "TD_WorkPointsId": null,
-        "TD_MajorId": null,
-        "TD_MajorCharge": null,
-        "TD_Deptid": null,
-        "TC_Id": null,
-        "Parent_Id": "843c36a6-c03f-ae76-f581-20a652f91f6e",
-        "CompleteStatistics": null,
-        "Is_Group": false,
-        "Level": 1,
-        "Is_Red": false,
-        "isCG": true,
-        "Colour": "#FF0000",
-        "Material_id": null,
-        "input_file": null,
-        "speciality": null,
-        "MaterialIncomplete": null,
-        "MaterialTotal": null,
-        "MaterialColour": null,
-        "TD_ProjectName": null,
-        "TD_NoticeName": null,
-        "Status": null,
-        "Reason": null
-      },
-      {
-        "Id": "4e43cc97-0ea9-473a-a765-d1e27379b47c",
-        "TD_Order": "4",
-        "TD_Name": "55",
-        "TD_WorkPointsName": "工点车站",
-        "TD_DeptMajor": "规划院(运输组织)",
-        "TD_LimitTime": "2025-12-16",
-        "TD_CompletionTime": "",
-        "Remark": null,
-        "Is_Delete": 0,
-        "TD_WorkPointsId": "2101",
-        "TD_MajorId": null,
-        "TD_MajorCharge": "曾扬",
-        "TD_Deptid": null,
-        "TC_Id": "2689801f-ea9d-b7d7-d6df-ee2fb783a93d",
-        "Parent_Id": "2689801f-ea9d-b7d7-d6df-ee2fb783a93d",
-        "CompleteStatistics": null,
-        "Is_Group": false,
-        "Level": 2,
-        "Is_Red": false,
-        "isCG": true,
-        "Colour": "#FF0000",
-        "Material_id": null,
-        "input_file": null,
-        "speciality": null,
-        "MaterialIncomplete": null,
-        "MaterialTotal": null,
-        "MaterialColour": "",
-        "TD_ProjectName": null,
-        "TD_NoticeName": null,
-        "Status": null,
-        "Reason": "未上传成果"
-      }
-    ];
-  } catch (error) {
-    console.error('加载任务详情异常:', error);
-    ElMessage.error('加载任务详情过程中发生错误');
-    taskDetailList.value = [];
-  }
-};
 
 
 // 监听路由参数变化
 watch(() => [route.query.projectId, route.query.stepId], () => {
   console.log('路由参数变化，重新查询数据');
+  tableDataVisible.value = 0;
   handleSearch();
+
 });
 
 onMounted(() => {

@@ -1,7 +1,11 @@
 <template>
     <div class="job-details-container">
+        <div style="text-align: right;margin-bottom: 10px;">
+            <a-button type="dashed" @click="CloseTaskFn">关闭</a-button>
+        </div>
         <!-- 头部信息 -->
         <div class="detail-header">
+
             <div class="header-left">
                 <el-image :src="Imgurl" :fit="fit" alt="图片" class="detail-image" />
                 <div class="header-info">
@@ -123,7 +127,7 @@
                     <div v-show="!setFillIntype">
                         <span>{{ FillInTime }}</span>
                         <a-button type="primary" shape="circle" size="small" style="margin: 0 10px;"
-                            @click="confirmFillInFn">
+                            @click="confirmFillInFn(record)">
                             <template #icon>
                                 <CheckOutlined />
                             </template>
@@ -144,6 +148,7 @@
 import { ref, computed, reactive, onMounted, watch } from 'vue';
 import { SettingOutlined, SoundOutlined, HistoryOutlined, CheckOutlined, CloseOutlined } from '@ant-design/icons-vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
+import getDatas from "@/network/index";
 
 // 图片引入
 const Imgurl = require("@/static/image/e93263af-ce49-4278-b619-6d6b4ef6f015.png");
@@ -155,7 +160,9 @@ interface Props {
     type: string;
 }
 
-
+const CloseTaskFn = () => {
+    emit('CloseTask');
+}
 
 const props = defineProps<Props>();
 
@@ -164,6 +171,8 @@ const emit = defineEmits<{
     (e: 'adjust'): void;
     (e: 'search', data: any): void;
     (e: 'reset'): void;
+    (e: 'CloseTask'): void;
+    (e: 'closeHome'): void;
 }>();
 
 // 筛选表单
@@ -423,14 +432,29 @@ const cancelFillInFn = () => {
     setFillIntype.value = true
 }
 
-const confirmFillInFn = () => {
+const confirmFillInFn = (item: any) => {
     ElMessageBox.confirm('是否确认完成？', '提示', {
         confirmButtonText: "是",
         cancelButtonText: "否",
         type: "warning",
-    }).then(() => {
-        ElMessage.success('完成成功');
-    }).catch(() => { 
+    }).then(async () => {
+        console.log(item, 'itemitemitem');
+
+        const resp = await getDatas("home/PostTaskComplete", {
+            taskContentStatusId: item.id,
+            completeTime: FillInTime.value
+        })
+        console.log(resp,'respresp');
+        
+        if (resp.data.code == 200) {
+            ElMessage.success('完成成功!');
+            fillInVisible.value = false;
+            emit('closeHome');
+        } else {
+            ElMessage.error(resp.data.message || '完成失败!');
+        }
+
+    }).catch(() => {
         ElMessage.info('取消完成');
     })
 }

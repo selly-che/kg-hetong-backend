@@ -1,93 +1,96 @@
 <template>
-    <div class="pdf-wrapper">
-        <div ref="pdfSourceRef" id="pdf-source" class="notice-container-hidden">
-            <h1 class="title">{{ fromData.taTaskName || '总体通知单' }}</h1>
-
-            <div class="notice-number">
-                编号：{{ fromData.taSerialNumber || '-' }}
-            </div>
-
-            <table class="info-table">
-                <tbody>
-                    <tr>
-                        <th class="label-cell">项目名称及阶段</th>
-                        <td class="content-cell" colspan="3">
-                            {{ fromData.taTaskName || '-' }} {{ fromData.projectStepStr || '' }}
-                        </td>
-                    </tr>
-                    <tr>
-                        <th class="label-cell">主送单位及部门</th>
-                        <td class="content-cell" colspan="3">
-                            {{ fromData.taCCUnit || '-' }}
-                        </td>
-                    </tr>
-                    <tr>
-                        <th class="label-cell">抄送单位及部门</th>
-                        <td class="content-cell" colspan="3">
-                            {{ fromData.taCCUnit || '-' }}
-                        </td>
-                    </tr>
-                    <tr>
-                        <th class="label-cell">编制</th>
-                        <td class="content-cell">{{ fromData.taCreator || '-' }}</td>
-                        <th class="label-cell">日期</th>
-                        <td class="content-cell">{{ formatDate(fromData.taEndDate) }}</td>
-                    </tr>
-                </tbody>
-            </table>
-
-            <div class="content-section">
-                <p class="content-title"><strong>{{ fromData.taTaskName || '联系事项' }}</strong></p>
-                <p style="text-indent: 2em;">{{ fromData.taPreface || '根据集团公司生产计划安排，现下达相关任务，请各单位遵照执行。' }}</p>
-                <p style="text-indent: 2em;">工期计划及要求详见附件。</p>
-
-                <div class="signature">
-                    <p>签署：{{ fromData.taCreator || '管理员' }} {{ formatDate(fromData.taEndDate) }}</p>
+    <div>
+        <div style="text-align: right;margin-bottom: 10px;"> <a-button type="dashed"   @click="ClosePdfFn">关闭</a-button></div>
+        <div class="pdf-wrapper">
+            <div ref="pdfSourceRef" id="pdf-source" class="notice-container-hidden">
+                <h1 class="title">{{ fromData.taTaskName || '总体通知单' }}</h1>
+    
+                <div class="notice-number">
+                    编号：{{ fromData.taSerialNumber || '-' }}
                 </div>
-            </div>
-
-            <div class="schedule-section">
-                <h3>工期计划</h3>
-                <table class="schedule-table">
-                    <thead>
-                        <tr>
-                            <th style="width: 80px;">序号</th>
-                            <th>任务内容</th>
-                            <th style="width: 150px;">完成单位</th>
-                            <th style="width: 150px;">完成时间</th>
-                            <th style="width: 200px;">备注</th>
-                        </tr>
-                    </thead>
+    
+                <table class="info-table">
                     <tbody>
-                        <template v-for="(group, index) in fromData.taskGroups" :key="group.id">
-                            <tr class="parent-row">
-                                <td>{{ Number(index) + 1 }}</td>
-                                <td class="task-name">{{ group.tgName }}</td>
-                                <td>--</td>
-                                <td>{{ formatDate(group.tgUpdateTime) }}</td>
-                                <td>{{ group.tgDescription }}</td>
-                            </tr>
-
-                            <tr v-for="(status, sIndex) in group.twaTaskContentStatuses" :key="status.id"
-                                class="child-row">
-                                <td>{{ Number(index) + 1 }}.{{ Number(sIndex) + 1 }}</td>
-                                <td class="task-name child-name">{{ status.tcName }}</td>
-                                <td>{{ status.deptMajor || '--' }}</td>
-                                <td>{{ formatDate(status.euCompleteDate) }}</td>
-                                <td>{{ status.tcRemark }}</td>
-                            </tr>
-                        </template>
+                        <tr>
+                            <th class="label-cell">项目名称及阶段</th>
+                            <td class="content-cell" colspan="3">
+                                {{ fromData.taTaskName || '-' }} {{ fromData.projectStepStr || '' }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="label-cell">主送单位及部门</th>
+                            <td class="content-cell" colspan="3">
+                                {{ fromData.taCCUnit || '-' }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="label-cell">抄送单位及部门</th>
+                            <td class="content-cell" colspan="3">
+                                {{ fromData.taCCUnit || '-' }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="label-cell">编制</th>
+                            <td class="content-cell">{{ fromData.taCreator || '-' }}</td>
+                            <th class="label-cell">日期</th>
+                            <td class="content-cell">{{ formatDate(fromData.taEndDate) }}</td>
+                        </tr>
                     </tbody>
                 </table>
+    
+                <div class="content-section">
+                    <p class="content-title"><strong>{{ fromData.taTaskName || '联系事项' }}</strong></p>
+                    <p style="text-indent: 2em;">{{ fromData.taPreface || '根据集团公司生产计划安排，现下达相关任务，请各单位遵照执行。' }}</p>
+                    <p style="text-indent: 2em;">工期计划及要求详见附件。</p>
+    
+                    <div class="signature">
+                        <p>签署：{{ fromData.taCreator || '管理员' }} {{ formatDate(fromData.taEndDate) }}</p>
+                    </div>
+                </div>
+    
+                <div class="schedule-section">
+                    <h3>工期计划</h3>
+                    <table class="schedule-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 80px;">序号</th>
+                                <th>任务内容</th>
+                                <th style="width: 150px;">完成单位</th>
+                                <th style="width: 150px;">完成时间</th>
+                                <th style="width: 200px;">备注</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template v-for="(group, index) in fromData.taskGroups" :key="group.id">
+                                <tr class="parent-row">
+                                    <td>{{ Number(index) + 1 }}</td>
+                                    <td class="task-name">{{ group.tgName }}</td>
+                                    <td>--</td>
+                                    <td>{{ formatDate(group.tgUpdateTime) }}</td>
+                                    <td>{{ group.tgDescription }}</td>
+                                </tr>
+    
+                                <tr v-for="(status, sIndex) in group.twaTaskContentStatuses" :key="status.id"
+                                    class="child-row">
+                                    <td>{{ Number(index) + 1 }}.{{ Number(sIndex) + 1 }}</td>
+                                    <td class="task-name child-name">{{ status.tcName }}</td>
+                                    <td>{{ status.deptMajor || '--' }}</td>
+                                    <td>{{ formatDate(status.euCompleteDate) }}</td>
+                                    <td>{{ status.tcRemark }}</td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
             </div>
-        </div>
-
-        <!-- PDF 预览区域 -->
-        <div class="pdf-preview-box">
-            <div v-if="isLoading" class="loading-tip">正在生成 PDF，请稍候...</div>
-            <embed v-else-if="pdfUrl" :src="pdfUrl" type="application/pdf" width="100%" height="800px" />
-            <div v-else class="empty-tip">
-                {{ errorMsg || '暂无数据' }}
+    
+            <!-- PDF 预览区域 -->
+            <div class="pdf-preview-box">
+                <div v-if="isLoading" class="loading-tip">正在生成 PDF，请稍候...</div>
+                <embed v-else-if="pdfUrl" :src="pdfUrl" type="application/pdf" width="100%" height="800px" />
+                <div v-else class="empty-tip">
+                    {{ errorMsg || '暂无数据' }}
+                </div>
             </div>
         </div>
     </div>
@@ -99,6 +102,7 @@ import { format } from 'date-fns';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 
+
 export default defineComponent({
     name: 'PdfDetail',
     props: {
@@ -108,7 +112,7 @@ export default defineComponent({
             default: () => ({})
         }
     },
-    setup(props) {
+    setup(props,{ emit }) {
         const pdfUrl = ref<string | null>(null);
         const isLoading = ref<boolean>(false);
         const errorMsg = ref<string>('');
@@ -199,6 +203,11 @@ export default defineComponent({
             }
         };
 
+        const ClosePdfFn = () => {
+            // 触发父组件的关闭事件
+            emit('closePdf');
+        }
+
         // 监听数据变化
         watch(() => props.fromData, (newVal) => {
             // 只有当 newVal 有实际内容时才生成
@@ -219,7 +228,8 @@ export default defineComponent({
             pdfUrl,
             isLoading,
             errorMsg,
-            pdfSourceRef
+            pdfSourceRef,
+            ClosePdfFn
         };
     }
 });

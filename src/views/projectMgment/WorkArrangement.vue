@@ -1,135 +1,146 @@
 <template>
-    <div class="work-arrangement-container">
-        <!-- 搜索与筛选区域 -->
-        <div class="search-bar">
-            <!-- 下拉选择搜索字段 -->
-            <a-select v-model:value="searchType" style="width: 100px; margin-right: 8px">
-                <a-select-option value="0">通知名称</a-select-option>
-                <a-select-option value="1">任务名称</a-select-option>
-            </a-select>
+    <div>
+        <div class="work-arrangement-container" ref="containerRef" id="containerRef" v-if="tableDataVisible == 0">
+            <!-- 搜索与筛选区域 -->
+            <div class="search-bar">
+                <!-- 下拉选择搜索字段 -->
+                <a-select v-model:value="searchType" style="width: 100px; margin-right: 8px">
+                    <a-select-option value="0">通知名称</a-select-option>
+                    <a-select-option value="1">任务名称</a-select-option>
+                </a-select>
 
-            <!-- 搜索输入框 -->
-            <a-input v-model:value="searchText" placeholder="请输入名称" style="width: 300px; margin-right: 16px" />
+                <!-- 搜索输入框 -->
+                <a-input v-model:value="searchText" placeholder="请输入名称" style="width: 300px; margin-right: 16px" />
 
-            <!-- 状态筛选 -->
-            <a-checkbox-group v-model:value="statusFilters" style="margin-right: 16px">
-                <a-checkbox value="-1">未下发</a-checkbox>
-                <a-checkbox value="0">未签发</a-checkbox>
-                <a-checkbox value="1">未完成</a-checkbox>
-                <a-checkbox value="-2">已退回</a-checkbox>
-                <a-checkbox value="2">已完成</a-checkbox>
-                <a-checkbox value="5">未分解</a-checkbox>
-            </a-checkbox-group>
+                <!-- 状态筛选 -->
+                <a-checkbox-group v-model:value="statusFilters" style="margin-right: 16px">
+                    <a-checkbox value="-1">未下发</a-checkbox>
+                    <a-checkbox value="0">未签发</a-checkbox>
+                    <a-checkbox value="1">未完成</a-checkbox>
+                    <a-checkbox value="-2">已退回</a-checkbox>
+                    <a-checkbox value="2">已完成</a-checkbox>
+                    <a-checkbox value="5">未分解</a-checkbox>
+                </a-checkbox-group>
 
-            <!-- 计划类型筛选 -->
-            <a-checkbox-group v-model:value="planFilters" style="margin-right: 16px">
-                <a-checkbox value="processPlan">过程计划</a-checkbox>
-                <a-checkbox value="phasePlan">阶段计划</a-checkbox>
-            </a-checkbox-group>
+                <!-- 计划类型筛选 -->
+                <a-checkbox-group v-model:value="planFilters" style="margin-right: 16px">
+                    <a-checkbox value="processPlan">过程计划</a-checkbox>
+                    <a-checkbox value="phasePlan">阶段计划</a-checkbox>
+                </a-checkbox-group>
 
-            <!-- 操作按钮 -->
-            <a-button type="primary" @click="handleSearch">查询</a-button>
-            <a-button @click="handleReset">重置</a-button>
-            <a-button type="dashed" @click="handleAdd" v-if="Editable">新增</a-button>
+                <!-- 操作按钮 -->
+                <a-button type="primary" @click="handleSearch">查询</a-button>
+                <a-button @click="handleReset">重置</a-button>
+                <a-button type="dashed" @click="handleAdd" v-if="Editable">新增</a-button>
 
-            <!-- 列设置 -->
-            <a-dropdown overlayClassName="column-filter-dropdown" trigger="click">
-                <a-button>
-                    <SettingOutlined />
-                    <span>列设置</span>
-                </a-button>
-                <template #overlay>
-                    <a-menu>
-                        <a-menu-item key="operation">
-                            <a-checkbox v-model:checked="columnVisible.operation">操作</a-checkbox>
-                        </a-menu-item>
-                        <a-menu-item key="taTaskName">
-                            <a-checkbox v-model:checked="columnVisible.taTaskName">通知名称</a-checkbox>
-                        </a-menu-item>
-                        <a-menu-item key="taCreator">
-                            <a-checkbox v-model:checked="columnVisible.taCreator">下发人</a-checkbox>
-                        </a-menu-item>
-                        <a-menu-item key="taSerialNumber">
-                            <a-checkbox v-model:checked="columnVisible.taSerialNumber">编号</a-checkbox>
-                        </a-menu-item>
-                        <a-menu-item key="taEndDate">
-                            <a-checkbox v-model:checked="columnVisible.taEndDate">截止时间</a-checkbox>
-                        </a-menu-item>
-                        <a-menu-item key="taStatus">
-                            <a-checkbox v-model:checked="columnVisible.taStatus">状态</a-checkbox>
-                        </a-menu-item>
-                        <a-menu-item key="taReason">
-                            <a-checkbox v-model:checked="columnVisible.taReason">签发退回原因</a-checkbox>
-                        </a-menu-item>
-                        <a-menu-item key="planExecutionProgress">
-                            <a-checkbox v-model:checked="columnVisible.planExecutionProgress">阶段计划执行进度</a-checkbox>
-                        </a-menu-item>
-                        <a-menu-item key="completionCount">
-                            <a-checkbox v-model:checked="columnVisible.completionCount">完成量</a-checkbox>
-                        </a-menu-item>
-                    </a-menu>
+                <!-- 列设置 -->
+                <a-dropdown overlayClassName="column-filter-dropdown" trigger="click">
+                    <a-button>
+                        <SettingOutlined />
+                        <span>列设置</span>
+                    </a-button>
+                    <template #overlay>
+                        <a-menu>
+                            <a-menu-item key="operation">
+                                <a-checkbox v-model:checked="columnVisible.operation">操作</a-checkbox>
+                            </a-menu-item>
+                            <a-menu-item key="taTaskName">
+                                <a-checkbox v-model:checked="columnVisible.taTaskName">通知名称</a-checkbox>
+                            </a-menu-item>
+                            <a-menu-item key="taCreator">
+                                <a-checkbox v-model:checked="columnVisible.taCreator">下发人</a-checkbox>
+                            </a-menu-item>
+                            <a-menu-item key="taSerialNumber">
+                                <a-checkbox v-model:checked="columnVisible.taSerialNumber">编号</a-checkbox>
+                            </a-menu-item>
+                            <a-menu-item key="taEndDate">
+                                <a-checkbox v-model:checked="columnVisible.taEndDate">截止时间</a-checkbox>
+                            </a-menu-item>
+                            <a-menu-item key="taStatus">
+                                <a-checkbox v-model:checked="columnVisible.taStatus">状态</a-checkbox>
+                            </a-menu-item>
+                            <a-menu-item key="taReason">
+                                <a-checkbox v-model:checked="columnVisible.taReason">签发退回原因</a-checkbox>
+                            </a-menu-item>
+                            <a-menu-item key="planExecutionProgress">
+                                <a-checkbox v-model:checked="columnVisible.planExecutionProgress">阶段计划执行进度</a-checkbox>
+                            </a-menu-item>
+                            <a-menu-item key="completionCount">
+                                <a-checkbox v-model:checked="columnVisible.completionCount">完成量</a-checkbox>
+                            </a-menu-item>
+                        </a-menu>
+                    </template>
+                </a-dropdown>
+            </div>
+
+            <!-- 表格区域 -->
+            <a-table :dataSource="tableData" :columns="visibleColumns" :loading="tableLoading" :pagination="false"
+                size="small" bordered class="work-arrangement-table">
+                <template #empty>
+                    <div class="empty-text">没有找到匹配的记录</div>
                 </template>
-            </a-dropdown>
+                <template #taStatus="{ record }">
+                    <a-tag>
+                        {{ getStatusText(record.taStatus) }}
+                    </a-tag>
+                </template>
+                <!-- 操作 -->
+                <template #operation="{ record }">
+                    <a-space>
+                        <!-- <el-tooltip class="item" effect="dark" content="添加关注" placement="top-start">
+                            根据collect 来判断是否添加operation_star
+                            <div class="operation_box " :class="{ 'operation_star': collect }" @click="collect = !collect">
+                                <StarOutlined />
+                            </div>
+                        </el-tooltip> -->
+
+                        <!-- <el-tooltip class="item" effect="dark" content="单位确认情况：规划院" placement="top-start">
+                            <div class="operation_box">
+                                <SafetyCertificateOutlined />
+                            </div>
+                        </el-tooltip> -->
+                        <el-tooltip class="item" effect="dark" content="完成情况" placement="top-start"
+                            v-if="userName == record.taCreator">
+                            <div class="operation_box" @click="handleEditFn(record)">
+                                <!-- <MenuOutlined /> -->
+                                <PicLeftOutlined />
+                            </div>
+                        </el-tooltip>
+                        <el-tooltip class="item" effect="dark" content="删除" placement="top-start"
+                            v-if="userName == record.taCreator">
+                            <div class="operation_box">
+                                <i class="el-icon-delete"></i>
+                                <DeleteOutlined @click="handleDelete(record.id)" style="color: #ed5565;" />
+                            </div>
+                        </el-tooltip>
+                        <!-- <a-button type="link" @click="handleDelete(record)">删除</a-button> -->
+                    </a-space>
+                </template>
+                <!-- 通知名称 -->
+                <template #taTaskName="{ record }">
+                    <span style="color: #1890ff; cursor: pointer;" @click="showTaskContentModal(record)">
+                        {{ record.taTaskName }}
+                    </span>
+                </template>
+            </a-table>
+
+
+
         </div>
-
-        <!-- 表格区域 -->
-        <a-table :dataSource="tableData" :columns="visibleColumns" :loading="tableLoading" :pagination="false"
-            size="small" bordered class="work-arrangement-table">
-            <template #empty>
-                <div class="empty-text">没有找到匹配的记录</div>
-            </template>
-            <template #taStatus="{ record }">
-                <a-tag>
-                    {{ getStatusText(record.taStatus) }}
-                </a-tag>
-            </template>
-            <!-- 操作 -->
-            <template #operation="{ record }">
-                <a-space>
-                    <!-- <el-tooltip class="item" effect="dark" content="添加关注" placement="top-start">
-                        根据collect 来判断是否添加operation_star
-                        <div class="operation_box " :class="{ 'operation_star': collect }" @click="collect = !collect">
-                            <StarOutlined />
-                        </div>
-                    </el-tooltip> -->
-
-                    <!-- <el-tooltip class="item" effect="dark" content="单位确认情况：规划院" placement="top-start">
-                        <div class="operation_box">
-                            <SafetyCertificateOutlined />
-                        </div>
-                    </el-tooltip> -->
-                    <el-tooltip class="item" effect="dark" content="完成情况" placement="top-start"
-                        v-if="userName == record.taCreator">
-                        <div class="operation_box" @click="handleEditFn(record)">
-                            <!-- <MenuOutlined /> -->
-                            <PicLeftOutlined />
-                        </div>
-                    </el-tooltip>
-                    <el-tooltip class="item" effect="dark" content="删除" placement="top-start"
-                        v-if="userName == record.taCreator">
-                        <div class="operation_box">
-                            <i class="el-icon-delete"></i>
-                            <DeleteOutlined @click="handleDelete(record.id)" style="color: #ed5565;" />
-                        </div>
-                    </el-tooltip>
-                    <!-- <a-button type="link" @click="handleDelete(record)">删除</a-button> -->
-                </a-space>
-            </template>
-            <!-- 通知名称 -->
-            <template #taTaskName="{ record }">
-                <span style="color: #1890ff; cursor: pointer;" @click="showTaskContentModal(record)">
-                    {{ record.taTaskName }}
-                </span>
-            </template>
-        </a-table>
         <!-- 新增工作安排 -->
-        <el-dialog v-model="dialogVisible" title="工作安排" width="80%" destroy-on-close @close="handleDialogClose"
-            :before-close="handleBeforeClose">
-            <!-- 表单主体 -->
+        <div v-if="tableDataVisible == 1">
             <el-form :model="formData" label-width="100px" class="task-form">
+                <el-row :gutter="24">
+                    <el-col :span="24">
+                        <div style="text-align: right;">
+                            <el-button type="primary" @click="handleGenerateFn">生成</el-button>
+                            <el-button type="info" @click="handleResetFn">重置</el-button>
+                        </div>
+                    </el-col>
+                </el-row>
                 <!-- 第一行：工作类型、计划类型、抄送单位 -->
                 <el-row :gutter="24">
-                    <el-col :span="6">
+                    <el-col :span="12">
                         <el-form-item label="工作类型">
                             <el-radio-group v-model="formData.workType">
                                 <el-radio :value="0">业务类</el-radio>
@@ -138,7 +149,7 @@
                         </el-form-item>
                     </el-col>
 
-                    <el-col :span="6">
+                    <el-col :span="12">
                         <el-form-item label="计划类型">
                             <el-radio-group v-model="formData.taPlanType" disabled>
                                 <el-radio :value="formData.workType == 0 ? 1 : 0">过程计划</el-radio>
@@ -147,17 +158,14 @@
                     </el-col>
 
                     <!-- <el-col :span="6">
-                        <el-form-item label="抄送单位">
-                            <el-select v-model="formData.taCCUnit" placeholder="请选择">
-                                <el-option label="单位一" value="单位一"></el-option>
-                                <el-option label="单位二" value="单位二"></el-option>
-                            </el-select>
-                        </el-form-item>
-                    </el-col> -->
-                    <el-col :span="6">
-                        <el-button type="primary" @click="handleGenerateFn">生成</el-button>
-                        <el-button type="info" @click="handleResetFn">重置</el-button>
-                    </el-col>
+                            <el-form-item label="抄送单位">
+                                <el-select v-model="formData.taCCUnit" placeholder="请选择">
+                                    <el-option label="单位一" value="单位一"></el-option>
+                                    <el-option label="单位二" value="单位二"></el-option>
+                                </el-select>
+                            </el-form-item>
+                        </el-col> -->
+
                 </el-row>
 
                 <!-- 第二行：工作名称 -->
@@ -167,10 +175,14 @@
 
                 <!-- 第三行：执行单位提示 -->
                 <el-form-item label="执行负责人">
-                    <el-input v-model="formData.executingUnit"
-                        placeholder="提示：如未找到相应的执行单位，请和生产院计调确认是否进行了项目组成员的安排"></el-input>
-                
-                    </el-form-item>
+                    <!-- <el-input v-model="formData.executingUnit"
+                            placeholder="提示：如未找到相应的执行单位，请和生产院计调确认是否进行了项目组成员的安排"></el-input> -->
+                    <!-- userList -->
+                    <el-select clearable v-model="formData.executingUnit" placeholder="请选择" style="width: 100%;">
+                        <el-option v-for="item in userList" :key="item.value" :label="item.value" :value="item.value">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
 
                 <!-- 第四行：前言 -->
                 <el-form-item label="前言">
@@ -283,21 +295,20 @@
                     <el-button type="primary" @click="saveForm">保存</el-button>
                 </div>
             </el-form>
-        </el-dialog>
-        <!-- 关门时间 -->
-        <a-modal v-model:visible="ClosingTimeVisible" title="关门时间" @ok="handleOk" @cancel="handleCancel">
-            <a-form :model="ClosingTimeForm" layout="horizontal">
-                <a-form-item label="关门时间">
-                    <span>2025-12-16</span>
-                </a-form-item>
-                <a-form-item label="调整后关门时间">
-                    <a-date-picker value-format="YYYY-MM-DD HH:mm:ss" v-model:value="ClosingTimeForm.ClosingReason"
-                        style="width: 100%;" />
-                </a-form-item>
-            </a-form>
-        </a-modal>
+        </div>
+        <!-- 展示pdf弹窗 -->
+        <div v-if="tableDataVisible == 2">
+            <pdfDetail v-if="tableDataVisible == 2" @closePdf="changeShowTab(0)" :fromData="pdftableDetail"></pdfDetail>
+        </div>
+        <!-- 查看工作安排 -->
+        <div v-if="tableDataVisible == 3">
+            <taskDetails :type="'work'" v-if="tableDataVisible == 3" @adjust="handleAdjust"
+                @CloseTask="changeShowTab(0)" :detailData="detailModalData">
+            </taskDetails>
+        </div>
+
         <!-- 设置阶段进度 - 关联合同条款 -->
-        <el-dialog v-model="dialogTermsVisible" title="设置阶段进度 - 关联合同条款" width="80%" :before-close="handleClose">
+        <a-modal v-model:visible="dialogTermsVisible" title="设置阶段进度 - 关联合同条款" width="80%" @cancel="handleClose">
             <div class="contract-clause-container">
                 <!-- 合同信息 --> 工作详情
                 <div class="contract-info">
@@ -333,9 +344,22 @@
                 <el-button @click="dialogTermsVisible = false">关闭</el-button>
                 <el-button type="primary" @click="saveSettings">保存设置</el-button>
             </template>
-        </el-dialog>
+        </a-modal>
+        <!-- 关门时间 -->
+        <a-modal v-model:visible="ClosingTimeVisible" title="关门时间" @ok="handleOk" @cancel="handleCancel">
+            <a-form :model="ClosingTimeForm" layout="horizontal">
+                <a-form-item label="关门时间">
+                    <span>2025-12-16</span>
+                </a-form-item>
+                <a-form-item label="调整后关门时间">
+                    <a-date-picker value-format="YYYY-MM-DD HH:mm:ss" v-model:value="ClosingTimeForm.ClosingReason"
+                        style="width: 100%;" />
+                </a-form-item>
+            </a-form>
+        </a-modal>
+
         <!-- 关联 情况详情 -->
-        <el-dialog v-model="dialogLinkVisible" title="关联情况" width="80%" :before-close="handleClose">
+        <a-modal v-model:visible="dialogLinkVisible" title="关联情况" width="80%" @cancel="handleClose">
             <el-table :data="CaseDetailsList" border style="width: 100%">
                 <el-table-column type="index" width="70" label="序号" />
                 <el-table-column prop="TA_TaskName" label="通知名称" />
@@ -344,17 +368,15 @@
             <template #footer>
                 <el-button @click="dialogLinkVisible = false">关闭</el-button>
             </template>
-        </el-dialog>
-        <!-- 展示pdf 弹窗 -->
-        <a-modal v-model:visible="pdfModalDetails" :title="pdfDetailsTitle" width="90%" :footer="null">
-            <pdfDetail v-if="pdfModalDetails" :fromData="pdftableDetail"></pdfDetail>
-        </a-modal>
-        <!-- 展示详情 弹窗 -->
-        <a-modal v-model:visible="detailModalVisible" :title="detailModalTitle" width="80%" :footer="null">
-            <taskDetails :type="'work'" v-if="detailModalVisible" @adjust="handleAdjust" :detailData="detailModalData"></taskDetails>
         </a-modal>
     </div>
 </template>
+
+<script lang="ts">
+export default {
+    name: 'WorkArrangement' // 显式声明，确保 include 能找到
+}
+</script>
 
 <script setup lang="ts">
 import { ref, computed, onMounted, watch, reactive } from 'vue';
@@ -368,8 +390,14 @@ import taskDetails from "./components/taskDetails.vue";
 
 // 引入组件pdfDetail 并展示
 import pdfDetail from "./components/pdfDetail.vue";
-import work from '@/network/apis/work';
+
 const dialogVisible = ref(false);
+const tableDataVisible = ref(0);
+
+
+const changeShowTab = (type: number) => {
+    tableDataVisible.value = type;
+};
 
 // 搜索相关
 const searchType = ref('0');
@@ -485,13 +513,12 @@ const visibleColumns = computed(() => {
     return columns.filter((col) => columnVisible.value[col.key as keyof typeof columnVisible.value]);
 });
 // 查看通知名称
-const pdfModalDetails = ref(false);
 const pdftableDetail = ref({});
 const pdfDetailsTitle = ref('显示文件')
 const showTaskContentModal = (record: any) => {
     console.log(record, 'record');
 
-    pdfModalDetails.value = true
+    tableDataVisible.value = 2
     pdftableDetail.value = record
 };
 
@@ -540,7 +567,7 @@ const handleReset = () => {
 // 新增处理
 const handleAdd = () => {
     console.log('点击新增');
-    dialogVisible.value = true;
+    tableDataVisible.value = 1;
     // 清空填写表单
     formData.value.workType = 0;
     formData.value.taPlanType = 0;
@@ -727,7 +754,7 @@ const handleResetFn = () => {
 
 // 生成表单
 const handleGenerateFn = () => {
-    console.log('生成表单:', formData);
+    console.log('生成表单:', formData.value);
 
     ElMessageBox.confirm('同层级,同单位/专业不能有相同的任务,请修改以下任务 1|规划院', '提示', {
         confirmButtonText: "确定",
@@ -739,6 +766,9 @@ const handleGenerateFn = () => {
             ElMessage.warning('您还未添加工作安排');
             return;
         }
+        pdftableDetail.value = formData.value
+        tableDataVisible.value = 2;
+
         // 点击确定按钮的处理逻辑
         console.log("点击确定按钮");
     }).catch(() => {
@@ -749,7 +779,7 @@ const handleGenerateFn = () => {
 
 // 取消对话框
 const handleCancel = () => {
-    dialogVisible.value = false;
+    tableDataVisible.value = 0;
 };
 
 // 关闭对话框前的处理
@@ -781,15 +811,13 @@ const handleDelete = async (id: number) => {
 }
 
 
-const detailModalVisible = ref(false);
 const detailModalTitle = ref('查看工作安排');
 const detailModalData = ref<any>({});
 
 
 const handleEditFn = (row: any) => {
     console.log(row, '点击编辑');
-    detailModalVisible.value = true;
-    detailModalTitle.value = '查看工作安排';
+    tableDataVisible.value = 3;
     detailModalData.value = row;
 }
 
@@ -819,7 +847,7 @@ const ClosingTimeForm = ref({
 // 工作调整
 const handleAdjust = () => {
     dialogVisible.value = true;
-    detailModalVisible.value = false;
+    tableDataVisible.value = 1;
     //  Object.assign(formData, detailModalData.value);
     formData.value = JSON.parse(JSON.stringify(detailModalData.value));
     console.log(detailModalData.value, 'detailModalDatadetailModalData');
@@ -903,9 +931,11 @@ const handleClose = () => {
         type: 'warning',
     }).then(() => {
         dialogLinkVisible.value = false;
+        dialogTermsVisible.value = false;
     }).catch(() => {
         // 取消关闭
         dialogLinkVisible.value = false;
+        dialogTermsVisible.value = false;
     });
 };
 
@@ -949,12 +979,22 @@ const userName = ref<string | null>(null);
 const userList = ref<any[]>([]);
 const getUserList = async () => {
     const res = await getDatas('project/majorByProIdAndStep', {
-        // projectId: route.query.projectId, // 使用从地址栏获取的projectId
-        // step: route.query.projectStep, // 使用从地址栏获取的projectStep
+        projectId: route.query.projectId, // 使用从地址栏获取的projectId
+        step: route.query.projectStep, // 使用从地址栏获取的projectStep
     });
     console.log(res, 'getUserList');
-    if (res.code === 200) {
-        userList.value = res.data;
+    if (res.data.code === 200) {
+        userList.value = res.data.result;
+        // 将数组改为{
+        //   value: 'Beijing',
+        //   label: '北京'
+        // }的格式
+        if (userList.value && userList.value.length > 0) {
+            userList.value = userList.value.map(item => ({
+                value: item,
+                label: item,
+            }));
+        }
     }
 };
 
@@ -962,15 +1002,15 @@ const getUserList = async () => {
 watch(() => [route.query.projectId, route.query.projectStep], () => {
     console.log('路由参数变化，重新查询数据');
     handleSearch();
+    changeShowTab(0);
 });
 
 
-
 onMounted(() => {
-    handleSearch(); 
+    handleSearch();
     getUserList();
-    console.log('WorkArrangement mounted');
     userName.value = localStorage.getItem("userName");
+
 })
 const Editable = ref(false);
 watch(

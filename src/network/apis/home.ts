@@ -38,4 +38,22 @@ export default {
       data: params,
     };
   },
+
+  // 查看任务详情
+  GetTaskDetails(params: any) {
+    return {
+      method: "GET",
+      url: "/projectcontract/taskArrangemenTodo/detail",
+      params,
+    };
+  },
+  // 确认完成任务
+  PostTaskComplete(params: any) {
+    return {
+      method: "POST",
+      url: "/projectcontract/taskArrangemenTodo/complete",
+      data:params,
+    };
+  },
+
 };

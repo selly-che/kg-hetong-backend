@@ -1,132 +1,105 @@
 <template>
-  <div class="todolist-container">
-    <div class="search-form-wrapper">
-      <a-form layout="inline" :model="searchForm">
-        <a-form-item label="任务名称">
-          <a-input
-            v-model:value="searchForm.taskName"
-            placeholder="请输入任务名称"
-          />
-        </a-form-item>
-        <a-form-item label="任务状态">
-          <a-select
-            v-model:value="searchForm.completeStatus"
-            style="width: 150px"
-          >
-            <a-select-option value="">全部</a-select-option>
-            <a-select-option value="0">未完成</a-select-option>
-            <a-select-option value="1">已完成</a-select-option>
-          </a-select>
-        </a-form-item>
-        <a-form-item>
-          <div style="display: flex; gap: 10px">
-            <a-button type="primary" @click="handleSearch">查询</a-button>
-            <a-button type="primary" @click="handleReset">重置</a-button>
-          </div>
-        </a-form-item>
-      </a-form>
-    </div>
-
-    <div class="table-container">
-      <div class="table-toolbar">
-        <a-space>
-          <a-button size="small" @click="handleReset">
-            <template #icon><ReloadOutlined /></template>
-          </a-button>
-          <!-- <a-button size="small">
-            <template #icon><TableOutlined /></template>
-            <DownOutlined />
-          </a-button> -->
-        </a-space>
+  <div v-if="tableDataVisible == 0">
+    <div class="todolist-container">
+      <div class="search-form-wrapper">
+        <a-form layout="inline" :model="searchForm">
+          <a-form-item label="任务名称">
+            <a-input v-model:value="searchForm.taskName" placeholder="请输入任务名称" />
+          </a-form-item>
+          <a-form-item label="任务状态">
+            <a-select v-model:value="searchForm.completeStatus" style="width: 150px">
+              <a-select-option value="">全部</a-select-option>
+              <a-select-option value="0">未完成</a-select-option>
+              <a-select-option value="1">已完成</a-select-option>
+            </a-select>
+          </a-form-item>
+          <a-form-item>
+            <div style="display: flex; gap: 10px">
+              <a-button type="primary" @click="handleSearch">查询</a-button>
+              <a-button type="primary" @click="handleReset">重置</a-button>
+            </div>
+          </a-form-item>
+        </a-form>
       </div>
 
-      <a-table
-        :columns="columns"
-        :data-source="dataSource"
-        :pagination="false"
-        bordered
-        size="middle"
-        :row-class-name="() => 'table-row'"
-      >
-        <template #bodyCell="{ column, record }">
-          <template v-if="column.key === 'taskName'">
-            <a class="task-link" @click="handleTaskClick(record)">{{
-              record.taskName
-            }}</a>
-          </template>
-          <template v-if="column.key === 'completeStatus'">
-            {{ record.completeStatus === "1" ? "已完成" : "未完成" }}
-          </template>
-        </template>
-      </a-table>
-      <!-- 分页 -->
-      <div class="custom-pagination">
-        <div class="pagination-info">
-          显示第
-          {{
-            pagination.total > 0
-              ? (pagination.current - 1) * pagination.pageSize + 1
-              : 0
-          }}
-          到第
-          {{
-            Math.min(pagination.current * pagination.pageSize, pagination.total)
-          }}
-          条记录，总共 {{ pagination.total }} 条记录 每页显示
-          <a-select
-            v-model:value="pagination.pageSize"
-            size="small"
-            style="width: 70px; margin: 0 5px"
-            @change="handlePageSizeChange"
-          >
-            <a-select-option :value="10">10</a-select-option>
-            <a-select-option :value="20">20</a-select-option>
-            <a-select-option :value="50">50</a-select-option>
-            <a-select-option :value="100">100</a-select-option>
-          </a-select>
-          条记录
+      <div class="table-container">
+        <div class="table-toolbar">
+          <a-space>
+            <a-button size="small" @click="handleReset">
+              <template #icon>
+                <ReloadOutlined />
+              </template>
+            </a-button>
+            <!-- <a-button size="small">
+              <template #icon><TableOutlined /></template>
+              <DownOutlined />
+            </a-button> -->
+          </a-space>
         </div>
-        <div class="pagination-buttons">
-          <div
-            class="page-btn"
-            :class="{ disabled: pagination.current === 1 }"
-            @click="goToPage(1)"
-          >
-            «
+
+        <a-table :columns="columns" :data-source="dataSource" :pagination="false" bordered size="middle"
+          :row-class-name="() => 'table-row'">
+          <template #bodyCell="{ column, record }">
+            <template v-if="column.key === 'taskName'">
+              <a class="task-link" @click="handleTaskClick(record)">{{
+                record.taskName
+              }}</a>
+            </template>
+            <template v-if="column.key === 'completeStatus'">
+              {{ record.completeStatus === "1" ? "已完成" : "未完成" }}
+            </template>
+          </template>
+        </a-table>
+        <!-- 分页 -->
+        <div class="custom-pagination">
+          <div class="pagination-info">
+            显示第
+            {{
+              pagination.total > 0
+                ? (pagination.current - 1) * pagination.pageSize + 1
+                : 0
+            }}
+            到第
+            {{
+              Math.min(pagination.current * pagination.pageSize, pagination.total)
+            }}
+            条记录，总共 {{ pagination.total }} 条记录 每页显示
+            <a-select v-model:value="pagination.pageSize" size="small" style="width: 70px; margin: 0 5px"
+              @change="handlePageSizeChange">
+              <a-select-option :value="10">10</a-select-option>
+              <a-select-option :value="20">20</a-select-option>
+              <a-select-option :value="50">50</a-select-option>
+              <a-select-option :value="100">100</a-select-option>
+            </a-select>
+            条记录
           </div>
-          <div
-            class="page-btn"
-            :class="{ disabled: pagination.current === 1 }"
-            @click="goToPage(pagination.current - 1)"
-          >
-            ‹
-          </div>
-          <div
-            v-for="page in displayedPages"
-            :key="page"
-            class="page-btn"
-            :class="{ active: pagination.current === page }"
-            @click="goToPage(page)"
-          >
-            {{ page }}
-          </div>
-          <div
-            class="page-btn"
-            :class="{ disabled: pagination.current === totalPages }"
-            @click="goToPage(pagination.current + 1)"
-          >
-            ›
-          </div>
-          <div
-            class="page-btn"
-            :class="{ disabled: pagination.current === totalPages }"
-            @click="goToPage(totalPages)"
-          >
-            »
+          <div class="pagination-buttons">
+            <div class="page-btn" :class="{ disabled: pagination.current === 1 }" @click="goToPage(1)">
+              «
+            </div>
+            <div class="page-btn" :class="{ disabled: pagination.current === 1 }"
+              @click="goToPage(pagination.current - 1)">
+              ‹
+            </div>
+            <div v-for="page in displayedPages" :key="page" class="page-btn"
+              :class="{ active: pagination.current === page }" @click="goToPage(page)">
+              {{ page }}
+            </div>
+            <div class="page-btn" :class="{ disabled: pagination.current === totalPages }"
+              @click="goToPage(pagination.current + 1)">
+              ›
+            </div>
+            <div class="page-btn" :class="{ disabled: pagination.current === totalPages }"
+              @click="goToPage(totalPages)">
+              »
+            </div>
           </div>
         </div>
       </div>
     </div>
+  </div>
+  <div v-if="tableDataVisible == 1">
+    <taskdetails :detailData="detailData" :type="'home'" @CloseTask="closeHomeFn" @closeHome="closeHomeFn" />
   </div>
 </template>
 
@@ -134,10 +107,11 @@
 import { ref, reactive, onMounted, computed } from "vue";
 import { ReloadOutlined } from "@ant-design/icons-vue";
 import getDatas from "@/network/index";
-
+import taskdetails from "@/views/projectMgment/components/taskDetails.vue";
 onMounted(() => {
   List();
 });
+const tableDataVisible = ref(0)
 const searchForm = reactive({
   taskName: "",
   completeStatus: "",
@@ -260,9 +234,21 @@ const handleReset = () => {
   List();
 };
 
-const handleTaskClick = (record) => {
-  console.log("Task clicked:", record);
+const detailData = ref({});
+const handleTaskClick = async (record) => {
+  const resp = await getDatas("home/GetTaskDetails", {
+    taskId: record.taskId,
+  });
+  console.log(resp, 'respresp');
+  if (resp.data.code === 200) {
+    detailData.value = resp.data.result;
+    tableDataVisible.value = 1;
+  }
 };
+
+const closeHomeFn = () => {
+  tableDataVisible.value = 0;
+}
 </script>
 
 <style lang="less" scoped>

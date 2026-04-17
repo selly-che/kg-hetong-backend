@@ -339,8 +339,9 @@
     </a-tabs>
   </div>
 </template>
+ 
 <script setup lang="ts">
-import { ref, onMounted, watch,onActivated } from "vue";
+import { ref, onMounted, watch, onActivated } from "vue";
 import getDates from "@/network/index";
 import { useRoute } from "vue-router";
 import { message } from "ant-design-vue";

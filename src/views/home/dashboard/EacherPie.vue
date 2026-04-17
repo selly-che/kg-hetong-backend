@@ -18,14 +18,14 @@
           </div>
         </div>
         <div class="item-actions">
-          <a-button size="small" class="action-btn" @click="handleView(item)">查看</a-button>
-          <a-button size="small" class="action-btn" @click="handleClose(item)">关闭</a-button>
+          <a-button size="small" type="primary" class="action-btn" @click="handleView(item)">查看</a-button>
+          <a-button size="small" type="danger" class="action-btn" @click="handleClose(item)">关闭</a-button>
         </div>
       </div>
     </div>
     <!-- 详情 -->
     <a-modal v-model:visible="visible" title="任务详情" width="80%">
-      <taskdetails :detailData="detailData" :type="'home'" />
+      <taskdetails :detailData="detailData" :type="'home'" @CloseTask="closeHomeFn" @closeHome="closeHomeFn" /> 
     </a-modal>
   </div>
 </template>
@@ -71,12 +71,23 @@ const handleViewAll = () => {
   });
 };
 
+const closeHomeFn = () => {
+  
+  visible.value = false;
+};
+
 const visible = ref(false);
 const detailData = ref({});
-const handleView = (item) => {
+const handleView = async (item) => {
   visible.value = true;
   console.log("查看", item);
-  detailData.value = item;
+  const resp = await getDatas("home/GetTaskDetails", {
+    taskId: item.taskId,
+  });
+  console.log(resp, 'respresp');
+  if(resp.data.code === 200){
+    detailData.value = resp.data.result;
+  }
 };
 
 const handleClose = (item) => {

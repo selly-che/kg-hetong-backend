@@ -244,8 +244,7 @@
       暂无项目组成员数据
     </div>
   </div>
-</template>
-
+</template> 
 <script setup lang="ts">
 import { ref, onMounted, watch, computed } from "vue";
 import getDatas from "@/network/index";
