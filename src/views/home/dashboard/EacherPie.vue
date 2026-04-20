@@ -3,12 +3,16 @@
     <div class="header">
       <div class="title-section">
         <span class="pie-title">待办工作</span>
-        <span class="todo-tag">待办: {{ todoList.length }}</span>
+        <span class="todo-tag">待办: {{ filteredTodoList.length }}</span>
       </div>
-      <a class="more-link" @click="handleViewAll(item)">查看更多</a>
+      <a class="more-link" @click="handleViewAll()">查看更多</a>
     </div>
     <div class="todo-list">
-      <div v-for="(item, index) in todoList" :key="index" class="todo-item">
+      <div
+        v-for="(item, index) in filteredTodoList"
+        :key="index"
+        class="todo-item"
+      >
         <div class="item-content">
           <!-- taskName -->
           <div class="item-text">{{ item.taskName }}</div>
@@ -34,7 +38,7 @@
 import { ClockCircleOutlined } from "@ant-design/icons-vue";
 import { Modal } from "ant-design-vue";
 import getDatas from "@/network/index";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import { useRouter } from "vue-router";
 
 onMounted(() => {
@@ -54,6 +58,10 @@ const todoList = ref([
     taskName: "工作名称11",
   },
 ]);
+
+const filteredTodoList = computed(() => {
+  return todoList.value.filter((item) => item.completeStatus === "0");
+});
 
 //获取代办列表
 const List = async () => {
