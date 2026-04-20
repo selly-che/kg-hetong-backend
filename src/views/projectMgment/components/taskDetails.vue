@@ -5,9 +5,9 @@
             <div class="header-left">
                 <el-image :src="Imgurl" :fit="fit" alt="图片" class="detail-image" />
                 <div class="header-info">
-                    <div class="info-title">{{ detailData.taTaskName || '土一-自揽-20251216-城轨[初步设计]' }}</div>
+                    <div class="info-title">{{ detailData.taTaskName || '' }}</div>
                     <div class="info-subtitle">
-                        {{ detailData.tcName || '1216-1216-自揽-城轨-主责1' }}
+                        {{ detailData.tcName || '' }}
                     </div>
                     <!-- 筛选区域 -->
                     <div class="detail-filter">
@@ -36,7 +36,7 @@
                     <a-button @click="toggleFullScreen">全屏</a-button>
                 </a-space>
             </div>
-            <div class="header_last">
+            <div class="header_last" v-if="type == 'work'">
                 <div class="header_last_box" @click="handleAdjust">
                     <SettingOutlined style="font-size: 30px;" />
                     <span>工作调整</span>
@@ -46,6 +46,11 @@
                 </div>
                 <div class="header_last_box" @click="handleClosingTime">
                     <HistoryOutlined style="font-size: 30px;" /><span>关门时间</span>
+                </div>
+            </div>
+            <div class="header_last" v-if="type == 'home'">
+                <div class="header_last_box" @click="handlefillInFn" width="60%">
+                    <HistoryOutlined style="font-size: 30px;" /><span>填报</span>
                 </div>
             </div>
         </div>
@@ -66,7 +71,7 @@
                     <template v-else-if="column.key === 'groupName'">
                         <div class="group-name-cell">
                             <div class="group-name-text">{{ record.tgName || text }}</div>
-                            <div v-if="record.tcName" >{{ record.tcName }}</div>
+                            <div v-if="record.tcName">{{ record.tcName }}</div>
                         </div>
                     </template>
                     <template v-else-if="column.key === 'taskContent'">
@@ -107,12 +112,37 @@
                 </a-form-item>
             </a-form>
         </a-modal>
+        <!-- 填报弹窗 -->
+        <a-modal v-model:visible="fillInVisible" title="全局事务性项目[事务性]" width="80%">
+            <!-- 展示表格，任务、要求完成时间、实际完成时间、备注 -->
+            <a-table :columns="fillInColumns" :data-source="fillInData" :pagination="false" :bordered="true"
+                size="middle" :row-key="(record: any) => record.id" :scroll="{ x: 1200 }">
+                <template #euCompleteDate="{ record }">
+                    <span v-show="setFillIntype" style="cursor: pointer;color: #337ab7;"
+                        @click="setFillInFn">设为完成</span>
+                    <div v-show="!setFillIntype">
+                        <span>{{ FillInTime }}</span>
+                        <a-button type="primary" shape="circle" size="small" style="margin: 0 10px;"
+                            @click="confirmFillInFn">
+                            <template #icon>
+                                <CheckOutlined />
+                            </template>
+                        </a-button>
+                        <a-button type="primary" shape="circle" size="small" @click="cancelFillInFn">
+                            <template #icon>
+                                <CloseOutlined />
+                            </template>
+                        </a-button>
+                    </div>
+                </template>
+            </a-table>
+        </a-modal>
     </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, reactive, onMounted, watch } from 'vue';
-import { SettingOutlined, SoundOutlined, HistoryOutlined } from '@ant-design/icons-vue';
+import { SettingOutlined, SoundOutlined, HistoryOutlined, CheckOutlined, CloseOutlined } from '@ant-design/icons-vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 
 // 图片引入
@@ -122,7 +152,10 @@ const fit = ref('contain');
 // Props
 interface Props {
     detailData: any;
+    type: string;
 }
+
+
 
 const props = defineProps<Props>();
 
@@ -317,6 +350,59 @@ const handleClosingTime = () => {
     closingTimeVisible.value = true;
 };
 
+// 填报
+const fillInVisible = ref(false);
+const fillInColumns = ref([
+    {
+        title: '任务名称',
+        key: 'taskName',
+        dataIndex: 'tcName',
+        width: 200
+    },
+    {
+        title: '要求完成时间',
+        key: 'deptMajor',
+        dataIndex: 'deptMajor',
+        width: 150
+    },
+    {
+        title: '实际完成时间',
+        key: 'actualDate',
+        dataIndex: 'euCompleteDate',
+        width: 150,
+        slots: { customRender: 'euCompleteDate' },
+    },
+    {
+        title: '备注',
+        key: 'remark',
+        dataIndex: 'tcRemark',
+        width: 200
+    },
+])
+const fillInData: any = ref([])
+const handlefillInFn = () => {
+    console.log(props.detailData, '填报');
+    fillInVisible.value = true;
+    const processedData = processTaskGroups(props.detailData.taskGroups);
+    console.log(processedData, 'processedDataprocessedData');
+
+    fillInData.value = collectAllChildren(processedData);
+    console.log(fillInData.value, 'fillInDatafillInData');
+
+}
+
+const collectAllChildren = (arr: any) => {
+    let result: any = [];
+    arr.forEach((item: any) => {
+        // 如果当前项有 children，就加入结果
+        if (item.children && item.children.length) {
+            result.push(...item.children);
+            // 递归：children 内部还有 children 继续提取
+            result.push(...collectAllChildren(item.children));
+        }
+    });
+    return result;
+}
 const handleClosingTimeOk = () => {
     console.log('关门时间:', closingTimeForm.value.ClosingReason);
     closingTimeVisible.value = false;
@@ -325,6 +411,29 @@ const handleClosingTimeOk = () => {
 const handleClosingTimeCancel = () => {
     closingTimeVisible.value = false;
 };
+
+const setFillIntype = ref(true)
+const FillInTime = ref()
+const setFillInFn = () => {
+    setFillIntype.value = false
+    // 获取当前的时间 年月日
+    FillInTime.value = new Date().toLocaleDateString().replace(/\//g, '-')
+}
+const cancelFillInFn = () => {
+    setFillIntype.value = true
+}
+
+const confirmFillInFn = () => {
+    ElMessageBox.confirm('是否确认完成？', '提示', {
+        confirmButtonText: "是",
+        cancelButtonText: "否",
+        type: "warning",
+    }).then(() => {
+        ElMessage.success('完成成功');
+    }).catch(() => { 
+        ElMessage.info('取消完成');
+    })
+}
 
 </script>
 

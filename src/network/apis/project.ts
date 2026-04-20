@@ -103,6 +103,13 @@ export default {
       url: "/sys/file/upload",
       data: params,
     }
+  },
+  majorByProIdAndStep(params: any) {
+    return {
+      method: "POST",
+      url: "/projectcontract/taskArrangemenTodo/majorByProIdAndStep",
+      data: params,
+    }
   }
 
 };

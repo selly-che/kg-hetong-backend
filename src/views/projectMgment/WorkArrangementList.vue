@@ -91,7 +91,7 @@
       <!-- 操作 -->
       <template #operation="{ record }">
         <a-space>
-          <MenuOutlined style="color: #1890ff;" @click="handleEdit(record)" />
+          <PicLeftOutlined style="color: #1890ff;" @click="handleEdit(record)" />
         </a-space>
       </template>
     </a-table>
@@ -117,86 +117,15 @@
       <embed :src="pdfUrl" type="application/pdf" width="100%" height="700px" />
     </a-modal>
 
-    <!-- 详情弹窗 -->
-    <a-modal v-model:visible="detailModalVisible" :title="detailModalTitle" width="80%" :footer="null">
-      <div class="detail-container">
-        <!-- 头部信息 -->
-        <div class="detail-header">
-          <div class="header-left">
-            <el-image :src="Imgurl" :fit="fit" alt="图片" class="detail-image" />
-            <div class="header-info">
-              <div class="info-title">{{ detailModalData.taTaskName || '土一-自揽-20251216-城轨[初步设计]' }}</div>
-              <div class="info-subtitle">
-
-                {{ detailModalData.tcName || '1216-1216-自揽-城轨-主责1' }}
-              </div>
-              <!-- 筛选区域 -->
-              <div class="detail-filter">
-                <a-form :model="detailForm" layout="inline">
-                  <a-form-item label="状态">
-                    <el-radio-group v-model="detailForm.status">
-                      <el-radio :value="1">未完成</el-radio>
-                      <el-radio :value="2">已完成</el-radio>
-                    </el-radio-group>
-                  </a-form-item>
-                  <a-form-item label="单位">
-                    <el-select v-model="detailForm.taTaskName" placeholder="请选择" style="width: 200px">
-                      <el-option v-for="item in unitOptions" :key="item.value" :label="item.label" :value="item.value">
-                      </el-option>
-                    </el-select>
-                  </a-form-item>
-                </a-form>
-              </div>
-            </div>
-          </div>
-          <div class="header-right">
-            <a-space>
-              <a-button type="primary" @click="detailSearch">查询</a-button>
-              <a-button @click="detailReset">重置</a-button>
-              <a-button @click="toggleFullScreen">全屏</a-button>
-            </a-space>
-          </div>
-        </div>
-
-        <!-- 任务列表 -->
-        <div class="task-list">
-          <a-table :columns="columns" :data-source="treeData" row-key="Id" bordered :pagination="false" :expandable="{
-            defaultExpandAllRows: true,
-            expandRowByClick: true,
-            indentSize: 30
-          }" :row-class-name="getRowClassName">
-            <template #bodyCell="{ column, record }">
-              <template v-if="column.dataIndex === 'TD_Order'">
-                <span>{{ record.TD_Order }}</span>
-              </template>
-              <template v-if="column.dataIndex === 'TD_Name'">
-                <span :style="{ fontWeight: record.Level === 1 ? '600' : '400' }">{{ record.TD_Name }}</span>
-              </template>
-              <template v-if="column.dataIndex === 'TD_LimitTime'">
-                <span>{{ formatDate(record.TD_LimitTime) }}</span>
-              </template>
-              <template v-if="column.dataIndex === 'TD_CompletionTime'">
-                <span>{{ record.TD_CompletionTime || '-' }}</span>
-              </template>
-              <template v-if="column.dataIndex === 'Is_Red'">
-                <a-tag :color="record.Is_Red ? 'red' : 'green'">
-                  {{ record.Is_Red ? '逾期' : '正常' }}
-                </a-tag>
-              </template>
-              <template v-if="column.dataIndex === 'Reason'">
-                <span v-if="record.Reason" style="color: #ff4d4f;">{{ record.Reason }}</span>
-                <span v-else>-</span>
-              </template>
-            </template>
-          </a-table>
-        </div>
-      </div>
-    </a-modal>
 
     <!-- 展示pdf 弹窗 -->
     <a-modal v-model:visible="pdfModalDetails" :title="pdfDetailsTitle" width="90%" :footer="null">
-
       <pdfDetail v-if="pdfModalDetails" :fromData="pdftableDetail"></pdfDetail>
+    </a-modal>
+
+    <!-- 展示工作详情 弹窗 -->
+    <a-modal v-model:visible="detailModalVisible" width="80%" :title="detailModalTitle">
+      <taskDetails v-if="detailModalVisible" :detailData="detailModalData" :type="'workList'"></taskDetails>
     </a-modal>
   </div>
 </template>
@@ -204,25 +133,25 @@
 <script setup lang="ts">
 import { ref, computed, reactive, onMounted, watch } from 'vue';
 import { useRoute } from 'vue-router';
-import { SettingOutlined, MenuOutlined } from '@ant-design/icons-vue';
+import { SettingOutlined, PicLeftOutlined } from '@ant-design/icons-vue';
 import getDatas from "@/network/index";
 import { ElMessage } from 'element-plus';
 // 引入组件pdfDetail 并展示
 import pdfDetail from "./components/pdfDetail.vue";
 
+import taskDetails from './components/taskDetails.vue';
+
 const pdfModalDetails = ref(false)
 const pdfDetailsTitle = ref('显示文件')
 const pdftableDetail = ref({})
 
-// 图片引入
-const Imgurl = require("@/static/image/e93263af-ce49-4278-b619-6d6b4ef6f015.png");
+const detailModalTitle = ref('查看工作安排');
 
 // 弹窗相关
 const pdfModalVisible = ref(false);
 const pdfTitle = ref('');
 const pdfUrl = ref('https://storage.xuetangx.com/public_assets/xuetangx/PDF/PlayerAPI_v1.0.6.pdf');
 
-const fit = ref('contain'); // 图片适应方式
 
 // 路由相关
 const route = useRoute();
@@ -466,7 +395,6 @@ const handleViewDetail = (record: any) => {
 
 // 点击编辑
 const detailModalVisible = ref(false);
-const detailModalTitle = ref('查看工作安排');
 const detailModalData = ref<any>({});
 const detailForm = reactive({
   status: '',
@@ -775,124 +703,7 @@ const loadTaskDetails = async (taskId: string) => {
     taskDetailList.value = [];
   }
 };
-const columns = [
-  {
-    title: '序号',
-    dataIndex: 'TD_Order', // 或者使用自定义索引, 下面会说明
-    // 如果需要自定义序号，可以使用 slot 或下面方式
-    customRender: ({ index }: { index: number }) => index + 1,
-  },
-  {
-    title: '单位/专业',
-    dataIndex: 'TD_DeptMajor',
-  },
-  {
-    title: '节点计划',
-    dataIndex: 'TD_Name',
-  },
-  {
-    title: '工点系统类型',
-    dataIndex: 'TD_WorkPointsName',
-  },
-  {
-    title: '要求完成时间',
-    dataIndex: 'TD_LimitTime',
-  },
-  {
-    title: '实际完成时间',
-    dataIndex: 'TD_CompletionTime',
-  },
-  {
-    title: '专业负责人',
-    dataIndex: 'TD_MajorCharge',
-  },
-  {
-    title: '前序专业完成情况未完成/总数',
-    dataIndex: 'CompleteStatistics',
-  },
-  {
-    title: '进展情况',
-    dataIndex: 'Reason',
-  },
-  {
-    title: '备注',
-    dataIndex: 'Remark',
-  },
-];
 
-// 获取行类名
-const getRowClassName = (record: any) => {
-  if (record.Level === 1) {
-    return 'parent-row';
-  }
-  return 'child-row';
-};
-const treeData = computed(() => {
-  return buildTree(taskDetailList.value);
-});
-// 构建树形结构
-const buildTree = (list: any[]) => {
-  const map = new Map();
-  const tree: any[] = [];
-
-  // 创建映射
-  list.forEach(item => {
-    map.set(item.Id, { ...item, children: [] });
-  });
-
-  // 构建树形结构
-  list.forEach(item => {
-    const node = map.get(item.Id);
-    if (item.Parent_Id && map.has(item.Parent_Id)) {
-      const parent = map.get(item.Parent_Id);
-      parent.children.push(node);
-    } else {
-      tree.push(node);
-    }
-  });
-  // 清理空 children 数组
-  const cleanEmptyChildren = (nodes: any[]) => {
-    nodes.forEach(node => {
-      if (node.children && node.children.length === 0) {
-        delete node.children;
-      } else if (node.children && node.children.length > 0) {
-        cleanEmptyChildren(node.children);
-      }
-    });
-  };
-
-  cleanEmptyChildren(tree);
-  return tree;
-};
-const formatDate = (dateString: string) => {
-  // 简单处理日期格式，如果需要可以更复杂
-  if (/年/.test(dateString)) return dateString;
-  const date = new Date(dateString);
-  return date.toLocaleDateString();
-};
-const detailSearch = () => {
-  console.log('查询详情:', detailForm);
-};
-
-const detailReset = () => {
-  detailForm.status = '';
-  detailForm.taTaskName = '';
-  console.log('重置详情查询条件');
-};
-
-// 全屏切换
-const toggleFullScreen = () => {
-  const modalElement = document.querySelector('.detail-container');
-  if (modalElement) {
-    if (!document.fullscreenElement) {
-      modalElement.requestFullscreen().catch(err => {
-        console.error('全屏失败:', err);
-      });
-    } else {
-      document.exitFullscreen();
-    }
-  }
-};
 
 // 监听路由参数变化
 watch(() => [route.query.projectId, route.query.stepId], () => {

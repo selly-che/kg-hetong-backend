@@ -15,10 +15,10 @@
       >
         <div class="item-content">
           <!-- taskName -->
-          <div class="item-text">{{ item.taskName }}</div>
+          <div class="item-text">{{ item?.taskName }}</div>
           <div class="item-time">
             <clock-circle-outlined class="time-icon" />
-            {{ item.createTime }}
+            {{ item?.createTime }}
           </div>
         </div>
         <div class="item-actions">
@@ -31,6 +31,10 @@
         </div>
       </div>
     </div>
+    <!-- 详情 -->
+    <a-modal v-model:visible="visible" title="任务详情" width="80%">
+      <taskdetails :detailData="detailData" :type="'home'" />
+    </a-modal>
   </div>
 </template>
 
@@ -39,6 +43,7 @@ import { ClockCircleOutlined } from "@ant-design/icons-vue";
 import { Modal } from "ant-design-vue";
 import getDatas from "@/network/index";
 import { ref, onMounted, computed } from "vue";
+import taskdetails from "@/views/projectMgment/components/taskDetails.vue";
 import { useRouter } from "vue-router";
 
 onMounted(() => {
@@ -78,8 +83,12 @@ const handleViewAll = () => {
   });
 };
 
+const visible = ref(false);
+const detailData = ref({});
 const handleView = (item) => {
-  console.log("查看", item.id);
+  visible.value = true;
+  console.log("查看", item);
+  detailData.value = item;
 };
 
 const handleClose = (item) => {
