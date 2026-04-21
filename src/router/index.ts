@@ -54,14 +54,14 @@ const routes: Array<RouteRecordRaw> = [
         name: "WorkArrangementList",
         component: () =>
           import("../views/projectMgment/WorkArrangementList.vue"),
-        meta: { check: true, title: "查看全部工作安排" },
+        meta: { check: true, title: "查看全部工作安排", keepAlive: true },
       },
       // 工作安排
       {
         path: "WorkArrangement",
         name: "WorkArrangement",
         component: () => import("../views/projectMgment/WorkArrangement.vue"),
-        meta: { check: true, title: "工作安排" },
+        meta: { check: true, title: "工作安排", keepAlive: true },
       },
       // 自揽项目信息维护
       // {
@@ -116,7 +116,63 @@ const routes: Array<RouteRecordRaw> = [
         name: "todoList",
         component: () => import("../views/Todolist/index.vue"),
         meta: { check: true, title: "代办事项" },
+      },
+      {
+        path: "/contractMgment/internal",
+        name: "contractMgment-internal",
+        component: () => import("../views/contractMgment/internal.vue"),
+        meta: { check: true, title: "内部合同" },
+      },
+      // 外协合同
+      {
+        path: "/contractMgment/outsourcing",
+        name: "contractMgment-outsourcing",
+        component: () => import("../views/contractMgment/outsourcing.vue"),
+        meta: { check: true, title: "外协合同" },
+      },
+      {
+        path: "/bidMgment",
+        name: "bidMgment-index",
+        component: () => import("../views/bidMgment/index.vue"),
+        meta: { check: true, title: "投标管理" },
+      },
+      {
+        path: "/approvalMgment",
+        name: "approvalMgment-index",
+        component: () => import("../views/approvalMgment/index.vue"),
+        meta: { check: true, title: "审批管理" },
+      },
+      {
+        path: "/ledgerMgment",
+        name: "ledgerMgment-index",
+        component: () => import("../views/ledgerMgment/index.vue"),
+        meta: { check: true, title: "台账管理" },
+      },
+      {
+        path: "/projectMgment/projectMaintenance",
+        name: "projectMgment-index",
+        component: () => import("../views/projectMgment/projectMaintenance.vue"),
+        meta: { check: true, title: "项目管理" },
+      },
+      {
+        path: "/systemMgment/userMgment",
+        name: "system-user",
+        component: () => import("../views/systemMgment/userMgment.vue"),
+        meta: { check: true, title: "用户管理" },
+      },
+      {
+        path: "/systemMgment/menuMgment",
+        name: "isystem/permission",
+        component: () => import("../views/systemMgment/menuMgment.vue"),
+        meta: { check: true, title: "用户管理" },
+      },
+      {
+        path: "/systemMgment/roleMgment",
+        name: "system-role",
+        component: () => import("../views/systemMgment/roleMgment.vue"),
+        meta: { check: true, title: "角色管理" },
       }
+
     ],
   },
   {
@@ -149,9 +205,8 @@ router.beforeEach((to, from, next) => {
     });
 
     return;
-  }
-  console.log(layoutRoute, "layoutRoutelayoutRoute");
-  
+  } 
+
   // 已登录且需要初始化路由
   // 注意：检查是否有子路由，但至少应该有一个首页路由
   if (token && layoutRoute && layoutRoute.children.length <= 5) {

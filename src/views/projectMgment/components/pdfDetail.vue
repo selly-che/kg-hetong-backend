@@ -1,14 +1,15 @@
 <template>
     <div>
-        <div style="text-align: right;margin-bottom: 10px;"> <a-button type="dashed"   @click="ClosePdfFn">关闭</a-button></div>
+        <div style="text-align: right;margin-bottom: 10px;"> <a-button type="dashed" @click="ClosePdfFn">关闭</a-button>
+        </div>
         <div class="pdf-wrapper">
             <div ref="pdfSourceRef" id="pdf-source" class="notice-container-hidden">
                 <h1 class="title">{{ fromData.taTaskName || '总体通知单' }}</h1>
-    
+
                 <div class="notice-number">
                     编号：{{ fromData.taSerialNumber || '-' }}
                 </div>
-    
+
                 <table class="info-table">
                     <tbody>
                         <tr>
@@ -37,17 +38,17 @@
                         </tr>
                     </tbody>
                 </table>
-    
+
                 <div class="content-section">
                     <p class="content-title"><strong>{{ fromData.taTaskName || '联系事项' }}</strong></p>
                     <p style="text-indent: 2em;">{{ fromData.taPreface || '根据集团公司生产计划安排，现下达相关任务，请各单位遵照执行。' }}</p>
                     <p style="text-indent: 2em;">工期计划及要求详见附件。</p>
-    
+
                     <div class="signature">
                         <p>签署：{{ fromData.taCreator || '管理员' }} {{ formatDate(fromData.taEndDate) }}</p>
                     </div>
                 </div>
-    
+
                 <div class="schedule-section">
                     <h3>工期计划</h3>
                     <table class="schedule-table">
@@ -69,7 +70,7 @@
                                     <td>{{ formatDate(group.tgUpdateTime) }}</td>
                                     <td>{{ group.tgDescription }}</td>
                                 </tr>
-    
+
                                 <tr v-for="(status, sIndex) in group.twaTaskContentStatuses" :key="status.id"
                                     class="child-row">
                                     <td>{{ Number(index) + 1 }}.{{ Number(sIndex) + 1 }}</td>
@@ -83,11 +84,11 @@
                     </table>
                 </div>
             </div>
-    
+
             <!-- PDF 预览区域 -->
             <div class="pdf-preview-box">
                 <div v-if="isLoading" class="loading-tip">正在生成 PDF，请稍候...</div>
-                <embed v-else-if="pdfUrl" :src="pdfUrl" type="application/pdf" width="100%" height="800px" />
+                <embed v-else-if="pdfUrl" :src="`${pdfUrl}#zoom=64`" type="application/pdf" width="100%" height="800px" />
                 <div v-else class="empty-tip">
                     {{ errorMsg || '暂无数据' }}
                 </div>
@@ -112,7 +113,7 @@ export default defineComponent({
             default: () => ({})
         }
     },
-    setup(props,{ emit }) {
+    setup(props, { emit }) {
         const pdfUrl = ref<string | null>(null);
         const isLoading = ref<boolean>(false);
         const errorMsg = ref<string>('');
@@ -144,20 +145,16 @@ export default defineComponent({
                 URL.revokeObjectURL(pdfUrl.value);
                 pdfUrl.value = null;
             }
-
             try {
                 // 2. 等待 Vue 更新 DOM
                 await nextTick();
-
                 // 使用 ref 获取元素，比 getElementById 更可靠
                 const element = pdfSourceRef.value;
                 if (!element) {
                     throw new Error('渲染容器未就绪');
                 }
-
                 // 额外等待 100ms 确保字体和样式完全应用
                 await new Promise(resolve => setTimeout(resolve, 100));
-
                 // 3. 执行截图
                 const canvas = await html2canvas(element, {
                     scale: 2, // 提高清晰度
@@ -173,16 +170,13 @@ export default defineComponent({
                 const imgWidth = 595.28; // A4 宽度 pt
                 const pageHeight = 841.89; // A4 高度 pt
                 const imgHeight = (canvas.height * imgWidth) / canvas.width;
-
                 const pdf = new jsPDF('p', 'pt', 'a4');
-
                 let heightLeft = imgHeight;
                 let position = 0;
 
                 // 第一页
                 pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, position, imgWidth, imgHeight);
                 heightLeft -= pageHeight;
-
                 // 后续页
                 while (heightLeft >= 0) {
                     position = heightLeft - imgHeight;
@@ -202,7 +196,6 @@ export default defineComponent({
                 isLoading.value = false;
             }
         };
-
         const ClosePdfFn = () => {
             // 触发父组件的关闭事件
             emit('closePdf');
@@ -222,7 +215,6 @@ export default defineComponent({
                 URL.revokeObjectURL(pdfUrl.value);
             }
         });
-
         return {
             formatDate,
             pdfUrl,
@@ -240,7 +232,7 @@ export default defineComponent({
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 20px;
+    padding: 10px;
     background-color: #f0f2f5;
     min-height: 100%;
 }

@@ -123,9 +123,6 @@
                     </span>
                 </template>
             </a-table>
-
-
-
         </div>
         <!-- 新增工作安排 -->
         <div v-if="tableDataVisible == 1">
@@ -298,7 +295,8 @@
         </div>
         <!-- 展示pdf弹窗 -->
         <div v-if="tableDataVisible == 2">
-            <pdfDetail v-if="tableDataVisible == 2" @closePdf="changeShowTab(0)" :fromData="pdftableDetail"></pdfDetail>
+            <pdfDetail v-if="tableDataVisible == 2" @closePdf="changeShowTab(0)" :key="detailModalData.id"
+                :fromData="detailModalData"></pdfDetail>
         </div>
         <!-- 查看工作安排 -->
         <div v-if="tableDataVisible == 3">
@@ -374,12 +372,12 @@
 
 <script lang="ts">
 export default {
-    name: 'WorkArrangement' // 显式声明，确保 include 能找到
+    name: 'WorkArrangement'
 }
 </script>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch, reactive } from 'vue';
+import { ref, computed, onMounted, watch, reactive, onActivated, onDeactivated } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { SettingOutlined, DeleteOutlined, SafetyCertificateOutlined, PicLeftOutlined, MenuOutlined, StarOutlined, SoundOutlined, HistoryOutlined } from '@ant-design/icons-vue';
 import getDatas from "@/network/index";
@@ -397,6 +395,7 @@ const tableDataVisible = ref(0);
 
 const changeShowTab = (type: number) => {
     tableDataVisible.value = type;
+    updateTableDataVisibleInTabs(type);
 };
 
 // 搜索相关
@@ -511,15 +510,11 @@ const visibleColumns = computed(() => {
     ];
 
     return columns.filter((col) => columnVisible.value[col.key as keyof typeof columnVisible.value]);
-});
-// 查看通知名称
-const pdftableDetail = ref({});
-const pdfDetailsTitle = ref('显示文件')
+});  
 const showTaskContentModal = (record: any) => {
     console.log(record, 'record');
-
     tableDataVisible.value = 2
-    pdftableDetail.value = record
+    detailModalData.value = record
 };
 
 // 查询处理
@@ -597,11 +592,6 @@ console.log('页面加载了多次');
 const route = useRoute();
 
 
-// 新增工作安排
-const handleDialogClose = () => {
-    console.log('新增工作安排对话框关闭');
-    // 这里可以添加一些清理逻辑，比如重置表单等
-};
 
 
 // 表单数据
@@ -766,7 +756,7 @@ const handleGenerateFn = () => {
             ElMessage.warning('您还未添加工作安排');
             return;
         }
-        pdftableDetail.value = formData.value
+        detailModalData.value = formData.value
         tableDataVisible.value = 2;
 
         // 点击确定按钮的处理逻辑
@@ -782,11 +772,6 @@ const handleCancel = () => {
     tableDataVisible.value = 0;
 };
 
-// 关闭对话框前的处理
-const handleBeforeClose = (done: Function) => {
-    // 这里可以添加确认逻辑
-    done();
-};
 
 // 删除工作安排
 const handleDelete = async (id: number) => {
@@ -811,7 +796,6 @@ const handleDelete = async (id: number) => {
 }
 
 
-const detailModalTitle = ref('查看工作安排');
 const detailModalData = ref<any>({});
 
 
@@ -820,17 +804,6 @@ const handleEditFn = (row: any) => {
     tableDataVisible.value = 3;
     detailModalData.value = row;
 }
-
-const detailForm = reactive({
-    status: '',
-    taTaskName: '',
-});
-const formatDate = (dateString: string) => {
-    // 简单处理日期格式，如果需要可以更复杂
-    if (/年/.test(dateString)) return dateString;
-    const date = new Date(dateString);
-    return date.toLocaleDateString();
-};
 
 
 // 关门时间
@@ -856,72 +829,7 @@ const handleAdjust = () => {
 // 点击关联条款
 const dialogTermsVisible = ref(false);
 const contractName = ref('【自揽自签】【国内】土一-自揽-20251216-城轨-国内合同1');
-const clauseList = ref<any[]>([
-    {
-        "payment_id": "fe9b032d50224ba099dc7ea0ce58b8ae-39",
-        "StpeName": "初步设计",
-        "py_id": "fe9b032d50224ba099dc7ea0ce58b8ae",
-        "condition_type": 1,
-        "implementation": 605,
-        "pay_condition_value": "合同生效，合同签订",
-        "pay_condition": "39",
-        "condition": "111",
-        "amount": 100,
-        "phase_amount": 400000,
-        "remarks": null,
-        "settlement_ratio": 50,
-        "payment_ratio": null,
-        "prorately_or_amount": null,
-        "calendar_or_working": null,
-        "payment_received": null,
-        "tcids": "5eb045c1-1109-80c9-c811-ef0678e782f9",
-        "total": 1,
-        "isCheck": false,
-        "proportion": 50,
-        "detail": [
-            {
-                "TC_Id": "5eb045c1-1109-80c9-c811-ef0678e782f9",
-                "TA_TaskName": "1216-1216-自揽-城轨-主责1",
-                "TC_Name": "1",
-                "TC_Proportion": 50,
-                "TC_LimitDate": "/Date(1765641600000)/",
-                "IsComplete": 1
-            }
-        ]
-    },
-    {
-        "payment_id": "fe9b032d50224ba099dc7ea0ce58b8ae-1055",
-        "StpeName": "初步设计",
-        "py_id": "fe9b032d50224ba099dc7ea0ce58b8ae",
-        "condition_type": 2,
-        "implementation": 605,
-        "pay_condition_value": "阶段开始",
-        "pay_condition": "1055",
-        "condition": "111",
-        "amount": 100,
-        "phase_amount": 400000,
-        "remarks": null,
-        "settlement_ratio": 50,
-        "payment_ratio": null,
-        "prorately_or_amount": null,
-        "calendar_or_working": null,
-        "payment_received": null,
-        "tcids": "20220a6d-db6c-1721-b482-4d7dc9390918",
-        "total": 1,
-        "isCheck": false,
-        "proportion": 50,
-        "detail": [
-            {
-                "TC_Id": "20220a6d-db6c-1721-b482-4d7dc9390918",
-                "TA_TaskName": "1216-1216-自揽-城轨-主责1",
-                "TC_Name": "2",
-                "TC_Proportion": 50,
-                "TC_LimitDate": "/Date(1765728000000)/",
-                "IsComplete": 1
-            }
-        ]
-    }
-]);
+const clauseList = ref<any[]>([]);
 
 // 处理关闭弹窗
 const handleClose = () => {
@@ -969,7 +877,6 @@ const handleSelectionChange = (selection: any[]) => {
 // 根据传入的数据初始化弹窗
 const openContractDialog = (data: any) => {
     console.log(data, 'openContractDialog');
-
     dialogTermsVisible.value = true;
 };
 
@@ -998,11 +905,62 @@ const getUserList = async () => {
     }
 };
 
+const isEmptyObject = (obj: any) => {
+    // 先判断是不是真正的对象，且不是 null
+    if (typeof obj !== 'object' || obj === null) return false;
+    // 再判断是否为空
+    return Object.keys(obj).length === 0;
+}
+// 根据打开标签的页面改变 同步tableDataVisible的值
+const syncTableDataVisibleFromTabs = () => {
+    const savedTabs = sessionStorage.getItem("openedTabs");
+    if (savedTabs) {
+        try {
+            const tabs = JSON.parse(savedTabs);
+            const currentPath = route.fullPath;
+            const currentTab = tabs.find((tab: any) => tab.path === currentPath);
+            if (currentTab) {
+                tableDataVisible.value = currentTab.tableDataVisible ? currentTab.tableDataVisible : 0;
+                detailModalData.value = isEmptyObject(currentTab.Details) ? '{}' : JSON.parse(currentTab.Details);
+                if (currentTab.tableDataVisible) {
+                    tableDataVisible.value = 0
+                    detailModalData.value = currentTab.Details ? JSON.parse(currentTab.Details) : {};
+                    tableDataVisible.value = currentTab.tableDataVisible;
+                } else {
+                    tableDataVisible.value = 0
+                }
+            }
+        } catch (e) {
+            console.error("解析保存的标签页失败:", e);
+        }
+    }
+}
+// 更新 openedTabs 中当前路由对应的 tableDataVisible 值
+const updateTableDataVisibleInTabs = (value: number) => {
+    const savedTabs = sessionStorage.getItem("openedTabs");
+    if (savedTabs) {
+        try {
+            const tabs = JSON.parse(savedTabs);
+            console.log(tabs, 'tabstabstabstabs');
+
+            const currentPath = route.fullPath;
+            const currentTabIndex = tabs.findIndex((tab: any) => tab.path == currentPath);
+            if (currentTabIndex > -1) {
+                tabs[currentTabIndex].tableDataVisible = value;
+                tabs[currentTabIndex].Details = JSON.stringify(detailModalData.value); // 保存详情数据
+                sessionStorage.setItem("openedTabs", JSON.stringify(tabs));
+            }
+        } catch (e) {
+            console.error("更新标签页失败:", e);
+        }
+    }
+};
+
+
 // 判断url中的projectId和projectStep是否变化，如果变化则重新查询数据
 watch(() => [route.query.projectId, route.query.projectStep], () => {
-    console.log('路由参数变化，重新查询数据');
     handleSearch();
-    changeShowTab(0);
+    syncTableDataVisibleFromTabs()
 });
 
 
@@ -1024,6 +982,12 @@ watch(
     },
     { deep: true, immediate: true }
 );
+
+// 监听 tableDataVisible 变化，同步到 openedTabs
+watch(tableDataVisible, (newValue) => {
+    updateTableDataVisibleInTabs(newValue);
+});
+
 </script>
 
 <style scoped>

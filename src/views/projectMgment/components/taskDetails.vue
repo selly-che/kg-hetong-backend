@@ -9,7 +9,9 @@
             <div class="header-left">
                 <el-image :src="Imgurl" :fit="fit" alt="图片" class="detail-image" />
                 <div class="header-info">
-                    <div class="info-title">{{ detailData.taTaskName || '' }}</div>
+                    <div class="info-title">{{ detailData.taTaskName   }}
+                        <span> {{detailData.projectStep ? ` [${getLabelByValue(detailData.projectStep) }]`: ''}}</span>
+                    </div>
                     <div class="info-subtitle">
                         {{ detailData.tcName || '' }}
                     </div>
@@ -52,7 +54,7 @@
                     <HistoryOutlined style="font-size: 30px;" /><span>关门时间</span>
                 </div>
             </div>
-            <div class="header_last" v-if="type == 'home'">
+            <div class="header_last" v-if="type == 'home' && props.detailData.taStatus == 1">
                 <div class="header_last_box" @click="handlefillInFn" width="60%">
                     <HistoryOutlined style="font-size: 30px;" /><span>填报</span>
                 </div>
@@ -117,7 +119,7 @@
             </a-form>
         </a-modal>
         <!-- 填报弹窗 -->
-        <a-modal v-model:visible="fillInVisible" title="全局事务性项目[事务性]" width="80%">
+        <a-modal v-model:visible="fillInVisible" :title="fillInTitle" width="80%">
             <!-- 展示表格，任务、要求完成时间、实际完成时间、备注 -->
             <a-table :columns="fillInColumns" :data-source="fillInData" :pagination="false" :bordered="true"
                 size="middle" :row-key="(record: any) => record.id" :scroll="{ x: 1200 }">
@@ -164,7 +166,10 @@ const CloseTaskFn = () => {
     emit('CloseTask');
 }
 
+
+
 const props = defineProps<Props>();
+console.log(props.detailData, "detailData");
 
 // Emits
 const emit = defineEmits<{
@@ -182,9 +187,7 @@ const filterForm = reactive({
 });
 
 // 单位选项
-const unitOptions = ref([
-    { label: '规划院(运输组织)', value: '规划院(运输组织)' },
-]);
+const unitOptions = ref<{ value: string | number; label: string }[]>([]);
 
 // 表格数据
 const tableData = ref<any[]>([]);
@@ -225,7 +228,7 @@ const processTaskGroups = (taskGroups: any[]) => {
                     tcLimitDate: subtask.tcLimitDate,
                     euCompleteDate: subtask.euCompleteDate,
                     tcRemark: subtask.tcRemark,
-                    isGroup: false
+                    isGroup: false,
                 });
             });
         }
@@ -237,7 +240,8 @@ const processTaskGroups = (taskGroups: any[]) => {
             tgName: group.tgName,
             tgDescription: group.tgDescription,
             isGroup: true,
-            children: children.length > 0 ? children : undefined
+            children: children.length > 0 ? children : undefined,
+
         };
     });
 };
@@ -361,6 +365,7 @@ const handleClosingTime = () => {
 
 // 填报
 const fillInVisible = ref(false);
+const fillInTitle = ref('');
 const fillInColumns = ref([
     {
         title: '任务名称',
@@ -389,11 +394,40 @@ const fillInColumns = ref([
     },
 ])
 const fillInData: any = ref([])
+const projectStepList = [
+    { value: '600', label: '预付期' },
+    { value: '601', label: '投标' },
+    { value: '602', label: '规划' },
+    { value: '603', label: '预可研' },
+    { value: '604', label: '可研' },
+    { value: '605', label: '初步设计' },
+    { value: '606', label: '施工图' },
+    { value: '607', label: '配合施工' },
+    { value: '608', label: '开通运营' },
+    { value: '609', label: '招标图' },
+    { value: '610', label: '专题专项' },
+    { value: '611', label: '清概（结算）' },
+    { value: '612', label: '质保期' },
+]
+
+// 获取一个值，遍历数组返回label
+const getLabelByValue = ( value: any) => {
+    const item = projectStepList.find((item: any) => item.value == value);
+    console.log(item,'itemitem');
+    
+    return item ? item.label : '';
+}
+
 const handlefillInFn = () => {
-    console.log(props.detailData, '填报');
+// <!-- ，600-预付期，601-投标，602-规划，603-预可研，604-可研，605-初步设计，606-施工图，607-配合施工，608-开通运营，609-招标图，610-专题专项，611-清概（结算），612-质保期 -->
+    // 根据值 取对应的文字
+    console.log(props.detailData, '填报 projectStep的值为600，返回文字预付期');
+    
+    const projectStepText = projectStepList.find(item => item.value == props.detailData.projectStep)?.label;
+    fillInTitle.value = props.detailData.taTaskName + `[${projectStepText}]`;
     fillInVisible.value = true;
     const processedData = processTaskGroups(props.detailData.taskGroups);
-    console.log(processedData, 'processedDataprocessedData');
+    console.log(fillInTitle.value , 'processedDataprocessedData');
 
     fillInData.value = collectAllChildren(processedData);
     console.log(fillInData.value, 'fillInDatafillInData');
@@ -444,8 +478,8 @@ const confirmFillInFn = (item: any) => {
             taskContentStatusId: item.id,
             completeTime: FillInTime.value
         })
-        console.log(resp,'respresp');
-        
+        console.log(resp, 'respresp');
+
         if (resp.data.code == 200) {
             ElMessage.success('完成成功!');
             fillInVisible.value = false;

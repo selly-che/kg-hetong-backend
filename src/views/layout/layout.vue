@@ -3,50 +3,26 @@
     <div class="main-container">
       <div class="side-menu-container" :style="`width:${collWidth}`">
         <div class="title">{{ isCollapse ? "系统" : "合同管理系统" }}</div>
-        <el-menu
-          class="side-menu"
-          :style="`width:${collWidth}`"
-          :default-active="activeMenu"
-          mode="vertical"
-          :collapse-transition="false"
-          router
-          unique-opened
-          text-color="#bfcbd9"
-          active-text-color="#ffffff"
-          background-color="#409eff"
-          :collapse="isCollapse"
-          @select="handleMenuSelect"
-        >
+        <el-menu class="side-menu" :style="`width:${collWidth}`" :default-active="activeMenu" mode="vertical"
+          :collapse-transition="false" router unique-opened text-color="#bfcbd9" active-text-color="#ffffff"
+          background-color="#409eff" :collapse="isCollapse" @select="handleMenuSelect">
           <template v-for="item in menus" :key="item.index">
             <el-sub-menu v-if="item.children" :index="item.index">
               <template #title>
-                <component
-                  :is="resolveIconComponent(item.icon)"
-                  class="menu-icon"
-                />
+                <component :is="resolveIconComponent(item.icon)" class="menu-icon" />
                 <span class="pl-10">{{ item.meta.title }} </span>
               </template>
-              <el-menu-item
-                v-for="child in item.children"
-                :key="child.index"
-                :index="child.path"
-              >
+              <el-menu-item v-for="child in item.children" :key="child.index" :index="child.path">
                 <template #title>
                   <div>
-                    <component
-                      :is="resolveIconComponent(child.icon)"
-                      class="menu-icon"
-                    />
+                    <component :is="resolveIconComponent(child.icon)" class="menu-icon" />
                     <span class="pl-10"> {{ child.meta.title }}</span>
                   </div>
                 </template>
               </el-menu-item>
             </el-sub-menu>
             <el-menu-item v-else :index="item.path">
-              <component
-                :is="resolveIconComponent(item.icon)"
-                class="menu-icon"
-              />
+              <component :is="resolveIconComponent(item.icon)" class="menu-icon" />
               <template #title="">
                 <span :class="item.children ? '' : 'pl-10'">{{
                   item.meta.title
@@ -104,29 +80,14 @@
           </div> -->
         </div>
         <div class="tabs-container" v-if="!route.meta.noTab">
-          <el-tabs
-            v-model="activeTab"
-            type="card"
-            closable
-            @tab-remove="removeTab"
-            @tab-click="handleClick"
-          >
-            <el-tab-pane
-              v-for="tab in tabs"
-              :key="tab.path"
-              :label="tab.title"
-              :name="tab.path"
-              :closable="tab.path !== '/home'"
-              @close="removeTab(tab.path)"
-            >
+          <el-tabs v-model="activeTab" type="card" closable @tab-remove="removeTab" @tab-click="handleClick">
+            <el-tab-pane v-for="tab in tabs" :key="tab.path" :label="tab.title" :name="tab.path"
+              :closable="tab.path !== '/home'" @close="removeTab(tab.path)">
             </el-tab-pane>
           </el-tabs>
         </div>
-        <div
-          :class="{ pd20: $router.currentRoute.value.path !== '/home' }"
-          style="background-color: white"
-        >
-          <router-view></router-view>
+        <div :class="{ pd20: $router.currentRoute.value.path !== '/home' }" style="background-color: white">
+          <router-view> </router-view>
         </div>
       </div>
     </div>
@@ -209,6 +170,16 @@ const resolveIconComponent = (icon?: string) => {
   const iconName = normalizeIconName(icon);
   return (AntIcons as any)[iconName] || (AntIcons as any).HomeOutlined;
 };
+
+// 需要缓存的视图列表
+const cachedViews = computed(() => {
+  return tabs.value
+    .filter(tab => tab.path !== '/home')
+    .map(tab => {
+      const matchedRoute = Router.getRoutes().find(r => r.path === tab.path);
+      return matchedRoute?.name as string || tab.path;
+    });
+});
 
 const loadMenusFromStorage = () => {
   const raw = localStorage.getItem("wuyemenusJSON");
@@ -314,7 +285,7 @@ const syncTabTitles = () => {
   }
 };
 const userName = computed(() => {
-  return localStorage.getItem("userName");
+  return JSON.parse(localStorage.getItem("userInfo") || "{}").realname;
 });
 onMounted(async () => {
   try {
@@ -456,6 +427,7 @@ watch(
 :deep(.el-menu) {
   background-color: #1961ac !important;
   border-right: none !important;
+
   :hover {
     background: none !important;
     // color: #bfcbd9 !important;
@@ -475,9 +447,11 @@ watch(
       // background: none !important;
     }
   }
+
   .is-active :hover {
     color: #409eff !important;
   }
+
   .is-opened {
     .is-active :hover {
       color: #409eff !important;
@@ -514,6 +488,7 @@ watch(
       overflow: hidden;
       overflow-y: auto;
       background-color: #1961ac;
+
       /* 隐藏滚动条 */
       &::-webkit-scrollbar {
         width: 0;
@@ -522,7 +497,9 @@ watch(
       }
 
       /* 兼容 Firefox */
-      scrollbar-width: none; /* Firefox */
+      scrollbar-width: none;
+
+      /* Firefox */
       .title {
         // width: 180px;
         color: #1961ac;
@@ -543,6 +520,7 @@ watch(
         overflow: hidden;
         overflow-y: auto;
         background-color: #1961ac;
+
         /* 隐藏滚动条 */
         &::-webkit-scrollbar {
           width: 0;
@@ -551,7 +529,9 @@ watch(
         }
 
         /* 兼容 Firefox */
-        scrollbar-width: none; /* Firefox */
+        scrollbar-width: none;
+
+        /* Firefox */
         .el-sub-menu__title {
           .iconfont {
             font-size: 20px;
@@ -660,11 +640,13 @@ watch(
 
         &.is-active .el-icon-close {
           color: #1961ac;
+
           &:hover {
             background-color: rgba(255, 255, 255, 0.3);
           }
         }
       }
+
       // 隐藏首页标签页的关闭按钮
       :deep(.el-tabs__item[aria-controls="pane-home"]) {
         .el-icon-close {

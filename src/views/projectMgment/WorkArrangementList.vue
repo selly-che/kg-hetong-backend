@@ -127,14 +127,21 @@
         :type="'workList'"></taskDetails>
     </div>
     <!-- 展示pdf 弹窗 -->
-    <div v-if="tableDataVisible == 2">
-      <pdfDetail v-if="tableDataVisible == 2" @closePdf="changeShowTab(0)" :fromData="pdftableDetail"></pdfDetail>
+    <div v-if="tableDataVisible == 2" >
+      <pdfDetail v-if="tableDataVisible == 2" :key="detailModalData.id" @closePdf="changeShowTab(0)"
+        :fromData="detailModalData"></pdfDetail>
     </div>
   </div>
 </template>
 
+<script lang="ts">
+export default {
+  name: 'WorkArrangementList'
+}
+</script>
+
 <script setup lang="ts">
-import { ref, computed, reactive, onMounted, watch } from 'vue';
+import { ref, computed, reactive, onMounted, watch, onActivated, onDeactivated } from 'vue';
 import { useRoute } from 'vue-router';
 import { SettingOutlined, PicLeftOutlined } from '@ant-design/icons-vue';
 import getDatas from "@/network/index";
@@ -145,12 +152,9 @@ import pdfDetail from "./components/pdfDetail.vue";
 import taskDetails from './components/taskDetails.vue';
 
 
-const tableDataVisible = ref(0)
+const tableDataVisible = ref(0);
+ 
 
-const pdfDetailsTitle = ref('显示文件')
-const pdftableDetail = ref({})
-
-const detailModalTitle = ref('查看工作安排');
 
 // 弹窗相关
 const pdfModalVisible = ref(false);
@@ -159,6 +163,7 @@ const pdfUrl = ref('https://storage.xuetangx.com/public_assets/xuetangx/PDF/Play
 
 const changeShowTab = (type: number) => {
   tableDataVisible.value = type;
+  updateTableDataVisibleInTabs(type);
 };
 
 // 路由相关
@@ -324,8 +329,8 @@ const hasTaskContents = (record: any) => {
 // 显示任务内容弹窗
 const showTaskContentModal = (record: any) => {
   console.log(record, 'record');
-  tableDataVisible.value = 2
-  pdftableDetail.value = record
+  changeShowTab(2) 
+   detailModalData.value = record;
   return
   if (!hasTaskContents(record)) {
     ElMessage.info('该记录没有任务内容');
@@ -395,45 +400,90 @@ const handleTableChange = (pagination: any) => {
   handleSearch();
 };
 
-// 查看详情
-const handleViewDetail = (record: any) => {
-  console.log('查看详情:', record);
-};
 
 // 点击编辑
 const detailModalData = ref<any>({});
-const detailForm = reactive({
-  status: '',
-  taTaskName: '',
-});
-const unitOptions = ref([
-  { label: '规划院(运输组织)', value: '规划院(运输组织)' },
-]);
-
-// 任务详情数据
-const taskDetailList = ref<any[]>([]);
 
 
 // 点击编辑
 const handleEdit = async (record: any) => {
   console.log('编辑记录:', record);
-  tableDataVisible.value = 1;
+  changeShowTab(1)
   detailModalData.value = record;
 };
 
+// 根据打开标签的页面改变 同步tableDataVisible的值
+const syncTableDataVisibleFromTabs = () => {
+  const savedTabs = sessionStorage.getItem("openedTabs");
+  if (savedTabs) {
+    try {
+      const tabs = JSON.parse(savedTabs);
+      const currentPath = route.fullPath;
+      const currentTab = tabs.find((tab: any) => tab.path === currentPath);
+      console.log(currentTab, 'currentTabcurrentTab');
+
+      if (currentTab) {
+        if (currentTab.tableDataVisible) {
+          console.log(currentTab, 'currentTabcurrentTab111111');
+
+          tableDataVisible.value = 0
+          detailModalData.value = currentTab.Details ? JSON.parse(currentTab.Details) : {};
+          tableDataVisible.value = currentTab.tableDataVisible;
+        } else {
+          tableDataVisible.value = 0
+        }
+      }
+    } catch (e) {
+      console.error("解析保存的标签页失败:", e);
+    }
+  }
+}
+const isEmptyObject = (obj: any) => {
+  // 先判断是不是真正的对象，且不是 null
+  if (typeof obj !== 'object' || obj === null) return false;
+  // 再判断是否为空
+  return Object.keys(obj).length === 0;
+}
+
+// 更新 openedTabs 中当前路由对应的 tableDataVisible 值
+const updateTableDataVisibleInTabs = (value: number) => {
+
+  const savedTabs = sessionStorage.getItem("openedTabs");
+  if (savedTabs) {
+    try {
+      const tabs = JSON.parse(savedTabs);
+      const currentPath = route.fullPath;
+      const currentTabIndex = tabs.findIndex((tab: any) => tab.path == currentPath);
+
+      if (currentTabIndex > -1) {
+        tabs[currentTabIndex].tableDataVisible = value;
+        tabs[currentTabIndex].Details = isEmptyObject(detailModalData.value) ? '{}' : JSON.stringify(detailModalData.value);
+        sessionStorage.setItem("openedTabs", JSON.stringify(tabs));
+      }
+    } catch (e) {
+      console.error("更新标签页失败:", e);
+    }
+  }
+};
 
 
 // 监听路由参数变化
 watch(() => [route.query.projectId, route.query.stepId], () => {
-  console.log('路由参数变化，重新查询数据');
-  tableDataVisible.value = 0;
+  console.log('路由参数变化1111', detailModalData.value);
   handleSearch();
+  syncTableDataVisibleFromTabs()
+});
 
+// 监听 tableDataVisible 变化，同步到 openedTabs
+watch(tableDataVisible, (newValue) => {
+  updateTableDataVisibleInTabs(newValue);
 });
 
 onMounted(() => {
-  console.log('WorkArrangementList mounted');
+  console.log(tableDataVisible.value, 'WorkArrangementList mounted');
   handleSearch();
+  syncTableDataVisibleFromTabs();
+  console.log('onMounted2222');
 });
 
 

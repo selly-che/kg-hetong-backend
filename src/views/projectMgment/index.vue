@@ -99,7 +99,7 @@
                 <span @click="handleTabClick(tab)">{{ tab.title }}</span>
               </template>
             </a-tab-pane>
-            <a-tab-pane>
+            <a-tab-pane :closable="false"> 
               <template #tab>
                 <a-button type="link" size="small" @click="closeAllTabs" class="close-all-btn"
                   :disabled="openedTabs.length === 0">
@@ -110,11 +110,7 @@
           </a-tabs>
 
           <div class="tab-content" id="tabContent">
-            <keep-alive :include="cachedViews">
-              <router-view v-slot="{ Component }">
-                <component :is="Component" />
-              </router-view>
-            </keep-alive>
+            <router-view> </router-view>
           </div>
         </div>
       </a-layout-content>
@@ -157,7 +153,6 @@ const cachedViews = ref<string[]>([
   "WorkArrangementList",
   "WorkArrangement",
   "projectAdded",
-
 ]);
 const openedTabs = ref<any[]>([]);
 
@@ -415,11 +410,9 @@ const handleResponsibilityChange = (responsibilityValue: string) => {
 
 // 处理标签页点击
 const handleTabClick = (tab: any) => {
-  console.log(tab, '标签页');
 
   activeTabKey.value = tab.id;
   router.push(tab.path);
-
   // 根据tab的path找到对应的菜单项并高亮
   findAndHighlightMenuItem(tab.path);
 };
@@ -526,7 +519,6 @@ onMounted(() => {
       if (openedTabs.value.length > 0) {
         const lastTab = openedTabs.value[openedTabs.value.length - 1];
         activeTabKey.value = lastTab.id;
-
       }
     } catch (e) {
       console.error("解析保存的标签页失败:", e);
@@ -538,7 +530,38 @@ onMounted(() => {
 watch(
   openedTabs,
   (newVal) => {
-    sessionStorage.setItem("openedTabs", JSON.stringify(newVal));
+    console.log(newVal, 'newValnewVal');
+    
+    // 获取缓存的 tabs
+    const cachedTabsStr = sessionStorage.getItem("openedTabs");
+    let cachedTabs: any[] = [];
+    
+    if (cachedTabsStr) {
+      try {
+        cachedTabs = JSON.parse(cachedTabsStr);
+      } catch (e) {
+        console.error("解析缓存的标签页失败:", e);
+      }
+    }
+    
+    // 创建一个新的 Map，以缓存的 tabs 为主
+    const mergedTabsMap = new Map();
+    
+    // 先添加缓存的 tabs
+    cachedTabs.forEach((tab: any) => {
+      mergedTabsMap.set(tab.id, tab);
+    });
+    
+    // 再遍历新的 tabs，如果 id 不存在于缓存中，则添加
+    newVal.forEach((tab: any) => {
+      if (!mergedTabsMap.has(tab.id)) {
+        mergedTabsMap.set(tab.id, tab);
+      }
+    });
+    
+    // 转换为数组并保存
+    const mergedTabs = Array.from(mergedTabsMap.values());
+    sessionStorage.setItem("openedTabs", JSON.stringify(mergedTabs));
   },
   { deep: true },
 );

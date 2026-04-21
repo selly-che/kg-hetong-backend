@@ -5,7 +5,7 @@
         <img src="#" alt="" />
       </div>
       <div class="user-details">
-        <div class="greeting">你好! 陈渝蓉</div>
+        <div class="greeting">你好! {{ userInfo.realname }}</div>
         <div class="position">项目经理 | 中铁.重庆分公司.生产部 主管</div>
       </div>
     </div>
@@ -43,10 +43,14 @@ const headerdata = ref({
   totalReceivableAmount: "",
 });
 
+const userInfo = ref({})
+
 onMounted(async () => {
   const res = await getDatas("home/GetComprehensiveStats");
   console.log("统计信息", res.data.result);
   headerdata.value = res.data.result;
+
+  userInfo.value = JSON.parse(localStorage.getItem("userInfo"));
 });
 </script>
 
@@ -73,6 +77,7 @@ onMounted(async () => {
   border-radius: 50%;
   overflow: hidden;
   margin-right: 16px;
+
   img {
     width: 100%;
     height: 100%;
@@ -87,6 +92,7 @@ onMounted(async () => {
     color: #262626;
     margin-bottom: 4px;
   }
+
   .position {
     font-size: 12px;
     color: #8c8c8c;
@@ -96,6 +102,7 @@ onMounted(async () => {
 .stats-container {
   display: flex;
   align-items: center;
+
   .stat-item {
     display: flex;
     flex-direction: column;
@@ -103,6 +110,7 @@ onMounted(async () => {
     margin-left: 40px;
     padding-left: 40px;
     position: relative;
+
     &:not(:last-child)::before {
       content: "";
       position: absolute;
@@ -113,11 +121,13 @@ onMounted(async () => {
       height: 32px;
       background-color: #e8e8e8;
     }
+
     .stat-label {
       font-size: 12px;
       color: #8c8c8c;
       margin-bottom: 4px;
     }
+
     .stat-value {
       font-size: 20px;
       font-weight: 500;
