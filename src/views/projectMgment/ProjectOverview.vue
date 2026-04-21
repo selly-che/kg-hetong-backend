@@ -619,6 +619,7 @@ const handleSave = async () => {
 
     // 构建保存数据
     const saveData = {
+      urlType:0,
       id: projects.value.Id,
       projectFullName: projects.value.Project_FullName,
       projectStep: editForm.value.projectStep.join(","),
@@ -699,6 +700,7 @@ const handleTechSave = async () => {
 
     // 构建保存数据
     const saveData = {
+      urlType:0,
       id: projects.value.Id,
       projectFullName: projects.value.Project_FullName,
       projectStep: Array.isArray(projects.value.Project_Step)

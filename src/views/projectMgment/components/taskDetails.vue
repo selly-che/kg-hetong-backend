@@ -9,14 +9,15 @@
             <div class="header-left">
                 <el-image :src="Imgurl" :fit="fit" alt="图片" class="detail-image" />
                 <div class="header-info">
-                    <div class="info-title">{{ detailData.taTaskName   }}
-                        <span> {{detailData.projectStep ? ` [${getLabelByValue(detailData.projectStep) }]`: ''}}</span>
+                    <div class="info-title">{{ detailData.taTaskName }}
+                        <span> {{ detailData.projectStep ? ` [${getLabelByValue(detailData.projectStep)}]` : ''
+                            }}</span>
                     </div>
                     <div class="info-subtitle">
                         {{ detailData.tcName || '' }}
                     </div>
                     <!-- 筛选区域 -->
-                    <div class="detail-filter">
+                    <!-- <div class="detail-filter">
                         <a-form :model="filterForm" layout="inline">
                             <a-form-item label="状态">
                                 <el-radio-group v-model="filterForm.status">
@@ -32,7 +33,7 @@
                                 </el-select>
                             </a-form-item>
                         </a-form>
-                    </div>
+                    </div> -->
                 </div>
             </div>
             <div class="header-right">
@@ -54,7 +55,7 @@
                     <HistoryOutlined style="font-size: 30px;" /><span>关门时间</span>
                 </div>
             </div>
-            <div class="header_last" v-if="type == 'home' && props.detailData.taStatus == 1">
+            <div class="header_last" v-if="type == 'home' && props.detailData.taStatus != 2">
                 <div class="header_last_box" @click="handlefillInFn" width="60%">
                     <HistoryOutlined style="font-size: 30px;" /><span>填报</span>
                 </div>
@@ -63,8 +64,8 @@
 
         <!-- 任务表格 -->
         <div class="task-table-container">
-            <a-table :columns="columns" :data-source="tableData" :pagination="false" :bordered="true" size="middle"
-                :row-key="(record: any) => record.id" :scroll="{ x: 1200 }" :expandable="{
+            <a-table :columns="columns" :loading="searchLoading" :data-source="tableData" :pagination="paginationConfig"
+                :bordered="true" size="middle" :row-key="(record: any) => record.id" :scroll="{ x: 1200 }" :expandable="{
                     defaultExpandAllRows: false,
                     expandRowByClick: true,
                     expandedRowKeys: expandedRowKeys,
@@ -237,6 +238,7 @@ const processTaskGroups = (taskGroups: any[]) => {
         return {
             id: group.id || `group-${groupIndex}`,
             type: 'group',
+            euCompleteDate: group.tgUpdateTime,
             tgName: group.tgName,
             tgDescription: group.tgDescription,
             isGroup: true,
@@ -254,6 +256,20 @@ const handleExpand = (expanded: boolean, record: any) => {
         expandedRowKeys.value = expandedRowKeys.value.filter(key => key !== record.id);
     }
 };
+
+// 分页配置
+const paginationConfig = reactive({
+    current: 1,
+    pageSize: 20,
+    total: 0,
+    showSizeChanger: false,
+    showQuickJumper: true,
+    showTotal: (total: number) => `共 ${total} 条`,
+    onChange: (page: number, pageSize: number) => {
+        paginationConfig.current = page;
+        paginationConfig.pageSize = pageSize;
+    }
+});
 
 // 格式化日期
 const formatDate = (dateString: string | null) => {
@@ -308,9 +324,23 @@ const columns = [
 ];
 
 // 查询处理
-const handleSearch = () => {
+const searchLoading = ref(false);
+const handleSearch = async () => {
     console.log('查询:', filterForm);
-    emit('search', filterForm);
+    searchLoading.value = true;
+    const res = await getDatas("project/GetWorkArrangement", {
+        id: props.detailData.id,
+    });
+    if (res.data.code === 200) {
+        const processedData = processTaskGroups(res.data.result.records[0].taskGroups);
+        tableData.value = processedData;
+        searchLoading.value = false;
+    } else {
+        ElMessage.error(res.message);
+        searchLoading.value = false;
+    }
+    console.log(res, 'handleSearchhandleSearch');
+
 };
 
 // 重置处理
@@ -411,23 +441,23 @@ const projectStepList = [
 ]
 
 // 获取一个值，遍历数组返回label
-const getLabelByValue = ( value: any) => {
+const getLabelByValue = (value: any) => {
     const item = projectStepList.find((item: any) => item.value == value);
-    console.log(item,'itemitem');
-    
+    console.log(item, 'itemitem');
+
     return item ? item.label : '';
 }
 
 const handlefillInFn = () => {
-// <!-- ，600-预付期，601-投标，602-规划，603-预可研，604-可研，605-初步设计，606-施工图，607-配合施工，608-开通运营，609-招标图，610-专题专项，611-清概（结算），612-质保期 -->
+    // <!-- ，600-预付期，601-投标，602-规划，603-预可研，604-可研，605-初步设计，606-施工图，607-配合施工，608-开通运营，609-招标图，610-专题专项，611-清概（结算），612-质保期 -->
     // 根据值 取对应的文字
     console.log(props.detailData, '填报 projectStep的值为600，返回文字预付期');
-    
+
     const projectStepText = projectStepList.find(item => item.value == props.detailData.projectStep)?.label;
     fillInTitle.value = props.detailData.taTaskName + `[${projectStepText}]`;
     fillInVisible.value = true;
     const processedData = processTaskGroups(props.detailData.taskGroups);
-    console.log(fillInTitle.value , 'processedDataprocessedData');
+    console.log(fillInTitle.value, 'processedDataprocessedData');
 
     fillInData.value = collectAllChildren(processedData);
     console.log(fillInData.value, 'fillInDatafillInData');

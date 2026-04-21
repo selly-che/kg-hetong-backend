@@ -237,16 +237,16 @@
 
                                     <el-table-column label="完成时间">
                                         <template #default="{ row }">
-                                            <el-date-picker v-model="row.euCompleteDate" type="datetime"
+                                            <el-date-picker v-model="row.tcLimitDate" type="datetime"
                                                 placeholder="选择完成时间"
                                                 value-format="YYYY-MM-DD HH:mm:ss"></el-date-picker>
                                         </template>
                                     </el-table-column>
-                                    <el-table-column label="合同条款关联">
+                                    <!-- <el-table-column label="合同条款关联">
                                         <template #default="{ row }">
                                             <a target="_blank" @click="openContractDialog(row)">关联条款</a>
                                         </template>
-                                    </el-table-column>
+                                    </el-table-column> -->
 
                                     <el-table-column label="备注">
                                         <template #default="{ row }">
@@ -510,10 +510,10 @@ const visibleColumns = computed(() => {
     ];
 
     return columns.filter((col) => columnVisible.value[col.key as keyof typeof columnVisible.value]);
-});  
+});
 const showTaskContentModal = (record: any) => {
     console.log(record, 'record');
-    tableDataVisible.value = 2
+    changeShowTab(2)
     detailModalData.value = record
 };
 
@@ -562,7 +562,7 @@ const handleReset = () => {
 // 新增处理
 const handleAdd = () => {
     console.log('点击新增');
-    tableDataVisible.value = 1;
+    changeShowTab(1)
     // 清空填写表单
     formData.value.workType = 0;
     formData.value.taPlanType = 0;
@@ -580,7 +580,7 @@ const handleAdd = () => {
                 {
                     tcName: '',
                     deptMajor: '',
-                    euCompleteDate: '',
+                    tcLimitDate: '',
                     remark: ''
                 }
             ]
@@ -612,7 +612,7 @@ const formData = ref({
                 {
                     tcName: '',
                     deptMajor: '',
-                    euCompleteDate: '',
+                    tcLimitDate: '',
                     remark: ''
                 }
             ]
@@ -633,7 +633,7 @@ const addGroup = () => {
             {
                 tcName: '',
                 deptMajor: '',
-                euCompleteDate: '',
+                tcLimitDate: '',
                 remark: ''
             }
         ]
@@ -652,7 +652,7 @@ const removeGroup = (index: number) => {
             {
                 tcName: '',
                 deptMajor: '',
-                euCompleteDate: '',
+                tcLimitDate: '',
                 remark: ''
             }
         ];
@@ -669,7 +669,7 @@ const addTask = (group: any) => {
     group.twaTaskContentStatuses.push({
         tcName: '',
         deptMajor: '',
-        euCompleteDate: '',
+        tcLimitDate: '',
         remark: ''
     });
 };
@@ -696,14 +696,20 @@ const handleFileChange = (file: any) => {
 // 保存表单
 const saveForm = async () => {
     console.log('保存表单:', formData.value);
+    if (!formData.value.taTaskName) {
+        ElMessage.warning('请输入工作名称');
+        return;
+    }
     const resp = await getDatas("project/AddWorkArrangement", {
         ...formData.value,
         projectId: route.query.projectId,
         projectStep: route.query.projectStep
     });
+    console.log(resp, 'resprespresp');
+
     if (resp && resp.data.code === 200) {
         ElMessage.success('保存成功');
-        dialogVisible.value = false;
+        changeShowTab(0)
         handleSearch(); // 刷新表格数据
 
     } else {
@@ -732,7 +738,7 @@ const handleResetFn = () => {
                     {
                         tcName: '',
                         deptMajor: '',
-                        euCompleteDate: '',
+                        tcLimitDate: '',
                         remark: ''
                     }
                 ]
@@ -745,7 +751,10 @@ const handleResetFn = () => {
 // 生成表单
 const handleGenerateFn = () => {
     console.log('生成表单:', formData.value);
-
+    if (!formData.value.taTaskName) {
+        ElMessage.warning('请输入工作名称');
+        return;
+    }
     ElMessageBox.confirm('同层级,同单位/专业不能有相同的任务,请修改以下任务 1|规划院', '提示', {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
@@ -757,7 +766,7 @@ const handleGenerateFn = () => {
             return;
         }
         detailModalData.value = formData.value
-        tableDataVisible.value = 2;
+        changeShowTab(2)
 
         // 点击确定按钮的处理逻辑
         console.log("点击确定按钮");
@@ -769,7 +778,7 @@ const handleGenerateFn = () => {
 
 // 取消对话框
 const handleCancel = () => {
-    tableDataVisible.value = 0;
+    changeShowTab(0)
 };
 
 
@@ -801,7 +810,7 @@ const detailModalData = ref<any>({});
 
 const handleEditFn = (row: any) => {
     console.log(row, '点击编辑');
-    tableDataVisible.value = 3;
+    changeShowTab(3)
     detailModalData.value = row;
 }
 
@@ -820,7 +829,7 @@ const ClosingTimeForm = ref({
 // 工作调整
 const handleAdjust = () => {
     dialogVisible.value = true;
-    tableDataVisible.value = 1;
+    changeShowTab(1)
     //  Object.assign(formData, detailModalData.value);
     formData.value = JSON.parse(JSON.stringify(detailModalData.value));
     console.log(detailModalData.value, 'detailModalDatadetailModalData');
@@ -923,11 +932,11 @@ const syncTableDataVisibleFromTabs = () => {
                 tableDataVisible.value = currentTab.tableDataVisible ? currentTab.tableDataVisible : 0;
                 detailModalData.value = isEmptyObject(currentTab.Details) ? '{}' : JSON.parse(currentTab.Details);
                 if (currentTab.tableDataVisible) {
-                    tableDataVisible.value = 0
+                    changeShowTab(0)
                     detailModalData.value = currentTab.Details ? JSON.parse(currentTab.Details) : {};
-                    tableDataVisible.value = currentTab.tableDataVisible;
+                    changeShowTab(currentTab.tableDataVisible)
                 } else {
-                    tableDataVisible.value = 0
+                    changeShowTab(0)
                 }
             }
         } catch (e) {

@@ -71,7 +71,7 @@
                         {{ getProjectPlateText(row.projectPlate) }}
                     </template>
                 </el-table-column>
-                <el-table-column prop="projectSection" label="类型一" width="80" align="center">
+                <el-table-column prop="projectType" label="类型一" width="80" align="center">
 
                 </el-table-column>
                 <!-- <el-table-column prop="subjectUnit" label="主体责任单位" width="150" align="center" /> -->
@@ -149,8 +149,8 @@
                         </el-form-item>
                     </el-col>
                     <el-col :span="8">
-                        <el-form-item label="类型一" prop="projectSection">
-                            <el-select v-model="formData.projectSection" placeholder="选择类型一" style="width: 100%">
+                        <el-form-item label="类型一" prop="projectType">
+                            <el-select v-model="formData.projectType" placeholder="选择类型一" style="width: 100%">
                                 <el-option label="铁路" value="铁路" />
                                 <el-option label="城轨" value="城轨" />
                                 <el-option label="公路" value="公路" />
@@ -286,7 +286,7 @@ const trafficTypeOptions = ref()
 const searchForm = reactive({
     projectFullName: '',
     managerCharge: '',
-    projectSection: '',
+    projectType: '',
     projectTypeTwo: '',
     projectArea: '',
     projectIsJr: null
@@ -325,7 +325,7 @@ const formData = reactive({
     projectFullName: '',
     projectShortName: '',
     abbreviation: '',
-    projectSection: '',
+    projectType: '',
     type1: '',
     projectTypeTwo: '',
     ownerUnit: '',
@@ -363,7 +363,7 @@ const handleSearch = () => {
 const resetSearch = () => {
     searchForm.projectFullName = ''
     searchForm.managerCharge = ''
-    searchForm.projectSection = ''
+    searchForm.projectType = ''
     searchForm.projectTypeTwo = ''
     searchForm.projectArea = ''
     searchForm.projectPlate = ''
@@ -383,7 +383,7 @@ const handleAdd = () => {
         projectFullPinyin: '',
         projectShortPinyin: '',
         projectPlate: '',
-        projectSection: '',
+        projectType: '',
         projectTypeTwo: '',
         steps: [],
 
@@ -415,6 +415,7 @@ const handleSave = async () => {
         if (valid) {
             console.log(formData, 'formData');
             const params = JSON.parse(JSON.stringify(formData))
+            params.urlType = 1
             params.steps = formData.steps.join(',')
             params.stepList = []
             const res = await getDatas('project/AddProject', params);

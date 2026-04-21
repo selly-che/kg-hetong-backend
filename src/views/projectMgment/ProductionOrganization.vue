@@ -68,6 +68,8 @@
                 <template v-if="isEdit">
                   <el-select v-model="editData.professionalDeputyOveralls" multiple placeholder="请选择专业副总体"
                     style="width: 100%">
+                    <el-option label="user001" value="user001"></el-option>
+                    <el-option label="user002" value="user002"></el-option>
                     <el-option label="user003" value="user003"></el-option>
                     <el-option label="user004" value="user004"></el-option>
                   </el-select>
@@ -101,14 +103,22 @@
                 </template>
               </a-descriptions-item>
               <a-descriptions-item label="项目经理">
-                <el-input v-if="isEdit" v-model="editData.projectManagers" placeholder="请输入项目经理"></el-input>
-                <template v-else>{{ result.projectManagers || '--' }}</template>
+                <el-select v-if="isEdit" v-model="editData.projectManagers" multiple placeholder="请输入项目经理"
+                  style="width: 100%">
+                  <el-option label="经理1" value="经理1"></el-option>
+                  <el-option label="经理2" value="经理2"></el-option>
+                  <el-option label="经理3" value="经理3"></el-option>
+                  <el-option label="经理4" value="经理4"></el-option>
+                  <el-option label="经理5" value="经理5"></el-option>
+                </el-select>
+
+                <template v-else>{{ arrayToString(result.projectManagers) || '--' }}</template>
               </a-descriptions-item>
 
               <!-- 主体责任单位 -->
               <a-descriptions-item label="主体责任单位">
                 <el-input v-if="isEdit" v-model="editData.mainResponsibilityUnit" placeholder="请输入主体责任单位"></el-input>
-                <template v-else>{{ result.mainResponsibilityUnit || '--' }}</template>
+                <template v-else>{{  result.mainResponsibilityUnit || '--' }}</template>
               </a-descriptions-item>
 
             </a-descriptions>
@@ -890,7 +900,7 @@
     </div>
   </div>
 </template>
- 
+
 
 <script lang="ts" setup>
 import { reactive, ref, computed, onMounted, watch } from "vue";
@@ -945,6 +955,13 @@ interface ResultData {
 
 }
 
+
+// 生成一个函数，将数组转为字符串展示
+const arrayToString = (arr: any[]) => {
+  if (!Array.isArray(arr)) return "";
+  return arr.join(", ");
+}
+
 const result = ref<ResultData>({
   projectStep: null,
   projectStepName: "",
@@ -956,7 +973,7 @@ const result = ref<ResultData>({
   executiveDeputyOverall: "",
   professionalDeputyOveralls: [],
   projectDepartments: ["领导"],
-  projectManagers: null,
+  projectManagers: [],
   mainResponsibilityUnit: "",
   stationBeaforTasks: [
     {
@@ -1089,7 +1106,7 @@ const editData = ref<ResultData>({
   executiveDeputyOverall: "",
   professionalDeputyOveralls: [],
   projectDepartments: [],
-  projectManagers: null,
+  projectManagers: [],
   mainResponsibilityUnit: "",
   stationBeaforTasks: [],
   economicTasks: [],
@@ -1123,7 +1140,6 @@ const getProjectDetails = async (projectStepStr: any) => {
     result.value = res.data.result;
     ResultData.value = res.data.result;
     result.value.projectStep = res.data.result.projectStep.toString();
-    result.value.projectManagers = result.value.projectManagers ? result.value.projectManagers.join(',') : null;
     editData.value = isEdit.value ? JSON.parse(JSON.stringify(res.data.result)) : {};
   } catch (error) {
     console.error("获取项目详情失败:", error);
@@ -1155,12 +1171,12 @@ const handleCancel = () => {
 const handleSave = async () => {
   detailsLoading.value = true;
   try {
-    editData.value.projectManagers = editData.value.projectManagers ? editData.value.projectManagers.split(',') : null;
+    console.log(editData.value, 'editDataeditData');
+
     editData.value.projectStep = editData.value.projectStep !== null ? parseInt(String(editData.value.projectStep)) : null;
 
     const res = await getDatas('project/addProductionOrg', {
       projectId: router.currentRoute.value.query.projectId,
-      // projectStep: router.currentRoute.value.query.projectStep,
       ...editData.value
     });
 

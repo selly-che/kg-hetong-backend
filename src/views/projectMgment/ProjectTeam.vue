@@ -17,108 +17,66 @@
           <el-row>
             <el-col :span="12">
               <el-form-item label="单位名称">
-                <el-input
-                  v-model="formData.deptName"
-                  placeholder="请输入单位名称"
-                ></el-input>
+                <el-input v-model="formData.deptName" placeholder="请输入单位名称"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12">
               <el-form-item label="专业名称">
-                <el-input
-                  v-model="formData.majorName"
-                  placeholder="请输入专业名称"
-                ></el-input>
+                <el-input v-model="formData.majorName" placeholder="请输入专业名称"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row>
             <el-col :span="12">
               <el-form-item label="专业负责人域账号">
-                <el-input
+                <!-- <el-input
                   v-model="formData.majorPrincipleCode"
                   placeholder="请输入专业负责人域账号"
-                ></el-input>
+                ></el-input> -->
+                <el-select v-model="formData.majorPrincipleCode" placeholder="请选择专业负责人域账号">
+                  <el-option v-for="item in majorPrincipleOptions" :key="item.value" :label="item.label"
+                    :value="item.value">
+                  </el-option>
+                </el-select>
               </el-form-item>
             </el-col>
             <el-col :span="12">
               <el-form-item label="第一牵头人">
-                <el-input
-                  v-model="formData.majorPrincipleName"
-                  placeholder="第一牵头人"
-                ></el-input>
+                <el-input v-model="formData.majorPrincipleName" placeholder="第一牵头人"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row>
             <el-col :span="12">
               <el-form-item label="第二牵头人">
-                <el-input
-                  v-model="formData.otherMajorPrincipleName"
-                  placeholder="第二牵头人"
-                ></el-input>
+                <el-input v-model="formData.otherMajorPrincipleName" placeholder="第二牵头人"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12">
               <el-form-item label="专业简称">
-                <el-input
-                  v-model="formData.productCode"
-                  placeholder="专业简称"
-                ></el-input>
+                <el-input v-model="formData.productCode" placeholder="专业简称"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row>
             <el-col :span="12">
-              <el-button type="primary" @click="handleAddToTable"
-                >添加到列表</el-button
-              >
+              <el-button type="primary" @click="handleAddToTable">添加到列表</el-button>
             </el-col>
           </el-row>
         </el-form>
 
         <!-- 临时数据表格 -->
         <div class="temp-table-wrapper" v-if="tempMemberList.length > 0">
-          <el-table
-            :data="tempMemberList"
-            border
-            style="width: 100%; margin-top: 20px"
-          >
+          <el-table :data="tempMemberList" border style="width: 100%; margin-top: 20px">
             <el-table-column prop="deptName" label="单位名称" align="center" />
             <el-table-column prop="majorName" label="专业名称" align="center" />
-            <el-table-column
-              prop="majorPrincipleCode"
-              label="专业负责人域账号"
-              align="center"
-            />
-            <el-table-column
-              prop="majorPrincipleName"
-              label="第一牵头人"
-              align="center"
-            />
-            <el-table-column
-              prop="otherMajorPrincipleName"
-              label="第二牵头人"
-              align="center"
-            />
-            <el-table-column
-              prop="productCode"
-              label="专业简称"
-              align="center"
-            />
-            <el-table-column
-              label="操作"
-              width="100"
-              align="center"
-              fixed="right"
-            >
+            <el-table-column prop="majorPrincipleCode" label="专业负责人域账号" align="center" />
+            <el-table-column prop="majorPrincipleName" label="第一牵头人" align="center" />
+            <el-table-column prop="otherMajorPrincipleName" label="第二牵头人" align="center" />
+            <el-table-column prop="productCode" label="专业简称" align="center" />
+            <el-table-column label="操作" width="100" align="center" fixed="right">
               <template #default="{ $index }">
-                <el-button
-                  type="danger"
-                  size="small"
-                  @click="handleDeleteTemp($index)"
-                  >删除</el-button
-                >
+                <el-button type="danger" size="small" @click="handleDeleteTemp($index)">删除</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -129,9 +87,7 @@
       <template #footer>
         <div class="dialog-footer">
           <el-button @click="handleCancel">取消</el-button>
-          <el-button type="primary" @click="handleSaveAll" :loading="saving"
-            >保存</el-button
-          >
+          <el-button type="primary" @click="handleSaveAll" :loading="saving">保存</el-button>
         </div>
       </template>
     </el-dialog>
@@ -157,12 +113,7 @@
       <!-- <div class="section-title">项目组成员</div> -->
       <div class="coordinator-input-group">
         <div class="coordinator-label">项目组计调:</div>
-        <el-input
-          v-model="coordinatorName"
-          placeholder="请选择计调人"
-          class="coordinator-input"
-          clearable
-        >
+        <el-input v-model="coordinatorName" placeholder="请选择计调人" class="coordinator-input" clearable>
           <template #append>
             <el-button :icon="User" @click="selectCoordinator" />
           </template>
@@ -170,81 +121,33 @@
       </div>
     </div>
     <!-- 动态渲染各单位成员表格区域 -->
-    <div
-      v-for="dept in groupedTeamData"
-      :key="dept.deptName"
-      class="dept-section"
-    >
+    <div v-for="dept in groupedTeamData" :key="dept.deptName" class="dept-section">
       <div class="dept-title">{{ dept.deptName }}</div>
       <div class="table-operation-bar" v-if="Editable">
-        <el-button type="primary" :icon="Plus" @click="handleAddMember"
-          >添加</el-button
-        >
-        <el-button type="primary" :icon="Remove" @click="removeMember"
-          >移除</el-button
-        >
+        <el-button type="primary" :icon="Plus" @click="handleAddMember">添加</el-button>
+        <el-button type="primary" :icon="Remove" @click="removeMember">移除</el-button>
         <el-button type="primary" :icon="Top" @click="moveUp">上移</el-button>
-        <el-button type="primary" :icon="Bottom" @click="moveDown"
-          >下移</el-button
-        >
+        <el-button type="primary" :icon="Bottom" @click="moveDown">下移</el-button>
       </div>
 
-      <el-table
-        :data="dept.members"
-        border
-        style="width: 100%"
-        @selection-change="handleSelectionChange"
-        @row-click="handleRowClick"
-        :header-cell-style="{ background: '#f5f7fa', color: '#303133' }"
-      >
-        <el-table-column
-          type="selection"
-          width="55"
-          align="center"
-          v-if="Editable"
-        />
-      <!-- 单位名称、专业名称、专业负责人域账号、第一牵头人、第二牵头人、专业简称 -->
-       <el-table-column
-          prop="deptName"
-          label="单位名称"
-          align="center"
-        />
-        <el-table-column
-          prop="majorName"
-          label="专业名称"
-          align="center"
-        />
-        <el-table-column
-          prop="majorPrincipleCode"
-          label="专业负责人域账号"
-          align="center"
-        />
-        <el-table-column
-          prop="majorPrincipleName"
-          label="第一牵头人"
-          align="center"
-        />
-        <el-table-column
-          prop="otherMajorPrincipleName"
-          label="第二牵头人"
-          align="center"
-        />
-        <el-table-column
-          prop="productCode"
-          label="专业简称"
-          align="center"
-        />
+      <el-table :data="dept.members" border style="width: 100%" @selection-change="handleSelectionChange"
+        @row-click="handleRowClick" :header-cell-style="{ background: '#f5f7fa', color: '#303133' }">
+        <el-table-column type="selection" width="55" align="center" v-if="Editable" />
+        <!-- 单位名称、专业名称、专业负责人域账号、第一牵头人、第二牵头人、专业简称 -->
+        <el-table-column prop="deptName" label="单位名称" align="center" />
+        <el-table-column prop="majorName" label="专业名称" align="center" />
+        <el-table-column prop="majorPrincipleCode" label="专业负责人域账号" align="center" />
+        <el-table-column prop="majorPrincipleName" label="第一牵头人" align="center" />
+        <el-table-column prop="otherMajorPrincipleName" label="第二牵头人" align="center" />
+        <el-table-column prop="productCode" label="专业简称" align="center" />
       </el-table>
     </div>
     <!-- 如果没有数据，显示提示 -->
-    <div
-      v-if="!teamDataloading && groupedTeamData.length === 0"
-      class="no-data-tip"
-    >
+    <div v-if="!teamDataloading && groupedTeamData.length === 0" class="no-data-tip">
       暂无项目组成员数据
     </div>
   </div>
-</template> 
+</template>
 <script setup lang="ts">
 import { ref, onMounted, watch, computed } from "vue";
 import getDatas from "@/network/index";
@@ -280,6 +183,17 @@ const formData = ref({
   productCode: "",
   projectInfoID: "",
 });
+
+const majorPrincipleOptions = ref<any[]>([
+  {
+    label: '陈叔清',
+    value: 'csq'
+  },
+  {
+    label: '卢静静',
+    value: 'ljj'
+  },
+]);
 
 // 表格列定义
 const teamColumns = [
@@ -472,9 +386,10 @@ const handleSaveAll = async () => {
 
     const res = await getDatas(
       "project/AddProjectMember",
-     {deptMajorList: tempMemberList.value,
-      projectInfoId: projectInfoID.value
-     },
+      {
+        deptMajorList: tempMemberList.value,
+        projectInfoId: projectInfoID.value
+      },
     );
 
     if (res.data.code === 200) {
@@ -649,14 +564,14 @@ onMounted(() => {
   margin-top: 20px;
 }
 
-.team-table .ant-table-thead > tr > th {
+.team-table .ant-table-thead>tr>th {
   background-color: #f5f5f5;
   font-weight: 600;
   color: #000;
   border-bottom: 1px solid #d9d9d9;
 }
 
-.team-table .ant-table-tbody > tr:hover {
+.team-table .ant-table-tbody>tr:hover {
   background-color: #f5f5f5;
 }
 
@@ -688,6 +603,7 @@ onMounted(() => {
 :deep(.ant-table-thead > tr > th) {
   background-color: #f5f9ff !important;
 }
+
 /* 部门区域样式 */
 .dept-section {
   background: #fff;

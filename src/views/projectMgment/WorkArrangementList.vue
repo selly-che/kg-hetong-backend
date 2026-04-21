@@ -348,14 +348,7 @@ const showTaskContentModal = (record: any) => {
 // 查询处理
 const handleSearch = async () => {
   try {
-    tableLoading.value = true;
-
-    console.log('查询条件:', {
-      searchType: searchType.value,
-      searchText: searchText.value,
-      statusFilters: statusFilters.value,
-      planFilters: planFilters.value,
-    });
+    tableLoading.value = true; 
 
     const projectId = route.query.projectId || '1'; // 从路由获取项目 ID
 

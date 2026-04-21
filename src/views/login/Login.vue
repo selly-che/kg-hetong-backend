@@ -2,6 +2,7 @@
   <div class="login">
     <div class="from">
       <div class="title">合同管理系统</div>
+      <div>主账号：admin</div>
       <div>主管账号-陈叔清：csq </div>
       <div style="margin-bottom: 20px;">协管账号-卢静静：ljj</div>
       <el-input v-model="input" size="large" style="width: 400px" placeholder="请输入您的账号" prefix-icon="User" />
@@ -9,7 +10,8 @@
         <el-input v-model="password" @keyup.enter="login" size="large" type="password" style="width: 400px"
           placeholder="请输入您的密码" show-password prefix-icon="Lock" />
       </div>
-      <div class="login-btn" @click="login">登录</div>
+      <!-- 添加回车 -->
+      <div class="login-btn" @click="login"  @keydown.enter="login">登录</div>
     </div>
   </div>
 </template>
