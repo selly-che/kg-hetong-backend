@@ -547,7 +547,6 @@ watch(
     overflow: auto;
     // padding: 20px;
     background-color: rgb(247, 248, 250);
-
     .header {
       display: flex;
       align-items: center;
@@ -555,6 +554,7 @@ watch(
       background-color: white;
       padding: 10px 20px;
       border-bottom: 1px solid #dcdfe6;
+      
 
       // 面包屑
       .breadcrumb {

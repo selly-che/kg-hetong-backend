@@ -255,7 +255,7 @@ const closeHomeFn = () => {
 .todolist-container {
   padding: 20px;
   background-color: #fff;
-  min-height: 100vh;
+  min-height: calc(100vh - 160px);
 
   .search-form-wrapper {
     margin-bottom: 24px;

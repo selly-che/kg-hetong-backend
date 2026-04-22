@@ -123,7 +123,7 @@
     </div>
     <!-- 展示工作详情 弹窗 -->
     <div v-if="tableDataVisible == 1">
-      <taskDetails v-if="tableDataVisible == 1" @CloseTask="changeShowTab(0)" :detailData="detailModalData"
+      <taskDetails v-if="tableDataVisible == 1"  @CloseTask="changeShowTab(0)" :detailData="detailModalData"
         :type="'workList'"></taskDetails>
     </div>
     <!-- 展示pdf 弹窗 -->

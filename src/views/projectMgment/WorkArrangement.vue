@@ -301,7 +301,7 @@
         <!-- 查看工作安排 -->
         <div v-if="tableDataVisible == 3">
             <taskDetails :type="'work'" v-if="tableDataVisible == 3" @adjust="handleAdjust"
-                @CloseTask="changeShowTab(0)" :detailData="detailModalData">
+                @CloseTask="changeShowTab(0)" :detailData="detailModalData"> 
             </taskDetails>
         </div>
 

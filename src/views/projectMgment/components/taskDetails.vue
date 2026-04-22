@@ -11,7 +11,7 @@
                 <div class="header-info">
                     <div class="info-title">{{ detailData.taTaskName }}
                         <span> {{ detailData.projectStep ? ` [${getLabelByValue(detailData.projectStep)}]` : ''
-                            }}</span>
+                        }}</span>
                     </div>
                     <div class="info-subtitle">
                         {{ detailData.tcName || '' }}
@@ -43,7 +43,7 @@
                     <a-button @click="toggleFullScreen">全屏</a-button>
                 </a-space>
             </div>
-            <div class="header_last" v-if="type == 'work'">
+            <div class="header_last" v-if="type == 'work' && Editable">
                 <div class="header_last_box" @click="handleAdjust">
                     <SettingOutlined style="font-size: 30px;" />
                     <span>工作调整</span>
@@ -152,6 +152,7 @@ import { ref, computed, reactive, onMounted, watch } from 'vue';
 import { SettingOutlined, SoundOutlined, HistoryOutlined, CheckOutlined, CloseOutlined } from '@ant-design/icons-vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import getDatas from "@/network/index";
+import { useRoute } from 'vue-router';
 
 // 图片引入
 const Imgurl = require("@/static/image/e93263af-ce49-4278-b619-6d6b4ef6f015.png");
@@ -204,6 +205,20 @@ onMounted(() => {
         tableData.value = processedData;
     }
 });
+
+const Editable = ref(false);
+const route = useRoute();
+watch(
+    // 判断页面路径发生变化就重新获取数据
+    () => route.query.Editable,
+    (newEditable) => {
+        if (newEditable) {
+            Editable.value = newEditable === "true";
+            console.log(Editable.value, "EditableEditable111");
+        }
+    },
+    { deep: true, immediate: true }
+);
 
 // 监听detailData变化
 watch(() => props.detailData, (newVal) => {
@@ -340,7 +355,6 @@ const handleSearch = async () => {
         searchLoading.value = false;
     }
     console.log(res, 'handleSearchhandleSearch');
-
 };
 
 // 重置处理
@@ -365,9 +379,9 @@ const toggleFullScreen = () => {
 };
 
 // 工作调整
-const handleAdjust = () => {
+const handleAdjust = () => { 
     emit('adjust');
-};
+}
 
 // 催办
 const handleUrgentReminder = () => {
@@ -423,6 +437,7 @@ const fillInColumns = ref([
         width: 200
     },
 ])
+
 const fillInData: any = ref([])
 const projectStepList = [
     { value: '600', label: '预付期' },

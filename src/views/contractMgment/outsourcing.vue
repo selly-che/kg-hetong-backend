@@ -641,7 +641,7 @@ onUnmounted(() => {
 
 .context {
   width: 100%;
-  min-height: calc(100vh - 120px);
+  // min-height: calc(100vh - 320px);
   background-color: #ffffff;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
