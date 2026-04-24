@@ -2,7 +2,7 @@
   <div class="project-card">
     <div class="project-card-header">
       <a-tag color="blue" class="project-type-tag">{{
-        props.project.projectType
+        props.project.projectSection || props.project.projectType
       }}</a-tag>
       <a-tag class="project-status-tag" color="cyan">
         {{ props.project.projectTypeDetail }}
