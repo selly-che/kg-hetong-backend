@@ -7,7 +7,8 @@
         <div class="detail-header">
 
             <div class="header-left">
-                <el-image :src="Imgurl" :fit="fit" alt="图片" class="detail-image" />
+                <!-- <el-image :src="Imgurl" :fit="fit" alt="图片" class="detail-image" />    -->
+                 <a-image :src="Imgurl" :preview="false" :fit="fit" alt="图片" class="detail-image" />
                 <div class="header-info">
                     <div class="info-title">{{ detailData.taTaskName }}
                         <span> {{ detailData.projectStep ? ` [${getLabelByValue(detailData.projectStep)}]` : ''

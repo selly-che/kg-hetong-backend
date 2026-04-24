@@ -1,283 +1,282 @@
 <template>
     <div class="project-management">
         <!-- 搜索筛选区域 -->
-        <el-card class="search-card" shadow="never">
-            <el-form :inline="true" :model="searchForm" class="search-form">
-                <el-form-item label="项目名称">
-                    <el-input v-model="searchForm.projectFullName" placeholder="请输入项目名称" clearable
+        <a-card class="search-card" :bordered="false">
+            <a-form :model="searchForm" layout="inline" class="search-form">
+                <a-form-item label="项目名称">
+                    <a-input v-model:value="searchForm.projectFullName" placeholder="请输入项目名称" allow-clear
                         style="width: 200px" />
-                </el-form-item>
-                <el-form-item label="主管计调">
-                    <el-select v-model="searchForm.managerCharge" placeholder="请选择" clearable style="width: 120px">
-                        <el-option label="陈叔清" value="csq" />
-                        <el-option label="卢静静" value="ljj" />
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="板块">
-                    <el-select v-model="searchForm.projectPlate" placeholder="请选择" clearable style="width: 120px">
-                        <el-option v-for="item in engineeringBusinessTypeOptions" :key="item.value" :label="item.label"
-                            :value="item.value" />
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="类型">
-                    <el-select v-model="searchForm.projectTypeTwo" placeholder="请选择" clearable style="width:120px">
-                        <el-option v-for="item in trafficTypeOptions" :key="item" :label="item" :value="item" />
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="区域指挥部">
-                    <el-select v-model="searchForm.projectArea" clearable placeholder="请选择" style="width: 120px">
-                        <el-option v-for="item in regionTypeOptions" :key="item" :label="item" :value="item" />
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="是否军融">
-                    <el-select v-model="searchForm.projectIsJr" placeholder="请选择" clearable style="width: 120px">
-                        <el-option label="是" :value="1" />
-                        <el-option label="否" :value="0" />
-                    </el-select>
-                </el-form-item>
-                <el-form-item>
-                    <el-button type="primary" @click="handleSearch">查询</el-button>
-                    <el-button @click="resetSearch">重置</el-button>
-                    <el-button type="primary" @click="handleAdd">
-                        <el-icon>
-                            <Plus />
-                        </el-icon>
-                        新增
-                    </el-button>
-                    <el-button type="danger" plain @click="handleBatchDelete" :disabled="selectedRows.length === 0">
-                        <el-icon>
-                            <Delete />
-                        </el-icon>
-                        删除
-                    </el-button>
-                </el-form-item>
-            </el-form>
-        </el-card>
-        <!-- 数据表格 -->
-        <el-card class="table-card" shadow="never">
-            <el-table :data="tableData" stripe border style="width: 100%" @selection-change="handleSelectionChange">
-                <el-table-column type="selection" width="55" />
-                <el-table-column prop="projectFullName" label="项目名称">
-                    <!-- <template #default="{ row }">
-                        <el-link type="primary" @click="handleViewDetail(row)">
-                            {{ row.projectName }}
-                        </el-link>
-                    </template> -->
-                </el-table-column>
-                <el-table-column prop="projectShortName" label="项目简称" />
-                <el-table-column prop="projectArea" label="区域指挥部" width="120" align="center" />
-                <el-table-column prop="projectPlate" label="板块" width="90" align="center">
-                    <template #default="{ row }">
-                        {{ getProjectPlateText(row.projectPlate) }}
-                    </template>
-                </el-table-column>
-                <el-table-column prop="projectType" label="类型一" width="80" align="center">
+                </a-form-item>
 
-                </el-table-column>
-                <!-- <el-table-column prop="subjectUnit" label="主体责任单位" width="150" align="center" /> -->
-                <!-- <el-table-column prop="undertakingUnit" label="承担单位" width="150" align="center" /> -->
-                <el-table-column prop="managerCharge" label="主管计调" width="120" align="center">
-                    <template #default="{ row }">
-                        {{ row.managerCharge === 'csq' ? '陈叔清' : "" }}
-                        {{ row.managerCharge === 'ljj' ? '卢静静' : "" }}
+                <a-form-item label="主管计调">
+                    <a-select v-model:value="searchForm.managerCharge" placeholder="请选择" allow-clear
+                        style="width: 120px">
+                        <a-select-option value="csq">陈叔清</a-select-option>
+                        <a-select-option value="ljj">卢静静</a-select-option>
+                    </a-select>
+                </a-form-item>
+
+                <a-form-item label="板块">
+                    <a-select v-model:value="searchForm.projectPlate" placeholder="请选择" allow-clear
+                        style="width: 120px">
+                        <a-select-option v-for="item in engineeringBusinessTypeOptions" :key="item.value"
+                            :value="item.value">
+                            {{ item.label }}
+                        </a-select-option>
+                    </a-select>
+                </a-form-item>
+
+                <a-form-item label="类型">
+                    <a-select v-model:value="searchForm.projectTypeTwo" placeholder="请选择" allow-clear
+                        style="width: 120px">
+                        <a-select-option v-for="item in trafficTypeOptions" :key="item" :value="item">
+                            {{ item }}
+                        </a-select-option>
+                    </a-select>
+                </a-form-item>
+
+                <a-form-item label="区域指挥部">
+                    <a-select v-model:value="searchForm.projectArea" placeholder="请选择" allow-clear style="width: 120px">
+                        <a-select-option v-for="item in regionTypeOptions" :key="item" :value="item">
+                            {{ item }}
+                        </a-select-option>
+                    </a-select>
+                </a-form-item>
+
+                <a-form-item label="是否军融">
+                    <a-select v-model:value="searchForm.projectIsJr" placeholder="请选择" allow-clear style="width: 120px">
+                        <a-select-option :value="1">是</a-select-option>
+                        <a-select-option :value="0">否</a-select-option>
+                    </a-select>
+                </a-form-item>
+
+                <a-form-item>
+                    <a-button type="primary" @click="handleSearch">
+                        <template #icon>
+                            <PlusOutlined />
+                        </template>
+                        查询
+                    </a-button>
+                    <a-button style="margin: 0 10px;" @click="resetSearch">重置</a-button>
+                    <a-button type="primary" @click="handleAdd">
+                        <template #icon>
+                            <PlusOutlined />
+                        </template>
+                        新增
+                    </a-button>
+                    <a-button style="margin-left:  10px;" danger @click="handleBatchDelete"
+                        :disabled="selectedRows.length === 0">
+                        <template #icon>
+                            <DeleteOutlined />
+                        </template>
+                        删除
+                    </a-button>
+                </a-form-item>
+            </a-form>
+        </a-card>
+
+        <!-- 数据表格 -->
+        <a-card class="table-card" :bordered="false">
+            <a-table :columns="columns" :data-source="tableData" row-key="id" bordered :pagination="false"
+                @selection-change="handleSelectionChange">
+                <!-- 复选框列 -->
+                <template #bodyCell="{ column, record }">
+                    <template v-if="column.key === 'selection'">
+                        <a-checkbox :checked="selectedRows.some(item => item.id === record.id)"
+                            @change="(e) => handleSelectRow(e, record)" />
                     </template>
-                </el-table-column>
-                <el-table-column prop="managerAssist" label="协管计调" width="120" align="center">
-                    <template #default="{ row }">
-                        {{ row.managerAssist === 'csq' ? '陈叔清' : "" }}
-                        {{ row.managerAssist === 'ljj' ? '卢静静' : "" }}
+                    <template v-else-if="column.key === 'managerCharge'">
+                        {{ record.managerCharge === 'csq' ? '陈叔清' : '' }}
+                        {{ record.managerCharge === 'ljj' ? '卢静静' : '' }}
                     </template>
-                </el-table-column>
-                <!-- <el-table-column prop="supervisor" label="关注领导" width="120" align="center" /> -->
-                <el-table-column label="操作" width="100" fixed="right">
-                    <template #default="{ row }">
-                        <el-button link type="primary" size="small" @click="handleEdit(row)">
-                            编辑
-                        </el-button>
-                        <el-button link type="danger" size="small" @click="handleDelete(row)">
-                            删除
-                        </el-button>
+                    <template v-else-if="column.key === 'managerAssist'">
+                        {{ record.managerAssist === 'csq' ? '陈叔清' : '' }}
+                        {{ record.managerAssist === 'ljj' ? '卢静静' : '' }}
                     </template>
-                </el-table-column>
-            </el-table>
+                    <template v-else-if="column.key === 'projectPlate'">
+                        {{ getProjectPlateText(record.projectPlate) }}
+                    </template>
+                    <template v-else-if="column.key === 'action'">
+                        <a-space size="small">
+                            <a-button type="link" @click="handleEdit(record)">编辑</a-button>
+                            <a-button type="link" danger @click="handleDelete(record)">
+                                删除
+                            </a-button>
+                        </a-space>
+                    </template>
+                </template>
+            </a-table>
 
             <!-- 分页 -->
             <div class="pagination">
-                <el-pagination v-model:current-page="pagination.currentPage" v-model:page-size="pagination.pageSize"
-                    :page-sizes="[10, 20, 50, 100]" :total="pagination.total"
-                    layout="total, sizes, prev, pager, next, jumper" @size-change="handleSizeChange"
-                    @current-change="handleCurrentChange" />
+                <a-pagination v-model:current="pagination.currentPage" v-model:page-size="pagination.pageSize"
+                    :page-size-options="[10, 20, 50, 100]" :total="pagination.total" show-size-changer show-quick-jumper
+                    @change="handlePageChange" />
             </div>
-        </el-card>
+        </a-card>
 
         <!-- 新增/编辑弹框 -->
-        <el-dialog v-model="dialogVisible" :title="dialogTitle" width="80%" destroy-on-close @close="handleDialogClose">
-            <el-form ref="formRef" :model="formData" :rules="formRules" label-width="100px" label-position="right">
-                <el-row :gutter="20">
-                    <el-col :span="12">
-                        <el-form-item label="项目全称" prop="projectFullName">
-                            <el-input v-model="formData.projectFullName" placeholder="请输入项目全称" />
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="12">
-                        <el-form-item label="项目简称" prop="projectShortName">
-                            <el-input v-model="formData.projectShortName" placeholder="请输入项目简称" />
-                        </el-form-item>
-                    </el-col>
-                </el-row>
+        <a-modal v-model:visible="dialogVisible" :title="dialogTitle" width="80%" destroy-on-close
+            @cancel="handleDialogClose">
+            <a-form ref="formRef" :model="formData" :rules="formRules" layout="vertical">
+                <a-row :gutter="[20, 20]">
+                    <a-col :span="12">
+                        <a-form-item label="项目全称" name="projectFullName">
+                            <a-input v-model:value="formData.projectFullName" placeholder="请输入项目全称" />
+                        </a-form-item>
+                    </a-col>
+                    <a-col :span="12">
+                        <a-form-item label="项目简称" name="projectShortName">
+                            <a-input v-model:value="formData.projectShortName" placeholder="请输入项目简称" />
+                        </a-form-item>
+                    </a-col>
+                </a-row>
 
-                <el-row :gutter="20">
-                    <el-col :span="12">
-                        <el-form-item label="项目拼音" prop="projectFullPinyin">
-                            <el-input v-model="formData.projectFullPinyin" placeholder="请输入项目拼音" />
+                <a-row :gutter="[20, 20]">
+                    <a-col :span="12">
+                        <a-form-item label="项目拼音" name="projectFullPinyin">
+                            <a-input v-model:value="formData.projectFullPinyin" placeholder="请输入项目拼音" />
+                        </a-form-item>
+                    </a-col>
+                    <a-col :span="12">
+                        <a-form-item label="项目简拼" name="projectShortPinyin">
+                            <a-input v-model:value="formData.projectShortPinyin" placeholder="请输入项目简拼" />
+                        </a-form-item>
+                    </a-col>
+                </a-row>
 
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="12">
-                        <el-form-item label="项目简拼" prop="projectShortPinyin">
-                            <el-input v-model="formData.projectShortPinyin" placeholder="请输入项目简拼" />
-                        </el-form-item>
-                    </el-col>
-                </el-row>
-                <el-row :gutter="24">
-                    <el-col :span="8">
-                        <el-form-item label="板块" prop="projectPlate">
-                            <el-select v-model="formData.projectPlate" placeholder="选择板块" style="width: 100%">
-                                <el-option v-for="item in engineeringBusinessTypeOptions" :key="item.value"
-                                    :label="item.label" :value="item.value" />
-                            </el-select>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="8">
-                        <el-form-item label="类型一" prop="projectType">
-                            <el-select v-model="formData.projectType" placeholder="选择类型一" style="width: 100%">
-                                <el-option label="铁路" value="铁路" />
-                                <el-option label="城轨" value="城轨" />
-                                <el-option label="公路" value="公路" />
-                                <el-option label="市政" value="市政" />
-                            </el-select>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="8">
-                        <el-form-item label="类型二" prop="projectTypeTwo">
-                            <el-select v-model="formData.projectTypeTwo" placeholder="请选择" style="width: 100%">
-                                <el-option v-for="item in trafficTypeOptions" :key="item" :label="item" :value="item" />
-                            </el-select>
-                        </el-form-item>
-                    </el-col>
-                </el-row>
-                <!-- <el-col :span="12">
-                        <el-form-item label="业主单位" prop="ownerUnit">
-                            <el-select v-model="formData.ownerUnit" placeholder="请选择" style="width: 100%">
-                                <el-option label="业主单位A" value="业主单位A" />
-                                <el-option label="业主单位B" value="业主单位B" />
-                            </el-select>
-                        </el-form-item>
-                    </el-col> -->
-
-                <el-row :gutter="24">
-                    <el-col :span="12">
-                        <el-form-item label="项目阶段" prop="steps">
-                            <el-select v-model="formData.steps" multiple placeholder="请选择" style="width: 100%"
-                                clearable>
-                                <!-- 600-预付期，601-投标，602-规划，603-预可研，604-可研，605-初步设计，606-施工图，607-配合施工，608-开通运营，609-招标图，610-专题专项，611-清概（结算），612-质保期， -->
-                                <el-option label="预付期" value="600" />
-                                <el-option label="投标" value="601" />
-                                <el-option label="规划" value="602" />
-                                <el-option label="预可研" value="603" />
-                                <el-option label="可研" value="604" />
-                                <el-option label="初步设计" value="605" />
-                                <el-option label="施工图" value="606" />
-                                <el-option label="配合施工" value="607" />
-                                <el-option label="开通运营" value="608" />
-                                <el-option label="招标图" value="609" />
-                                <el-option label="专题专项" value="610" />
-                                <el-option label="清概（结算）" value="611" />
-                                <el-option label="质保期" value="612" />
-                            </el-select>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="12">
-                        <el-form-item label="区域指挥部" prop="projectArea">
-                            <el-select v-model="formData.projectArea" placeholder="请选择" style="width: 100%">
-                                <el-option v-for="item in regionTypeOptions" :key="item" :label="item" :value="item" />
-                            </el-select>
-                        </el-form-item>
-                    </el-col>
-                </el-row>
-
-                <el-row :gutter="20">
-
-                    <el-col :span="12">
-                        <el-form-item label="主管计调" prop="managerCharge">
-                            <el-select v-model="formData.managerCharge" clearable placeholder="请选择" style="width: 100%">
-                                <el-option label="陈叔清" value="csq" />
-                            </el-select>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="12">
-                        <el-form-item label="协管计调" prop="managerAssist">
-                            <el-select v-model="formData.managerAssist" clearable placeholder="请选择" style="width: 100%">
-                                <el-option label="卢静静" value="ljj" />
-                            </el-select>
-                        </el-form-item>
-                    </el-col>
-                </el-row>
-
-                <el-row :gutter="24">
-                    <el-col :span="12">
-                        <el-form-item label="是否军融" prop="projectIsJr">
-                            <el-select v-model="formData.projectIsJr" clearable placeholder="请选择" style="width: 100%">
-                                <el-option label="是" :value="1" />
-                                <el-option label="否" :value="0" />
-                            </el-select>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="12">
-                        <el-form-item label="项目来源" prop="projectSource">
-                            <el-select v-model="formData.projectSource" clearable placeholder="国内勘察设计"
+                <a-row :gutter="[24, 24]">
+                    <a-col :span="8">
+                        <a-form-item label="板块" name="projectPlate">
+                            <a-select allowClear v-model:value="formData.projectPlate" placeholder="选择板块"
                                 style="width: 100%">
-                                <el-option label="国内勘察设计" value="国内勘察设计" />
-                                <el-option label="海外项目" value="海外项目" />
-                            </el-select>
-                        </el-form-item>
-                    </el-col>
-                </el-row>
-            </el-form>
+                                <a-select-option v-for="item in engineeringBusinessTypeOptions" :key="item.value"
+                                    :value="item.value">
+                                    {{ item.label }}
+                                </a-select-option>
+                            </a-select>
+                        </a-form-item>
+                    </a-col>
+                    <a-col :span="8">
+                        <a-form-item label="类型一" name="projectType">
+                            <a-select allowClear v-model:value="formData.projectType" placeholder="选择类型一"
+                                style="width: 100%">
+                                <a-select-option value="铁路">铁路</a-select-option>
+                                <a-select-option value="城轨">城轨</a-select-option>
+                                <a-select-option value="公路">公路</a-select-option>
+                                <a-select-option value="市政">市政</a-select-option>
+                            </a-select>
+                        </a-form-item>
+                    </a-col>
+                    <a-col :span="8">
+                        <a-form-item label="类型二" name="projectTypeTwo">
+                            <a-select allowClear v-model:value="formData.projectTypeTwo" placeholder="请选择"
+                                style="width: 100%">
+                                <a-select-option v-for="item in trafficTypeOptions" :key="item" :value="item">
+                                    {{ item }}
+                                </a-select-option>
+                            </a-select>
+                        </a-form-item>
+                    </a-col>
+                </a-row>
+
+                <a-row :gutter="[24, 24]">
+                    <a-col :span="12">
+                        <a-form-item label="项目阶段" name="steps">
+                            <a-select v-model:value="formData.steps" mode="multiple" placeholder="请选择"
+                                style="width: 100%" allow-clear>
+                                <a-select-option value="600">预付期</a-select-option>
+                                <a-select-option value="601">投标</a-select-option>
+                                <a-select-option value="602">规划</a-select-option>
+                                <a-select-option value="603">预可研</a-select-option>
+                                <a-select-option value="604">可研</a-select-option>
+                                <a-select-option value="605">初步设计</a-select-option>
+                                <a-select-option value="606">施工图</a-select-option>
+                                <a-select-option value="607">配合施工</a-select-option>
+                                <a-select-option value="608">开通运营</a-select-option>
+                                <a-select-option value="609">招标图</a-select-option>
+                                <a-select-option value="610">专题专项</a-select-option>
+                                <a-select-option value="611">清概（结算）</a-select-option>
+                                <a-select-option value="612">质保期</a-select-option>
+                            </a-select>
+                        </a-form-item>
+                    </a-col>
+                    <a-col :span="12">
+                        <a-form-item label="区域指挥部" name="projectArea">
+                            <a-select v-model:value="formData.projectArea" placeholder="请选择" style="width: 100%">
+                                <a-select-option v-for="item in regionTypeOptions" :key="item" :value="item">
+                                    {{ item }}
+                                </a-select-option>
+                            </a-select>
+                        </a-form-item>
+                    </a-col>
+                </a-row>
+
+                <a-row :gutter="[20, 20]">
+                    <a-col :span="12">
+                        <a-form-item label="主管计调" name="managerCharge">
+                            <a-select v-model:value="formData.managerCharge" allow-clear placeholder="请选择"
+                                style="width: 100%">
+                                <a-select-option value="csq">陈叔清</a-select-option>
+                            </a-select>
+                        </a-form-item>
+                    </a-col>
+                    <a-col :span="12">
+                        <a-form-item label="协管计调" name="managerAssist">
+                            <a-select v-model:value="formData.managerAssist" allow-clear placeholder="请选择"
+                                style="width: 100%">
+                                <a-select-option value="ljj">卢静静</a-select-option>
+                            </a-select>
+                        </a-form-item>
+                    </a-col>
+                </a-row>
+
+                <a-row :gutter="[24, 24]">
+                    <a-col :span="12">
+                        <a-form-item label="是否军融" name="projectIsJr">
+                            <a-select v-model:value="formData.projectIsJr" allow-clear placeholder="请选择"
+                                style="width: 100%">
+                                <a-select-option :value="1">是</a-select-option>
+                                <a-select-option :value="0">否</a-select-option>
+                            </a-select>
+                        </a-form-item>
+                    </a-col>
+                    <a-col :span="12">
+                        <a-form-item label="项目来源" name="projectSource">
+                            <a-select v-model:value="formData.projectSource" allow-clear placeholder="国内勘察设计"
+                                style="width: 100%">
+                                <a-select-option value="国内勘察设计">
+                                    国内勘察设计
+                                </a-select-option>
+                                <a-select-option value="海外项目">海外项目</a-select-option>
+                            </a-select>
+                        </a-form-item>
+                    </a-col>
+                </a-row>
+            </a-form>
 
             <template #footer>
                 <div class="dialog-footer">
-                    <el-button @click="dialogVisible = false">关闭</el-button>
-                    <el-button type="primary" @click="handleSave">保存</el-button>
+                    <a-button @click="dialogVisible = false">关闭</a-button>
+                    <a-button type="primary" @click="handleSave">保存</a-button>
                 </div>
             </template>
-        </el-dialog>
+        </a-modal>
     </div>
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, watch } from 'vue'
-import { ElMessage, ElMessageBox } from 'element-plus'
-import { Plus, Delete } from '@element-plus/icons-vue'
-import getDatas from "@/network/index"; // 引入接口
+import { ref, reactive, onMounted } from 'vue'
+import { message, Modal } from 'ant-design-vue'
+import { PlusOutlined, DeleteOutlined } from '@ant-design/icons-vue'
+import getDatas from "@/network/index";
 
+// 下拉选项
 const engineeringBusinessTypeOptions = ref([
-    {
-        label: "勘察设计",
-        value: 0
-    },
-    {
-        label: "工程咨询",
-        value: 1
-    },
-    {
-        label: "工程监理",
-        value: 2
-    },
-    {
-        label: "前期经营项目",
-        value: 3
-    }
+    { label: "勘察设计", value: 0 },
+    { label: "工程咨询", value: 1 },
+    { label: "工程监理", value: 2 },
+    { label: "前期经营项目", value: 3 }
 ])
 const regionTypeOptions = ref()
 const trafficTypeOptions = ref()
@@ -289,7 +288,8 @@ const searchForm = reactive({
     projectType: '',
     projectTypeTwo: '',
     projectArea: '',
-    projectIsJr: null
+    projectIsJr: null,
+    projectPlate: ''
 })
 
 // 分页
@@ -299,67 +299,76 @@ const pagination = reactive({
     total: 0
 })
 
-// 表格数据
+// 表格
 const tableData = ref([])
 const selectedRows = ref([])
+const formRef = ref(null)
 
-// 弹框相关
+// 表格列配置
+const columns = [
+    { key: 'selection', title: '', width: 55 },
+    { title: '项目名称', dataIndex: 'projectFullName', key: 'projectFullName' },
+    { title: '项目简称', dataIndex: 'projectShortName', key: 'projectShortName' },
+    { title: '区域指挥部', dataIndex: 'projectArea', key: 'projectArea', width: 120, align: 'center' },
+    { title: '板块', dataIndex: 'projectPlate', key: 'projectPlate', width: 90, align: 'center' },
+    { title: '类型一', dataIndex: 'projectType', key: 'projectType', width: 80, align: 'center' },
+    { title: '主管计调', dataIndex: 'managerCharge', key: 'managerCharge', width: 120, align: 'center' },
+    { title: '协管计调', dataIndex: 'managerAssist', key: 'managerAssist', width: 120, align: 'center' },
+    { title: '操作', key: 'action', width: 100, align: 'center', fixed: 'right' }
+]
+
+// 弹框
 const dialogVisible = ref(false)
 const dialogTitle = ref('新增项目表')
 const isEdit = ref(false)
-const formRef = ref(null)
-// 获取类型一文本
-const getProjectSectionText = (value) => {
-    const sectionMap = {
-        '0': '铁路',
-        '1': '城轨',
-        '2': '公路',
-        '3': '市政'
-    }
-    return sectionMap[value] || '-'
-}
 
 // 表单数据
 const formData = reactive({
     id: null,
     projectFullName: '',
     projectShortName: '',
-    abbreviation: '',
+    projectFullPinyin: '',
+    projectShortPinyin: '',
+    projectPlate: '',
     projectType: '',
-    type1: '',
     projectTypeTwo: '',
-    ownerUnit: '',
-    projectIsJr: null,
     steps: [],
     projectArea: '',
     managerCharge: '',
     managerAssist: '',
-    projectSource: '国内勘察设计'
+    projectSource: '国内勘察设计',
+    projectIsJr: null
 })
 
-// 表单验证规则
-const formRules = {
-    // projectFullName: [{ required: true, message: '请输入项目全称', trigger: 'blur' }],
-    // projectShortName: [{ required: true, message: '请输入项目简称', trigger: 'blur' }],
-    // projectPlate: [{ required: true, message: '请选择板块', trigger: 'change' }],
-    // projectArea: [{ required: true, message: '请选择区域指挥部', trigger: 'change' }]
+// 表单规则
+const formRules = {}
+
+// 表格单选/全选
+const handleSelectRow = (e, record) => {
+    const checked = e.target.checked
+    if (checked) {
+        selectedRows.value = [...selectedRows.value, record]
+    } else {
+        selectedRows.value = selectedRows.value.filter(item => item.id !== record.id)
+    }
 }
 
-
-
+const handleSelectionChange = (val) => {
+    selectedRows.value = val
+}
 
 // 获取表格数据
 const fetchTableData = () => {
     getProjectList()
 }
 
-// 搜索
+// 查询
 const handleSearch = () => {
     pagination.currentPage = 1
     fetchTableData()
 }
 
-// 重置搜索
+// 重置
 const resetSearch = () => {
     searchForm.projectFullName = ''
     searchForm.managerCharge = ''
@@ -375,7 +384,6 @@ const resetSearch = () => {
 const handleAdd = () => {
     isEdit.value = false
     dialogTitle.value = '新增项目表'
-    // 重置表单
     Object.assign(formData, {
         id: null,
         projectFullName: '',
@@ -386,167 +394,127 @@ const handleAdd = () => {
         projectType: '',
         projectTypeTwo: '',
         steps: [],
-
         projectArea: '',
         managerCharge: '',
         managerAssist: '',
         projectSource: '',
-        projectIsJr: ''
+        projectIsJr: null
     })
     dialogVisible.value = true
 }
 
 // 编辑
 const handleEdit = (row) => {
-    console.log(row);
-    formData.steps = []
     isEdit.value = true
     dialogTitle.value = '编辑项目表'
     Object.assign(formData, row)
-    formData.steps = row.steps ? row.steps.split(',') : [] // 将字符串转换为数组
+    formData.steps = row.steps ? row.steps.split(',') : []
     dialogVisible.value = true
 }
 
 // 保存
 const handleSave = async () => {
     if (!formRef.value) return
+    const valid = await formRef.value.validate()
+    if (!valid) return
 
-    await formRef.value.validate(async (valid) => {
-        if (valid) {
-            console.log(formData, 'formData');
-            const params = JSON.parse(JSON.stringify(formData))
-            params.urlType = 1
-            params.steps = formData.steps.join(',')
-            params.stepList = []
-            const res = await getDatas('project/AddProject', params);
-            console.log(res, 'resresres');
+    const params = JSON.parse(JSON.stringify(formData))
+    params.urlType = 1
+    params.steps = formData.steps.join(',')
+    params.stepList = []
 
-            if (res.data.code === 200) {
-                ElMessage.success('保存成功');
-                dialogVisible.value = false
-                fetchTableData()
-            }
-
-        } else {
-            ElMessage.error('请完善表单信息')
-        }
-    })
+    const res = await getDatas('project/AddProject', params)
+    if (res.data.code === 200) {
+        message.success('保存成功')
+        dialogVisible.value = false
+        fetchTableData()
+    }
 }
 
-// 删除单条
+// 删除
 const handleDelete = (row) => {
-    console.log(row);
-
-    ElMessageBox.confirm('确定删除该项目吗？', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-    }).then(async () => {
-        console.log('123456789');
-
-        const res = await getDatas('project/delsProList', [row.id]);
-        console.log(res, 'rreess');
-        if (res.data.code === 200) {
-            ElMessage.success('删除成功')
-            fetchTableData()
-        } else {
-            ElMessage.error('删除失败')
+    Modal.confirm({
+        title: '提示',
+        content: '确定删除该项目吗？',
+        onOk: async () => {
+            const res = await getDatas('project/delsProList', [row.id])
+            if (res.data.code === 200) {
+                message.success('删除成功')
+                fetchTableData()
+            } else {
+                message.error('删除失败')
+            }
         }
-    }).catch(() => { })
+    })
 }
 
 // 批量删除
 const handleBatchDelete = () => {
     if (selectedRows.value.length === 0) {
-        ElMessage.warning('请选择要删除的项目')
+        message.warning('请选择要删除的项目')
         return
     }
-    ElMessageBox.confirm(`确定删除选中的 ${selectedRows.value.length} 个项目吗？`, '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-    }).then(async () => {
-        const idsToDelete = selectedRows.value.map(row => row.id.toString())
-        const res = await getDatas('project/delsProList', idsToDelete);
-        if (res.data.code === 200) {
-            selectedRows.value = []
-            ElMessage.success('删除成功')
-            fetchTableData()
+    Modal.confirm({
+        title: '提示',
+        content: `确定删除选中的 ${selectedRows.value.length} 个项目吗？`,
+        onOk: async () => {
+            const ids = selectedRows.value.map(i => i.id)
+            const res = await getDatas('project/delsProList', ids)
+            if (res.data.code === 200) {
+                message.success('删除成功')
+                selectedRows.value = []
+                fetchTableData()
+            }
         }
-    }).catch(() => { })
+    })
 }
 
-// 查看详情
-const handleViewDetail = (row) => {
-    ElMessage.info(`查看项目详情: ${row.projectName}`)
-    // 可跳转详情页或打开详情弹框
-}
-
-// 表格选中变化
-const handleSelectionChange = (val) => {
-    selectedRows.value = val
-}
-
-// 分页大小变化
-const handleSizeChange = (val) => {
-    pagination.pageSize = val
+// 分页
+const handlePageChange = (page, pageSize) => {
+    pagination.currentPage = page
+    pagination.pageSize = pageSize
     fetchTableData()
 }
 
-// 当前页变化
-const handleCurrentChange = (val) => {
-    pagination.currentPage = val
-    fetchTableData()
-}
-
-// 弹框关闭回调
+// 关闭弹框
 const handleDialogClose = () => {
     formRef.value?.resetFields()
 }
 
-// 存储原始mock数据
-const mockData = ref([])
-
-
+// 接口
 const getProjectList = async () => {
     const res = await getDatas("project/GetProjectList", {
         pageNum: pagination.currentPage,
         pageSize: pagination.pageSize,
         urlType: 1,
         ...searchForm
-    });
-    console.log("项目列表信息:", res.data.result.records);
-    tableData.value = res.data.result.records;
-    pagination.total = res.data.result.total;
-};
+    })
+    tableData.value = res.data.result.records
+    pagination.total = res.data.result.total
+}
+
 const getProjectSelectList = async () => {
-    const res = await getDatas("project/ProSelectList", {});
-    console.log("项目下拉列表信息:", res.data.result);
-    // 可将下拉列表数据存储在响应式变量中，供表单使用
-    if (res.data.code == 200) {
-        // engineeringBusinessTypeOptions.value = res.data.result.engineeringBusinessType
-        engineeringBusinessTypeOptions.value = (res.data.result.engineeringBusinessType).map((item, index) => ({
+    const res = await getDatas("project/ProSelectList", {})
+    if (res.data.code === 200) {
+        engineeringBusinessTypeOptions.value = res.data.result.engineeringBusinessType.map((item, index) => ({
             label: item,
             value: index
         }))
-        console.log(engineeringBusinessTypeOptions.value, '888888888888');
         regionTypeOptions.value = res.data.result.regionType
         trafficTypeOptions.value = res.data.result.trafficType
     }
-};
+}
 
-
-
+// 板块文本转换
 const getProjectPlateText = (value) => {
     if (!value && value !== 0) return '-'
-    const option = engineeringBusinessTypeOptions.value?.find(item => item.value == value)
-    return option ? option.label : '-'
+    const opt = engineeringBusinessTypeOptions.value.find(i => i.value == value)
+    return opt ? opt.label : '-'
 }
 
 onMounted(() => {
     getProjectList()
     getProjectSelectList()
-    mockData.value = [...tableData.value]
 })
 </script>
 
@@ -558,7 +526,6 @@ onMounted(() => {
 }
 
 .search-card,
-.action-card,
 .table-card {
     margin-bottom: 20px;
     border-radius: 8px;
@@ -571,11 +538,6 @@ onMounted(() => {
     gap: 10px;
 }
 
-.action-bar {
-    display: flex;
-    gap: 12px;
-}
-
 .pagination {
     margin-top: 20px;
     display: flex;
@@ -586,13 +548,5 @@ onMounted(() => {
     display: flex;
     justify-content: flex-end;
     gap: 12px;
-}
-
-:deep(.el-table .el-link) {
-    font-weight: 500;
-}
-
-:deep(.el-card__body) {
-    padding: 20px;
 }
 </style>

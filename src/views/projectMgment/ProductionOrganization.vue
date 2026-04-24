@@ -2,15 +2,17 @@
   <div class="project-detail-page">
     <div class="project-header">
       <div class="project-title">{{ '项目信息' }}</div>
+
       <div class="action-buttons" v-if="Editable">
-        <el-button v-if="!isEdit" type="primary" @click="handleEdit">
+        <a-button v-if="!isEdit" type="primary" @click="handleEdit">
           编辑
-        </el-button>
+        </a-button>
         <template v-else>
-          <el-button @click="handleCancel">取消</el-button>
-          <el-button type="primary" @click="handleSave">保存</el-button>
+          <a-button @click="handleCancel">取消</a-button>
+          <a-button type="primary" @click="handleSave">保存</a-button>
         </template>
       </div>
+
     </div>
     <div class="content-wrapper" v-loading="detailsLoading">
       <a-row :gutter="[24, 24]">
@@ -118,7 +120,7 @@
               <!-- 主体责任单位 -->
               <a-descriptions-item label="主体责任单位">
                 <el-input v-if="isEdit" v-model="editData.mainResponsibilityUnit" placeholder="请输入主体责任单位"></el-input>
-                <template v-else>{{  result.mainResponsibilityUnit || '--' }}</template>
+                <template v-else>{{ result.mainResponsibilityUnit || '--' }}</template>
               </a-descriptions-item>
 
             </a-descriptions>

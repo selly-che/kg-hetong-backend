@@ -1,261 +1,326 @@
 <template>
-    <div class="bgf br8">
-        <div class="project-detail-page">
-            <div class="content-wrapper">
-                <h2>项目信息录入</h2>
-                <el-form ref="fromRef" :model="formData" label-width="120px">
-                    <!-- 项目名称（必填） -->
-                    <el-form-item label="项目名称" prop="projectFullName"
-                        :rules="{ required: true, message: '请输入项目名称', trigger: 'blur' }">
-                        <el-input v-model="formData.projectFullName" placeholder="请输入项目名称" />
-                    </el-form-item>
-                    <!-- 项目类型（必填） -->
-                    <el-row :gutter="20">
-                        <el-col :span="12">
-                            <el-form-item label="项目类型" prop="projectType"
-                                :rules="{ required: true, message: '请选择项目类型', trigger: 'change' }">
-                                <el-select v-model="formData.projectType" placeholder="请选择项目类型">
-                                    <el-option label="全部" value="全部" />
-                                    <el-option label="铁路" value="铁路" />
-                                    <el-option label="城轨" value="城轨" />
-                                    <el-option label="公路" value="公路" />
-                                </el-select>
-                            </el-form-item>
-                        </el-col>
-                        <el-col :span="12">
-                            <!-- 项目阶段（必填） -->
-                            <el-form-item label="项目负责人" prop="projectleader"
-                                :rules="{ required: true, message: '请选择项目负责人', trigger: 'change' }">
-                                <el-select clearable filterable v-model="formData.projectleader" placeholder="请选择项目阶段">
-                                    <el-option :label="item.realname" :value="item.id" v-for="item in ProjectUserList" />
-                                </el-select>
-                            </el-form-item>
-                        </el-col>
-                        <el-col :span="12">
-                            <!-- 项目阶段（必填） -->
-                            <el-form-item label="项目阶段" prop="projectStep"
-                                :rules="{ required: true, message: '请选择项目阶段', trigger: 'change' }">
-                                <el-select v-model="formData.projectStep" placeholder="请选择项目阶段">
-                                    <el-option label="预付期" value="600" />
-                                    <el-option label="投标" value="601" />
-                                    <el-option label="规划" value="602" />
-                                    <el-option label="预可研" value="603" />
-                                    <el-option label="可研" value="604" />
-                                    <el-option label="初步设计" value="605" />
-                                    <el-option label="施工图" value="606" />
-                                    <el-option label="配合施工" value="607" />
-                                    <el-option label="开通运营" value="608" />
-                                    <el-option label="招标图" value="609" />
-                                    <el-option label="专题专项" value="610" />
-                                    <el-option label="清概（结算）" value="611" />
-                                    <el-option label="质保期" value="612" />
-                                </el-select>
-                            </el-form-item>
-                        </el-col>
-                        <el-col :span="12">
-                            <el-form-item label="项目状态">
-                                <el-select v-model="formData.projectStatus">
-                                    <el-option label="暂停" value="0" />
-                                    <el-option label="进行中" value="1" />
-                                    <el-option label="已完成" value="2" />
-                                </el-select>
-                            </el-form-item>
-                        </el-col>
-                    </el-row>
-                    <!-- 线路长度 & 速度目标值 -->
-                    <el-row :gutter="20">
-                        <el-col :span="12">
-                            <el-form-item label="线路长度">
-                                <el-input v-model.number="formData.projectLength" clearable placeholder="如：200 km">
-                                    <template #append>km</template>
-                                </el-input>
-                            </el-form-item>
-                        </el-col>
-                        <el-col :span="12">
-                            <el-form-item label="速度目标值">
-                                <el-input v-model="formData.projectSpeed" clearable placeholder="如：200 km/h">
-                                    <template #append> km/h</template>
-                                </el-input>
-                            </el-form-item>
-                        </el-col>
-                    </el-row>
-                    <!-- 铁路等级 & 运营组织模式 -->
-                    <el-row :gutter="20">
-                        <el-col :span="12">
-                            <el-form-item label="铁路等级">
-                                <el-select v-model="formData.saixuantLx2" placeholder="请选择等级">
-                                    <el-option label="等級一" :value="1" />
-                                    <el-option label="等級二" :value="2" />
-                                    <el-option label="等級三" :value="3" />
-                                </el-select>
-                            </el-form-item>
-                        </el-col>
-                        <el-col :span="12">
-                            <el-form-item label="运营组织模式">
-                                <el-input v-model="formData.operationMode" placeholder="如：--" />
-                            </el-form-item>
-                        </el-col>
-                    </el-row>
-                    <!-- 车辆选型与编组 & 重点工程 -->
-                    <el-row :gutter="20">
-                        <el-col :span="12">
-                            <el-form-item label="车辆选型与编组">
-                                <el-input v-model="formData.vehicleType" placeholder="如：--" />
-                            </el-form-item>
-                        </el-col>
-                        <el-col :span="12">
-                            <el-form-item label="重点工程">
-                                <el-radio-group v-model="formData.projectIsEmphasis">
-                                    <el-radio value="0">否</el-radio>
-                                    <el-radio value="1">是</el-radio>
-                                </el-radio-group>
-                            </el-form-item>
-                        </el-col>
-                    </el-row>
-                    <!-- 项目说明 -->
-                    <el-form-item label="项目说明">
-                        <el-input type="textarea" :autosize="{ minRows: 2, maxRows: 4 }"
-                            v-model="formData.projectDescription" placeholder="请输入项目说明" />
-                    </el-form-item>
-                    <!-- 合同时间 & 项目状态 -->
-                    <el-row :gutter="20">
-                        <el-col :span="12">
-                            <el-form-item label="合同时间">
-                                <el-date-picker v-model="formData.projectContractTime" type="datetime"
-                                    format="YYYY-MM-DD HH:mm:ss" value-format="YYYY-MM-DD HH:mm:ss"
-                                    placeholder="请选择合同时间" />
-                            </el-form-item>
-                        </el-col>
-                        <el-col :span="12">
-                            <el-form-item label="开工时间">
-                                <el-date-picker v-model="formData.projectStartTime" type="datetime"
-                                    format="YYYY-MM-DD HH:mm:ss"     value-format="YYYY-MM-DD HH:mm:ss"
-                                    placeholder="请选择开工时间" />
-                            </el-form-item>
-                        </el-col>
-                    </el-row>
-                    <!-- 计划通车时间 & 项目投资 -->
-                    <el-row :gutter="20">
-                        <el-col :span="12">
-                            <el-form-item label="计划通车时间">
-                                <el-date-picker v-model="formData.projectFinishTime" type="datetime"
-                                    format="YYYY-MM-DD HH:mm:ss" value-format="YYYY-MM-DD HH:mm:ss"
-                                    placeholder="请选择计划通车时间" />
-                            </el-form-item>
-                        </el-col>
-                        <el-col :span="12">
-                            <el-form-item label="项目投资">
-                                <el-input v-model.number="formData.projectInvestAmount" clearable
-                                    placeholder="如：200 万元">
-                                    <template #append> 万元</template>
-                                </el-input>
-                            </el-form-item>
-                        </el-col>
-                    </el-row>
-                    <!-- 开工时间 & 合同金额 -->
-                    <el-row :gutter="20">
+  <div class="bgf br8">
+    <div class="project-detail-page">
+      <div class="content-wrapper">
+        <h2>项目信息录入</h2>
+        <a-form ref="fromRef" :model="formData" layout="vertical" :label-col="{ span: 6 }" :wrapper-col="{ span: 18 }">
+          <!-- 项目名称（必填） -->
+          <a-form-item
+            label="项目名称"
+            name="projectFullName"
+            :rules="[{ required: true, message: '请输入项目名称', trigger: 'blur' }]"
+          >
+            <a-input v-model:value="formData.projectFullName" placeholder="请输入项目名称" />
+          </a-form-item>
 
-                        <el-col :span="12">
-                            <el-form-item label="合同金额">
-                                <el-input v-model.number="formData.projectAmount" clearable placeholder="如：200 万元">
-                                    <template #append> 万元</template>
-                                </el-input>
-                            </el-form-item>
-                        </el-col>
-                    </el-row>
-                    <!-- 保存按钮 -->
-                    <el-form-item>
-                        <!-- native-type="submit" -->
-                        <el-button type="primary" @click="saveProject">保存</el-button>
-                    </el-form-item>
-                </el-form>
-            </div>
-        </div>
+          <!-- 项目类型（必填） -->
+          <a-row :gutter="20">
+            <a-col :span="12">
+              <a-form-item
+                label="项目类型"
+                name="projectType"
+                :rules="[{ required: true, message: '请选择项目类型', trigger: 'change' }]"
+              >
+                <a-select v-model:value="formData.projectType" placeholder="请选择项目类型">
+                  <a-select-option value="全部">全部</a-select-option>
+                  <a-select-option value="铁路">铁路</a-select-option>
+                  <a-select-option value="城轨">城轨</a-select-option>
+                  <a-select-option value="公路">公路</a-select-option>
+                </a-select>
+              </a-form-item>
+            </a-col>
+
+            <a-col :span="12">
+              <!-- 项目负责人（必填） -->
+              <a-form-item
+                label="项目负责人"
+                name="projectleader"
+                :rules="[{ required: true, message: '请选择项目负责人', trigger: 'change' }]"
+              >
+                <a-select
+                  clearable
+                  show-search
+                  v-model:value="formData.projectleader"
+                  placeholder="请选择项目负责人"
+                >
+                  <a-select-option
+                    v-for="item in ProjectUserList"
+                    :key="item.id"
+                    :value="item.id"
+                  >
+                    {{ item.realname }}
+                  </a-select-option>
+                </a-select>
+              </a-form-item>
+            </a-col>
+
+            <a-col :span="12">
+              <!-- 项目阶段（必填） -->
+              <a-form-item
+                label="项目阶段"
+                name="projectStep"
+                :rules="[{ required: true, message: '请选择项目阶段', trigger: 'change' }]"
+              >
+                <a-select v-model:value="formData.projectStep" placeholder="请选择项目阶段">
+                  <a-select-option value="600">预付期</a-select-option>
+                  <a-select-option value="601">投标</a-select-option>
+                  <a-select-option value="602">规划</a-select-option>
+                  <a-select-option value="603">预可研</a-select-option>
+                  <a-select-option value="604">可研</a-select-option>
+                  <a-select-option value="605">初步设计</a-select-option>
+                  <a-select-option value="606">施工图</a-select-option>
+                  <a-select-option value="607">配合施工</a-select-option>
+                  <a-select-option value="608">开通运营</a-select-option>
+                  <a-select-option value="609">招标图</a-select-option>
+                  <a-select-option value="610">专题专项</a-select-option>
+                  <a-select-option value="611">清概（结算）</a-select-option>
+                  <a-select-option value="612">质保期</a-select-option>
+                </a-select>
+              </a-form-item>
+            </a-col>
+
+            <a-col :span="12">
+              <a-form-item label="项目状态">
+                <a-select v-model:value="formData.projectStatus">
+                  <a-select-option value="0">暂停</a-select-option>
+                  <a-select-option value="1">进行中</a-select-option>
+                  <a-select-option value="2">已完成</a-select-option>
+                </a-select>
+              </a-form-item>
+            </a-col>
+          </a-row>
+
+          <!-- 线路长度 & 速度目标值 -->
+          <a-row :gutter="20">
+            <a-col :span="12">
+              <a-form-item label="线路长度">
+                <a-input
+                  v-model:value="formData.projectLength"
+                  type="number"
+                  clearable
+                  placeholder="如：200"
+                >
+                  <template #addonAfter>km</template>
+                </a-input>
+              </a-form-item>
+            </a-col>
+            <a-col :span="12">
+              <a-form-item label="速度目标值">
+                <a-input
+                  v-model:value="formData.projectSpeed"
+                  clearable
+                  placeholder="如：200"
+                >
+                  <template #addonAfter>km/h</template>
+                </a-input>
+              </a-form-item>
+            </a-col>
+          </a-row>
+
+          <!-- 铁路等级 & 运营组织模式 -->
+          <a-row :gutter="20">
+            <a-col :span="12">
+              <a-form-item label="铁路等级">
+                <a-select v-model:value="formData.saixuantLx2" placeholder="请选择等级">
+                  <a-select-option :value="1">等級一</a-select-option>
+                  <a-select-option :value="2">等級二</a-select-option>
+                  <a-select-option :value="3">等級三</a-select-option>
+                </a-select>
+              </a-form-item>
+            </a-col>
+            <a-col :span="12">
+              <a-form-item label="运营组织模式">
+                <a-input v-model:value="formData.operationMode" placeholder="如：--" />
+              </a-form-item>
+            </a-col>
+          </a-row>
+
+          <!-- 车辆选型与编组 & 重点工程 -->
+          <a-row :gutter="20">
+            <a-col :span="12">
+              <a-form-item label="车辆选型与编组">
+                <a-input v-model:value="formData.vehicleType" placeholder="如：--" />
+              </a-form-item>
+            </a-col>
+            <a-col :span="12">
+              <a-form-item label="重点工程">
+                <a-radio-group v-model:value="formData.projectIsEmphasis">
+                  <a-radio value="0">否</a-radio>
+                  <a-radio value="1">是</a-radio>
+                </a-radio-group>
+              </a-form-item>
+            </a-col>
+          </a-row>
+
+          <!-- 项目说明 -->
+          <a-form-item label="项目说明">
+            <a-input
+              type="textarea"
+              :auto-size="{ minRows: 2, maxRows: 4 }"
+              v-model:value="formData.projectDescription"
+              placeholder="请输入项目说明"
+            />
+          </a-form-item>
+
+          <!-- 合同时间 & 开工时间 -->
+          <a-row :gutter="20">
+            <a-col :span="12">
+              <a-form-item label="合同时间">
+                <a-date-picker
+                  v-model:value="formData.projectContractTime"
+                  show-time
+                  value-format="YYYY-MM-DD HH:mm:ss"
+                  placeholder="请选择合同时间"
+                />
+              </a-form-item>
+            </a-col>
+            <a-col :span="12">
+              <a-form-item label="开工时间">
+                <a-date-picker
+                  v-model:value="formData.projectStartTime"
+                  show-time
+                  value-format="YYYY-MM-DD HH:mm:ss"
+                  placeholder="请选择开工时间"
+                />
+              </a-form-item>
+            </a-col>
+          </a-row>
+
+          <!-- 计划通车时间 & 项目投资 -->
+          <a-row :gutter="20">
+            <a-col :span="12">
+              <a-form-item label="计划通车时间">
+                <a-date-picker
+                  v-model:value="formData.projectFinishTime"
+                  show-time
+                  value-format="YYYY-MM-DD HH:mm:ss"
+                  placeholder="请选择计划通车时间"
+                />
+              </a-form-item>
+            </a-col>
+            <a-col :span="12">
+              <a-form-item label="项目投资">
+                <a-input
+                  v-model:value="formData.projectInvestAmount"
+                  type="number"
+                  clearable
+                  placeholder="如：200"
+                >
+                  <template #addonAfter>万元</template>
+                </a-input>
+              </a-form-item>
+            </a-col>
+          </a-row>
+
+          <!-- 合同金额 -->
+          <a-row :gutter="20">
+            <a-col :span="12">
+              <a-form-item label="合同金额">
+                <a-input
+                  v-model:value="formData.projectAmount"
+                  type="number"
+                  clearable
+                  placeholder="如：200"
+                >
+                  <template #addonAfter>万元</template>
+                </a-input>
+              </a-form-item>
+            </a-col>
+          </a-row>
+
+          <!-- 保存按钮 -->
+          <a-form-item>
+            <a-button type="primary" @click="saveProject">保存</a-button>
+          </a-form-item>
+        </a-form>
+      </div>
     </div>
+  </div>
 </template>
 
 <script setup>
-import { ref , onMounted } from 'vue';
+import { ref, onMounted } from 'vue';
 import getDatas from "@/network/index";
-import { ElMessage } from 'element-plus';
+import { message } from 'ant-design-vue';
 import { useRouter, useRoute } from "vue-router";
-const fromRef = ref()
+
+const fromRef = ref();
+const router = useRouter();
+const route = useRoute();
+
 // 初始化表单数据
 const formData = ref({
-    projectFullName: '',
-    projectType: '',
-    projectStep: '',
-    projectLength: null,
-    projectSpeed: '',
-    operationMode: '',
-    vehicleType: '',
-    projectIsEmphasis: '0',
-    projectDescription: '',
-    projectContractTime: new Date('2023-12-01'),
-    projectStatus: '1',
-    projectFinishTime: null,
-    projectInvestAmount: null,
-    projectStartTime: new Date('2024-01-15'),
-    projectAmount: null,
-    saixuantLx2: null,
+  projectFullName: '',
+  projectType: '',
+  projectStep: '',
+  projectLength: null,
+  projectSpeed: '',
+  operationMode: '',
+  vehicleType: '',
+  projectIsEmphasis: '0',
+  projectDescription: '',
+  projectContractTime: new Date('2023-12-01'),
+  projectStatus: '1',
+  projectFinishTime: null,
+  projectInvestAmount: null,
+  projectStartTime: new Date('2024-01-15'),
+  projectAmount: null,
+  saixuantLx2: null,
+  projectleader: ''
 });
-const router = useRouter();
-const ProjectUserList = ref([])
+
+const ProjectUserList = ref([]);
+
 // 保存逻辑
 const saveProject = async () => {
-    const isValid = await fromRef.value.validate()
-    if (!isValid) {
-        return;
+  const valid = await fromRef.value.validate();
+  if (!valid) return;
+
+  try {
+    const res = await getDatas('project/AddProject', formData.value);
+    if (res.data.code === 200) {
+      message.success('保存成功');
+      router.push('/projectMgment/projectHome').finally(() => {
+        sessionStorage.setItem('openedTabs', [])
+        window.location.reload();
+      });
     }
-    try {
-        // 发送保存请求
-        const res = await getDatas('project/AddProject', formData.value);
-        if (res.data.code === 200) {
-            ElMessage.success('保存成功');
-            // 跳转到首页
-            router.push('/projectMgment/projectHome').finally(() => {
-                // 刷新页面
-                sessionStorage.setItem('openedTabs', [])
-                window.location.reload();
-            });
-        }
-        console.log(res);
-    } catch (error) {
-        console.log(error);
-    } finally {
-        // 清空formData
-        formData.value = {};
-    }
-};  
+  } catch (error) {
+    console.error(error);
+  } finally {
+    formData.value = {};
+  }
+};
+
 // 获取用户列表
 const getUserList = async () => {
-    try {
-        const res = await getDatas('system/GetUserinfo', { pageNo: 1,pageSize:20 });
-        console.log(res);
-        ProjectUserList.value = res.data.result.records;
-    } catch (error) {
-        console.log(error);
-    }
+  try {
+    const res = await getDatas('system/GetUserinfo', { pageNo: 1, pageSize: 20 });
+    ProjectUserList.value = res.data.result.records;
+  } catch (error) {
+    console.error(error);
+  }
 };
+
 onMounted(() => {
-    getUserList()
-})
+  getUserList();
+});
 </script>
 
 <style lang="less" scoped>
 .bgf {
-    background-color: #fff;
-    padding: 20px;
+  background-color: #fff;
+  padding: 20px;
 }
 
 .project-detail-page {
-    max-width: 1200px;
-    margin: 0 auto;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .content-wrapper {
-    padding: 20px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
 }
 </style>

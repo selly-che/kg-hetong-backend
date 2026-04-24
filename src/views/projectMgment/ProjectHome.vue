@@ -1,7 +1,6 @@
 <template>
   <div class="project-home">
     <div class="content">
-      <!-- <h1 class="title">项目首页</h1> -->
     </div>
   </div>
 </template>
