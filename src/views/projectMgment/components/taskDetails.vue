@@ -194,6 +194,9 @@ const unitOptions = ref<{ value: string | number; label: string }[]>([]);
 // 表格数据
 const tableData = ref<any[]>([]);
 
+// 所有数据
+const allTableData = ref<any[]>([]);
+
 // 展开的行keys
 const expandedRowKeys = ref<string[]>([]);
 
@@ -201,8 +204,10 @@ const expandedRowKeys = ref<string[]>([]);
 onMounted(() => {
     if (props.detailData && props.detailData.taskGroups) {
         const processedData = processTaskGroups(props.detailData.taskGroups);
+        allTableData.value = processedData;
         console.log(processedData, "processedData");
-        tableData.value = processedData;
+        paginationConfig.current = 1;
+        updateTableData();
     }
 });
 
@@ -224,7 +229,9 @@ watch(
 watch(() => props.detailData, (newVal) => {
     if (newVal && newVal.taskGroups) {
         const processedData = processTaskGroups(newVal.taskGroups);
-        tableData.value = processedData;
+        allTableData.value = processedData;
+        paginationConfig.current = 1;
+        updateTableData();
         console.log(processedData, "processedData111");
     }
 }, { deep: true });
@@ -277,14 +284,25 @@ const paginationConfig = reactive({
     current: 1,
     pageSize: 20,
     total: 0,
-    showSizeChanger: false,
+    showSizeChanger: true,
+    pageSizeOptions: ['10', '20', '50', '100'],
     showQuickJumper: true,
     showTotal: (total: number) => `共 ${total} 条`,
     onChange: (page: number, pageSize: number) => {
+
         paginationConfig.current = page;
         paginationConfig.pageSize = pageSize;
+        updateTableData();
     }
 });
+
+// 更新表格数据显示
+const updateTableData = () => {
+    const start = (paginationConfig.current - 1) * paginationConfig.pageSize;
+    const end = start + paginationConfig.pageSize;
+    tableData.value = allTableData.value.slice(start, end);
+    paginationConfig.total = allTableData.value.length;
+};
 
 // 格式化日期
 const formatDate = (dateString: string | null) => {
@@ -348,7 +366,9 @@ const handleSearch = async () => {
     });
     if (res.data.code === 200) {
         const processedData = processTaskGroups(res.data.result.records[0].taskGroups);
-        tableData.value = processedData;
+        allTableData.value = processedData;
+        paginationConfig.current = 1;
+        updateTableData();
         searchLoading.value = false;
     } else {
         ElMessage.error(res.message);
@@ -379,7 +399,7 @@ const toggleFullScreen = () => {
 };
 
 // 工作调整
-const handleAdjust = () => { 
+const handleAdjust = () => {
     emit('adjust');
 }
 

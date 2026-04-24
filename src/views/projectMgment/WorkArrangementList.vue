@@ -3,24 +3,25 @@
     <div class="work-arrangement-container" v-if="tableDataVisible == 0">
       <!-- 搜索区域 -->
       <div class="search-bar">
-        <a-select v-model:value="searchType" style="width: 100px; margin-right: 8px">
-          <a-select-option value="noticeName">通知名称</a-select-option>
-          <a-select-option value="taskName">任务名称</a-select-option>
+        <a-select v-model:value="workType" style="width: 100px; margin-right: 8px">
+          <a-select-option :value="null">任务通知</a-select-option>
+          <a-select-option :value="0">业务性</a-select-option>
+          <a-select-option :value="1">事务性</a-select-option>
         </a-select>
 
-        <a-input v-model:value="searchText" placeholder="请输入名称" style="width: 300px; margin-right: 16px" />
+        <a-input v-model:value="searchText" allowClear placeholder="请输入名称" style="width: 300px; margin-right: 16px" />
 
         <!-- 状态筛选 -->
         <a-checkbox-group v-model:value="statusFilters" style="margin-right: 16px">
-          <a-checkbox value="1">未完成</a-checkbox>
-          <a-checkbox value="2">已完成</a-checkbox>
+          <a-checkbox :value="1">未完成</a-checkbox>
+          <a-checkbox :value="2">已完成</a-checkbox>
         </a-checkbox-group>
 
         <!-- 计划类型筛选 -->
-        <a-checkbox-group v-model:value="planFilters" style="margin-right: 16px">
+        <!-- <a-checkbox-group v-model:value="planFilters" style="margin-right: 16px">
           <a-checkbox value="0">过程计划</a-checkbox>
           <a-checkbox value="1">阶段计划</a-checkbox>
-        </a-checkbox-group>
+        </a-checkbox-group> -->
 
         <!-- 查询和重置按钮 -->
         <a-button type="primary" @click="handleSearch">查询</a-button>
@@ -170,7 +171,7 @@ const changeShowTab = (type: number) => {
 const route = useRoute();
 
 // 搜索相关
-const searchType = ref('noticeName');
+const workType = ref(null); // 业务性/事务性
 const searchText = ref('');
 
 // 分页相关
@@ -183,7 +184,7 @@ const handlePageChange = (page: number, pageSize?: number) => {
 
 };
 // 状态筛选
-const statusFilters = ref(['1', '2']);
+const statusFilters = ref([1, 2]);
 const planFilters = ref(['0', '1']);
 const tableLoading = ref(false);
 
@@ -351,12 +352,16 @@ const handleSearch = async () => {
     tableLoading.value = true; 
 
     const projectId = route.query.projectId || '1'; // 从路由获取项目 ID
-
+    console.log(statusFilters.value.join(','),'statusFilters');
+    
     const res = await getDatas("project/GetWorkArrangement", {
       pageNo: currentPage.value,
       pageSize: pageSize.value,
       projectId: projectId,
+      taTaskName: searchText.value,
+      // taStatus: statusFilters.value.length == 2 ? '' : statusFilters.value[0],
       stepId: '', // 全部
+      // f: workType.value, 
     });
 
     if (res && res.data.code === 200) {
@@ -380,7 +385,7 @@ const handleSearch = async () => {
 // 重置处理
 const handleReset = () => {
   searchText.value = '';
-  statusFilters.value = ['1', '2'];
+  statusFilters.value = [1, 2];
   planFilters.value = ['0', '1'];
   currentPage.value = 1;
   handleSearch();

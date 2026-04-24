@@ -41,7 +41,8 @@
 
                 <div class="content-section">
                     <p class="content-title"><strong>{{ fromData.taTaskName || '联系事项' }}</strong></p>
-                    <p style="text-indent: 2em;">{{ fromData.taPreface || '根据集团公司生产计划安排，现下达相关任务，请各单位遵照执行。' }}</p>
+                    <!-- <p style="text-indent: 2em;">{{ fromData.taPreface || '根据集团公司生产计划安排，现下达相关任务，请各单位遵照执行。' }}</p> -->
+                    <p style="text-indent: 2em;">{{  `根据集团公司生产计划安排，现下达 《${fromData.taTaskName }》 相关任务，请各单位遵照执行。` }}</p>
                     <p style="text-indent: 2em;">工期计划及要求详见附件。</p>
 
                     <div class="signature">
