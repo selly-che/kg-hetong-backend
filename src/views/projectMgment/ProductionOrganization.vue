@@ -70,10 +70,10 @@
                 <template v-if="isEdit">
                   <el-select v-model="editData.professionalDeputyOveralls" multiple placeholder="请选择专业副总体"
                     style="width: 100%">
-                    <el-option label="user001" value="user001"></el-option>
-                    <el-option label="user002" value="user002"></el-option>
-                    <el-option label="user003" value="user003"></el-option>
-                    <el-option label="user004" value="user004"></el-option>
+                    <el-option label="专业副总体1" value="专业副总体1"></el-option>
+                    <el-option label="专业副总体2" value="专业副总体2"></el-option>
+                    <el-option label="专业副总体3" value="专业副总体3"></el-option>
+                    <el-option label="专业副总体4" value="专业副总体4"></el-option>
                   </el-select>
                 </template>
                 <template v-else>
@@ -91,7 +91,10 @@
               <a-descriptions-item label="项目部">
                 <template v-if="isEdit">
                   <el-select v-model="editData.projectDepartments" multiple placeholder="请选择项目部" style="width: 100%">
-                    <el-option label="领导" value="领导"></el-option>
+                    <el-option label="领导1" value="领导1"></el-option>
+                    <el-option label="领导2" value="领导2"></el-option>
+                    <el-option label="领导3" value="领导3"></el-option>
+                    <el-option label="领导4" value="领导4"></el-option>
                   </el-select>
                 </template>
                 <template v-else>
@@ -905,7 +908,7 @@
 
 
 <script lang="ts" setup>
-import { reactive, ref, computed, onMounted, watch } from "vue";
+import { reactive, ref, computed, onMounted, watch, inject } from "vue";
 import getDatas from "@/network/index";
 import { useRouter } from "vue-router";
 import { ElMessage } from 'element-plus';
@@ -1163,6 +1166,8 @@ const handleEdit = () => {
 
 };
 
+const triggerRefresh = inject('triggerRefresh') as (() => void) | undefined;
+
 // 处理取消
 const handleCancel = () => {
   isEdit.value = false;
@@ -1187,6 +1192,9 @@ const handleSave = async () => {
       result.value = { ...editData.value };
       result.value.projectStep = editData.value.projectStep ? editData.value.projectStep.toString() : null;
       isEdit.value = false;
+      if (triggerRefresh) {
+        triggerRefresh();
+      }
     } else {
       ElMessage.error(res.data.message || '保存失败');
     }

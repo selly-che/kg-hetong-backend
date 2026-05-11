@@ -36,41 +36,43 @@
         </div>
 
         <!-- 项目列表 -->
-        <div class="project-list">
-          <a-menu v-model:selectedKeys="selectedMenuKeys" v-model:openKeys="openMenuKeys" mode="inline"
-            :inline-collapsed="collapsed">
-            <!-- 动态渲染项目 -->
-            <a-sub-menu v-for="project in filteredProjects" :key="project.Id">
-              <template #title>
-                <span class="project-title">{{ project.text }}</span>
-              </template>
-
-              <!-- 固定的二级菜单项 -->
-              <a-menu-item v-for="fixedItem in project.fixedNodes" :key="fixedItem.Id"
-                @click="handleMenuItemClick(fixedItem)">
-                {{ fixedItem.text }}
-              </a-menu-item>
-
-              <!-- 动态的二级菜单项（来自stepList） -->
-              <a-sub-menu v-for="taskItem in project.taskNodes" :key="taskItem.Id">
-                <template #title>
-                  <!-- <el-badge is-dot class="item_badge" v-if="taskItem.stepCode == project.stepCode"> -->
-                  <div v-if="taskItem.stepCode == project.stepCode">
-                    <span style="color: #f8ac59;margin-right: 4px;">{{ taskItem.text }} </span>
-                    <link-outlined />
-                  </div>
-                  <!-- </el-badge> -->
-                  <span v-else>{{ taskItem.text }}</span>
-                </template>
-
-                <!-- 固定的三级菜单项 -->
-                <a-menu-item v-for="thirdLevelItem in taskItem.children" :key="thirdLevelItem.Id"
-                  @click="handleMenuItemClick(thirdLevelItem)">
-                  {{ thirdLevelItem.text }}
-                </a-menu-item>
-              </a-sub-menu>
-            </a-sub-menu>
-          </a-menu>
+        <div class="project-list" >
+           <a-spin :spinning="Projectloading" tip="加载中...">
+             <a-menu   v-model:selectedKeys="selectedMenuKeys" v-model:openKeys="openMenuKeys" mode="inline"
+               :inline-collapsed="collapsed">
+               <!-- 动态渲染项目 -->
+               <a-sub-menu v-for="project in filteredProjects" :key="project.Id" >
+                 <template #title>
+                   <span class="project-title">{{ project.text }}</span>
+                 </template>
+   
+                 <!-- 固定的二级菜单项 -->
+                 <a-menu-item v-for="fixedItem in project.fixedNodes" :key="fixedItem.Id"
+                   @click="handleMenuItemClick(fixedItem)">
+                   {{ fixedItem.text }}
+                 </a-menu-item>
+   
+                 <!-- 动态的二级菜单项（来自stepList） -->
+                 <a-sub-menu v-for="taskItem in project.taskNodes" :key="taskItem.Id">
+                   <template #title>
+                     <!-- <el-badge is-dot class="item_badge" v-if="taskItem.stepCode == project.stepCode"> -->
+                     <div v-if="taskItem.stepCode == project.stepCode">
+                       <span style="color: #f8ac59;margin-right: 4px;">{{ taskItem.text }} </span>
+                       <link-outlined />
+                     </div>
+                     <!-- </el-badge> -->
+                     <span v-else>{{ taskItem.text }}</span>
+                   </template>
+   
+                   <!-- 固定的三级菜单项 -->
+                   <a-menu-item v-for="thirdLevelItem in taskItem.children" :key="thirdLevelItem.Id"
+                     @click="handleMenuItemClick(thirdLevelItem)">
+                     {{ thirdLevelItem.text }}
+                   </a-menu-item>
+                 </a-sub-menu>
+               </a-sub-menu>
+             </a-menu>
+           </a-spin>
         </div>
 
         <!-- 固定在底部的返回首页按钮 -->
@@ -119,7 +121,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed, onMounted, watch } from "vue";
+import { ref, computed, onMounted, watch ,provide} from "vue";
 import { useRouter, useRoute } from "vue-router";
 import getDatas from "@/network/index";
 import { ElMessage } from "element-plus";
@@ -211,8 +213,10 @@ const TabClickFn = (key: string) => {
 
 
 // 获取项目列表
+const Projectloading = ref(false)
 const getProjectList = async () => {
   projects.value = []; // 清空当前项目列表
+  Projectloading.value = true
   try {
     let saixuantLx1 = getResponsibilityIndex(activeResponsibility.value);
     let saixuantLx2 = getFilterIndex(activeFilter.value);
@@ -321,11 +325,14 @@ const getProjectList = async () => {
 
     selectedMenuKeys.value = [];
     openMenuKeys.value = [];
+     Projectloading.value = false
   } catch (error) {
     console.error("获取项目列表失败:", error);
     ElMessage.error("获取项目列表失败");
   }
 };
+
+provide('triggerRefresh', getProjectList);
 
 // 根据项目类型详情获取类型标识
 const getProjectType = (projectTypeDetail: string) => {

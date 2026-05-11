@@ -74,7 +74,7 @@
         <div class="table-wrapperzhu">
           <a-table
             :row-selection="{
-              selectedRowKeys: selectedRowKeys.value,
+              selectedRowKeys: selectedRowKeys,
               onChange: onSelectChange,
               type: 'radio',
             }"
@@ -91,7 +91,7 @@
                 <a-divider type="vertical" />
 
                 <a-dropdown placement="bottomRight">
-                  <a class="ant-dropdown-link">
+                  <a class="ant-dropdown-link" @click="handleActionClick(record)">
                     更多
                     <DownOutlined />
                   </a>
@@ -457,12 +457,15 @@ const handleAdd = () => {
     formRef.value.clearValidate();
   }
 };
+// 点击用户
 const handleViewUsers = (record) => {
   console.log("查看用户功能待实现", record);
   IsAddUser.value = true;
   searchForm.roleId = record.id;
   selectedroles.value = record.id;
-  handleUserSearch();
+  selectedRowKeys.value = [record.id];
+  handleUserSearch(); 
+  
 };
 const handleCloseUserManagement = () => {
   IsAddUser.value = false;
@@ -558,7 +561,7 @@ const onClearSelected = () => {
 
 // 选择变更
 const onSelectChange = (newSelectedRowKeys) => {
-  console.log(newSelectedRowKeys);
+  console.log(newSelectedRowKeys,'newSelectedRowKeys');
 
   selectedRowKeys.value = newSelectedRowKeys;
   searchForm.username = "";

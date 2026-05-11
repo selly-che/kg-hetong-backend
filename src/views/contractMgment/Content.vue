@@ -8,13 +8,8 @@
       <span>收款金额：{{ contractStatistics.receivedAmount }}万元</span>
       <a-button type="primary" @click="exportExcelHandler">导出excel</a-button>
     </div>
-    <a-table
-      :row-selection="rowSelection"
-      :columns="columns"
-      :data-source="data"
-      :scroll="{ x: 1500, y: 500 }"
-      bordered
-    >
+    <a-table :row-selection="rowSelection" :columns="columns" :data-source="data" :scroll="{ x: 1500, y: 500 }"
+      bordered>
       <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'paymentAuditStatus'">
           <a-tag :color="paymentAuditStatusColor(record.paymentAuditStatus)">{{

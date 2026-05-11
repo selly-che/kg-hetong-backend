@@ -89,7 +89,7 @@
           <span class="notice-name-link" @click="showTaskContentModal(record)" style="color: #1890ff; cursor: pointer;">
             {{ record.taTaskName }}
           </span>
-        </template>
+        </template> 
         <!-- 操作 -->
         <template #operation="{ record }">
           <a-space>
@@ -124,11 +124,11 @@
     </div>
     <!-- 展示工作详情 弹窗 -->
     <div v-if="tableDataVisible == 1">
-      <taskDetails v-if="tableDataVisible == 1"  @CloseTask="changeShowTab(0)" :detailData="detailModalData"
+      <taskDetails v-if="tableDataVisible == 1" @CloseTask="changeShowTab(0)" :detailData="detailModalData"
         :type="'workList'"></taskDetails>
     </div>
     <!-- 展示pdf 弹窗 -->
-    <div v-if="tableDataVisible == 2" >
+    <div v-if="tableDataVisible == 2">
       <pdfDetail v-if="tableDataVisible == 2" :key="detailModalData.id" @closePdf="changeShowTab(0)"
         :fromData="detailModalData"></pdfDetail>
     </div>
@@ -154,7 +154,7 @@ import taskDetails from './components/taskDetails.vue';
 
 
 const tableDataVisible = ref(0);
- 
+
 
 
 // 弹窗相关
@@ -254,6 +254,7 @@ const visibleColumns = computed(() => {
       title: '下发人',
       dataIndex: 'taCreator',
       key: 'taCreator',
+      slots: { customRender: 'taCreator' },
     },
     {
       title: '任务名称',
@@ -330,8 +331,8 @@ const hasTaskContents = (record: any) => {
 // 显示任务内容弹窗
 const showTaskContentModal = (record: any) => {
   console.log(record, 'record');
-  changeShowTab(2) 
-   detailModalData.value = record;
+  changeShowTab(2)
+  detailModalData.value = record;
   return
   if (!hasTaskContents(record)) {
     ElMessage.info('该记录没有任务内容');
@@ -349,11 +350,11 @@ const showTaskContentModal = (record: any) => {
 // 查询处理
 const handleSearch = async () => {
   try {
-    tableLoading.value = true; 
+    tableLoading.value = true;
 
     const projectId = route.query.projectId || '1'; // 从路由获取项目 ID
-    console.log(statusFilters.value.join(','),'statusFilters');
-    
+    console.log(statusFilters.value.join(','), 'statusFilters');
+
     const res = await getDatas("project/GetWorkArrangement", {
       pageNo: currentPage.value,
       pageSize: pageSize.value,

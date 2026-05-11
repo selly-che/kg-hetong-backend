@@ -11,9 +11,12 @@
                 <a-form-item label="主管计调">
                     <a-select v-model:value="searchForm.managerCharge" placeholder="请选择" allow-clear
                         style="width: 120px">
-                        <a-select-option value="csq">陈叔清</a-select-option>
-                        <a-select-option value="ljj">卢静静</a-select-option>
+                        <a-select-option v-for="item in managerList" :key="item.id" :value="item.username">
+                            {{ item.realname || item.userName }}
+                        </a-select-option>
                     </a-select>
+
+
                 </a-form-item>
 
                 <a-form-item label="板块">
@@ -53,7 +56,7 @@
                 <a-form-item>
                     <a-button type="primary" @click="handleSearch">
                         <template #icon>
-                            <PlusOutlined />
+                            <SearchOutlined />
                         </template>
                         查询
                     </a-button>
@@ -77,21 +80,15 @@
 
         <!-- 数据表格 -->
         <a-card class="table-card" :bordered="false">
-            <a-table :columns="columns" :data-source="tableData" row-key="id" bordered :pagination="false"
+            <a-table :columns="columns" :data-source="tableData"
+            :loading="tableLoading"
+            row-key="id" bordered :pagination="false"
                 @selection-change="handleSelectionChange">
                 <!-- 复选框列 -->
                 <template #bodyCell="{ column, record }">
                     <template v-if="column.key === 'selection'">
                         <a-checkbox :checked="selectedRows.some(item => item.id === record.id)"
                             @change="(e) => handleSelectRow(e, record)" />
-                    </template>
-                    <template v-else-if="column.key === 'managerCharge'">
-                        {{ record.managerCharge === 'csq' ? '陈叔清' : '' }}
-                        {{ record.managerCharge === 'ljj' ? '卢静静' : '' }}
-                    </template>
-                    <template v-else-if="column.key === 'managerAssist'">
-                        {{ record.managerAssist === 'csq' ? '陈叔清' : '' }}
-                        {{ record.managerAssist === 'ljj' ? '卢静静' : '' }}
                     </template>
                     <template v-else-if="column.key === 'projectPlate'">
                         {{ getProjectPlateText(record.projectPlate) }}
@@ -215,17 +212,22 @@
                 <a-row :gutter="[20, 20]">
                     <a-col :span="12">
                         <a-form-item label="主管计调" name="managerCharge">
-                            <a-select v-model:value="formData.managerCharge" allow-clear placeholder="请选择"
-                                style="width: 100%">
-                                <a-select-option value="csq">陈叔清</a-select-option>
+                            <a-select v-model:value="formData.managerCharge" placeholder="请选择" allow-clear>
+                                <!-- 4. 动态渲染选项 -->
+                                <a-select-option v-for="item in managerList" :key="item.id" :value="item.username">
+                                    {{ item.realname || item.userName }}
+                                </a-select-option>
                             </a-select>
                         </a-form-item>
                     </a-col>
                     <a-col :span="12">
                         <a-form-item label="协管计调" name="managerAssist">
-                            <a-select v-model:value="formData.managerAssist" allow-clear placeholder="请选择"
-                                style="width: 100%">
-                                <a-select-option value="ljj">卢静静</a-select-option>
+                            <a-select v-model:value="formData.managerAssist" placeholder="请选择" allow-clear>
+                                <!-- 4. 动态渲染选项 -->
+                                <a-select-option v-for="item in managerAssistList" :key="item.id"
+                                    :value="item.username">
+                                    {{ item.realname || item.userName }}
+                                </a-select-option>
                             </a-select>
                         </a-form-item>
                     </a-col>
@@ -268,8 +270,16 @@
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
 import { message, Modal } from 'ant-design-vue'
-import { PlusOutlined, DeleteOutlined } from '@ant-design/icons-vue'
+import { PlusOutlined, DeleteOutlined, SearchOutlined } from '@ant-design/icons-vue'
 import getDatas from "@/network/index";
+import { exportUserData } from '@/utils/common';
+
+
+// 获取主管的数据信息
+const managerList = ref([]);
+
+// 获取协管数据信息
+const managerAssistList = ref([]);
 
 // 下拉选项
 const engineeringBusinessTypeOptions = ref([
@@ -301,6 +311,7 @@ const pagination = reactive({
 
 // 表格
 const tableData = ref([])
+const tableLoading = ref(false)
 const selectedRows = ref([])
 const formRef = ref(null)
 
@@ -483,6 +494,7 @@ const handleDialogClose = () => {
 
 // 接口
 const getProjectList = async () => {
+    tableLoading.value = true
     const res = await getDatas("project/GetProjectList", {
         pageNum: pagination.currentPage,
         pageSize: pagination.pageSize,
@@ -491,6 +503,7 @@ const getProjectList = async () => {
     })
     tableData.value = res.data.result.records
     pagination.total = res.data.result.total
+    tableLoading.value = false
 }
 
 const getProjectSelectList = async () => {
@@ -512,9 +525,11 @@ const getProjectPlateText = (value) => {
     return opt ? opt.label : '-'
 }
 
-onMounted(() => {
+onMounted(async () => {
     getProjectList()
     getProjectSelectList()
+    managerList.value = await exportUserData('manager')
+    managerAssistList.value = await exportUserData('assistant')
 })
 </script>
 

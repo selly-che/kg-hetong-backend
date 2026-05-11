@@ -72,13 +72,13 @@
                     <a-row :gutter="16">
                       <a-col :span="12">
                         <a-form-item label="线路长度(km)">
-                          <a-input-number v-model:value="editForm.projectLength" :min="0" :precision="2"
+                          <a-input-number v-model:value="editForm.projectLength" allowClear  :min="0" :precision="2"
                             style="width: 100%" placeholder="请输入线路长度" />
                         </a-form-item>
                       </a-col>
                       <a-col :span="12">
                         <a-form-item label="速度目标值(km/h)">
-                          <a-input-number v-model:value="editForm.speedTarget" :min="0" style="width: 100%"
+                          <a-input-number v-model:value="editForm.speedTarget" allowClear  :min="0" style="width: 100%"
                             placeholder="请输入速度目标值" />
                         </a-form-item>
                       </a-col>
@@ -173,7 +173,7 @@
                       </a-col>
                       <a-col :span="12">
                         <a-form-item label="项目投资(万元)">
-                          <a-input-number v-model:value="editForm.investAmount" :min="0" :precision="2"
+                          <a-input-number allowClear  v-model:value="editForm.investAmount" :min="0" :precision="2" 
                             style="width: 100%" placeholder="请输入项目投资" />
                         </a-form-item>
                       </a-col>
@@ -183,13 +183,13 @@
                     <a-row :gutter="16">
                       <a-col :span="12">
                         <a-form-item label="开工时间">
-                          <a-date-picker v-model:value="editForm.startTime" show-time format="YYYY-MM-DD HH:mm:ss"
+                          <a-date-picker  v-model:value="editForm.startTime" show-time format="YYYY-MM-DD HH:mm:ss"
                             value-format="YYYY-MM-DD HH:mm:ss" style="width: 100%" placeholder="请选择开工时间" />
                         </a-form-item>
                       </a-col>
                       <a-col :span="12">
                         <a-form-item label="合同金额(万元)">
-                          <a-input-number v-model:value="editForm.amount" :min="0" :precision="2" style="width: 100%"
+                          <a-input-number allowClear  v-model:value="editForm.amount" :min="0" :precision="2" style="width: 100%"
                             placeholder="请输入合同金额" />
                         </a-form-item>
                       </a-col>
@@ -257,7 +257,7 @@
                     <a-row :gutter="16">
                       <a-col :span="12">
                         <a-form-item label="速度目标值(km/h)">
-                          <a-input-number v-model:value="techEditForm.tsSpeedTarget" :min="0" style="width: 100%"
+                          <a-input-number v-model:value="techEditForm.tsSpeedTarget" allowClear  :min="0" style="width: 100%"
                             placeholder="请输入速度目标值" />
                         </a-form-item>
                       </a-col>
@@ -305,7 +305,7 @@
                       </a-col>
                       <a-col :span="12">
                         <a-form-item label="牵引质量">
-                          <a-input-number v-model:value="techEditForm.tsTowMass" :min="0" style="width: 100%"
+                          <a-input-number v-model:value="techEditForm.tsTowMass" allowClear  :min="0" style="width: 100%"
                             placeholder="请输入牵引质量" />
                         </a-form-item>
                       </a-col>
@@ -313,7 +313,7 @@
                     <a-row :gutter="16">
                       <a-col :span="12">
                         <a-form-item label="到发线有效长度">
-                          <a-input-number v-model:value="techEditForm.tsArrivalDeparture" :min="0" style="width: 100%"
+                          <a-input-number v-model:value="techEditForm.tsArrivalDeparture" allowClear  :min="0" style="width: 100%"
                             placeholder="请输入到发线有效长度" />
                         </a-form-item>
                       </a-col>
@@ -624,7 +624,7 @@ const handleSave = async () => {
       projectFullName: projects.value.Project_FullName,
       projectStep: editForm.value.projectStep.join(","),
       projectLength: editForm.value.projectLength,
-      projectSpeed: editForm.value.speedTarget.toString(),
+      projectSpeed: editForm.value.speedTarget?.toString(),
       projectIsEmphasis: editForm.value.isEmphasis === "是" ? 1 : 0,
       projectDescription: editForm.value.description,
       projectContractTime: editForm.value.contractTime ? dayjs(editForm.value.contractTime).format("YYYY-MM-DD HH:mm:ss") : "",
@@ -707,7 +707,7 @@ const handleTechSave = async () => {
         ? projects.value.Project_Step.join(",")
         : projects.value.Project_Step,
       projectLength: projects.value.Project_Length,
-      projectSpeed: projects.value.TS_SpeedTarget.toString(),
+      projectSpeed: projects.value.TS_SpeedTarget?.toString(),
       projectIsEmphasis: projects.value.Project_IsEmphasis === "是" ? 1 : 0,
       projectDescription: projects.value.Project_Description,
       projectContractTime: projects.value.Project_ContractTime,

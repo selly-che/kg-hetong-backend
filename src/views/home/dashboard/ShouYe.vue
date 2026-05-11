@@ -9,7 +9,7 @@
           <span class="side1-title">进行中的项目</span>
           <a class="side1-more" @click="clickroutxm">全部</a>
         </div>
-        <ul>
+        <ul v-loading="projectsLoading">
           <li v-for="project in projects.slice(0, 6)" :key="project.id">
             <Side1Cards :project="project" />
           </li>
@@ -38,16 +38,19 @@ import { useRouter, useRoute } from "vue-router";
 const router = useRouter();
 const route = useRoute();
 const projects = ref([]);
+const projectsLoading = ref(false);
 onMounted(() => {
   getProjectList();
 });
 const getProjectList = async () => {
+  projectsLoading.value = true;
   const res = await getDatas("project/GetProjectList", {
     pageNum: 1,
     pageSize: 10,
   });
   console.log("项目列表信息:", res.data.result.records);
   projects.value = res.data.result.records;
+  projectsLoading.value = false;
 };
 const clickroutxm = () => {
   const route = router.resolve({

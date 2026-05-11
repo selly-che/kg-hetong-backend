@@ -57,7 +57,7 @@
                             <tr>
                                 <th style="width: 80px;">序号</th>
                                 <th>任务内容</th>
-                                <th style="width: 150px;">完成单位</th>
+                                <th style="width: 150px;">完成情况说明</th>
                                 <th style="width: 150px;">完成时间</th>
                                 <th style="width: 200px;">备注</th>
                             </tr>

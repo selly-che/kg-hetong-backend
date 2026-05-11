@@ -24,7 +24,8 @@ export default {
       url: "/projectcontract/taskArrangement/gzap",
       params,
     };
-  },
+  },  
+
   // 项目组成员
   GetProjectMembers(params: any) {
     return {

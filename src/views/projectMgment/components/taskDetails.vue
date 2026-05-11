@@ -8,7 +8,7 @@
 
             <div class="header-left">
                 <!-- <el-image :src="Imgurl" :fit="fit" alt="图片" class="detail-image" />    -->
-                 <a-image :src="Imgurl" :preview="false" :fit="fit" alt="图片" class="detail-image" />
+                <a-image :src="Imgurl" :preview="false" :fit="fit" alt="图片" class="detail-image" />
                 <div class="header-info">
                     <div class="info-title">{{ detailData.taTaskName }}
                         <span> {{ detailData.projectStep ? ` [${getLabelByValue(detailData.projectStep)}]` : ''
@@ -78,13 +78,17 @@
                     </template>
                     <template v-else-if="column.key === 'groupName'">
                         <div class="group-name-cell">
-                            <div class="group-name-text">{{ record.tgName || text }}</div>
-                            <div v-if="record.tcName">{{ record.tcName }}</div>
+                            <div class="group-name-text">{{ record.tgName || '-' }}</div>
+                        </div>
+                    </template>
+                    <template v-else-if="column.key === 'tgDescription'">
+                        <div class="group-name-cell">
+                            <div class="group-name-text">{{ record.tgDescription || '-' }}</div>
                         </div>
                     </template>
                     <template v-else-if="column.key === 'taskContent'">
                         <div class="task-content-cell">
-                            <div class="task-name">{{ record.tcName || text }}</div>
+                            <div class="task-name">{{ record.tcName || '-' }}</div>
                         </div>
                     </template>
                     <template v-else-if="column.key === 'deptMajor'">
@@ -92,17 +96,36 @@
                     </template>
                     <template v-else-if="column.key === 'requireDate'">
                         <div>
-                            <span>{{ formatDate(record.tcLimitDate || text) }}</span>
+                            <span>{{ formatDate(record.tcLimitDate || '-') }}</span>
                         </div>
                     </template>
                     <template v-else-if="column.key === 'actualDate'">
                         <div>
-                            <span>{{ formatDate(record.euCompleteDate || text) }}</span>
+                            <span>{{ formatDate(record.euCompleteDate || '-') }}</span>
                         </div>
                     </template>
-                    <template v-else-if="column.key === 'remark'">
+                    <template v-else-if="column.key === 'tcRemark'">
                         <span>{{ record.tcRemark || text || '-' }}</span>
                     </template>
+                   <template v-else-if="column.key === 'materialId'">
+                        <!-- materialId是数组，需要全部展示 -->
+                        <div v-if="record.materialIdArr && record.materialIdArr.length > 0" style="display: flex; flex-direction: column; gap: 5px;">
+                             <a-tooltip>
+                                 <template #title>点击下载查看文件</template>
+                                 <a 
+                                     v-for="(item, index) in record.materialIdArr" 
+                                     :key="index"
+                                     href="javascript:;"
+                                     @click="handleDownloadFile(`文件${index + 1}`, item)"
+                                     style="color: #1890ff; cursor: pointer; text-decoration: underline;"
+                                 >
+                                     文件{{ index + 1 }}
+                                 </a>
+                             </a-tooltip>
+                        </div>
+                        <span v-else>-</span>
+                    </template>
+
                 </template>
             </a-table>
         </div>
@@ -126,22 +149,34 @@
             <a-table :columns="fillInColumns" :data-source="fillInData" :pagination="false" :bordered="true"
                 size="middle" :row-key="(record: any) => record.id" :scroll="{ x: 1200 }">
                 <template #euCompleteDate="{ record }">
-                    <span v-show="setFillIntype" style="cursor: pointer;color: #337ab7;"
-                        @click="setFillInFn">设为完成</span>
-                    <div v-show="!setFillIntype">
-                        <span>{{ FillInTime }}</span>
-                        <a-button type="primary" shape="circle" size="small" style="margin: 0 10px;"
-                            @click="confirmFillInFn(record)">
-                            <template #icon>
-                                <CheckOutlined />
-                            </template>
-                        </a-button>
-                        <a-button type="primary" shape="circle" size="small" @click="cancelFillInFn">
-                            <template #icon>
-                                <CloseOutlined />
-                            </template>
-                        </a-button>
+                    <div>
+                        <a-date-picker placeholder="请选择完成日期" value-format="YYYY-MM-DD HH:mm:ss"
+                            v-model:value="record.euCompleteDate" style="width: 100%;" />
                     </div>
+                </template>
+                <template #deptMajor="{ record }">
+                    <!-- 输入 -->
+                    <a-textarea v-model:value="record.deptMajor" placeholder="请输入完成情况说明" />
+                </template>
+                <template #tcRemark="{ record }">
+                    <!-- 输入 -->
+                    <a-textarea v-model:value="record.tcRemark" placeholder="请输入备注" />
+                </template>
+                <template #materialIdArr="{ record }">
+                    <!-- 上传附件 -->
+                    <a-upload v-model:file-list="record.materialIdArr" :max-count="5" name="file" :headers="headers"
+                        accept=".pdf,.jpg,.jpeg,.png" :custom-request="customRequest" @change="handleChange">
+                        <a-button>
+                            <UploadOutlined />
+                            上传附件
+                        </a-button>
+                    </a-upload>
+                </template>
+                <!-- 操作 -->
+                <template #operation="{ record }">
+                    <a-button type="primary" size="small" @click="confirmFillInFn(record)">
+                        保存
+                    </a-button>
                 </template>
             </a-table>
         </a-modal>
@@ -150,8 +185,11 @@
 
 <script setup lang="ts">
 import { ref, computed, reactive, onMounted, watch } from 'vue';
-import { SettingOutlined, SoundOutlined, HistoryOutlined, CheckOutlined, CloseOutlined } from '@ant-design/icons-vue';
+import { SettingOutlined, SoundOutlined, HistoryOutlined, UploadOutlined, CheckOutlined, CloseOutlined } from '@ant-design/icons-vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
+
+import { message, Modal } from 'ant-design-vue';
+import axios from 'axios';
 import getDatas from "@/network/index";
 import { useRoute } from 'vue-router';
 
@@ -169,7 +207,71 @@ const CloseTaskFn = () => {
     emit('CloseTask');
 }
 
+const headers = ref({
+    authorization: 'authorization-text',
+    'x-access-token': localStorage.getItem('accesstoken') || '',
+})
 
+const customRequest = async (options: any) => {
+    const { file, onSuccess, onError, onProgress } = options;
+    console.log(file, 'filefile');
+
+    try {
+        const formData = new FormData();
+        formData.append('fileList ', file as File);
+
+        const token = localStorage.getItem('accesstoken');
+
+        const resp = await axios.post('/jeecg-boot/sys/file/upload', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+                'x-access-token': token || '',
+            },
+            onUploadProgress: (progressEvent) => {
+                if (progressEvent.total) {
+                    const percent = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+                    onProgress({ percent });
+                }
+            }
+        });
+
+        if (resp.data.code === 200) {
+            onSuccess?.(resp.data, file);
+            // message.success('文件上传成功');
+            console.log('上传成功，返回数据:', resp.data.result); 
+        } else {
+            onError?.(new Error(resp.data.message || '上传失败'));
+            message.error(resp.data.message || '文件上传失败');
+        }
+    } catch (error: any) {
+        onError?.(error);
+        const errorMsg = error.response?.data?.message || error.message || '文件上传异常';
+        message.error(errorMsg);
+        console.error('上传异常:', error);
+    }
+};
+
+const handleChange = async (info: any) => {
+    const { file, fileList } = info;
+
+    if (file.status === 'uploading') {
+        console.log('文件上传中...', file.name);
+        return;
+    }
+
+    if (file.status === 'done') {
+        const response = file.response;
+        if (response && response.code === 200) {
+            message.success(`${file.name} 文件上传成功`);
+            console.log('上传返回数据:', response.result);
+        } else {
+            message.error(`${file.name} 文件上传失败: ${response?.message || '未知错误'}`);
+        }
+    } else if (file.status === 'error') {
+        message.error(`${file.name} 文件上传失败`);
+        console.error('上传错误:', file.error);
+    }
+};
 
 const props = defineProps<Props>();
 console.log(props.detailData, "detailData");
@@ -247,12 +349,14 @@ const processTaskGroups = (taskGroups: any[]) => {
                 children.push({
                     id: subtask.id || `subtask-${groupIndex}-${subIndex}`,
                     type: 'task',
-                    tcName: subtask.tcName || '-',
+                    tgName: subtask.tcName || '-',
                     deptMajor: subtask.deptMajor || '-',
                     tcLimitDate: subtask.tcLimitDate,
                     euCompleteDate: subtask.euCompleteDate,
                     tcRemark: subtask.tcRemark,
-                    isGroup: false,
+                    isGroup: false,  
+                    materialIdArr: subtask.materialId ? subtask.materialId.split(',').map((id: string) => ({ uid: id,name: id, url: `${id}` })) : [],
+               
                 });
             });
         }
@@ -264,7 +368,7 @@ const processTaskGroups = (taskGroups: any[]) => {
             euCompleteDate: group.tgUpdateTime,
             tgName: group.tgName,
             tgDescription: group.tgDescription,
-            isGroup: true,
+            isGroup: true, 
             children: children.length > 0 ? children : undefined,
 
         };
@@ -302,6 +406,8 @@ const updateTableData = () => {
     const start = (paginationConfig.current - 1) * paginationConfig.pageSize;
     const end = start + paginationConfig.pageSize;
     tableData.value = allTableData.value.slice(start, end);
+    console.log(tableData.value, 'tableDatatableData');
+
     paginationConfig.total = allTableData.value.length;
 };
 
@@ -327,7 +433,7 @@ const columns = [
     },
     {
         title: '任务名称',
-        key: 'groupName',
+        key: 'tgName',
         dataIndex: 'tgName',
         width: 200
     },
@@ -338,22 +444,29 @@ const columns = [
         width: 200
     },
     {
-        title: '完成单位',
+        title: '完成时间',
+        key: 'euCompleteDate',
+        dataIndex: 'euCompleteDate',
+        width: 150
+    },
+    {
+        title: '完成情况说明',
         key: 'deptMajor',
         dataIndex: 'deptMajor',
         width: 150
     },
     {
-        title: '完成时间',
-        key: 'actualDate',
-        dataIndex: 'euCompleteDate',
-        width: 150
-    },
-    {
         title: '备注',
-        key: 'remark',
+        key: 'tcRemark',
         dataIndex: 'tcRemark',
         width: 200
+    },
+    {
+        title: '附件',
+        key: 'materialId',
+        dataIndex: 'materialId',
+        width: 200,
+
     },
 ];
 
@@ -434,29 +547,53 @@ const fillInTitle = ref('');
 const fillInColumns = ref([
     {
         title: '任务名称',
-        key: 'taskName',
-        dataIndex: 'tcName',
+        key: 'tgName',
+        dataIndex: 'tgName',
         width: 200
     },
     {
         title: '要求完成时间',
-        key: 'deptMajor',
-        dataIndex: 'deptMajor',
+        key: 'tcLimitDate',
+        dataIndex: 'tcLimitDate',
         width: 150
     },
     {
         title: '实际完成时间',
-        key: 'actualDate',
+        key: 'euCompleteDate',
         dataIndex: 'euCompleteDate',
         width: 150,
         slots: { customRender: 'euCompleteDate' },
     },
     {
-        title: '备注',
-        key: 'remark',
-        dataIndex: 'tcRemark',
-        width: 200
+        title: '附件',
+        key: 'materialIdArr',
+        dataIndex: 'materialIdArr',
+        width: 200,
+        slots: { customRender: 'materialIdArr' },
     },
+    {
+        title: '完成情况说明',
+        key: 'actualDate',
+        dataIndex: 'deptMajor',
+        width: 150,
+        slots: { customRender: 'deptMajor' },
+    },
+    {
+        title: '备注',
+        key: 'tcRemark',
+        dataIndex: 'tcRemark',
+        width: 200,
+        slots: { customRender: 'tcRemark' },
+    },
+    {
+        title: '操作',
+        key: 'operation',
+        dataIndex: 'operation',
+        width: 120,
+        fixed: 'right',
+        slots: { customRender: 'operation' },
+    },
+
 ])
 
 const fillInData: any = ref([])
@@ -484,20 +621,20 @@ const getLabelByValue = (value: any) => {
     return item ? item.label : '';
 }
 
+// 点击填报
 const handlefillInFn = () => {
     // <!-- ，600-预付期，601-投标，602-规划，603-预可研，604-可研，605-初步设计，606-施工图，607-配合施工，608-开通运营，609-招标图，610-专题专项，611-清概（结算），612-质保期 -->
-    // 根据值 取对应的文字
-    console.log(props.detailData, '填报 projectStep的值为600，返回文字预付期');
+    // 根据值 取对应的文字 
 
     const projectStepText = projectStepList.find(item => item.value == props.detailData.projectStep)?.label;
     fillInTitle.value = props.detailData.taTaskName + `[${projectStepText}]`;
     fillInVisible.value = true;
+
     const processedData = processTaskGroups(props.detailData.taskGroups);
     console.log(fillInTitle.value, 'processedDataprocessedData');
 
     fillInData.value = collectAllChildren(processedData);
     console.log(fillInData.value, 'fillInDatafillInData');
-
 }
 
 const collectAllChildren = (arr: any) => {
@@ -522,42 +659,73 @@ const handleClosingTimeCancel = () => {
 };
 
 const setFillIntype = ref(true)
+
 const FillInTime = ref()
-const setFillInFn = () => {
-    setFillIntype.value = false
-    // 获取当前的时间 年月日
-    FillInTime.value = new Date().toLocaleDateString().replace(/\//g, '-')
-}
+
+ 
 const cancelFillInFn = () => {
     setFillIntype.value = true
 }
 
 const confirmFillInFn = (item: any) => {
-    ElMessageBox.confirm('是否确认完成？', '提示', {
+    console.log(item, 'itemitemitem');
+
+    ElMessageBox.confirm('是否确认保存？', '提示', {
         confirmButtonText: "是",
         cancelButtonText: "否",
         type: "warning",
     }).then(async () => {
-        console.log(item, 'itemitemitem');
-
+        let materialIdS: any[] = []
+        if (item.materialIdArr && item.materialIdArr.length > 0) {
+            item.materialIdArr.forEach((file: any) => {
+                if(file.url){
+                    materialIdS.push(file.url)
+                }else if (file.response && file.response.result) {
+                    materialIdS.push(file.response.result[0].fileUrl)
+                }
+            })
+        }
         const resp = await getDatas("home/PostTaskComplete", {
             taskContentStatusId: item.id,
-            completeTime: FillInTime.value
+            completeTime: item.euCompleteDate,
+            deptMajor: item.deptMajor,
+            tcRemark: item.tcRemark,
+            materialId: materialIdS.length > 0 ? materialIdS.join(',') : '',
         })
         console.log(resp, 'respresp');
 
         if (resp.data.code == 200) {
-            ElMessage.success('完成成功!');
+            message.success('完成成功!');
             fillInVisible.value = false;
             emit('closeHome');
         } else {
-            ElMessage.error(resp.data.message || '完成失败!');
+            message.error(resp.data.message || '完成失败!');
         }
 
     }).catch(() => {
-        ElMessage.info('取消完成');
+        message.info('取消完成');
     })
 }
+// 1. 定义接口基础 URL (根据你的项目配置调整，通常是 import.meta.env.VITE_APP_BASE_API 或固定地址)
+const BASE_URL = (import.meta.env && import.meta.env.VITE_APP_BASE_API) 
+    ? import.meta.env.VITE_APP_BASE_API 
+    : '/jeecg-boot'; 
+// 下载文件
+const handleDownloadFile = (fileName: string, item: any) => {
+    if (!item.url) return;
+    
+    // 拼接完整下载链接
+    const fullUrl = `${BASE_URL}${item.url}`;
+    
+    // 创建临时 a 标签触发下载
+    const link = document.createElement('a');
+    link.href = fullUrl;
+    link.download = fileName; // 设置下载文件名
+    link.style.display = 'none';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+};
 
 </script>
 

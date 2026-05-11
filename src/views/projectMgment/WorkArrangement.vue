@@ -121,7 +121,7 @@
                     <span style="color: #1890ff; cursor: pointer;" @click="showTaskContentModal(record)">
                         {{ record.taTaskName }}
                     </span>
-                </template>
+                </template> 
             </a-table>
         </div>
         <!-- 新增工作安排 -->
@@ -172,11 +172,9 @@
 
                 <!-- 第三行：执行单位提示 -->
                 <el-form-item label="执行负责人">
-                    <!-- <el-input v-model="formData.executingUnit"
-                            placeholder="提示：如未找到相应的执行单位，请和生产院计调确认是否进行了项目组成员的安排"></el-input> -->
-                    <!-- userList -->
                     <el-select clearable v-model="formData.executingUnit" placeholder="请选择" style="width: 100%;">
-                        <el-option v-for="item in userList" :key="item.value" :label="item.value" :value="item.value">
+                        <el-option v-for="item in userList" :key="item.account" :label="item.name"
+                            :value="item.account">
                         </el-option>
                     </el-select>
                 </el-form-item>
@@ -223,15 +221,6 @@
                                     <el-table-column label="任务内容">
                                         <template #default="{ row }">
                                             <el-input v-model="row.tcName" placeholder="请输入任务内容"></el-input>
-                                        </template>
-                                    </el-table-column>
-
-                                    <el-table-column label="完成单位">
-                                        <template #default="{ row }">
-                                            <el-select v-model="row.deptMajor" placeholder="请选择">
-                                                <el-option label="单位一" value="unit1"></el-option>
-                                                <el-option label="单位二" value="unit2"></el-option>
-                                            </el-select>
                                         </template>
                                     </el-table-column>
 
@@ -295,13 +284,13 @@
         </div>
         <!-- 展示pdf弹窗 -->
         <div v-if="tableDataVisible == 2">
-            <pdfDetail v-if="tableDataVisible == 2" @closePdf="changeShowTab(0)" :key="detailModalData.id"
+            <pdfDetail v-if="tableDataVisible == 2" @closePdf="closePdfFn" :key="detailModalData.id"
                 :fromData="detailModalData"></pdfDetail>
         </div>
         <!-- 查看工作安排 -->
         <div v-if="tableDataVisible == 3">
             <taskDetails :type="'work'" v-if="tableDataVisible == 3" @adjust="handleAdjust"
-                @CloseTask="changeShowTab(0)" :detailData="detailModalData"> 
+                @CloseTask="changeShowTab(0)" :detailData="detailModalData">
             </taskDetails>
         </div>
 
@@ -398,6 +387,17 @@ const changeShowTab = (type: number) => {
     updateTableDataVisibleInTabs(type);
 };
 
+// 如果点了生成则打开1 
+const isAdding = ref(false);
+const closePdfFn = () => {
+    if (isAdding.value) {
+        changeShowTab(1);
+    } else {
+        changeShowTab(0);
+        isAdding.value = false;
+    }
+};
+
 // 搜索相关
 const searchType = ref('0');
 const searchText = ref('');
@@ -465,6 +465,7 @@ const visibleColumns = computed(() => {
             dataIndex: 'taCreator',
             key: 'taCreator',
             width: 100,
+            slots: { customRender: 'taCreator' },
         },
         {
             title: '编号',
@@ -766,9 +767,9 @@ const handleGenerateFn = () => {
             return;
         }
         detailModalData.value = formData.value
+        isAdding.value = true;
         changeShowTab(2)
 
-        // 点击确定按钮的处理逻辑
         console.log("点击确定按钮");
     }).catch(() => {
         // 点击取消按钮的处理逻辑
@@ -900,17 +901,7 @@ const getUserList = async () => {
     });
     console.log(res, 'getUserList');
     if (res.data.code === 200) {
-        userList.value = res.data.result;
-        // 将数组改为{
-        //   value: 'Beijing',
-        //   label: '北京'
-        // }的格式
-        if (userList.value && userList.value.length > 0) {
-            userList.value = userList.value.map(item => ({
-                value: item,
-                label: item,
-            }));
-        }
+        userList.value = [...new Set(res.data.result)]
     }
 };
 

@@ -155,8 +155,8 @@ const props = defineProps({
     default: 'role' // 'role' 或 'user'
   },
   selectedroles: {
-    type: Array,
-    default: []
+    type: String,
+    default: ""
   }
 });
 

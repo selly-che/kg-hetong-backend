@@ -11,7 +11,8 @@ module.exports = defineConfig({
     https: false,
     proxy: {
       "/jeecg-boot": {
-        target: "http://192.168.100.75:10888",
+        target: "http://192.168.100.76:10888",
+        // target: "http://10.20.120.153:8081",
         changeOrigin: true,
         pathRewrite: {
           "^/api": "",

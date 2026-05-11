@@ -107,6 +107,7 @@
 import { ref, reactive, onMounted, computed } from "vue";
 import { ReloadOutlined } from "@ant-design/icons-vue";
 import getDatas from "@/network/index";
+import { message } from "ant-design-vue";
 import taskdetails from "@/views/projectMgment/components/taskDetails.vue";
 onMounted(() => {
   List();
@@ -243,6 +244,9 @@ const handleTaskClick = async (record) => {
   if (resp.data.code === 200) {
     detailData.value = resp.data.result;
     tableDataVisible.value = 1;
+  }else{
+    // 提示错误信息
+    message.warning(resp.data.message || "获取任务详情失败");
   }
 };
 

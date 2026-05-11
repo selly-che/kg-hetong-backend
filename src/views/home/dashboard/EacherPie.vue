@@ -7,12 +7,8 @@
       </div>
       <a class="more-link" @click="handleViewAll()">查看更多</a>
     </div>
-    <div class="todo-list">
-      <div
-        v-for="(item, index) in filteredTodoList"
-        :key="index"
-        class="todo-item"
-      >
+    <div class="todo-list" v-loading="todLoading" >
+      <div v-for="(item, index) in filteredTodoList" :key="index" class="todo-item">
         <div class="item-content">
           <!-- taskName -->
           <div class="item-text">{{ item?.taskName }}</div>
@@ -29,7 +25,7 @@
     </div>
     <!-- 详情 -->
     <a-modal v-model:visible="visible" title="任务详情" width="80%">
-      <taskdetails :detailData="detailData" :type="'home'" @CloseTask="closeHomeFn" @closeHome="closeHomeFn" /> 
+      <taskdetails :detailData="detailData" :type="'home'" @CloseTask="closeHomeFn" @closeHome="closeHomeFn" />
     </a-modal>
   </div>
 </template>
@@ -65,12 +61,15 @@ const filteredTodoList = computed(() => {
 });
 
 //获取代办列表
+const todLoading = ref(false);
 const List = async () => {
+  todLoading.value = true;
   const res = await getDatas("message/getTaskArrangementTodoList");
   console.log("待办列表", res);
   if (res.data.code === 200) {
     todoList.value = res.data.result.records;
   }
+  todLoading.value = false;
   // console.log("待办列表", res);
 };
 const handleViewAll = () => {
@@ -80,7 +79,7 @@ const handleViewAll = () => {
 };
 
 const closeHomeFn = () => {
-  
+
   visible.value = false;
 };
 
@@ -93,8 +92,12 @@ const handleView = async (item) => {
     taskId: item.taskId,
   });
   console.log(resp, 'respresp');
-  if(resp.data.code === 200){
+  if (resp.data.code === 200) {
     detailData.value = resp.data.result;
+  } else {
+    // 提示错误信息
+    message.warning(resp.data.message || "获取任务详情失败");
+
   }
 };
 

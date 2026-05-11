@@ -6,13 +6,13 @@
         <a-row :gutter="24">
           <a-col :md="6" :sm="12">
             <a-form-item label="用户账号">
-              <a-input placeholder="请输入用户账号"  size="small" allowClear v-model:value="queryParam.username"></a-input>
+              <a-input placeholder="请输入用户账号" size="small" allowClear v-model:value="queryParam.username"></a-input>
             </a-form-item>
           </a-col>
 
           <a-col :md="6" :sm="8">
             <a-form-item label="性别">
-              <a-select v-model:value="queryParam.sex"  allowClear placeholder="请选择性别">
+              <a-select v-model:value="queryParam.sex" allowClear placeholder="请选择性别">
                 <a-select-option value="1">男</a-select-option>
                 <a-select-option value="2">女</a-select-option>
               </a-select>
@@ -21,7 +21,7 @@
 
           <a-col :md="6" :sm="8">
             <a-form-item label="真实姓名">
-              <a-input placeholder="请输入用户真实姓名"  size="small" allowClear v-model:value="queryParam.realname"></a-input>
+              <a-input placeholder="请输入用户真实姓名" size="small" allowClear v-model:value="queryParam.realname"></a-input>
             </a-form-item>
           </a-col>
           <!-- <a-col :md="6" :sm="8" v-if="toggleSearchStatus">
@@ -37,7 +37,7 @@
 
           <a-col :md="6" :sm="8" v-if="toggleSearchStatus">
             <a-form-item label="手机号码">
-              <a-input placeholder="请输入手机号码查询"  size="small" allowClear v-model:value="queryParam.phone"></a-input>
+              <a-input placeholder="请输入手机号码查询" size="small" allowClear v-model:value="queryParam.phone"></a-input>
             </a-form-item>
           </a-col>
 
@@ -86,7 +86,12 @@
           导入
         </a-button>
       </a-upload>
-
+      <a-button type="primary" @click="handleAddUser" v-permission="'user:add'">
+        <template #icon>
+          <PlusOutlined />
+        </template>
+        新增用户
+      </a-button>
       <!-- <a-button type="primary" @click="recycleBinVisible = true">
         <template #icon>
           <DatabaseOutlined />
@@ -164,7 +169,8 @@
     <!-- table 区域-end -->
   </a-card>
   <!-- 编辑抽屉 -->
-  <form-drawer-right ref="modalFormDawer" @refreshList="searchQuery" @ok="modalFormOk" :title="title" :type="'user'">
+  <form-drawer-right ref="modalFormDawer" @refreshList="searchQuery"
+   @ok="modalFormOk" :title="title" :type="'role'">
   </form-drawer-right>
 
   <!-- 密码重置弹窗 -->
@@ -371,7 +377,7 @@ const handleToggleSearch = () => {
 };
 
 // 添加用户
-const handleAdd = () => {
+const handleAddUser = () => {
   title.value = "添加用户";
   modalFormDawer.value.showDrawer();
 };
