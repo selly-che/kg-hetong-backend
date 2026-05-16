@@ -7,7 +7,7 @@
       </div>
       <a class="more-link" @click="handleViewAll()">查看更多</a>
     </div>
-    <div class="todo-list" v-loading="todLoading" >
+    <div class="todo-list" v-loading="todLoading">
       <div v-for="(item, index) in filteredTodoList" :key="index" class="todo-item">
         <div class="item-content">
           <!-- taskName -->
@@ -25,7 +25,7 @@
     </div>
     <!-- 详情 -->
     <a-modal v-model:visible="visible" title="任务详情" width="80%">
-      <taskdetails :detailData="detailData" :type="'home'" @CloseTask="closeHomeFn" @closeHome="closeHomeFn" />
+      <taskdetails :detailData="detailData" :type="'home'" @CloseTask="closeHomeFn" @closeHome="closeHome" />
     </a-modal>
   </div>
 </template>
@@ -79,15 +79,20 @@ const handleViewAll = () => {
 };
 
 const closeHomeFn = () => {
-
   visible.value = false;
 };
 
+const closeHome = () => {
+  handleView(taskItem.value)
+};
+
+
 const visible = ref(false);
 const detailData = ref({});
+const taskItem = ref()
 const handleView = async (item) => {
   visible.value = true;
-  console.log("查看", item);
+  taskItem.value = item
   const resp = await getDatas("home/GetTaskDetails", {
     taskId: item.taskId,
   });

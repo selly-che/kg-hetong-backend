@@ -139,6 +139,37 @@
             <template v-if="column.key === 'name'">
               <a @click="handleNameClick(record)">{{ record.name }}</a>
             </template>
+            <template v-if="column.key == 'paymentAuditStatus'">
+              <!-- 审核状态 0-未提交 1-审核中 2-通过 3-退回   采用标签的形式-->
+               <template v-if="record.paymentAuditStatus == 0">
+                <a-tag color="orange">未提交</a-tag>
+               </template>
+               <template v-if="record.paymentAuditStatus == 1">
+                <a-tag color="blue">审核中</a-tag>
+               </template>
+               <template v-if="record.paymentAuditStatus == 2">
+                <a-tag color="green">通过</a-tag>
+               </template>
+               <template v-if="record.paymentAuditStatus == 3">
+                <a-tag color="red">退回</a-tag>
+               </template>
+            </template>
+            <!-- status -->
+             <template v-if="column.key == 'status'">
+              <!-- 0-未提交 1-审核中 2-通过 3-退回-->
+               <template v-if="record.status == 0">
+                <a-tag color="orange">未提交</a-tag>
+               </template>
+               <template v-if="record.status == 1">
+                <a-tag color="blue">审核中</a-tag>
+               </template>
+               <template v-if="record.status == 2">
+                <a-tag color="green">通过</a-tag>
+               </template>
+               <template v-if="record.status == 3">
+                <a-tag color="red">退回</a-tag>
+               </template>
+             </template>
           </template>
         </a-table>
       </div>

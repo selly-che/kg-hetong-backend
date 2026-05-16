@@ -12,7 +12,7 @@
                 <div class="header-info">
                     <div class="info-title">{{ detailData.taTaskName }}
                         <span> {{ detailData.projectStep ? ` [${getLabelByValue(detailData.projectStep)}]` : ''
-                        }}</span>
+                            }}</span>
                     </div>
                     <div class="info-subtitle">
                         {{ detailData.tcName || '' }}
@@ -56,7 +56,7 @@
                     <HistoryOutlined style="font-size: 30px;" /><span>关门时间</span>
                 </div>
             </div>
-            <div class="header_last" v-if="type == 'home' && props.detailData.taStatus != 2">
+            <div class="header_last" v-if="type == 'home'">
                 <div class="header_last_box" @click="handlefillInFn" width="60%">
                     <HistoryOutlined style="font-size: 30px;" /><span>填报</span>
                 </div>
@@ -78,50 +78,47 @@
                     </template>
                     <template v-else-if="column.key === 'groupName'">
                         <div class="group-name-cell">
-                            <div class="group-name-text">{{ record.tgName || '-' }}</div>
+                            <div class="group-name-text">{{ record.tgName }}</div>
                         </div>
                     </template>
                     <template v-else-if="column.key === 'tgDescription'">
                         <div class="group-name-cell">
-                            <div class="group-name-text">{{ record.tgDescription || '-' }}</div>
+                            <div class="group-name-text">{{ record.tgDescription }}</div>
                         </div>
                     </template>
                     <template v-else-if="column.key === 'taskContent'">
                         <div class="task-content-cell">
-                            <div class="task-name">{{ record.tcName || '-' }}</div>
+                            <div class="task-name">{{ record.tcName }}</div>
                         </div>
                     </template>
                     <template v-else-if="column.key === 'deptMajor'">
-                        <span>{{ record.deptMajor || text || '-' }}</span>
+                        <span>{{ record.deptMajor }}</span>
                     </template>
                     <template v-else-if="column.key === 'requireDate'">
                         <div>
-                            <span>{{ formatDate(record.tcLimitDate || '-') }}</span>
+                            <span>{{ formatDate(record.tcLimitDate) }}</span>
                         </div>
                     </template>
                     <template v-else-if="column.key === 'actualDate'">
                         <div>
-                            <span>{{ formatDate(record.euCompleteDate || '-') }}</span>
+                            <span>{{ formatDate(record.euCompleteDate) }}</span>
                         </div>
                     </template>
                     <template v-else-if="column.key === 'tcRemark'">
-                        <span>{{ record.tcRemark || text || '-' }}</span>
+                        <span>{{ record.tcRemark }}</span>
                     </template>
-                   <template v-else-if="column.key === 'materialId'">
+                    <template v-else-if="column.key === 'materialId'">
                         <!-- materialId是数组，需要全部展示 -->
-                        <div v-if="record.materialIdArr && record.materialIdArr.length > 0" style="display: flex; flex-direction: column; gap: 5px;">
-                             <a-tooltip>
-                                 <template #title>点击下载查看文件</template>
-                                 <a 
-                                     v-for="(item, index) in record.materialIdArr" 
-                                     :key="index"
-                                     href="javascript:;"
-                                     @click="handleDownloadFile(`文件${index + 1}`, item)"
-                                     style="color: #1890ff; cursor: pointer; text-decoration: underline;"
-                                 >
-                                     文件{{ index + 1 }}
-                                 </a>
-                             </a-tooltip>
+                        <div v-if="record.materialIdArr && record.materialIdArr.length > 0"
+                            style="display: flex; flex-direction: column; gap: 5px;">
+                            <a-tooltip>
+                                <template #title>点击下载查看文件</template>
+                                <a v-for="(item, index) in record.materialIdArr" :key="index" href="javascript:;"
+                                    @click="handleDownloadFile(`文件${index + 1}`, item)"
+                                    style="color: #1890ff; cursor: pointer; text-decoration: underline;">
+                                    文件{{ index + 1 }}
+                                </a>
+                            </a-tooltip>
                         </div>
                         <span v-else>-</span>
                     </template>
@@ -160,7 +157,7 @@
                 </template>
                 <template #tcRemark="{ record }">
                     <!-- 输入 -->
-                    <a-textarea v-model:value="record.tcRemark" placeholder="请输入备注" />
+                    <a-textarea v-model:value="record.tcRemark" disabled placeholder="请输入备注" />
                 </template>
                 <template #materialIdArr="{ record }">
                     <!-- 上传附件 -->
@@ -238,7 +235,7 @@ const customRequest = async (options: any) => {
         if (resp.data.code === 200) {
             onSuccess?.(resp.data, file);
             // message.success('文件上传成功');
-            console.log('上传成功，返回数据:', resp.data.result); 
+            console.log('上传成功，返回数据:', resp.data.result);
         } else {
             onError?.(new Error(resp.data.message || '上传失败'));
             message.error(resp.data.message || '文件上传失败');
@@ -349,14 +346,14 @@ const processTaskGroups = (taskGroups: any[]) => {
                 children.push({
                     id: subtask.id || `subtask-${groupIndex}-${subIndex}`,
                     type: 'task',
-                    tgName: subtask.tcName || '-',
-                    deptMajor: subtask.deptMajor || '-',
+                    tgName: subtask.tcName,
+                    deptMajor: subtask.deptMajor,
                     tcLimitDate: subtask.tcLimitDate,
                     euCompleteDate: subtask.euCompleteDate,
                     tcRemark: subtask.tcRemark,
-                    isGroup: false,  
-                    materialIdArr: subtask.materialId ? subtask.materialId.split(',').map((id: string) => ({ uid: id,name: id, url: `${id}` })) : [],
-               
+                    isGroup: false,
+                    materialIdArr: subtask.materialId ? subtask.materialId.split(',').map((id: string) => ({ uid: id, name: id, url: `${id}` })) : [],
+
                 });
             });
         }
@@ -368,7 +365,7 @@ const processTaskGroups = (taskGroups: any[]) => {
             euCompleteDate: group.tgUpdateTime,
             tgName: group.tgName,
             tgDescription: group.tgDescription,
-            isGroup: true, 
+            isGroup: true,
             children: children.length > 0 ? children : undefined,
 
         };
@@ -662,7 +659,7 @@ const setFillIntype = ref(true)
 
 const FillInTime = ref()
 
- 
+
 const cancelFillInFn = () => {
     setFillIntype.value = true
 }
@@ -678,9 +675,9 @@ const confirmFillInFn = (item: any) => {
         let materialIdS: any[] = []
         if (item.materialIdArr && item.materialIdArr.length > 0) {
             item.materialIdArr.forEach((file: any) => {
-                if(file.url){
+                if (file.url) {
                     materialIdS.push(file.url)
-                }else if (file.response && file.response.result) {
+                } else if (file.response && file.response.result) {
                     materialIdS.push(file.response.result[0].fileUrl)
                 }
             })
@@ -707,16 +704,16 @@ const confirmFillInFn = (item: any) => {
     })
 }
 // 1. 定义接口基础 URL (根据你的项目配置调整，通常是 import.meta.env.VITE_APP_BASE_API 或固定地址)
-const BASE_URL = (import.meta.env && import.meta.env.VITE_APP_BASE_API) 
-    ? import.meta.env.VITE_APP_BASE_API 
-    : '/jeecg-boot'; 
+const BASE_URL = (import.meta.env && import.meta.env.VITE_APP_BASE_API)
+    ? import.meta.env.VITE_APP_BASE_API
+    : '/jeecg-boot';
 // 下载文件
 const handleDownloadFile = (fileName: string, item: any) => {
     if (!item.url) return;
-    
+
     // 拼接完整下载链接
     const fullUrl = `${BASE_URL}${item.url}`;
-    
+
     // 创建临时 a 标签触发下载
     const link = document.createElement('a');
     link.href = fullUrl;

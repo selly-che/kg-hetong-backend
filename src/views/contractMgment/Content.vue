@@ -8,7 +8,7 @@
       <span>收款金额：{{ contractStatistics.receivedAmount }}万元</span>
       <a-button type="primary" @click="exportExcelHandler">导出excel</a-button>
     </div>
-    <a-table :row-selection="rowSelection" :columns="columns" :data-source="data" :scroll="{ x: 1500, y: 500 }"
+    <a-table :loading="getContractLoading" :row-selection="rowSelection" :columns="columns" :data-source="data" :scroll="{ x: 1500, y: 500 }"
       bordered>
       <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'paymentAuditStatus'">
@@ -427,7 +427,9 @@ const getContractStatistics = async () => {
   console.log("合同统计数据", data);
 };
 // 分页查询合同列表
+const getContractLoading = ref(false)
 const getContractList = async () => {
+  getContractLoading.value = true
   const requestParams = {
     pageNum: 1,
     pageSize: 10,
@@ -458,6 +460,7 @@ const getContractList = async () => {
     });
     console.log(data.value, "分页查询合同列表222");
   }
+  getContractLoading.value = false
 };
 </script>
 

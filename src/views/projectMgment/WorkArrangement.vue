@@ -84,6 +84,11 @@
                         {{ getStatusText(record.taStatus) }}
                     </a-tag>
                 </template>
+                <template #planExecutionProgress="{ record }"> 
+                        {{record.planExecutionProgress ? record.planExecutionProgress + '%' : '0%' }}
+                  
+                </template>
+
                 <!-- 操作 -->
                 <template #operation="{ record }">
                     <a-space>
@@ -239,7 +244,7 @@
 
                                     <el-table-column label="备注">
                                         <template #default="{ row }">
-                                            <el-input v-model="row.remark" placeholder="请输入备注"></el-input>
+                                            <el-input v-model="row.tcRemark" placeholder="请输入备注"></el-input>
                                         </template>
                                     </el-table-column>
 
@@ -500,6 +505,7 @@ const visibleColumns = computed(() => {
             dataIndex: 'planExecutionProgress',
             key: 'planExecutionProgress',
             width: 150,
+             slots: { customRender: 'planExecutionProgress' },
         },
         {
             title: '完成量',

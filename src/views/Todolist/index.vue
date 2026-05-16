@@ -130,13 +130,13 @@ const columns = [
     align: "left",
     headerAlign: "center",
   },
-  {
-    title: "所属模块",
-    dataIndex: "module",
-    key: "module",
-    align: "center",
-    width: 120,
-  },
+  // {
+  //   title: "所属模块",
+  //   dataIndex: "module",
+  //   key: "module",
+  //   align: "center",
+  //   width: 120,
+  // },
   {
     title: "任务状态",
     dataIndex: "completeStatus",
@@ -244,7 +244,7 @@ const handleTaskClick = async (record) => {
   if (resp.data.code === 200) {
     detailData.value = resp.data.result;
     tableDataVisible.value = 1;
-  }else{
+  } else {
     // 提示错误信息
     message.warning(resp.data.message || "获取任务详情失败");
   }
@@ -252,6 +252,8 @@ const handleTaskClick = async (record) => {
 
 const closeHomeFn = () => {
   tableDataVisible.value = 0;
+  handleSearch()
+
 }
 </script>
 

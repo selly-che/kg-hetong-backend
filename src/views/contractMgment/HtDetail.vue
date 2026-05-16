@@ -5,14 +5,12 @@
         <!-- 基本信息 开票申请信息 收款信息 外协合同 补充合同 变更信息 中标审批表 -->
         <a-tab-pane key="1" tab="基本信息">
           <div style="display: flex; align-items: center; margin-bottom: 10px">
-            <div
-              style="
+            <div style="
                 width: 4px;
                 height: 18px;
                 background-color: #1890ff;
                 margin-right: 8px;
-              "
-            ></div>
+              "></div>
             <p style="margin: 0">基本信息</p>
           </div>
           <div class="formback">
@@ -40,20 +38,13 @@
               <a-row>
                 <a-col :span="8">
                   <a-form-item label="中标时间">
-                    <a-date-picker
-                      placeholder="请选择中标时间"
-                      v-model:value="formData.winBidTime"
-                      style="width: 100%"
-                      disabled
-                    />
+                    <a-date-picker placeholder="请选择中标时间" v-model:value="formData.winBidTime" style="width: 100%"
+                      disabled />
                   </a-form-item>
                 </a-col>
                 <a-col :span="8">
                   <a-form-item label="中标金额">
-                    <a-input
-                      v-model:value="formData.amountCollected"
-                      disabled
-                    />
+                    <a-input v-model:value="formData.amountCollected" disabled />
                   </a-form-item>
                 </a-col>
                 <a-col :span="8">
@@ -194,23 +185,14 @@
               <a-row>
                 <a-col :span="8">
                   <a-form-item label="签订日期">
-                    <a-date-picker
-                      placeholder="请选择签订日期"
-                      v-model:value="formData.signTime"
-                      style="width: 100%"
-                      disabled
-                    />
+                    <a-date-picker placeholder="请选择签订日期" v-model:value="formData.signTime" style="width: 100%"
+                      disabled />
                   </a-form-item>
                 </a-col>
                 <a-col :span="8">
                   <a-form-item label="合同归属年份">
-                    <a-date-picker
-                      placeholder="请选择合同归属年份"
-                      v-model:value="formData.year"
-                      picker="year"
-                      style="width: 100%"
-                      disabled
-                    />
+                    <a-date-picker placeholder="请选择合同归属年份" v-model:value="formData.year" picker="year"
+                      style="width: 100%" disabled />
                   </a-form-item>
                 </a-col>
                 <a-col :span="8">
@@ -262,22 +244,14 @@
               <a-row>
                 <a-col :span="8">
                   <a-form-item label="计划开工日期">
-                    <a-date-picker
-                      v-model:value="formData.plannedCommencementDate"
-                      style="width: 100%"
-                      disabled
-                      placeholder="请选择计划开工日期"
-                    />
+                    <a-date-picker v-model:value="formData.plannedCommencementDate" style="width: 100%" disabled
+                      placeholder="请选择计划开工日期" />
                   </a-form-item>
                 </a-col>
                 <a-col :span="8">
                   <a-form-item label="计划竣工日期">
-                    <a-date-picker
-                      v-model:value="formData.plannedCompletionDate"
-                      style="width: 100%"
-                      placeholder="请选择计划竣工日期"
-                      disabled
-                    />
+                    <a-date-picker v-model:value="formData.plannedCompletionDate" style="width: 100%"
+                      placeholder="请选择计划竣工日期" disabled />
                   </a-form-item>
                 </a-col>
                 <a-col :span="8">
@@ -289,22 +263,14 @@
               <a-row>
                 <a-col :span="8">
                   <a-form-item label="实际开工日期">
-                    <a-date-picker
-                      v-model:value="formData.actualCommencementDate"
-                      style="width: 100%"
-                      disabled
-                      placeholder="请选择实际开工日期"
-                    />
+                    <a-date-picker v-model:value="formData.actualCommencementDate" style="width: 100%" disabled
+                      placeholder="请选择实际开工日期" />
                   </a-form-item>
                 </a-col>
                 <a-col :span="8">
                   <a-form-item label="实际竣工日期">
-                    <a-date-picker
-                      v-model:value="formData.actualCompletionDate"
-                      style="width: 100%"
-                      placeholder="请选择实际竣工日期"
-                      disabled
-                    />
+                    <a-date-picker v-model:value="formData.actualCompletionDate" style="width: 100%"
+                      placeholder="请选择实际竣工日期" disabled />
                   </a-form-item>
                 </a-col>
                 <a-col :span="8">
@@ -319,10 +285,7 @@
               <a-row>
                 <a-col :span="8">
                   <a-form-item label="是否含增值税">
-                    <a-input
-                      :value="formData.isSd === 0 ? '否' : '是'"
-                      disabled
-                    />
+                    <a-input :value="formData.isSd === 0 ? '否' : '是'" disabled />
                   </a-form-item>
                 </a-col>
                 <a-col :span="8">
@@ -339,11 +302,7 @@
               <a-row>
                 <a-col :span="8">
                   <a-form-item label="登记日期">
-                    <a-input
-                      disabled
-                      v-model:value="formData.registerTime"
-                      style="width: 100%"
-                    />
+                    <a-input disabled v-model:value="formData.registerTime" style="width: 100%" />
                   </a-form-item>
                 </a-col>
                 <a-col :span="8">
@@ -363,10 +322,7 @@
               <a-row>
                 <a-col :span="8">
                   <a-form-item label="基本信息是否已治理">
-                    <a-select
-                      v-model:value="formData.basicInfoManaged"
-                      disabled
-                    >
+                    <a-select v-model:value="formData.basicInfoManaged" disabled>
                       <a-select-option :value="1">是</a-select-option>
                       <a-select-option :value="0">否</a-select-option>
                     </a-select>
@@ -382,11 +338,7 @@
                 </a-col>
                 <a-col :span="8">
                   <a-form-item label="上报营销系统时间">
-                    <a-input
-                      v-model:value="formData.auditTime"
-                      disabled
-                      style="width: 100%"
-                    />
+                    <a-input v-model:value="formData.auditTime" disabled style="width: 100%" />
                   </a-form-item>
                 </a-col>
               </a-row>
@@ -402,60 +354,48 @@
               </a-row>
             </a-form>
           </div>
-          <div
-            style="
+          <div style="
               display: flex;
               align-items: center;
               margin-bottom: 10px;
               margin-top: 10px;
-            "
-          >
-            <div
-              style="
+            ">
+            <div style="
                 width: 4px;
                 height: 18px;
                 background-color: #1890ff;
                 margin-right: 8px;
-              "
-            ></div>
+              "></div>
             <p style="margin: 0">新签合同指标分配（如无分配请忽略）</p>
           </div>
           <a-table :dataSource="dataSource1" :columns="columns1" />
-          <div
-            style="
+          <div style="
               display: flex;
               align-items: center;
               margin-bottom: 10px;
               margin-top: 10px;
-            "
-          >
-            <div
-              style="
+            ">
+            <div style="
                 width: 4px;
                 height: 18px;
                 background-color: #1890ff;
                 margin-right: 8px;
-              "
-            ></div>
+              "></div>
             <p style="margin: 0">合同金额变更</p>
           </div>
           <a-table :dataSource="dataSource2" :columns="columns2" />
-          <div
-            style="
+          <div style="
               display: flex;
               align-items: center;
               margin-bottom: 10px;
               margin-top: 10px;
-            "
-          >
-            <div
-              style="
+            ">
+            <div style="
                 width: 4px;
                 height: 18px;
                 background-color: #1890ff;
                 margin-right: 8px;
-              "
-            ></div>
+              "></div>
             <p style="margin: 0">上传附件</p>
           </div>
           <a-table :dataSource="dataSource3" :columns="columns3">
@@ -492,34 +432,17 @@
             <p style="font-size: 15px; font-weight: bold; padding-top: 5px">
               合计金额：{{ totalAmount }}万
             </p>
-            <a-button
-              type="primary"
-              style="margin-left: auto"
-              @click="showModal"
-            >
+            <a-button type="primary" style="margin-left: auto" @click="showModal">
               新增
             </a-button>
-            <a-modal
-              v-model:visible="visible"
-              title="新增收款数据"
-              ok-text="确认"
-              cancel-text="取消"
-              @ok="handleOk"
-            >
-              <a-form
-                :label-col="{ style: { width: '100px' } }"
-                :wrapper-col="{ style: { flex: 1 } }"
-              >
+            <a-modal v-model:visible="visible" title="新增收款数据" ok-text="确认" cancel-text="取消" @ok="handleOk">
+              <a-form :label-col="{ style: { width: '100px' } }" :wrapper-col="{ style: { flex: 1 } }">
                 <!-- 认领单编号	到款日期	认领金额(万元)	认领单位	经办人	认领状态	付款单位	摘要 -->
                 <a-form-item label="认领单编号">
                   <a-input v-model:value="billList.billNo" />
                 </a-form-item>
                 <a-form-item label="到款日期">
-                  <a-date-picker
-                    v-model:value="billList.claimTime"
-                    style="width: 100%"
-                    placeholder="请选择到款日期"
-                  />
+                  <a-date-picker v-model:value="billList.claimTime" style="width: 100%" placeholder="请选择到款日期" />
                 </a-form-item>
                 <a-form-item label="认领金额(万元)">
                   <a-input v-model:value="billList.amount" />
@@ -531,10 +454,7 @@
                   <a-input v-model:value="billList.claimer" />
                 </a-form-item>
                 <a-form-item label="认领状态">
-                  <a-select
-                    v-model:value="billList.approvalStatus"
-                    style="width: 100%"
-                  >
+                  <a-select v-model:value="billList.approvalStatus" style="width: 100%">
                     <a-select-option value="0">待认领</a-select-option>
                     <a-select-option value="1">已认领</a-select-option>
                   </a-select>
@@ -548,26 +468,13 @@
               </a-form>
             </a-modal>
             <!-- 编辑收款数据弹窗 -->
-            <a-modal
-              v-model:visible="visible2"
-              title="编辑收款数据"
-              ok-text="确认"
-              cancel-text="取消"
-              @ok="handleOk2"
-            >
-              <a-form
-                :label-col="{ style: { width: '100px' } }"
-                :wrapper-col="{ style: { flex: 1 } }"
-              >
+            <a-modal v-model:visible="visible2" title="编辑收款数据" ok-text="确认" cancel-text="取消" @ok="handleOk2">
+              <a-form :label-col="{ style: { width: '100px' } }" :wrapper-col="{ style: { flex: 1 } }">
                 <a-form-item label="认领单编号">
                   <a-input v-model:value="billList.billNo" />
                 </a-form-item>
                 <a-form-item label="到款日期">
-                  <a-date-picker
-                    v-model:value="billList.claimTime"
-                    style="width: 100%"
-                    placeholder="请选择到款日期"
-                  />
+                  <a-date-picker v-model:value="billList.claimTime" style="width: 100%" placeholder="请选择到款日期" />
                 </a-form-item>
                 <a-form-item label="认领金额(万元)">
                   <a-input v-model:value="billList.amount" />
@@ -579,10 +486,7 @@
                   <a-input v-model:value="billList.claimer" />
                 </a-form-item>
                 <a-form-item label="认领状态">
-                  <a-select
-                    v-model:value="billList.approvalStatus"
-                    style="width: 100%"
-                  >
+                  <a-select v-model:value="billList.approvalStatus" style="width: 100%">
                     <a-select-option value="0">待认领</a-select-option>
                     <a-select-option value="1">已认领</a-select-option>
                   </a-select>
@@ -596,333 +500,223 @@
               </a-form>
             </a-modal>
             <!-- 同步集团数据弹窗 -->
-            <a-modal
-              v-model:visible="visible3"
-              title="同步集团数据"
-              ok-text="保留集团同步版本"
-              cancel-text="保留手动添加版本"
-              @ok="handleOk3"
-              width="1200px"
-            >
+            <a-modal v-model:visible="visible3" title="同步集团数据" @cancel="handleClose3" @ok="handleClose3"
+              :close-icon="false" width="1200px">
               <div style="padding: 10px">
-                <table
-                  style="
+                <table style="
                     width: 100%;
                     border-collapse: collapse;
                     border: 1px solid #f0f0f0;
                     table-layout: fixed;
-                  "
-                >
+                  ">
                   <thead>
                     <tr style="background-color: #fafafa">
-                      <th
-                        style="
+                      <th style="
                           padding: 12px;
                           border: 1px solid #f0f0f0;
                           width: 140px;
                           text-align: left;
-                        "
-                      ></th>
-                      <th
-                        style="
+                        "></th>
+                      <th style="
                           padding: 12px;
                           border: 1px solid #f0f0f0;
                           text-align: center;
                           font-weight: bold;
-                        "
-                      >
+                        ">
                         手动添加版本
                       </th>
-                      <th
-                        style="
+                      <th style="
                           padding: 12px;
                           border: 1px solid #f0f0f0;
                           text-align: center;
                           font-weight: bold;
-                        "
-                      >
+                        ">
                         集团同步版本
                       </th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr>
-                      <td
-                        style="
+                      <td style="
                           padding: 12px;
                           border: 1px solid #f0f0f0;
                           background-color: #fafafa;
                           font-weight: 500;
-                        "
-                      >
+                        ">
                         账单编号
                       </td>
                       <td style="padding: 12px; border: 1px solid #f0f0f0">
-                        <a-input
-                          v-model:value="billList.billNo"
-                          :bordered="false"
-                          disabled
-                        />
+                        <a-input v-model:value="billList.billNo" :bordered="false" disabled />
                       </td>
                       <td style="padding: 12px; border: 1px solid #f0f0f0">
-                        <a-input
-                          v-model:value="billListGroup.billNo"
-                          disabled
-                          :bordered="false"
-                        />
+                        <a-input v-model:value="billListGroup.billNo" disabled :bordered="false" />
                       </td>
                     </tr>
                     <tr>
-                      <td
-                        style="
+                      <td style="
                           padding: 12px;
                           border: 1px solid #f0f0f0;
                           background-color: #fafafa;
                           font-weight: 500;
-                        "
-                      >
+                        ">
                         到款日期
                       </td>
                       <td style="padding: 12px; border: 1px solid #f0f0f0">
-                        <a-date-picker
-                          v-model:value="billList.claimTime"
-                          style="width: 100%"
-                          :bordered="false"
-                          disabled
-                        />
+                        <a-date-picker v-model:value="billList.claimTime" style="width: 100%" :bordered="false"
+                          disabled />
                       </td>
                       <td style="padding: 12px; border: 1px solid #f0f0f0">
-                        <a-date-picker
-                          v-model:value="billListGroup.claimTime"
-                          style="width: 100%"
-                          disabled
-                          :bordered="false"
-                        />
+                        <a-date-picker v-model:value="billListGroup.claimTime" style="width: 100%" disabled
+                          :bordered="false" />
                       </td>
                     </tr>
                     <tr>
-                      <td
-                        style="
+                      <td style="
                           padding: 12px;
                           border: 1px solid #f0f0f0;
                           background-color: #fafafa;
                           font-weight: 500;
-                        "
-                      >
+                        ">
                         认领金额(万元)
                       </td>
                       <td style="padding: 12px; border: 1px solid #f0f0f0">
-                        <a-input
-                          v-model:value="billList.amount"
-                          :bordered="false"
-                          disabled
-                        />
+                        <a-input v-model:value="billList.amount" :bordered="false" disabled />
                       </td>
                       <td style="padding: 12px; border: 1px solid #f0f0f0">
-                        <a-input
-                          v-model:value="billListGroup.amount"
-                          disabled
-                          :bordered="false"
-                        />
+                        <a-input v-model:value="billListGroup.amount" disabled :bordered="false" />
                       </td>
                     </tr>
                     <tr>
-                      <td
-                        style="
+                      <td style="
                           padding: 12px;
                           border: 1px solid #f0f0f0;
                           background-color: #fafafa;
                           font-weight: 500;
-                        "
-                      >
+                        ">
                         认领单位
                       </td>
                       <td style="padding: 12px; border: 1px solid #f0f0f0">
-                        <a-input
-                          v-model:value="billList.claimerDepartment"
-                          :bordered="false"
-                          disabled
-                        />
+                        <a-input v-model:value="billList.claimerDepartment" :bordered="false" disabled />
                       </td>
                       <td style="padding: 12px; border: 1px solid #f0f0f0">
-                        <a-input
-                          v-model:value="billListGroup.claimerDepartment"
-                          disabled
-                          :bordered="false"
-                        />
+                        <a-input v-model:value="billListGroup.claimerDepartment" disabled :bordered="false" />
                       </td>
                     </tr>
                     <tr>
-                      <td
-                        style="
+                      <td style="
                           padding: 12px;
                           border: 1px solid #f0f0f0;
                           background-color: #fafafa;
                           font-weight: 500;
-                        "
-                      >
+                        ">
                         经办人
                       </td>
                       <td style="padding: 12px; border: 1px solid #f0f0f0">
-                        <a-input
-                          v-model:value="billList.claimer"
-                          :bordered="false"
-                          disabled
-                        />
+                        <a-input v-model:value="billList.claimer" :bordered="false" disabled />
                       </td>
                       <td style="padding: 12px; border: 1px solid #f0f0f0">
-                        <a-input
-                          v-model:value="billListGroup.claimer"
-                          disabled
-                          :bordered="false"
-                        />
+                        <a-input v-model:value="billListGroup.claimer" disabled :bordered="false" />
                       </td>
                     </tr>
                     <tr>
-                      <td
-                        style="
+                      <td style="
                           padding: 12px;
                           border: 1px solid #f0f0f0;
                           background-color: #fafafa;
                           font-weight: 500;
-                        "
-                      >
+                        ">
                         认领状态
                       </td>
                       <td style="padding: 12px; border: 1px solid #f0f0f0">
-                        <a-select
-                          v-model:value="billList.approvalStatus"
-                          style="width: 100%"
-                          :bordered="false"
-                          disabled
-                        >
+                        <a-select v-model:value="billList.approvalStatus" style="width: 100%" :bordered="false"
+                          disabled>
                           <a-select-option value="0">待认领</a-select-option>
                           <a-select-option value="1">已认领</a-select-option>
                         </a-select>
                       </td>
                       <td style="padding: 12px; border: 1px solid #f0f0f0">
-                        <a-select
-                          v-model:value="billListGroup.approvalStatus"
-                          style="width: 100%"
-                          disabled
-                          :bordered="false"
-                        >
+                        <a-select v-model:value="billListGroup.approvalStatus" style="width: 100%" disabled
+                          :bordered="false">
                           <a-select-option value="0">待认领</a-select-option>
                           <a-select-option value="1">已认领</a-select-option>
                         </a-select>
                       </td>
                     </tr>
                     <tr>
-                      <td
-                        style="
+                      <td style="
                           padding: 12px;
                           border: 1px solid #f0f0f0;
                           background-color: #fafafa;
                           font-weight: 500;
-                        "
-                      >
+                        ">
                         付款单位
                       </td>
                       <td style="padding: 12px; border: 1px solid #f0f0f0">
-                        <a-input
-                          v-model:value="billList.buyerDepartment"
-                          :bordered="false"
-                          disabled
-                        />
+                        <a-input v-model:value="billList.buyerDepartment" :bordered="false" disabled />
                       </td>
                       <td style="padding: 12px; border: 1px solid #f0f0f0">
-                        <a-input
-                          v-model:value="billListGroup.buyerDepartment"
-                          disabled
-                          :bordered="false"
-                        />
+                        <a-input v-model:value="billListGroup.buyerDepartment" disabled :bordered="false" />
                       </td>
                     </tr>
                     <tr>
-                      <td
-                        style="
+                      <td style="
                           padding: 12px;
                           border: 1px solid #f0f0f0;
                           background-color: #fafafa;
                           font-weight: 500;
-                        "
-                      >
+                        ">
                         摘要
                       </td>
                       <td style="padding: 12px; border: 1px solid #f0f0f0">
-                        <a-input
-                          v-model:value="billList.remark"
-                          :bordered="false"
-                          disabled
-                        />
+                        <a-input v-model:value="billList.remark" :bordered="false" disabled />
                       </td>
                       <td style="padding: 12px; border: 1px solid #f0f0f0">
-                        <a-input
-                          v-model:value="billListGroup.remark"
-                          disabled
-                          :bordered="false"
-                        />
+                        <a-input v-model:value="billListGroup.remark" disabled :bordered="false" />
                       </td>
                     </tr>
                   </tbody>
                 </table>
               </div>
+              <!-- 自定义底部按钮 -->
+              <template #footer v-if="getStatusText2(billList)">
+                <a-button @click="handleCancel3">保留手动添加版本</a-button>
+                <a-button type="primary" @click="handleOk3">保留集团同步版本</a-button>
+              </template>
+
             </a-modal>
           </div>
-          <a-table :dataSource="dataSource5" :columns="columns5">
+          <a-table :dataSource="dataSource5" :loading="getBillLoading" :columns="columns5">
             <template #bodyCell="{ column, record }">
               <template v-if="column.dataIndex === 'approvalStatus'">
                 <template v-if="record.approvalStatus === 0"> 待认领 </template>
                 <template v-else> 已认领 </template>
               </template>
               <template v-if="column.dataIndex === 'operation'">
-                <div style="display: flex; gap: 8px">
-                  <a-button
-                    type="primary"
-                    @click="syncBill(record)"
-                    v-show="
-                      record.source != 1 &&
+                <div style="display: flex; gap: 8px" v-if="getStatusText2(record)">
+                  <a-button type="primary" @click="syncBill(record)" v-show="record.source != 1 &&
+                    !(
+                      isBillSame(record) &&
+                      record.sameBillNos &&
+                      record.sameBillNos.length > 0
+                    ) && 
+                    record.isTb == 1 
+                    ">查看</a-button>
+                  <a-button type="primary" @click="editBill(record)" v-show="record.source != 1 &&
+                    !(
+                      isBillSame(record) &&
+                      record.sameBillNos &&
+                      record.sameBillNos.length > 0
+                    ) &&
+                    record.isTb == 0  
+                    ">编辑</a-button>
+                  <a-popconfirm title="确认删除吗？" ok-text="是" cancel-text="否" @confirm="deleteBill(record.id)">
+                    <a-button type="danger" v-show="record.source != 1 &&
                       !(
                         isBillSame(record) &&
                         record.sameBillNos &&
                         record.sameBillNos.length > 0
-                      ) &&
-                      record.isTb == 1
-                    "
-                    >查看</a-button
-                  >
-                  <a-button
-                    type="primary"
-                    @click="editBill(record)"
-                    v-show="
-                      record.source != 1 &&
-                      !(
-                        isBillSame(record) &&
-                        record.sameBillNos &&
-                        record.sameBillNos.length > 0
-                      ) &&
-                      record.isTb == 0
-                    "
-                    >编辑</a-button
-                  >
-                  <a-popconfirm
-                    title="确认删除吗？"
-                    ok-text="是"
-                    cancel-text="否"
-                    @confirm="deleteBill(record.id)"
-                  >
-                    <a-button
-                      type="danger"
-                      v-show="
-                        record.source != 1 &&
-                        !(
-                          isBillSame(record) &&
-                          record.sameBillNos &&
-                          record.sameBillNos.length > 0
-                        )
-                      "
-                      >删除</a-button
-                    >
+                      )
+                      ">删除</a-button>
                   </a-popconfirm>
                 </div>
               </template>
@@ -972,7 +766,8 @@ const visible3 = ref(false);
 
 //判断bill同步状态
 const getStatusText = (record) => {
-  if (record.source === 1) return "";
+
+  // if (record.source === 1) return "";
   if (
     record.sameBillNos &&
     record.sameBillNos.length > 0 &&
@@ -988,12 +783,22 @@ const getStatusText = (record) => {
     return "已同步";
   }
   if (record.isTb === 0) return "未同步";
+  if (record.isTb === 1) return "已同步";
 };
+
+const getStatusText2 = (record) => {
+  // 判断值有没有包含已手动同步
+  if (record.billNo.includes('同步')) {
+    return false
+  } else {
+    return true
+  }
+}
 
 // 集团账单列表
 const billListGroup = ref({
   accumulatedInvoicingAmount: 0,
-  amount: 0,
+  amount: null,
   approvalStatus: 0,
   approvalWorkflowNode: 0,
   bankAccount: "",
@@ -1035,8 +840,8 @@ const showModal = () => {
   visible.value = true;
   billList.value = {
     accumulatedInvoicingAmount: 0,
-    amount: 0,
-    approvalStatus: 0,
+    amount: null,
+    approvalStatus: null,
     approvalWorkflowNode: 0,
     bankAccount: "",
     billNo: "",
@@ -1149,10 +954,38 @@ const handleOk3 = () => {
     // console.log("同步状态码111", billListGroup.value.sameBillNos[0].status);
     console.log("同步数据成功", newBillList);
     await xzform(newBillList);
-    //刷新数据
+    // 刷新数据
     contractinfo();
   });
 };
+const handleCancel3 = () => {
+  ElMessageBox.confirm("确认将永久丢弃另一版本数据，此操作不可恢复！", "提示", {
+    confirmButtonText: "确认",
+    cancelButtonText: "取消",
+    type: "warning",
+  }).then(async () => {
+    const newBillList = {
+      ...billList.value,
+      id: billList.value.id,
+      //isTb: billListGroup.value., //同步状态，1为已同步，0为未同步
+      claimTime: billListGroup.value.claimTime
+        ? billListGroup.value.claimTime.format("YYYY-MM-DD HH:mm:ss")
+        : null,
+      billNo: billList.value.billNo + '-已手动同步',
+    };
+    await xzform(newBillList);
+    // 刷新数据
+    contractinfo();
+    visible3.value = false;
+  })
+};
+const handleClose3 = (e) => {
+  console.log('点击 cancel cancelcancel');
+  visible3.value = false;
+
+};
+
+
 // 检查账单是否已同步（本地数据与集团数据是否一致）
 const isBillSame = (record) => {
   if (record.sameBillNos && record.sameBillNos.length > 0) {
@@ -1237,8 +1070,8 @@ const formData = ref({
 });
 const billList = ref({
   accumulatedInvoicingAmount: 0,
-  amount: 0,
-  approvalStatus: 0,
+  amount: null,
+  approvalStatus: null,
   approvalWorkflowNode: 0,
   bankAccount: "",
   billNo: "",
@@ -1274,7 +1107,9 @@ const billList = ref({
   version: 0,
   year: 0,
 });
+const getBillLoading = ref(false);
 const getBillList = async () => {
+  getBillLoading.value = true
   const res = await getData("zhangdan/QueryBillList", {
     contractId: contractId.value,
   });
@@ -1284,6 +1119,7 @@ const getBillList = async () => {
   }));
   dataSource5.value = billarr;
   console.log("账单信息", billarr);
+  getBillLoading.value = false
 };
 const typeMap = {
   0: "国内",
@@ -1612,6 +1448,7 @@ const contractinfo = async () => {
   dataSource6.value = data4;
   dataSource7.value = data5;
   console.log("合同数据", "contractDetails:", data, "contractInfo:", data1);
+
 };
 //bill操作
 //编辑账单
@@ -1642,6 +1479,7 @@ const deleteBill = async (bill) => {
 :deep(.ant-table-thead > tr > th) {
   background-color: #f5f9ff !important;
 }
+
 :deep(.ant-input-disabled) {
   color: #000;
 }
@@ -1649,9 +1487,11 @@ const deleteBill = async (bill) => {
 :deep(.ant-select-disabled .ant-select-selector) {
   color: #000 !important;
 }
+
 :deep(.ant-picker-disabled .ant-picker-input > input) {
   color: #000 !important;
 }
+
 .formback {
   background-color: #fff;
   padding: 20px;

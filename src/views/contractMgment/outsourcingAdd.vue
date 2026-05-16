@@ -12,7 +12,6 @@
         <a-row :gutter="24">
           <a-col :span="24">
             <a-form-item label="主合同" name="parentId">
-              <!-- <a-input v-model:value="form.name" @change="onNameChange" placeholder="请输入主合同名称" /> -->
               <a-select v-model:value="form.parentId" placeholder="请搜索" :options="ProjectData" show-search
                 @search="handleSearch" @change="handleChange" :option-filter-prop="'label'">
               </a-select>
@@ -96,7 +95,8 @@
           </a-col>
           <a-col :span="8">
             <a-form-item label="主合同累计收款" name="mainContractReceivedAmount">
-              <a-input v-model:value="form.parentContractInfo.mainContractReceivedAmount" placeholder="请选择主合同 (万元)" disabled />
+              <a-input v-model:value="form.parentContractInfo.mainContractReceivedAmount" placeholder="请选择主合同 (万元)"
+                disabled />
             </a-form-item>
           </a-col>
           <a-col :span="8">
@@ -135,7 +135,8 @@
         <a-row :gutter="24">
           <a-col :span="16">
             <a-form-item label="外协主责单位" name="outsourcingResponsibleUnit">
-              <a-select v-model:value="form.parentContractInfo.outsourcingResponsibleUnit" placeholder="请选择外协主责单位" disabled>
+              <a-select v-model:value="form.parentContractInfo.outsourcingResponsibleUnit" placeholder="请选择外协主责单位"
+                disabled>
                 <a-select-option value="kuanggu">1</a-select-option>
               </a-select>
             </a-form-item>
@@ -482,7 +483,8 @@ export default defineComponent({
     const formRef = ref();
 
     // 初始化表单数据
-    let form: any = reactive({
+    // 初始化表单数据
+    let form: any = ref({
       name: "",
       projectName: "",
       outsourcingType: undefined,
@@ -530,6 +532,17 @@ export default defineComponent({
       customerName: "",
       invoiceEntity: "",
       ownershipUnit: "",
+      parentContractInfo: {
+        number: "",
+        uniqueNumber: "",
+        id: "",
+        mainContractType: undefined,
+        mainContractAmount: "",
+        mainContractReceivedAmount: "",
+        mainContractSector: undefined,
+        mainContractTypeOne: undefined,
+        outsourcingResponsibleUnit: '',
+      },
     });
 
     // 支付申请相关
@@ -584,9 +597,9 @@ export default defineComponent({
 
     // 删除附件
     const removeAttachment = (record: any) => {
-      const index = form.attachments.indexOf(record);
+      const index = form.value.attachments.indexOf(record);
       if (index > -1) {
-        form.attachments.splice(index, 1);
+        form.value.attachments.splice(index, 1);
       }
     };
 
@@ -607,96 +620,95 @@ export default defineComponent({
     // 填充表单数据的方法
     const fillFormData = (data: any) => {
       if (!data || Object.keys(data).length === 0) return;
-
-      Object.assign(form, data);
+form.value = data;
 
       // 特殊字段处理
       if (data.totalReceivedAmount) {
-        form.mainContractReceivedAmount = data.totalReceivedAmount.toString();
+        form.value.mainContractReceivedAmount = data.totalReceivedAmount.toString();
       }
       if (data.year) {
-        form.belongYear = data.year.toString();
+        form.value.belongYear = data.year.toString();
       }
       if (data.paymentRatio) {
-        form.paymentRatio = data.paymentRatio.toString()
+        form.value.paymentRatio = data.paymentRatio.toString()
       }
       if (data.amount) {
-        form.amount = data.amount.toString();
+        form.value.amount = data.amount.toString();
       }
       if (data.name) {
-        form.name = data.name;
+        form.value.name = data.name;
       }
       if (data.customer) {
-        form.projectName = data.customer;
+        form.value.projectName = data.customer;
       }
       if (data.customer) {
-        form.customer = data.customer;
+        form.value.customer = data.customer;
       }
       if (data.ownershipUnit) {
-        form.otherBillingUnit = data.ownershipUnit;
+        form.value.otherBillingUnit = data.ownershipUnit;
       }
       if (data.signTime) {
-        form.signTime = data.signTime;
+        form.value.signTime = data.signTime;
       }
       if (data.createTime) {
-        form.registrationDate = data.createTime;
+        form.value.registrationDate = data.createTime;
       }
       if (data.code) {
-        form.code = data.code;
+        form.value.code = data.code;
       }
       if (data.number) {
-        form.number = data.number;
+        form.value.number = data.number;
       }
       if (data.id) {
-        form.id = data.id;
+        form.value.id = data.id;
       }
       if (data.paymentCycle) {
-        form.paymentCycle = data.paymentCycle;
+        form.value.paymentCycle = data.paymentCycle;
       }
       if (data.plannedCommencementDate) {
         form.plannedStartDate = data.plannedCommencementDate;
       }
       if (data.plannedCompletionDate) {
-        form.plannedCompletionDate = data.plannedCompletionDate;
+        form.value.plannedCompletionDate = data.plannedCompletionDate;
       }
       if (data.actualCommencementDate) {
-        form.actualCommencementDate = data.actualCommencementDate;
+        form.value.actualCommencementDate = data.actualCommencementDate;
       }
       if (data.actualCompletionDate) {
-        form.actualCompletionDate = data.actualCompletionDate;
+        form.value.actualCompletionDate = data.actualCompletionDate;
       }
       if (data.totalDuration) {
-        form.totalDuration = data.totalDuration.toString();
+        form.value.totalDuration = data.totalDuration.toString();
       }
       if (data.isFramework !== null && data.isFramework !== undefined) {
-        form.isFramework = data.isFramework === 1 ? '1' : '0';
+        form.value.isFramework = data.isFramework === 1 ? '1' : '0';
       }
       if (data.province) {
-        form.province = data.province;
+        form.value.province = data.province;
       }
       if (data.commandPost) {
-        form.commandPost = data.commandPost;
+        form.value.commandPost = data.commandPost;
       }
       if (data.status !== null && data.status !== undefined) {
-        form.status = data.status.toString();
+        form.value.status = data.status.toString();
       }
       if (data.basicInfoManaged !== null && data.basicInfoManaged !== undefined) {
-        form.basicInfoManaged = data.basicInfoManaged === 1 ? '1' : '0';
+        form.value.basicInfoManaged = data.basicInfoManaged === 1 ? '1' : '0';
       }
       if (data.isArchived !== null && data.isArchived !== undefined) {
-        form.isArchived = data.isArchived === 1 ? '1' : '0';
+        form.value.isArchived = data.isArchived === 1 ? '1' : '0';
       }
       if (data.ifPush !== null && data.ifPush !== undefined) {
-        form.ifPush = data.ifPush === 1 ? '1' : '0';
+        form.value.ifPush = data.ifPush === 1 ? '1' : '0';
       }
       if (data.charge) {
-        form.handler = data.charge;
+        form.value.handler = data.charge;
       }
       if (data.priceType !== null && data.priceType !== undefined) {
-        form.priceType = data.priceType.toString();
+        form.value.priceType = data.priceType.toString();
       }
       if (data.outsourcingType) {
-        form.outsourcingType = data.outsourcingType;
+        form.value.outsourcingType = data.outsourcingType;
       }
     };
 
@@ -783,10 +795,10 @@ export default defineComponent({
           // 处理主合同数据列表
           ProjectData.value = resp.data.result.records.map((item: any, index: number) => {
             const contractInfo = item.contractInfo || {};
-            const parentContractInfo = item.contractInfo.parentContractInfo || {};
+            // const parentContractInfo = item.contractInfo.parentContractInfo || {};
             return {
               ...contractInfo,
-              ...parentContractInfo,
+              // ...parentContractInfo,
               key: contractInfo.id,
               index: index + 1,
               label: contractInfo.name,
@@ -798,7 +810,7 @@ export default defineComponent({
             };
 
           });
-          console.log(ProjectData.value, 'ProjectData');
+          console.log(ProjectData.value, 'ProjectDataProjectData');
 
         } else {
           message.error(resp.data.message || "获取主合同数据列表失败");
@@ -812,7 +824,7 @@ export default defineComponent({
 
     const handleOk = async () => {
       try {
-        const fromData = JSON.parse(JSON.stringify(form));
+        const fromData = JSON.parse(JSON.stringify(form.value));
         fromData.year = Number(fromData.year || 0);
         fromData.totalDuration = Number(fromData.totalDuration || 0);
         fromData.status = Number(fromData.status || 0);
@@ -880,7 +892,7 @@ export default defineComponent({
       let year = getCurrentYear();
       console.log(timer, 'timertimertimer');
       formRef.value?.resetFields();
-      Object.assign(form, {
+      Object.assign(form.value, {
         parentId: undefined,
         name: "",
         signTime: "",
@@ -935,7 +947,7 @@ export default defineComponent({
         id: "",
         projectId: "",
         parentContractInfo: {
-          number: "",
+          number: null,
           uniqueNumber: "",
           id: "",
           mainContractType: undefined,
@@ -961,35 +973,37 @@ export default defineComponent({
     };
 
     const handleRemove = (file: any) => {
-      const index = form.attachments.indexOf(file);
+      const index = form.value.attachments.indexOf(file);
       if (index > -1) {
-        form.attachments.splice(index, 1);
+        form.value.attachments.splice(index, 1);
       }
     };
     // 合同名称输入框值改变时触发搜索
     const onNameChange = (e: any) => {
       console.log(e, '合同名称改变');
 
-      form.name = e.target.value;
+      form.value.name = e.target.value;
     };
     // 获取主合同数据列表
-    const ProjectData = ref([
-      { value: 'jack', label: 'Jack' },
-    ]);
+    const ProjectData = ref([]);
     //获取项目列表数据
     const ProjectsList = ref<any[]>([]);
     const ProjectDetails = ref<any>(null);
     const handleChange = (value: any) => {
       console.log(`selected ${value}`);
-      const contractDetail = ProjectData.value.find(item => item.label === value);
+      console.log(ProjectData.value, 'ProjectData');
+
+      const contractDetail = ProjectData.value.find((item: any) => item.value === value);
       console.log(contractDetail, 'contractDetailcontractDetail');
       if (contractDetail) {
-        Object.assign(form, contractDetail);
+        form.value = contractDetail
+        form.value.parentContractInfo = form.value.parentContractInfo ? form.value.parentContractInfo : {}
       }
     };
     const handleProjectChange = (value: any) => {
       console.log(`selected ${value}`, ProjectsList.value);
-      const currentProject = ProjectsList.value.find(item => item.label === value);
+      console.log(ProjectsList.value, 'ProjectsList');
+      const currentProject = ProjectsList.value.find(item => item.value === value);
       console.log('查找得到的完整对象:', currentProject);
       ProjectDetails.value = currentProject;
     };
