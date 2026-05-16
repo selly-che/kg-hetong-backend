@@ -221,13 +221,13 @@
             <!-- 操作列 -->
             <template #action="{ record }">
               <a-space>
-                <a-button
+                <!-- <a-button
                   type="link"
                   size="small"
                   @click="handleUserEdit(record)"
                 >
                   编辑
-                </a-button>
+                </a-button> -->
                 <a-popconfirm
                   title="确定要删除该用户吗？"
                   ok-text="确定"
