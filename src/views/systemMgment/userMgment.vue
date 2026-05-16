@@ -169,8 +169,7 @@
     <!-- table 区域-end -->
   </a-card>
   <!-- 编辑抽屉 -->
-  <form-drawer-right ref="modalFormDawer" @refreshList="searchQuery"
-   @ok="modalFormOk" :title="title" :type="'role'">
+  <form-drawer-right ref="modalFormDawer" @refreshList="searchQuery" @ok="modalFormOk" :title="title" :type="'role'">
   </form-drawer-right>
 
   <!-- 密码重置弹窗 -->
@@ -467,7 +466,8 @@ const handleEdit = async (record) => {
   //   id: record.id,
   // });
   title.value = "编辑用户";
-  modalFormDawer.value.showDrawer(record);
+  modalFormDawer.value.showDrawer(record, false);
+  
 };
 
 // 查看详情

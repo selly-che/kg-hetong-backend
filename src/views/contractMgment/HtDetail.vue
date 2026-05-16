@@ -1215,12 +1215,7 @@ const columns3 = [
   },
 ];
 const dataSource3 = [
-  {
-    attachmentType: "合同",
-    attachmentName: "合同.pdf",
-    download: "下载",
-    view: "查看",
-  },
+  
 ];
 //申请单号,申请日期,申请人,付款单位,申请金额(万元)
 const columns4 = [

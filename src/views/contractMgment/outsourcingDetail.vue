@@ -21,7 +21,7 @@
             <a-row :gutter="16">
               <a-col :span="8">
                 <a-form-item label="主合同">
-                  <a-input v-model:value="formData.mainContract" disabled></a-input>
+                  <a-input v-model:value="formData.parentContractInfo.name" disabled></a-input>
                 </a-form-item>
               </a-col>
               <a-col :span="8">
@@ -60,7 +60,7 @@
               </a-col>
               <a-col :span="8">
                 <a-form-item label="主合同编号">
-                  <a-input v-model:value="formData.mainContractNumber" disabled></a-input>
+                  <a-input v-model:value="formData.parentContractInfo.number" disabled></a-input>
                 </a-form-item>
               </a-col>
               <a-col :span="8">
@@ -402,6 +402,10 @@ const formData = ref({
   ifPush: 0,
   contractState: "",
   isArchived: 0,
+  parentContractInfo:{
+    name:'',
+    number:''
+  }
 });
 
 const handleTabChange = (key: string) => {

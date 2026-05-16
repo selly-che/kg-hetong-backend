@@ -336,6 +336,7 @@ const submitForm = async () => {
     let formData = Object.assign({}, form);
     formData.selectedroles = form.selectedroles.join(","); // 将数组转换为逗号分隔的字符串
     console.log(formData, 'formData');
+    console.log(props.title, 'props.titleprops.title');
 
     // 根据title判断是添加还是编辑
     if (props.title == "添加用户") {

@@ -36,43 +36,43 @@
         </div>
 
         <!-- 项目列表 -->
-        <div class="project-list" >
-           <a-spin :spinning="Projectloading" tip="加载中...">
-             <a-menu   v-model:selectedKeys="selectedMenuKeys" v-model:openKeys="openMenuKeys" mode="inline"
-               :inline-collapsed="collapsed">
-               <!-- 动态渲染项目 -->
-               <a-sub-menu v-for="project in filteredProjects" :key="project.Id" >
-                 <template #title>
-                   <span class="project-title">{{ project.text }}</span>
-                 </template>
-   
-                 <!-- 固定的二级菜单项 -->
-                 <a-menu-item v-for="fixedItem in project.fixedNodes" :key="fixedItem.Id"
-                   @click="handleMenuItemClick(fixedItem)">
-                   {{ fixedItem.text }}
-                 </a-menu-item>
-   
-                 <!-- 动态的二级菜单项（来自stepList） -->
-                 <a-sub-menu v-for="taskItem in project.taskNodes" :key="taskItem.Id">
-                   <template #title>
-                     <!-- <el-badge is-dot class="item_badge" v-if="taskItem.stepCode == project.stepCode"> -->
-                     <div v-if="taskItem.stepCode == project.stepCode">
-                       <span style="color: #f8ac59;margin-right: 4px;">{{ taskItem.text }} </span>
-                       <link-outlined />
-                     </div>
-                     <!-- </el-badge> -->
-                     <span v-else>{{ taskItem.text }}</span>
-                   </template>
-   
-                   <!-- 固定的三级菜单项 -->
-                   <a-menu-item v-for="thirdLevelItem in taskItem.children" :key="thirdLevelItem.Id"
-                     @click="handleMenuItemClick(thirdLevelItem)">
-                     {{ thirdLevelItem.text }}
-                   </a-menu-item>
-                 </a-sub-menu>
-               </a-sub-menu>
-             </a-menu>
-           </a-spin>
+        <div class="project-list">
+          <a-spin :spinning="Projectloading" tip="加载中...">
+            <a-menu v-model:selectedKeys="selectedMenuKeys" v-model:openKeys="openMenuKeys" mode="inline"
+              :inline-collapsed="collapsed">
+              <!-- 动态渲染项目 -->
+              <a-sub-menu v-for="project in filteredProjects" :key="project.Id">
+                <template #title>
+                  <span class="project-title">{{ project.text }}</span>
+                </template>
+
+                <!-- 固定的二级菜单项 -->
+                <a-menu-item v-for="fixedItem in project.fixedNodes" :key="fixedItem.Id"
+                  @click="handleMenuItemClick(fixedItem)">
+                  {{ fixedItem.text }}
+                </a-menu-item>
+
+                <!-- 动态的二级菜单项（来自stepList） -->
+                <a-sub-menu v-for="taskItem in project.taskNodes" :key="taskItem.Id">
+                  <template #title>
+                    <!-- <el-badge is-dot class="item_badge" v-if="taskItem.stepCode == project.stepCode"> -->
+                    <div v-if="taskItem.stepCode == project.stepCode">
+                      <span style="color: #f8ac59;margin-right: 4px;">{{ taskItem.text }} </span>
+                      <link-outlined />
+                    </div>
+                    <!-- </el-badge> -->
+                    <span v-else>{{ taskItem.text }}</span>
+                  </template>
+
+                  <!-- 固定的三级菜单项 -->
+                  <a-menu-item v-for="thirdLevelItem in taskItem.children" :key="thirdLevelItem.Id"
+                    @click="handleMenuItemClick(thirdLevelItem)">
+                    {{ thirdLevelItem.text }}
+                  </a-menu-item>
+                </a-sub-menu>
+              </a-sub-menu>
+            </a-menu>
+          </a-spin>
         </div>
 
         <!-- 固定在底部的返回首页按钮 -->
@@ -101,7 +101,7 @@
                 <span @click="handleTabClick(tab)">{{ tab.title }}</span>
               </template>
             </a-tab-pane>
-            <a-tab-pane :closable="false"> 
+            <a-tab-pane :closable="false">
               <template #tab>
                 <a-button type="link" size="small" @click="closeAllTabs" class="close-all-btn"
                   :disabled="openedTabs.length === 0">
@@ -121,7 +121,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed, onMounted, watch ,provide} from "vue";
+import { ref, computed, onMounted, watch, provide } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import getDatas from "@/network/index";
 import { ElMessage } from "element-plus";
@@ -325,7 +325,7 @@ const getProjectList = async () => {
 
     selectedMenuKeys.value = [];
     openMenuKeys.value = [];
-     Projectloading.value = false
+    Projectloading.value = false
   } catch (error) {
     console.error("获取项目列表失败:", error);
     ElMessage.error("获取项目列表失败");
@@ -425,9 +425,44 @@ const handleTabClick = (tab: any) => {
 };
 
 // 根据路径找到对应的菜单项并高亮
-const findAndHighlightMenuItem = (path: string) => {
+const findAndHighlightMenuItem = (path: string, menuItemId?: string) => {
   try {
-    // 解析URL参数
+    // 如果提供了菜单项ID，直接通过ID查找
+    if (menuItemId) {
+      for (const project of projects.value) {
+        // 检查是否是一级菜单（项目本身）
+        if (project.Id === menuItemId) {
+          openMenuKeys.value = [project.Id];
+          selectedMenuKeys.value = [menuItemId];
+          return;
+        }
+
+        // 检查是否是固定二级菜单项
+        const fixedItem = project.fixedNodes.find(
+          (item: any) => item.Id === menuItemId
+        );
+        if (fixedItem) {
+          openMenuKeys.value = [project.Id];
+          selectedMenuKeys.value = [menuItemId];
+          return;
+        }
+
+        // 检查是否是三级菜单项
+        for (const taskNode of project.taskNodes) {
+          const thirdLevelItem = taskNode.children.find(
+            (item: any) => item.Id === menuItemId
+          );
+          if (thirdLevelItem) {
+            openMenuKeys.value = [project.Id, taskNode.Id];
+            selectedMenuKeys.value = [menuItemId];
+            return;
+          }
+        }
+      }
+      return;
+    }
+
+    // 原有的通过路径查找逻辑
     const url = new URL(path, window.location.origin);
     const params = new URLSearchParams(url.search);
     const projectId = params.get("projectId");
@@ -516,21 +551,34 @@ const closeAllTabs = () => {
 };
 
 onMounted(() => {
-  getProjectList();
-  // 从 sessionStorage 恢复 openedTabs
-  const savedTabs = sessionStorage.getItem("openedTabs");
-  if (savedTabs) {
-    try {
-      openedTabs.value = JSON.parse(savedTabs);
-      // 如果有保存的标签页，默认打开第一个
-      if (openedTabs.value.length > 0) {
-        const lastTab = openedTabs.value[openedTabs.value.length - 1];
-        activeTabKey.value = lastTab.id;
-      }
-    } catch (e) {
-      console.error("解析保存的标签页失败:", e);
+  getProjectList().then(() => {
+    // 从URL参数中获取菜单项ID
+    const projectId = route.query.projectId as string;
+    const targetPath = route.path + (route.fullPath.includes('?') ? route.fullPath.substring(route.fullPath.indexOf('?')) : '');
+
+    // 优先使用菜单项ID，其次使用路径匹配
+    if (projectId) {
+      findAndHighlightMenuItem(targetPath, projectId);
+    } else if (route.query.projectId) {
+      // 如果没有menuItemId但有projectId，尝试通过路径匹配
+      findAndHighlightMenuItem(targetPath);
     }
-  }
+
+    // 从 sessionStorage 恢复 openedTabs
+    const savedTabs = sessionStorage.getItem("openedTabs");
+    if (savedTabs) {
+      try {
+        openedTabs.value = JSON.parse(savedTabs);
+        // 如果有保存的标签页，默认打开第一个
+        if (openedTabs.value.length > 0) {
+          const lastTab = openedTabs.value[openedTabs.value.length - 1];
+          activeTabKey.value = lastTab.id;
+        }
+      } catch (e) {
+        console.error("解析保存的标签页失败:", e);
+      }
+    }
+  });
 });
 
 // 监听 openedTabs 变化并保存到 sessionStorage
@@ -538,11 +586,11 @@ watch(
   openedTabs,
   (newVal) => {
     console.log(newVal, 'newValnewVal');
-    
+
     // 获取缓存的 tabs
     const cachedTabsStr = sessionStorage.getItem("openedTabs");
     let cachedTabs: any[] = [];
-    
+
     if (cachedTabsStr) {
       try {
         cachedTabs = JSON.parse(cachedTabsStr);
@@ -550,22 +598,22 @@ watch(
         console.error("解析缓存的标签页失败:", e);
       }
     }
-    
+
     // 创建一个新的 Map，以缓存的 tabs 为主
     const mergedTabsMap = new Map();
-    
+
     // 先添加缓存的 tabs
     cachedTabs.forEach((tab: any) => {
       mergedTabsMap.set(tab.id, tab);
     });
-    
+
     // 再遍历新的 tabs，如果 id 不存在于缓存中，则添加
     newVal.forEach((tab: any) => {
       if (!mergedTabsMap.has(tab.id)) {
         mergedTabsMap.set(tab.id, tab);
       }
     });
-    
+
     // 转换为数组并保存
     const mergedTabs = Array.from(mergedTabsMap.values());
     sessionStorage.setItem("openedTabs", JSON.stringify(mergedTabs));

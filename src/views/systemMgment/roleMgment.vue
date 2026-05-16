@@ -334,6 +334,7 @@
       ref="modalFormDawer"
       @ok="modalFormOk"
       :selectedroles="selectedroles"
+      @refreshList="handleSearch"
       :title="title"
       :type="'role'"
     >
@@ -754,7 +755,9 @@ const handleTableChange = (pagination, filters, sorter) => {
   handleUserSearch(); // 重新请求表格数据
 };
 const handleUserEdit = (record) => {
-  console.log("编辑用户:", record);
+  console.log("编辑用户11:", record);
+  title.value = "编辑用户";
+  modalFormDawer.value.showDrawer(record, false);
 };
 // 单个删除
 const handleUserDelete = async (record) => {
@@ -853,6 +856,7 @@ const modalFormOk = () => {
   // searchQuery();
   console.log("模拟框确认");
 };
+
 
 onMounted(() => {
   handleSearch();

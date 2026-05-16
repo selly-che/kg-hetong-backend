@@ -36,12 +36,12 @@
           <a-col :span="8">
             <a-form-item label="外协类型" name="outsourcingType">
               <a-select v-model:value="form.outsourcingType" placeholder="请选择外协类型">
-                <a-select-option value="road">路内外包</a-select-option>
-                <a-select-option value="road">路外外包</a-select-option>
-                <a-select-option value="road">代院外包</a-select-option>
-                <a-select-option value="road">自揽外包</a-select-option>
-                <a-select-option value="road">分包合同</a-select-option>
-                <a-select-option value="road">产品产业化设备采购</a-select-option>
+                <a-select-option :value="0" >路内外包</a-select-option>
+                <a-select-option :value="1">路外外包</a-select-option>
+                <a-select-option :value="2">代院外包</a-select-option>
+                <a-select-option :value="3">自揽外包</a-select-option>
+                <a-select-option :value="4">分包合同</a-select-option>
+                <a-select-option :value="5">产品产业化设备采购</a-select-option>
               </a-select>
             </a-form-item>
           </a-col>
@@ -834,7 +834,7 @@ form.value = data;
         fromData.paymentAuditStatus = Number(fromData.paymentAuditStatus || 0);
         fromData.pageSize = Number(fromData.pageSize || 0);
         fromData.pageNo = Number(fromData.pageNo || 0);
-        fromData.outsourcingType = Number(fromData.outsourcingType || 0);
+        fromData.outsourcingType = fromData.outsourcingType ;
         fromData.isSupplementary = Number(fromData.isSupplementary || 0);
         fromData.isReport = Number(fromData.isReport || 0);
         fromData.isPay = Number(fromData.isPay || 0);

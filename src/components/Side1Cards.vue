@@ -48,6 +48,7 @@ const watchProject = () => {
     name: "ProjectOverview",
     query: {
       projectId: props.project.id,
+      
     },
   });
   window.open(route.href, "_blank");
