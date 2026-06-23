@@ -2,16 +2,16 @@
   <div class="login">
     <div class="from">
       <div class="title">合同管理系统</div>
-      <div>主账号：admin</div>
+      <!-- <div>主账号：admin</div>
       <div>主管账号-陈叔清：csq </div>
-      <div style="margin-bottom: 20px;">协管账号-卢静静：ljj</div>
+      <div style="margin-bottom: 20px;">协管账号-卢静静：ljj</div> -->
       <el-input v-model="input" size="large" style="width: 400px" placeholder="请输入您的账号" prefix-icon="User" />
       <div class="password">
         <el-input v-model="password" @keyup.enter="login" size="large" type="password" style="width: 400px"
           placeholder="请输入您的密码" show-password prefix-icon="Lock" />
       </div>
       <!-- 添加回车 -->
-      <div class="login-btn" @click="login"  @keydown.enter="login">登录</div>
+      <div class="login-btn" @click="login" @keydown.enter="login">登录</div>
     </div>
   </div>
 </template>
@@ -24,8 +24,8 @@ import { ElMessage } from "element-plus";
 import { setUserPermissions } from '@/directives/permission'
 import { useStore } from 'vuex';
 
-const input = ref("csq");
-const password = ref("123456");
+const input = ref("");
+const password = ref("");
 const router = useRouter();
 
 const store = useStore();

@@ -272,9 +272,9 @@ const selectAll = () => {
   const getAllLeafKeys = (nodes) => {
     let keys = []
     nodes.forEach(node => {
-      // if (node.isLeaf || (!node.children || node.children.length === 0)) {
+      if (node.isLeaf || (!node.children || node.children.length === 0)) {
         keys.push(node.value)
-      // }
+      }
       if (node.children && node.children.length > 0) {
         keys = keys.concat(getAllLeafKeys(node.children))
       }
@@ -396,9 +396,29 @@ const performSave = async (closeAfterSave) => {
   console.log(checkedKeys.value, '保存的key');
   
   try {
+    // 过滤出叶子节点ID
+    const getLeafKeys = (nodes) => {
+      let keys = []
+      nodes.forEach(node => {
+        if (node.isLeaf || (!node.children || node.children.length === 0)) {
+          keys.push(node.value)
+        }
+        if (node.children && node.children.length > 0) {
+          keys = keys.concat(getLeafKeys(node.children))
+        }
+      })
+      return keys
+    }
+    
+    const allLeafKeys = getLeafKeys(treeData.value)
+    // 只保留叶子节点中的已选节点
+    const leafCheckedKeys = checkedKeys.value.filter(key => allLeafKeys.includes(key))
+    
+    console.log(leafCheckedKeys, '过滤后的叶子节点key');
+    
     const saveData = {
       roleId: props.roleId,
-      permissionIds: checkedKeys.value.join(','),
+      permissionIds: leafCheckedKeys.join(','),
       lastpermissionIds: defaultCheckedKeys.value.join(',')
     }
 

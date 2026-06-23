@@ -417,6 +417,7 @@ const modalVisible = ref(false);
 const IsCreate = ref(true);
 const formRef = ref(null);
 const formState = reactive({
+  id: "",
   roleCode: "",
   roleName: "",
   description: "",
@@ -449,6 +450,7 @@ const handleAdd = () => {
   IsCreate.value = true;
   // 清空表单数据
   Object.assign(formState, {
+    id: "",
     roleCode: "",
     roleName: "",
     description: "",
@@ -504,6 +506,7 @@ const handleOk = () => {
       const res = await getDatas(
         IsCreate.value ? "system/AddUserRole" : "system/EditUserRole",
         {
+          id: formState.id,
           roleCode: formState.roleCode,
           roleName: formState.roleName,
           description: formState.description,
@@ -531,6 +534,7 @@ const handleEdit = (record) => {
   IsCreate.value = false;
   // 填充表单数据
   Object.assign(formState, {
+    id: record.id,
     roleCode: record.roleCode,
     roleName: record.roleName,
     description: record.description,
@@ -618,6 +622,8 @@ const saveRolePermissions = async (saveData) => {
       ElMessage.success("保存成功");
       fetchPermissionTree();
       fetchCheckedPermissions(selectedRoleId.value);
+    }else{
+      ElMessage.error(response.data.message);
     }
   } catch (error) {
     console.error("保存权限失败:", error);
